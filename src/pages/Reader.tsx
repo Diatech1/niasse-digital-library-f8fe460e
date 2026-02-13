@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { books } from "@/data/books";
 import { ruhAlAdabVerses, ruhAlAdabMeta } from "@/data/ruh-al-adab";
+import { comprendreFaydhahSections, comprendreFaydhahMeta } from "@/data/comprendre-faydhah";
 import { ArrowLeft, Search, Type, List } from "lucide-react";
 
 const themes = [
@@ -106,6 +107,25 @@ const Reader = () => {
               ))}
             </div>
             <p className="text-center font-semibold mt-8">{ruhAlAdabMeta.closing}</p>
+          </>
+        ) : book.contentModule === "comprendre-faydhah" ? (
+          <>
+            <h2 className="text-center font-serif font-bold text-lg mb-1">{comprendreFaydhahMeta.title}</h2>
+            <p className="text-center text-sm text-muted-foreground mb-1">par {comprendreFaydhahMeta.author}</p>
+            <p className="text-center text-xs text-muted-foreground mb-6">Traduit par : {comprendreFaydhahMeta.translator}</p>
+            <div className="space-y-8">
+              {comprendreFaydhahSections.map((section, idx) => (
+                <div key={section.id}>
+                  {(idx === 0 || comprendreFaydhahSections[idx - 1].chapter !== section.chapter) && (
+                    <h3 className="text-center font-serif font-bold text-base text-primary mb-4 mt-6">{section.chapter}</h3>
+                  )}
+                  <h4 className="font-serif font-semibold text-sm mb-3">{section.heading}</h4>
+                  {section.content.split("\n\n").map((para, pIdx) => (
+                    <p key={pIdx} className="mb-3 text-justify">{para}</p>
+                  ))}
+                </div>
+              ))}
+            </div>
           </>
         ) : (
           <>
