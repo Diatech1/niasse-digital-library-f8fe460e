@@ -1,5 +1,6 @@
 import cover1 from "@/assets/book-cover-1.jpg";
 import cover7 from "@/assets/book-cover-7.jpg";
+import cover8 from "@/assets/book-cover-8.jpg";
 import cover2 from "@/assets/book-cover-2.jpg";
 import cover3 from "@/assets/book-cover-3.jpg";
 import cover4 from "@/assets/book-cover-4.jpg";
@@ -114,5 +115,18 @@ export const books: Book[] = [
     hasAudio: true,
     audioDuration: "1:45:00",
     contentModule: "ruh-al-adab",
+  },
+  {
+    id: "8",
+    title: "Comprendre la Faydhah Tijâniyyah",
+    titleAr: "فهم الفيضة التجانية",
+    author: "Fakhruddin Owaisi al-Tijânî",
+    cover: cover8,
+    language: "French",
+    pages: 50,
+    tags: ["Faydhah", "Theology", "Sufism", "Tarbiyya"],
+    description: "A comprehensive treatise on understanding the Faydhah Tijâniyyah — the great spiritual effusion predicted by Shaykh Ahmad al-Tijânî and manifested through Shaykh Ibrâhîm Niass. Translated from English by Sîdî Maodo Diop al-Fûtî.",
+    hasAudio: false,
+    contentModule: "comprendre-faydhah",
   },
 ];
