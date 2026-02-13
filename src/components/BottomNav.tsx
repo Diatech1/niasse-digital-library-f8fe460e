@@ -12,10 +12,6 @@ const BottomNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Hide on reader/player pages
-  if (location.pathname.includes("/read/") || location.pathname.includes("/listen/")) {
-    return null;
-  }
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 glass border-t border-border/50">
