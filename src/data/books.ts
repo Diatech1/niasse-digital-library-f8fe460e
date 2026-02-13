@@ -1,4 +1,5 @@
 import cover1 from "@/assets/book-cover-1.jpg";
+import cover7 from "@/assets/book-cover-7.jpg";
 import cover2 from "@/assets/book-cover-2.jpg";
 import cover3 from "@/assets/book-cover-3.jpg";
 import cover4 from "@/assets/book-cover-4.jpg";
@@ -18,6 +19,7 @@ export interface Book {
   hasAudio: boolean;
   progress?: number;
   audioDuration?: string;
+  contentModule?: string;
 }
 
 export const books: Book[] = [
@@ -98,5 +100,19 @@ export const books: Book[] = [
     tags: ["Ethics", "Hadith"],
     description: "Selected teachings and narrations compiled for the spiritual nourishment of the contemporary seeker.",
     hasAudio: false,
+  },
+  {
+    id: "7",
+    title: "Rūḥ al-Adab",
+    titleAr: "روح الأدب",
+    author: "Cheikh Ibrahim Niasse",
+    cover: cover7,
+    language: "English",
+    pages: 121,
+    tags: ["Adab", "Poetry", "Tarbiyya", "Ethics"],
+    description: "The Spirit of Good Morals — A poetic treatise on spiritual etiquette, the path of the seeker, and the virtues essential for the Tijani disciple. Transliterated by Abdulahi Thani Zainul Inyass.",
+    hasAudio: true,
+    audioDuration: "1:45:00",
+    contentModule: "ruh-al-adab",
   },
 ];

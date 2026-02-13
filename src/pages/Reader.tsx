@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { books } from "@/data/books";
+import { ruhAlAdabVerses, ruhAlAdabMeta } from "@/data/ruh-al-adab";
 import { ArrowLeft, Search, Type, List } from "lucide-react";
 
 const themes = [
@@ -90,8 +91,28 @@ const Reader = () => {
 
       {/* Reading content */}
       <div className={`px-6 py-8 max-w-2xl mx-auto ${fontClass} leading-relaxed`} style={{ fontSize }}>
-        <p className="mb-6">{sampleTextEn}</p>
-        <p className="font-arabic text-right mb-6" dir="rtl">{sampleTextAr}</p>
+        {book.contentModule === "ruh-al-adab" ? (
+          <>
+            <h2 className="text-center font-serif font-bold text-lg mb-1">{ruhAlAdabMeta.title}</h2>
+            <p className="text-center text-sm text-muted-foreground mb-1">{ruhAlAdabMeta.subtitle}</p>
+            <p className="text-center text-xs text-muted-foreground mb-1">Author: {ruhAlAdabMeta.author}</p>
+            <p className="text-center text-xs text-muted-foreground mb-6">Transliterated by: {ruhAlAdabMeta.transliteratedBy}</p>
+            <div className="space-y-3">
+              {ruhAlAdabVerses.map((v) => (
+                <p key={v.number}>
+                  <span className="text-primary font-semibold mr-2">{v.number}</span>
+                  {v.text}
+                </p>
+              ))}
+            </div>
+            <p className="text-center font-semibold mt-8">{ruhAlAdabMeta.closing}</p>
+          </>
+        ) : (
+          <>
+            <p className="mb-6">{sampleTextEn}</p>
+            <p className="font-arabic text-right mb-6" dir="rtl">{sampleTextAr}</p>
+          </>
+        )}
       </div>
 
       {/* Bottom bar */}
