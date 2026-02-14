@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { books } from "@/data/books";
 import { ruhAlAdabVerses, ruhAlAdabMeta } from "@/data/ruh-al-adab";
 import { comprendreFaydhahSections, comprendreFaydhahMeta } from "@/data/comprendre-faydhah";
+import { kachifulAlbasSections, kachifulAlbasMeta } from "@/data/kachiful-albas";
 import { ArrowLeft, Search, Type, List, X } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -46,6 +47,19 @@ const Reader = () => {
         const last = chapters[chapters.length - 1];
         if (!last || last.chapter !== s.chapter) {
           chapters.push({ chapter: s.chapter, sections: [{ id: s.id, heading: s.heading }] });
+        } else {
+          last.sections.push({ id: s.id, heading: s.heading });
+        }
+      });
+      return chapters;
+    }
+    if (book?.contentModule === "kachiful-albas") {
+      const chapters: { chapter: string; sections: { id: string; heading: string }[] }[] = [];
+      kachifulAlbasSections.forEach((s) => {
+        const key = `${s.part} — ${s.chapter}`;
+        const last = chapters[chapters.length - 1];
+        if (!last || last.chapter !== key) {
+          chapters.push({ chapter: key, sections: [{ id: s.id, heading: s.heading }] });
         } else {
           last.sections.push({ id: s.id, heading: s.heading });
         }
@@ -145,6 +159,35 @@ const Reader = () => {
                   ))}
                 </div>
               ))}
+            </div>
+          </>
+        ) : book.contentModule === "kachiful-albas" ? (
+          <>
+            <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize: fontSize }}>{kachifulAlbasMeta.title}</h2>
+            <p className="text-center text-sm text-muted-foreground mb-1">{kachifulAlbasMeta.subtitle}</p>
+            <p className="text-center text-xs text-muted-foreground mb-1">par {kachifulAlbasMeta.author}</p>
+            <p className="text-center text-xs text-muted-foreground mb-6">Traduit par : {kachifulAlbasMeta.translators}</p>
+            <div className="space-y-8">
+              {kachifulAlbasSections.map((section, idx) => {
+                const key = `${section.part} — ${section.chapter}`;
+                const prevKey = idx > 0 ? `${kachifulAlbasSections[idx - 1].part} — ${kachifulAlbasSections[idx - 1].chapter}` : "";
+                return (
+                  <div key={section.id} ref={(el) => { sectionRefs.current[section.id] = el; }}>
+                    {(idx === 0 || prevKey !== key) && (
+                      <>
+                        {(idx === 0 || kachifulAlbasSections[idx - 1].part !== section.part) && (
+                          <h3 className="text-center font-serif font-bold text-primary mb-2 mt-8 uppercase tracking-wider" style={{ fontSize: fontSize }}>{section.part}</h3>
+                        )}
+                        <h4 className="text-center font-serif font-semibold text-primary/80 mb-4 mt-4" style={{ fontSize: fontSize * 0.9 }}>{section.chapter}</h4>
+                      </>
+                    )}
+                    <h5 className="font-serif font-semibold mb-3" style={{ fontSize: fontSize }}>{section.heading}</h5>
+                    {section.content.split("\n\n").map((para, pIdx) => (
+                      <p key={pIdx} className="mb-3 text-justify">{para}</p>
+                    ))}
+                  </div>
+                );
+              })}
             </div>
           </>
         ) : (

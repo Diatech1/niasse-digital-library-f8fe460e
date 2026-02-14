@@ -1,5 +1,6 @@
 import cover7 from "@/assets/book-cover-7.jpg";
 import cover8 from "@/assets/book-cover-8.jpg";
+import cover9 from "@/assets/book-cover-9.jpg";
 
 export interface Book {
   id: string;
@@ -46,5 +47,18 @@ export const books: Book[] = [
     description: "A comprehensive treatise on understanding the Faydhah Tijâniyyah — the great spiritual effusion predicted by Shaykh Ahmad al-Tijânî and manifested through Shaykh Ibrâhîm Niass. Translated from English by Sîdî Maodo Diop al-Fûtî.",
     hasAudio: false,
     contentModule: "comprendre-faydhah",
+  },
+  {
+    id: "9",
+    title: "Kâchiful Albâs",
+    titleAr: "كاشف الإلباس",
+    author: "Cheikh Al Islam Elhadji Ibrahima Niass",
+    cover: cover9,
+    language: "French",
+    pages: 201,
+    tags: ["Faydhah", "Sufism", "Theology", "Tarbiyya"],
+    description: "La Levée des Équivoques concernant la Fayda du Sceau Abil Abbas — Un traité majeur défendant et expliquant la Fayda Tijâniyya, ses fondements coraniques, les réalités du soufisme et l'importance du Zikr. Traduit de l'arabe par Mouhammadou Lasse Khar BA et Oustaze Djim GUEYE.",
+    hasAudio: false,
+    contentModule: "kachiful-albas",
   },
 ];
