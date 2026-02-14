@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useRef, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { books } from "@/data/books";
 import { ruhAlAdabVerses, ruhAlAdabMeta } from "@/data/ruh-al-adab";
 import { comprendreFaydhahSections, comprendreFaydhahMeta } from "@/data/comprendre-faydhah";
-import { ArrowLeft, Search, Type, List } from "lucide-react";
+import { ArrowLeft, Search, Type, List, X } from "lucide-react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const themes = [
   { name: "Light", bg: "bg-[hsl(40,20%,95%)]", text: "text-[hsl(0,0%,15%)]" },
@@ -32,8 +34,26 @@ const Reader = () => {
   const [fontIdx, setFontIdx] = useState(1);
   const [fontSize, setFontSize] = useState(16);
   const [showSettings, setShowSettings] = useState(false);
+  const [tocOpen, setTocOpen] = useState(false);
+  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const theme = themes[themeIdx];
+
+  const tocItems = useMemo(() => {
+    if (book?.contentModule === "comprendre-faydhah") {
+      const chapters: { chapter: string; sections: { id: string; heading: string }[] }[] = [];
+      comprendreFaydhahSections.forEach((s) => {
+        const last = chapters[chapters.length - 1];
+        if (!last || last.chapter !== s.chapter) {
+          chapters.push({ chapter: s.chapter, sections: [{ id: s.id, heading: s.heading }] });
+        } else {
+          last.sections.push({ id: s.id, heading: s.heading });
+        }
+      });
+      return chapters;
+    }
+    return [];
+  }, [book?.contentModule]);
   const fontClass = fontIdx === 0 ? "font-sans" : fontIdx === 1 ? "font-serif" : "font-arabic";
 
   if (!book) return null;
@@ -115,7 +135,7 @@ const Reader = () => {
             <p className="text-center text-xs text-muted-foreground mb-6">Traduit par : {comprendreFaydhahMeta.translator}</p>
             <div className="space-y-8">
               {comprendreFaydhahSections.map((section, idx) => (
-                <div key={section.id}>
+              <div key={section.id} ref={(el) => { sectionRefs.current[section.id] = el; }}>
                   {(idx === 0 || comprendreFaydhahSections[idx - 1].chapter !== section.chapter) && (
                     <h3 className="text-center font-serif font-bold text-base text-primary mb-4 mt-6">{section.chapter}</h3>
                   )}
@@ -145,7 +165,44 @@ const Reader = () => {
           <div className="h-full w-[5%] bg-primary rounded-full" />
         </div>
         <div className="flex items-center justify-around py-2 pb-safe">
-          <button className="p-2"><List className="w-5 h-5 text-muted-foreground" /></button>
+          <button className="p-2" onClick={() => setTocOpen(true)}><List className="w-5 h-5 text-muted-foreground" /></button>
+
+          {/* TOC Sheet */}
+          <Sheet open={tocOpen} onOpenChange={setTocOpen}>
+            <SheetContent side="left" className={`${theme.bg} ${theme.text} w-[85%] sm:max-w-sm p-0`}>
+              <SheetHeader className="px-4 pt-4 pb-2 border-b border-border/20">
+                <SheetTitle className={theme.text}>Table des matières</SheetTitle>
+              </SheetHeader>
+              <ScrollArea className="h-[calc(100vh-60px)]">
+                <div className="px-4 py-3 space-y-4">
+                  {tocItems.map((ch) => (
+                    <div key={ch.chapter}>
+                      <p className="text-xs font-bold text-primary uppercase tracking-wider mb-2">{ch.chapter}</p>
+                      <div className="space-y-1">
+                        {ch.sections.map((s) => (
+                          <button
+                            key={s.id}
+                            onClick={() => {
+                              setTocOpen(false);
+                              setTimeout(() => {
+                                sectionRefs.current[s.id]?.scrollIntoView({ behavior: "smooth", block: "start" });
+                              }, 300);
+                            }}
+                            className="block w-full text-left text-sm py-1.5 px-2 rounded hover:bg-primary/10 transition-colors"
+                          >
+                            {s.heading}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                  {tocItems.length === 0 && (
+                    <p className="text-sm text-muted-foreground text-center py-8">Pas de table des matières disponible.</p>
+                  )}
+                </div>
+              </ScrollArea>
+            </SheetContent>
+          </Sheet>
           <button className="p-2"><Search className="w-5 h-5 text-muted-foreground" /></button>
           <button className="p-2"><Type className="w-5 h-5 text-muted-foreground" /></button>
         </div>
