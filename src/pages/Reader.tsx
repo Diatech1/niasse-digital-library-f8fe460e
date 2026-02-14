@@ -114,7 +114,7 @@ const Reader = () => {
       <div className={`px-6 py-8 max-w-2xl mx-auto ${fontClass} leading-relaxed`} style={{ fontSize }}>
         {book.contentModule === "ruh-al-adab" ? (
           <>
-            <h2 className="text-center font-serif font-bold text-lg mb-1">{ruhAlAdabMeta.title}</h2>
+            <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize: Math.max(fontSize + 4, 20) }}>{ruhAlAdabMeta.title}</h2>
             <p className="text-center text-sm text-muted-foreground mb-1">{ruhAlAdabMeta.subtitle}</p>
             <p className="text-center text-xs text-muted-foreground mb-1">Author: {ruhAlAdabMeta.author}</p>
             <p className="text-center text-xs text-muted-foreground mb-6">Transliterated by: {ruhAlAdabMeta.transliteratedBy}</p>
@@ -130,16 +130,16 @@ const Reader = () => {
           </>
         ) : book.contentModule === "comprendre-faydhah" ? (
           <>
-            <h2 className="text-center font-serif font-bold text-lg mb-1">{comprendreFaydhahMeta.title}</h2>
+            <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize: Math.max(fontSize + 4, 20) }}>{comprendreFaydhahMeta.title}</h2>
             <p className="text-center text-sm text-muted-foreground mb-1">par {comprendreFaydhahMeta.author}</p>
             <p className="text-center text-xs text-muted-foreground mb-6">Traduit par : {comprendreFaydhahMeta.translator}</p>
             <div className="space-y-8">
               {comprendreFaydhahSections.map((section, idx) => (
               <div key={section.id} ref={(el) => { sectionRefs.current[section.id] = el; }}>
                   {(idx === 0 || comprendreFaydhahSections[idx - 1].chapter !== section.chapter) && (
-                    <h3 className="text-center font-serif font-bold text-base text-primary mb-4 mt-6">{section.chapter}</h3>
+                    <h3 className="text-center font-serif font-bold text-primary mb-4 mt-6" style={{ fontSize: Math.max(fontSize + 2, 18) }}>{section.chapter}</h3>
                   )}
-                  <h4 className="font-serif font-semibold text-sm mb-3">{section.heading}</h4>
+                  <h4 className="font-serif font-semibold mb-3" style={{ fontSize: Math.max(fontSize + 1, 16) }}>{section.heading}</h4>
                   {section.content.split("\n\n").map((para, pIdx) => (
                     <p key={pIdx} className="mb-3 text-justify">{para}</p>
                   ))}
