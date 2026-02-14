@@ -219,4 +219,81 @@ Un autre Hadith : La meilleure action que pratique mon peuple est la récitation
 
 Le prophète a dit : Il est attendu de chaque table qu'elle soit entourée de festoyeurs ; or la table de Dieu est le coran, ne vous détournez donc pas de lui.`,
   },
+  {
+    id: "p1-ch3-2",
+    part: "Première Partie",
+    chapter: "Chapitre III — La récitation du Coran",
+    heading: "Les méthodes de récitation du Coran",
+    content: `Il existait, du temps des anciens, différentes méthodes de récitation du coran. Il y avait un peuple parmi eux qui récitait le coran une fois tous les mois ; un autre tous les deux mois et un autre encore tous les dix jours. Il y'en avait qui récitaient le coran tous les huit jours et d'autres tous les sept jours. Ces méthodes étaient les plus courantes parmi les anciens. Il existait une assemblée qui récitait le coran tous les six jours ; d'autres encore tous les cinq jours ; d'autres tous les quatre jours et d'autres encore, dont la majeure partie récitait le coran tous les trois jours.
+
+Il y'avait un peuple nombreux dont les membres récitaient un coran en un jour et une nuit. Il y'en avait qui récitaient quatre corans par jour et puis un autre qui récitait quatre corans par jour et quatre par nuit. Parmi ceux qui le récitaient quatre fois le jour et quatre fois la nuit, se trouvait un soufi du nom d'Ibn Kâtib.
+
+Toutefois, les cœurs diffèrent et chacun est tenu de réciter du coran ce qu'il peut. Celui qui a en sa charge l'enseignement des connaissances ; de juger entre les musulmans ; qui assume des fonctions dans la religion ou alors d'autres postes d'intérêt social peut, quant à lui se contenter d'une méthode de récitation du Coran qui ne porte pas préjudice à ses activités. Celui qui ne fait pas partie de cette catégorie peut réciter le coran autant qu'il le souhaite, sans pour autant aller jusqu'à risquer de le négliger par la fatigue et de mal en prononcer les mots.`,
+  },
+  {
+    id: "p1-ch3-3",
+    part: "Première Partie",
+    chapter: "Chapitre III — La récitation du Coran",
+    heading: "Les bienfaits de la récitation appliquée",
+    content: `On rapporte de Abî sa'îd que le prophète (saw) dit dans un saint hadîth tenu de son seigneur : Le seigneur loué soit-il a dit : Le serviteur dont le désir est le coran sacré et de me louer sans rien me demander, je lui donnerai quelque chose de meilleur que ce que j'ai offert à ceux là qui m'ont demandé. La suprématie de la parole divine sur toutes les autres formes de la parole est à l'instar de ce qu'est sa parole par rapport à celles des créatures.
+
+Il est de tradition de réciter le coran dans un lieu propre et de préférence dans une mosquée. Toutefois, il est blâmable de réciter le coran dans des lieux d'aisance ou bien en cours de route. Il est recommandé au récitant de se tourner vers l'est au moment de la récitation avec recueillement et concentration et qu'il se cure les dents avant que de s'y adonner, car le prophète (saw) dit : Assainissez votre bouche par l'usage du cure-dent car elle est la voie du coran et le lieu où siègent les anges.
+
+Alioune, (ra) a dit : Il n'y a rien de bien dans une lecture inappliquée, car c'est l'application qui ouvre la poitrine et éclaircit le cœur. Dieu a dit : J'ai descendu sur toi, ô Mouhammad, un livre béni. Appliquez-vous dans la récitation de ses versets. Sâd : 29.`,
+  },
+  {
+    id: "p1-ch3-4",
+    part: "Première Partie",
+    chapter: "Chapitre III — La récitation du Coran",
+    heading: "La réunion pour le Zikr et la récitation du Coran",
+    content: `Notre Imam et dirigeant de la communauté islamique Malik ben Anas a dit : Si je savais que mon cœur se purifierait par le fait d'aller m'asseoir à l'église, je le ferais. Il se trouve dans Charhil Mawâqib qu'Omar, lorsqu'il voyait Abal Moussa Al Ansârî lui disait : Rappelle nous notre seigneur. Et alors celui-ci récitait le Coran et il avait une belle voix. Omar recherchait en ceci ce qui pouvait purifier son cœur par ce qu'il écoutait la récitation du coran. Dans ce cas, ceci, la réunion pour le zikr n'a rien de réprouvé tant que c'est véridique en celui qui le pratique dans ce contexte-ci précisément, ce qui unit le serviteur à son seigneur.
+
+Concernant le choix des soufis et de quelques saints, de certaines nuits pour certaines dévotions à la différence d'autres ; Qâdil Ayâd dit que le prophète, (saw) avait l'habitude de se rendre le samedi à la mosquée pour y faire ses dévotions. C'est cela qui autorise les hommes de Dieu à choisir des jours tels que le vendredi pour y faire leurs dévotions.
+
+Notre maître, (ra) a dit, concernant le blâme sur ceux qui s'en vont écouter les louangeurs : Il existe des dons provenant de Dieu le très haut et qu'il fait descendre sur le connaissant assis à écouter le zikr tel par exemple une ascension douce et pure au saint plan ; l'affluence d'états mystiques et de connaissances ; l'ascension sur certaines stations, d'une manière impossible par la seule dévotion et l'obtention d'heures pures telles, qu'elles seraient inaccessibles en cent mille ans de dévotion parmi ces stations. Ceci est une assertion de notre maître et guide, dans son ouvrage Djawâhiroul ma'ânî.`,
+  },
+  {
+    id: "p1-ch3-5",
+    part: "Première Partie",
+    chapter: "Chapitre III — La récitation du Coran",
+    heading: "Le mérite intérieur de la récitation du Coran",
+    content: `Notre maître, le pôle Cheikh Tijânî à propos des bienfaits de la lecture du coran, dans son ouvrage Kounâs a dit : Concernant le degré extérieur provenant de l'intérieur de l'intérieur, c'est de réciter le coran dans la plus haute assemblée ; une assemblée sans où sans signe ni comment où rien n'existe que la réalité divine ; que nul intellect ne peut cerner ; que personne ne peut connaître ; que l'on ne pourrait définir et que l'on ne peut indiquer. Le détenteur de ce degré dans la récitation du coran a complété tout ce dont Dieu a parlé par la langue de tout l'univers, depuis le commencement jusqu'à la fin.
+
+Concernant le mérite de la récitation du coran, il est réparti, suivant les degrés du récitant. Le degré du profane n'égale pas le grade de celui à qui Dieu a offert le premier degré de la sainteté initiale et le mérite du détenteur de ce même degré n'égale pas le mérite du détenteur du degré de la véridicité (sidq). De même, le mérite du connaissant ('arif) qui a atteint le degré de véridicité, n'égale le mérite de celui qui a atteint le degré de pôle universel.
+
+L'extérieur du degré est à l'instar de ce que les hadiths en ont dit : Celui qui récite le coran sans avoir fait ses ablutions reçoit dix bienfaits pour chaque lettre. S'il a fait ses ablutions sans pour autant être en prière, il reçoit vingt cinq bienfaits, pour chaque lettre. S'il est en état de pureté légale, en prière et assis, il reçoit pour chaque lettre cent bienfaits. Pour ce qui est de la récompense intérieure, elle n'a point de limite ; elle est inestimable ; incommensurable ; ne peut être pesée et se situe au delà de la quantité et de la définition dans toute la création, jusqu'à la fin des temps.
+
+Ceci est ce que nous nous étions proposé de réunir dans cette partie. Qu'Allah le très haut nous guide et nous offre de retourner à lui agréés. Que son nom soit sanctifié !`,
+  },
+  {
+    id: "p2-ch1-1",
+    part: "Deuxième Partie",
+    chapter: "Chapitre I — La Fayda Tijâniya",
+    heading: "L'annonce de la Fayda par Cheikh Tijânî",
+    content: `C'est le quatrième parmi les chapitres du livre et il traite de la Fayda Tijânia ; de ce que son fondateur en a dit ; de ce que les hommes de Dieu ont dit d'elle, ainsi que de ce à quoi l'on peut se référer sur la question dans le coran et la tradition (sounna).
+
+Je dis : Les propos des disciples de Cheikh se succèdent ainsi que dans les livres écrits sur la voie, (Târiqa). Cheikh (ra) a dit : Une profusion (Fayda) viendra à mes disciples à tel point que les hommes entreront dans notre voie par multitudes. Cette Fayda surviendra à un moment où les hommes seront au sein de difficultés et calamités.
+
+L'auteur d'Ifâdat a dit : Ce que Cheikh entend par Fayda, c'est que le dévoilement s'épandra parmi ses disciples, mais il entendait tout aussi bien que ce temps restait à venir et qu'il se situait loin dans le futur.`,
+  },
+  {
+    id: "p2-ch1-2",
+    part: "Deuxième Partie",
+    chapter: "Chapitre I — La Fayda Tijâniya",
+    heading: "Les promesses du prophète à Cheikh Tijânî",
+    content: `Notre maître a dit, dans une noble lettre écrite par Seydi Aliou Harâzim Barrâdah : Parmi les assurances que le prophète lui a offertes, figure le fait que ses flux subsisteront, envers ses disciples jusqu'au jour de la résurrection et que sa voie sera supérieure à dix mille voies dont tous seraient disciples parmi ses disciples ; et que chaque voie aura des ramifications multiples de connaissances ; et puis chacune de ces ramifications aura de multiples ramifications jusqu'au jour du jugement dernier ; que ses disciples seront plus nombreux au paradis que ceux de vingt mille voies qui auraient subi de multiples ramifications jusqu'au jour du jugement dernier et que sa voie ne verrait jamais de fin, jusqu'à ce que Dieu hérite de la terre et de ce qui s'y trouve et que le mérite ainsi que la valeur du Wird seront constants jusqu'au jour dernier, tant que des hommes le réciteront. Ici se termine la parole de Cheikh.
+
+Cette Fayda qu'avait annoncée notre maître, ses disciples en ont parlé, ainsi que les héritiers de ses mystères, dont nombre ont prétendu en être les détenteurs, allant jusqu'à l'attester. Mais leurs prétentions étaient incomplètes.`,
+  },
+  {
+    id: "p2-ch1-3",
+    part: "Deuxième Partie",
+    chapter: "Chapitre I — La Fayda Tijâniya",
+    heading: "La question de l'arrivée de la Fayda",
+    content: `J'ai remarqué une question qu'Ahmad ben Mahamma Al Alawî, avait posée à Cheikh Omar (ra). Parmi les questions qu'il lui avait posées la troisième faisait allusion aux paroles de Cheikh (ra) : Une Fayda viendra à mes disciples, et tu verras les gens entrer dans ma voie par multitudes et cette Fayda trouvera les gens au sein de grandes difficultés. Et elle était : Est-elle arrivée ou non ? Cheikh Omar répondit : Pour la Fayda, j'espère pour vous en Dieu qu'arrive son désir la concernant quant à moi, je suis un humble serviteur et Imam fâtimî. Fin de son propos.
+
+Seydil Arabî ben Sâ'ih, (ra) à propos de la réponse de Cheikh Omar dit : Nous avons vu que les compagnons de Cheikh divergeaient de conception quant à l'arrivée de la Fayda. Il s'en trouvait qui croyaient qu'elle était arrivée, à cause de ce qui advint au pays de Chinguetti, des mains de Cheikh Mouhamad Al hâfedh, (ra). D'autres par contre disaient : Elle n'est pas encore arrivée car Cheikh a dit : Les gens entreront dans ma voie par multitudes, sans spécification de pays ou de région pour ceci, et tous s'accordaient sur le fait que le temps en était encore lointain.
+
+Je dis : Les gens entreront dans la voie par multitudes et j'entends par : Les voies disparaîtront, qu'aucune voie n'aura plus désormais l'autorisation d'éduquer. Par ailleurs, on a vu par ces temps-ci, des difficultés ainsi que des calamités que beaucoup d'anciens ne connaissaient pas, tout comme on voit en ce temps-ci que beaucoup de disciples de Cheikh ont accédé à l'ouverture en Dieu ; à la connaissance de Dieu ; qu'ils sont immergés en Dieu et ont abandonné tout ce qui n'est pas Dieu.`,
+  },
 ];
