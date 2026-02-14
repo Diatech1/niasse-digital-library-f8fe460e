@@ -19,7 +19,7 @@ const BookCard = ({ book, index }: BookCardProps) => {
       className="cursor-pointer group"
       onClick={() => navigate(`/book/${book.id}`)}
     >
-      <div className="relative overflow-hidden rounded-lg aspect-[2/3] mb-3">
+      <div className="relative overflow-hidden rounded-md aspect-[2/3] mb-3">
         <img
           src={book.cover}
           alt={book.title}
