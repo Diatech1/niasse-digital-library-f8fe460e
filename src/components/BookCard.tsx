@@ -39,13 +39,13 @@ const BookCard = ({ book, index }: BookCardProps) => {
           </div>
         )}
       </div>
-      <h3 className="font-serif text-sm font-medium leading-tight line-clamp-2 text-foreground">
+      <h3 className="font-serif text-xs sm:text-sm font-medium leading-tight line-clamp-2 text-foreground">
         {book.title}
       </h3>
-      <p className="text-xs text-muted-foreground mt-1">{book.author}</p>
-      <div className="flex items-center gap-1 mt-1.5">
-        <Globe className="w-3 h-3 text-muted-foreground" />
-        <span className="text-xs text-muted-foreground">{book.language}</span>
+      <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 sm:mt-1">{book.author}</p>
+      <div className="flex items-center gap-1 mt-1">
+        <Globe className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-muted-foreground" />
+        <span className="text-[10px] sm:text-xs text-muted-foreground">{book.language}</span>
       </div>
     </motion.div>
   );
