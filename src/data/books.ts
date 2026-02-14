@@ -21,6 +21,7 @@ export interface Book {
   progress?: number;
   audioDuration?: string;
   contentModule?: string;
+  isFavorite?: boolean;
 }
 
 export const books: Book[] = [
@@ -50,6 +51,7 @@ export const books: Book[] = [
     description: "A collection of spiritual poetry expressing the depths of divine knowledge and the path of the seeker towards the truth.",
     hasAudio: true,
     audioDuration: "3:15:00",
+    isFavorite: true,
   },
   {
     id: "3",
@@ -89,6 +91,7 @@ export const books: Book[] = [
     description: "Meditative writings on the nature of the soul, the cosmos, and the intimate connection between creation and the Creator.",
     hasAudio: true,
     audioDuration: "2:50:00",
+    isFavorite: true,
   },
   {
     id: "6",
@@ -115,6 +118,7 @@ export const books: Book[] = [
     hasAudio: true,
     audioDuration: "1:45:00",
     contentModule: "ruh-al-adab",
+    isFavorite: true,
   },
   {
     id: "8",

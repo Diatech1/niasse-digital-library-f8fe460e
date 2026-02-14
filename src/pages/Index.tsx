@@ -8,6 +8,7 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const continueReading = books.filter((b) => b.progress !== undefined);
+  const favorites = books.filter((b) => b.isFavorite);
   const filteredBooks = books.filter(
     (b) =>
       b.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -45,6 +46,22 @@ const Index = () => {
           </h2>
           <div className="flex gap-4 overflow-x-auto px-5 pb-2 scrollbar-hide">
             {continueReading.map((book) => (
+              <div key={book.id} className="min-w-[140px] max-w-[140px]">
+                <BookCard book={book} index={0} />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Favorites */}
+      {favorites.length > 0 && !searchQuery && (
+        <section className="mb-8">
+          <h2 className="text-gold font-serif text-lg font-semibold px-5 mb-3">
+            Favorites
+          </h2>
+          <div className="flex gap-4 overflow-x-auto px-5 pb-2 scrollbar-hide">
+            {favorites.map((book) => (
               <div key={book.id} className="min-w-[140px] max-w-[140px]">
                 <BookCard book={book} index={0} />
               </div>
