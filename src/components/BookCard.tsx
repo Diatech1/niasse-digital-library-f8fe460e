@@ -33,6 +33,9 @@ const BookCard = ({ book, index }: BookCardProps) => {
             />
           </div>
         )}
+        <div className="absolute top-2 left-2 px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] font-semibold uppercase tracking-wider glass text-foreground">
+          {book.language}
+        </div>
         {book.hasAudio && (
           <div className="absolute top-2 right-2 p-1.5 rounded-full glass">
             <Headphones className="w-3 h-3 text-primary" />
