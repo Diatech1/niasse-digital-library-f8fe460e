@@ -1,8 +1,10 @@
 import { ArrowLeft, ChevronRight, Globe, BookOpen, Info, User, LogOut, Moon, Sun, Monitor } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "@/hooks/use-theme";
 
 const Settings = () => {
   const navigate = useNavigate();
+  const { theme, setTheme } = useTheme();
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -33,14 +35,15 @@ const Settings = () => {
         <div className="glass rounded-2xl overflow-hidden">
           <div className="flex items-center justify-center gap-1 p-3">
             {[
-              { label: "Light", icon: Sun },
-              { label: "Dark", icon: Moon },
-              { label: "System", icon: Monitor },
-            ].map(({ label, icon: Icon }, i) => (
+              { label: "Light", icon: Sun, value: "light" as const },
+              { label: "Dark", icon: Moon, value: "dark" as const },
+              { label: "System", icon: Monitor, value: "system" as const },
+            ].map(({ label, icon: Icon, value }) => (
               <button
                 key={label}
+                onClick={() => setTheme(value)}
                 className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-medium transition-all ${
-                  i === 1
+                  theme === value
                     ? "bg-primary text-primary-foreground"
                     : "text-muted-foreground"
                 }`}
