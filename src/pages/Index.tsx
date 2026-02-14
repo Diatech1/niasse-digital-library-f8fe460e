@@ -58,7 +58,7 @@ const Index = () => {
         <h2 className="text-gold font-serif text-lg font-semibold mb-4">
           {searchQuery ? "Search Results" : "Library"}
         </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6">
+        <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 gap-3 gap-y-5">
           {filteredBooks.map((book, i) => (
             <BookCard key={book.id} book={book} index={i} />
           ))}

@@ -11,7 +11,7 @@ const AudioLibrary = () => {
         <p className="text-sm text-muted-foreground mt-1">Listen to sacred teachings</p>
       </div>
 
-      <div className="px-5 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6">
+      <div className="px-5 grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 gap-3 gap-y-5">
         {audioBooks.map((book, i) => (
           <BookCard key={book.id} book={book} index={i} />
         ))}
