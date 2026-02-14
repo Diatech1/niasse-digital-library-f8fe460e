@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Book } from "@/data/books";
 import { useNavigate } from "react-router-dom";
-import { Headphones, Globe } from "lucide-react";
+import { Headphones } from "lucide-react";
 
 interface BookCardProps {
   book: Book;
@@ -43,10 +43,6 @@ const BookCard = ({ book, index }: BookCardProps) => {
         {book.title}
       </h3>
       <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 sm:mt-1">{book.author}</p>
-      <div className="flex items-center gap-1 mt-1">
-        <Globe className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-muted-foreground" />
-        <span className="text-[10px] sm:text-xs text-muted-foreground">{book.language}</span>
-      </div>
     </motion.div>
   );
 };
