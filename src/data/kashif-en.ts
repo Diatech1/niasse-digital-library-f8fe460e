@@ -51,8 +51,16 @@ const SECTION_MARKERS = [
   { line: "Prominent Personalities", part: "Back Matter", chapter: "Reference", heading: "Prominent Personalities" },
 ];
 
-function cleanContent(text: string): string {
+function fixEncoding(text: string): string {
   return text
+    .replace(/╕/g, "ḥ")
+    .replace(/╔/g, "Ḥ")
+    .replace(/╓/g, "ḍ")
+    .replace(/╙/g, "ṭ");
+}
+
+function cleanContent(text: string): string {
+  return fixEncoding(text)
     .replace(/^\d+\s+THE REMOVAL OF CONFUSION\s*$/gm, "")
     .replace(/^THE REMOVAL OF CONFUSION\s*$/gm, "")
     .replace(/^[ivxlc]+\s*$/gim, "")
