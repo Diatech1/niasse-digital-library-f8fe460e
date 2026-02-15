@@ -1,10 +1,11 @@
-import { useState, useRef, useMemo } from "react";
+import { useState, useRef, useMemo, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { books } from "@/data/books";
 import { ruhAlAdabVerses, ruhAlAdabMeta } from "@/data/ruh-al-adab";
 import { comprendreFaydhahSections, comprendreFaydhahMeta } from "@/data/comprendre-faydhah";
 import { kachifulAlbasSections, kachifulAlbasMeta } from "@/data/kachiful-albas";
-import { ArrowLeft, Search, Type, List, X } from "lucide-react";
+import { loadKashifEnSections, kashifEnMeta, type KashifEnSection } from "@/data/kashif-en";
+import { ArrowLeft, Search, Type, List, X, Loader2 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -37,7 +38,18 @@ const Reader = () => {
   const [showSettings, setShowSettings] = useState(false);
   const [tocOpen, setTocOpen] = useState(false);
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const [kashifEnData, setKashifEnData] = useState<KashifEnSection[]>([]);
+  const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    if (book?.contentModule === "kashif-en") {
+      setLoading(true);
+      loadKashifEnSections().then((sections) => {
+        setKashifEnData(sections);
+        setLoading(false);
+      });
+    }
+  }, [book?.contentModule]);
   const theme = themes[themeIdx];
 
   const tocItems = useMemo(() => {
@@ -66,8 +78,21 @@ const Reader = () => {
       });
       return chapters;
     }
+    if (book?.contentModule === "kashif-en") {
+      const chapters: { chapter: string; sections: { id: string; heading: string }[] }[] = [];
+      kashifEnData.forEach((s) => {
+        const key = `${s.part} — ${s.chapter}`;
+        const last = chapters[chapters.length - 1];
+        if (!last || last.chapter !== key) {
+          chapters.push({ chapter: key, sections: [{ id: s.id, heading: s.heading }] });
+        } else {
+          last.sections.push({ id: s.id, heading: s.heading });
+        }
+      });
+      return chapters;
+    }
     return [];
-  }, [book?.contentModule]);
+  }, [book?.contentModule, kashifEnData]);
   const fontClass = fontIdx === 0 ? "font-sans" : fontIdx === 1 ? "font-serif" : "font-arabic";
 
   if (!book) return null;
@@ -190,6 +215,42 @@ const Reader = () => {
               })}
             </div>
           </>
+        ) : book.contentModule === "kashif-en" ? (
+          loading ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="w-6 h-6 animate-spin text-primary" />
+              <span className="ml-2 text-muted-foreground">Loading book...</span>
+            </div>
+          ) : (
+            <>
+              <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize: fontSize }}>{kashifEnMeta.title}</h2>
+              <p className="text-center text-sm text-muted-foreground mb-1">{kashifEnMeta.subtitle}</p>
+              <p className="text-center text-xs text-muted-foreground mb-1">by {kashifEnMeta.author}</p>
+              <p className="text-center text-xs text-muted-foreground mb-6">Translated by: {kashifEnMeta.translators}</p>
+              <div className="space-y-8">
+                {kashifEnData.map((section, idx) => {
+                  const key = `${section.part} — ${section.chapter}`;
+                  const prevKey = idx > 0 ? `${kashifEnData[idx - 1].part} — ${kashifEnData[idx - 1].chapter}` : "";
+                  return (
+                    <div key={section.id} ref={(el) => { sectionRefs.current[section.id] = el; }}>
+                      {(idx === 0 || prevKey !== key) && (
+                        <>
+                          {(idx === 0 || kashifEnData[idx - 1].part !== section.part) && (
+                            <h3 className="text-center font-serif font-bold text-primary mb-2 mt-8 uppercase tracking-wider" style={{ fontSize: fontSize }}>{section.part}</h3>
+                          )}
+                          <h4 className="text-center font-serif font-semibold text-primary/80 mb-4 mt-4" style={{ fontSize: fontSize * 0.9 }}>{section.chapter}</h4>
+                        </>
+                      )}
+                      <h5 className="font-serif font-semibold mb-3" style={{ fontSize: fontSize }}>{section.heading}</h5>
+                      {section.content.split("\n\n").map((para, pIdx) => (
+                        <p key={pIdx} className="mb-3 text-justify">{para}</p>
+                      ))}
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )
         ) : (
           <>
             <p className="mb-6">{sampleTextEn}</p>

@@ -1,6 +1,7 @@
 import cover7 from "@/assets/book-cover-7.jpg";
 import cover8 from "@/assets/book-cover-8.jpg";
 import cover9 from "@/assets/book-cover-9.jpg";
+import cover10 from "@/assets/book-cover-10.jpg";
 
 export interface Book {
   id: string;
@@ -60,5 +61,18 @@ export const books: Book[] = [
     description: "La Levée des Équivoques concernant la Fayda du Sceau Abil Abbas — Un traité majeur défendant et expliquant la Fayda Tijâniyya, ses fondements coraniques, les réalités du soufisme et l'importance du Zikr. Traduit de l'arabe par Mouhammadou Lasse Khar BA et Oustaze Djim GUEYE.",
     hasAudio: false,
     contentModule: "kachiful-albas",
+  },
+  {
+    id: "10",
+    title: "The Removal of Confusion",
+    titleAr: "كاشف الإلباس",
+    author: "Shaykh Ibrahim Niasse",
+    cover: cover10,
+    language: "English",
+    pages: 392,
+    tags: ["Faydhah", "Sufism", "Theology", "Tarbiyya"],
+    description: "The Removal of Confusion Concerning the Flood of the Saintly Seal Aḥmad al-Tijānī — The magnum opus of Shaykh al-Islam Ibrāhīm Niasse, a comprehensive treatise on Sufism, spiritual training, and the Tijānī Flood. Translated by Zachary Wright, Muhtar Holland and Abdullahi El-Okene.",
+    hasAudio: false,
+    contentModule: "kashif-en",
   },
 ];
