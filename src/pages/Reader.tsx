@@ -1,13 +1,15 @@
-import { useState, useRef, useMemo, useEffect } from "react";
+import { useState, useRef, useMemo, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { books } from "@/data/books";
 import { ruhAlAdabVerses, ruhAlAdabMeta } from "@/data/ruh-al-adab";
 import { comprendreFaydhahSections, comprendreFaydhahMeta } from "@/data/comprendre-faydhah";
 import { kachifulAlbasSections, kachifulAlbasMeta } from "@/data/kachiful-albas";
 import { loadKashifEnSections, kashifEnMeta, type KashifEnSection } from "@/data/kashif-en";
-import { ArrowLeft, Search, Type, List, X, Loader2 } from "lucide-react";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { ArrowLeft, Loader2 } from "lucide-react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import ChapterDropdown from "@/components/reader/ChapterDropdown";
+import ReaderBottomBar from "@/components/reader/ReaderBottomBar";
 
 const themes = [
   { name: "Light", bg: "bg-[hsl(40,20%,95%)]", text: "text-[hsl(0,0%,15%)]" },
@@ -28,6 +30,14 @@ Let the words of the righteous ones guide your steps, for they have walked the p
 
 const sampleTextAr = `بسم الله الرحمن الرحيم. الحمد لله رب العالمين، والصلاة والسلام على سيدنا محمد وعلى آله وصحبه أجمعين. إن المعرفة نور يهدي إلى الحق، وبها ترتقي الأمم وتسمو الأرواح.`;
 
+interface Section {
+  id: string;
+  part?: string;
+  chapter?: string;
+  heading: string;
+  content: string;
+}
+
 const Reader = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -35,9 +45,9 @@ const Reader = () => {
   const [themeIdx, setThemeIdx] = useState(2);
   const [fontIdx, setFontIdx] = useState(1);
   const [fontSize, setFontSize] = useState(16);
-  const [showSettings, setShowSettings] = useState(false);
   const [tocOpen, setTocOpen] = useState(false);
-  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const [currentSectionIdx, setCurrentSectionIdx] = useState(0);
+  const contentRef = useRef<HTMLDivElement>(null);
   const [kashifEnData, setKashifEnData] = useState<KashifEnSection[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -50,61 +60,182 @@ const Reader = () => {
       });
     }
   }, [book?.contentModule]);
+
   const theme = themes[themeIdx];
 
-  const tocItems = useMemo(() => {
+  // Flatten all sections into a unified array
+  const allSections: Section[] = useMemo(() => {
+    if (book?.contentModule === "ruh-al-adab") {
+      // Treat as single section
+      return [{ id: "ruh-al-adab-all", heading: ruhAlAdabMeta.title, content: "__ruh__" }];
+    }
     if (book?.contentModule === "comprendre-faydhah") {
-      const chapters: { chapter: string; sections: { id: string; heading: string }[] }[] = [];
-      comprendreFaydhahSections.forEach((s) => {
-        const last = chapters[chapters.length - 1];
-        if (!last || last.chapter !== s.chapter) {
-          chapters.push({ chapter: s.chapter, sections: [{ id: s.id, heading: s.heading }] });
-        } else {
-          last.sections.push({ id: s.id, heading: s.heading });
-        }
-      });
-      return chapters;
+      return comprendreFaydhahSections.map((s) => ({
+        id: s.id,
+        chapter: s.chapter,
+        heading: s.heading,
+        content: s.content,
+      }));
     }
     if (book?.contentModule === "kachiful-albas") {
-      const chapters: { chapter: string; sections: { id: string; heading: string }[] }[] = [];
-      kachifulAlbasSections.forEach((s) => {
-        const key = `${s.part} — ${s.chapter}`;
-        const last = chapters[chapters.length - 1];
-        if (!last || last.chapter !== key) {
-          chapters.push({ chapter: key, sections: [{ id: s.id, heading: s.heading }] });
-        } else {
-          last.sections.push({ id: s.id, heading: s.heading });
-        }
-      });
-      return chapters;
+      return kachifulAlbasSections.map((s) => ({
+        id: s.id,
+        part: s.part,
+        chapter: s.chapter,
+        heading: s.heading,
+        content: s.content,
+      }));
     }
     if (book?.contentModule === "kashif-en") {
-      const chapters: { chapter: string; sections: { id: string; heading: string }[] }[] = [];
-      kashifEnData.forEach((s) => {
-        const key = `${s.part} — ${s.chapter}`;
-        const last = chapters[chapters.length - 1];
-        if (!last || last.chapter !== key) {
-          chapters.push({ chapter: key, sections: [{ id: s.id, heading: s.heading }] });
-        } else {
-          last.sections.push({ id: s.id, heading: s.heading });
-        }
-      });
-      return chapters;
+      return kashifEnData.map((s) => ({
+        id: s.id,
+        part: s.part,
+        chapter: s.chapter,
+        heading: s.heading,
+        content: s.content,
+      }));
     }
-    return [];
+    return [{ id: "sample", heading: "Sample", content: "__sample__" }];
   }, [book?.contentModule, kashifEnData]);
+
+  const tocItems = useMemo(() => {
+    const chapters: { chapter: string; sections: { id: string; heading: string; index: number }[] }[] = [];
+    allSections.forEach((s, idx) => {
+      const chKey = s.part && s.chapter ? `${s.part} — ${s.chapter}` : s.chapter || s.heading;
+      const last = chapters[chapters.length - 1];
+      if (!last || last.chapter !== chKey) {
+        chapters.push({ chapter: chKey, sections: [{ id: s.id, heading: s.heading, index: idx }] });
+      } else {
+        last.sections.push({ id: s.id, heading: s.heading, index: idx });
+      }
+    });
+    return chapters;
+  }, [allSections]);
+
+  const currentSection = allSections[currentSectionIdx] || allSections[0];
+
+  const goToSection = useCallback((idx: number) => {
+    setCurrentSectionIdx(Math.max(0, Math.min(idx, allSections.length - 1)));
+    contentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+  }, [allSections.length]);
+
+  const goToSectionById = useCallback((id: string) => {
+    const idx = allSections.findIndex((s) => s.id === id);
+    if (idx >= 0) goToSection(idx);
+  }, [allSections, goToSection]);
+
   const fontClass = fontIdx === 0 ? "font-sans" : fontIdx === 1 ? "font-serif" : "font-arabic";
 
   if (!book) return null;
 
+  const renderMeta = () => {
+    if (book.contentModule === "ruh-al-adab") {
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{ruhAlAdabMeta.title}</h2>
+          <p className="text-center text-sm text-muted-foreground mb-1">{ruhAlAdabMeta.subtitle}</p>
+          <p className="text-center text-xs text-muted-foreground mb-1">Author: {ruhAlAdabMeta.author}</p>
+          <p className="text-center text-xs text-muted-foreground mb-6">Transliterated by: {ruhAlAdabMeta.transliteratedBy}</p>
+        </>
+      );
+    }
+    if (book.contentModule === "comprendre-faydhah") {
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{comprendreFaydhahMeta.title}</h2>
+          <p className="text-center text-sm text-muted-foreground mb-1">par {comprendreFaydhahMeta.author}</p>
+          <p className="text-center text-xs text-muted-foreground mb-6">Traduit par : {comprendreFaydhahMeta.translator}</p>
+        </>
+      );
+    }
+    if (book.contentModule === "kachiful-albas") {
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{kachifulAlbasMeta.title}</h2>
+          <p className="text-center text-sm text-muted-foreground mb-1">{kachifulAlbasMeta.subtitle}</p>
+          <p className="text-center text-xs text-muted-foreground mb-1">par {kachifulAlbasMeta.author}</p>
+          <p className="text-center text-xs text-muted-foreground mb-6">Traduit par : {kachifulAlbasMeta.translators}</p>
+        </>
+      );
+    }
+    if (book.contentModule === "kashif-en") {
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{kashifEnMeta.title}</h2>
+          <p className="text-center text-sm text-muted-foreground mb-1">{kashifEnMeta.subtitle}</p>
+          <p className="text-center text-xs text-muted-foreground mb-1">by {kashifEnMeta.author}</p>
+          <p className="text-center text-xs text-muted-foreground mb-6">Translated by: {kashifEnMeta.translators}</p>
+        </>
+      );
+    }
+    return null;
+  };
+
+  const renderCurrentSection = () => {
+    if (!currentSection) return null;
+
+    // Special: ruh-al-adab renders all verses
+    if (currentSection.content === "__ruh__") {
+      return (
+        <div className="space-y-3">
+          {ruhAlAdabVerses.map((v) => (
+            <p key={v.number}>
+              <span className="text-primary font-semibold mr-2">{v.number}</span>
+              {v.text}
+            </p>
+          ))}
+          <p className="text-center font-semibold mt-8">{ruhAlAdabMeta.closing}</p>
+        </div>
+      );
+    }
+
+    // Special: sample text
+    if (currentSection.content === "__sample__") {
+      return (
+        <>
+          <p className="mb-6">{sampleTextEn}</p>
+          <p className="font-arabic text-right mb-6" dir="rtl">{sampleTextAr}</p>
+        </>
+      );
+    }
+
+    // Standard section rendering
+    return (
+      <div>
+        {currentSection.part && (
+          <h3 className="text-center font-serif font-bold text-primary mb-2 mt-2 uppercase tracking-wider" style={{ fontSize }}>
+            {currentSection.part}
+          </h3>
+        )}
+        {currentSection.chapter && (
+          <h4 className="text-center font-serif font-semibold text-primary/80 mb-4" style={{ fontSize: fontSize * 0.9 }}>
+            {currentSection.chapter}
+          </h4>
+        )}
+        <h5 className="font-serif font-semibold mb-3" style={{ fontSize }}>{currentSection.heading}</h5>
+        {currentSection.content.split("\n\n").map((para, pIdx) => (
+          <p key={pIdx} className="mb-3 text-justify">{para}</p>
+        ))}
+      </div>
+    );
+  };
+
   return (
-    <div className={`min-h-screen ${theme.bg} ${theme.text} transition-colors duration-300`}>
+    <div className={`min-h-screen ${theme.bg} ${theme.text} transition-colors duration-300 flex flex-col`}>
       {/* Top bar */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border/20">
-        <button onClick={() => navigate(-1)} className="p-2">
+      <div className="flex items-center gap-2 px-3 py-3 border-b border-border/20">
+        <button onClick={() => navigate(-1)} className="p-2 flex-shrink-0">
           <ArrowLeft className="w-5 h-5" />
         </button>
-        <div className="flex items-center gap-2">
+        {tocItems.length > 1 && (
+          <ChapterDropdown
+            tocItems={tocItems}
+            currentSectionId={currentSection?.id || ""}
+            onSelectSection={goToSectionById}
+            themeClasses={{ bg: theme.bg, text: theme.text }}
+          />
+        )}
+        <div className="flex items-center gap-1 flex-shrink-0">
           <button onClick={() => setFontSize(Math.max(12, fontSize - 2))} className="px-2 py-1 text-sm font-medium">A-</button>
           <input
             type="range"
@@ -112,37 +243,32 @@ const Reader = () => {
             max={28}
             value={fontSize}
             onChange={(e) => setFontSize(Number(e.target.value))}
-            className="w-20 accent-primary"
+            className="w-16 accent-primary"
           />
           <button onClick={() => setFontSize(Math.min(28, fontSize + 2))} className="px-2 py-1 text-sm font-bold">A+</button>
         </div>
       </div>
 
       {/* Font selector */}
-      <div className="flex items-center justify-center gap-2 py-3 border-b border-border/20">
+      <div className="flex items-center justify-center gap-2 py-2 border-b border-border/20">
         {fonts.map((f, i) => (
           <button
             key={f}
             onClick={() => setFontIdx(i)}
             className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all ${
-              i === fontIdx
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted/30 text-muted-foreground"
+              i === fontIdx ? "bg-primary text-primary-foreground" : "bg-muted/30 text-muted-foreground"
             }`}
           >
             {f}
           </button>
         ))}
-      </div>
-
-      {/* Theme selector */}
-      <div className="flex items-center justify-center gap-4 py-3 border-b border-border/20">
-        <span className="text-xs text-muted-foreground mr-2">Theme</span>
+        {/* Theme dots inline */}
+        <span className="mx-2 text-border">|</span>
         {themes.map((t, i) => (
           <button
             key={t.name}
             onClick={() => setThemeIdx(i)}
-            className={`w-8 h-8 rounded-full border-2 transition-all ${t.bg} ${
+            className={`w-6 h-6 rounded-full border-2 transition-all ${t.bg} ${
               i === themeIdx ? "border-primary scale-110" : "border-transparent"
             }`}
           />
@@ -150,167 +276,67 @@ const Reader = () => {
       </div>
 
       {/* Reading content */}
-      <div className={`px-6 py-8 max-w-2xl mx-auto ${fontClass} leading-relaxed`} style={{ fontSize }}>
-        {book.contentModule === "ruh-al-adab" ? (
-          <>
-            <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize: fontSize }}>{ruhAlAdabMeta.title}</h2>
-            <p className="text-center text-sm text-muted-foreground mb-1">{ruhAlAdabMeta.subtitle}</p>
-            <p className="text-center text-xs text-muted-foreground mb-1">Author: {ruhAlAdabMeta.author}</p>
-            <p className="text-center text-xs text-muted-foreground mb-6">Transliterated by: {ruhAlAdabMeta.transliteratedBy}</p>
-            <div className="space-y-3">
-              {ruhAlAdabVerses.map((v) => (
-                <p key={v.number}>
-                  <span className="text-primary font-semibold mr-2">{v.number}</span>
-                  {v.text}
-                </p>
-              ))}
-            </div>
-            <p className="text-center font-semibold mt-8">{ruhAlAdabMeta.closing}</p>
-          </>
-        ) : book.contentModule === "comprendre-faydhah" ? (
-          <>
-            <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize: fontSize }}>{comprendreFaydhahMeta.title}</h2>
-            <p className="text-center text-sm text-muted-foreground mb-1">par {comprendreFaydhahMeta.author}</p>
-            <p className="text-center text-xs text-muted-foreground mb-6">Traduit par : {comprendreFaydhahMeta.translator}</p>
-            <div className="space-y-8">
-              {comprendreFaydhahSections.map((section, idx) => (
-              <div key={section.id} ref={(el) => { sectionRefs.current[section.id] = el; }}>
-                  {(idx === 0 || comprendreFaydhahSections[idx - 1].chapter !== section.chapter) && (
-                    <h3 className="text-center font-serif font-bold text-primary mb-4 mt-6" style={{ fontSize: fontSize }}>{section.chapter}</h3>
-                  )}
-                  <h4 className="font-serif font-semibold mb-3" style={{ fontSize: fontSize }}>{section.heading}</h4>
-                  {section.content.split("\n\n").map((para, pIdx) => (
-                    <p key={pIdx} className="mb-3 text-justify">{para}</p>
-                  ))}
-                </div>
-              ))}
-            </div>
-          </>
-        ) : book.contentModule === "kachiful-albas" ? (
-          <>
-            <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize: fontSize }}>{kachifulAlbasMeta.title}</h2>
-            <p className="text-center text-sm text-muted-foreground mb-1">{kachifulAlbasMeta.subtitle}</p>
-            <p className="text-center text-xs text-muted-foreground mb-1">par {kachifulAlbasMeta.author}</p>
-            <p className="text-center text-xs text-muted-foreground mb-6">Traduit par : {kachifulAlbasMeta.translators}</p>
-            <div className="space-y-8">
-              {kachifulAlbasSections.map((section, idx) => {
-                const key = `${section.part} — ${section.chapter}`;
-                const prevKey = idx > 0 ? `${kachifulAlbasSections[idx - 1].part} — ${kachifulAlbasSections[idx - 1].chapter}` : "";
-                return (
-                  <div key={section.id} ref={(el) => { sectionRefs.current[section.id] = el; }}>
-                    {(idx === 0 || prevKey !== key) && (
-                      <>
-                        {(idx === 0 || kachifulAlbasSections[idx - 1].part !== section.part) && (
-                          <h3 className="text-center font-serif font-bold text-primary mb-2 mt-8 uppercase tracking-wider" style={{ fontSize: fontSize }}>{section.part}</h3>
-                        )}
-                        <h4 className="text-center font-serif font-semibold text-primary/80 mb-4 mt-4" style={{ fontSize: fontSize * 0.9 }}>{section.chapter}</h4>
-                      </>
-                    )}
-                    <h5 className="font-serif font-semibold mb-3" style={{ fontSize: fontSize }}>{section.heading}</h5>
-                    {section.content.split("\n\n").map((para, pIdx) => (
-                      <p key={pIdx} className="mb-3 text-justify">{para}</p>
-                    ))}
-                  </div>
-                );
-              })}
-            </div>
-          </>
-        ) : book.contentModule === "kashif-en" ? (
-          loading ? (
-            <div className="flex items-center justify-center py-20">
-              <Loader2 className="w-6 h-6 animate-spin text-primary" />
-              <span className="ml-2 text-muted-foreground">Loading book...</span>
-            </div>
-          ) : (
-            <>
-              <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize: fontSize }}>{kashifEnMeta.title}</h2>
-              <p className="text-center text-sm text-muted-foreground mb-1">{kashifEnMeta.subtitle}</p>
-              <p className="text-center text-xs text-muted-foreground mb-1">by {kashifEnMeta.author}</p>
-              <p className="text-center text-xs text-muted-foreground mb-6">Translated by: {kashifEnMeta.translators}</p>
-              <div className="space-y-8">
-                {kashifEnData.map((section, idx) => {
-                  const key = `${section.part} — ${section.chapter}`;
-                  const prevKey = idx > 0 ? `${kashifEnData[idx - 1].part} — ${kashifEnData[idx - 1].chapter}` : "";
-                  return (
-                    <div key={section.id} ref={(el) => { sectionRefs.current[section.id] = el; }}>
-                      {(idx === 0 || prevKey !== key) && (
-                        <>
-                          {(idx === 0 || kashifEnData[idx - 1].part !== section.part) && (
-                            <h3 className="text-center font-serif font-bold text-primary mb-2 mt-8 uppercase tracking-wider" style={{ fontSize: fontSize }}>{section.part}</h3>
-                          )}
-                          <h4 className="text-center font-serif font-semibold text-primary/80 mb-4 mt-4" style={{ fontSize: fontSize * 0.9 }}>{section.chapter}</h4>
-                        </>
-                      )}
-                      <h5 className="font-serif font-semibold mb-3" style={{ fontSize: fontSize }}>{section.heading}</h5>
-                      {section.content.split("\n\n").map((para, pIdx) => (
-                        <p key={pIdx} className="mb-3 text-justify">{para}</p>
-                      ))}
-                    </div>
-                  );
-                })}
-              </div>
-            </>
-          )
+      <div ref={contentRef} className={`flex-1 overflow-y-auto px-6 py-8 pb-32 max-w-2xl mx-auto w-full ${fontClass} leading-relaxed`} style={{ fontSize }}>
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="w-6 h-6 animate-spin text-primary" />
+            <span className="ml-2 text-muted-foreground">Loading book...</span>
+          </div>
         ) : (
           <>
-            <p className="mb-6">{sampleTextEn}</p>
-            <p className="font-arabic text-right mb-6" dir="rtl">{sampleTextAr}</p>
+            {currentSectionIdx === 0 && renderMeta()}
+            {renderCurrentSection()}
           </>
         )}
       </div>
 
-      {/* Bottom bar */}
-      <div className="fixed bottom-0 left-0 right-0 border-t border-border/20 bg-inherit">
-        <div className="flex items-center justify-between px-6 py-2 text-xs text-muted-foreground">
-          <span>Page 15 of {book.pages}</span>
-          <span>5%</span>
-        </div>
-        <div className="h-1 bg-muted/30 mx-6 mb-2 rounded-full">
-          <div className="h-full w-[5%] bg-primary rounded-full" />
-        </div>
-        <div className="flex items-center justify-around py-2 pb-safe">
-          <button className="p-2" onClick={() => setTocOpen(true)}><List className="w-5 h-5 text-muted-foreground" /></button>
+      {/* Bottom bar with navigation */}
+      <ReaderBottomBar
+        currentPage={currentSectionIdx + 1}
+        totalPages={allSections.length}
+        onPrevPage={() => goToSection(currentSectionIdx - 1)}
+        onNextPage={() => goToSection(currentSectionIdx + 1)}
+        onOpenToc={() => setTocOpen(true)}
+        hasPrev={currentSectionIdx > 0}
+        hasNext={currentSectionIdx < allSections.length - 1}
+      />
 
-          {/* TOC Sheet */}
-          <Sheet open={tocOpen} onOpenChange={setTocOpen}>
-            <SheetContent side="left" className={`${theme.bg} ${theme.text} w-[85%] sm:max-w-sm p-0`}>
-              <SheetHeader className="px-4 pt-4 pb-2 border-b border-border/20">
-                <SheetTitle className={theme.text}>Table des matières</SheetTitle>
-              </SheetHeader>
-              <ScrollArea className="h-[calc(100vh-60px)]">
-                <div className="px-4 py-3 space-y-4">
-                  {tocItems.map((ch) => (
-                    <div key={ch.chapter}>
-                      <p className="text-xs font-bold text-primary uppercase tracking-wider mb-2">{ch.chapter}</p>
-                      <div className="space-y-1">
-                        {ch.sections.map((s) => (
-                          <button
-                            key={s.id}
-                            onClick={() => {
-                              setTocOpen(false);
-                              setTimeout(() => {
-                                sectionRefs.current[s.id]?.scrollIntoView({ behavior: "smooth", block: "start" });
-                              }, 300);
-                            }}
-                            className="block w-full text-left text-sm py-1.5 px-2 rounded hover:bg-primary/10 transition-colors"
-                          >
-                            {s.heading}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                  {tocItems.length === 0 && (
-                    <p className="text-sm text-muted-foreground text-center py-8">Pas de table des matières disponible.</p>
-                  )}
+      {/* TOC Sheet */}
+      <Sheet open={tocOpen} onOpenChange={setTocOpen}>
+        <SheetContent side="left" className={`${theme.bg} ${theme.text} w-[85%] sm:max-w-sm p-0`}>
+          <SheetHeader className="px-4 pt-4 pb-2 border-b border-border/20">
+            <SheetTitle className={theme.text}>Table of Contents</SheetTitle>
+          </SheetHeader>
+          <ScrollArea className="h-[calc(100vh-60px)]">
+            <div className="px-4 py-3 space-y-4">
+              {tocItems.map((ch) => (
+                <div key={ch.chapter}>
+                  <p className="text-xs font-bold text-primary uppercase tracking-wider mb-2">{ch.chapter}</p>
+                  <div className="space-y-1">
+                    {ch.sections.map((s) => (
+                      <button
+                        key={s.id}
+                        onClick={() => {
+                          setTocOpen(false);
+                          setTimeout(() => goToSection(s.index), 300);
+                        }}
+                        className={`block w-full text-left text-sm py-1.5 px-2 rounded hover:bg-primary/10 transition-colors ${
+                          s.index === currentSectionIdx ? "bg-primary/15 font-semibold" : ""
+                        }`}
+                      >
+                        {s.heading}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </ScrollArea>
-            </SheetContent>
-          </Sheet>
-          <button className="p-2"><Search className="w-5 h-5 text-muted-foreground" /></button>
-          <button className="p-2"><Type className="w-5 h-5 text-muted-foreground" /></button>
-        </div>
-      </div>
+              ))}
+              {tocItems.length === 0 && (
+                <p className="text-sm text-muted-foreground text-center py-8">No table of contents available.</p>
+              )}
+            </div>
+          </ScrollArea>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };
