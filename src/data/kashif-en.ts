@@ -56,7 +56,14 @@ function fixEncoding(text: string): string {
     .replace(/╕/g, "ḥ")
     .replace(/╔/g, "Ḥ")
     .replace(/╓/g, "ḍ")
-    .replace(/╙/g, "ṭ");
+    .replace(/╙/g, "ṭ")
+    .replace(/╗/g, "ṣ")
+    .replace(/╖/g, "Ṣ");
+}
+
+// Normalize various apostrophe/quote characters to a standard ASCII apostrophe
+function normalizeApostrophes(text: string): string {
+  return text.replace(/[\u2018\u2019\u201A\u201B\u0060\u00B4\u2032]/g, "'");
 }
 
 function cleanContent(text: string): string {
@@ -94,11 +101,11 @@ export async function loadKashifEnSections(): Promise<KashifEnSection[]> {
   const scanStart = startLine >= 0 ? startLine : 66;
 
   for (let i = scanStart; i < lines.length; i++) {
-    const line = lines[i].trim();
+    const line = normalizeApostrophes(lines[i].trim());
     
     // Check if this line matches any section marker
     for (let m = currentMarkerIdx + 1; m < SECTION_MARKERS.length; m++) {
-      if (line.startsWith(SECTION_MARKERS[m].line)) {
+      if (line.startsWith(normalizeApostrophes(SECTION_MARKERS[m].line))) {
         // Save previous section
         if (currentMarkerIdx >= 0 && currentStart >= 0) {
           const marker = SECTION_MARKERS[currentMarkerIdx];
