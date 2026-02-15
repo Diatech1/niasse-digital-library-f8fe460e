@@ -1,7 +1,7 @@
 import cover7 from "@/assets/book-cover-7.jpg";
 import cover8 from "@/assets/book-cover-8.jpg";
 import cover9 from "@/assets/book-cover-9.jpg";
-import cover10 from "@/assets/book-cover-10.jpg";
+
 
 export interface Book {
   id: string;
@@ -67,7 +67,7 @@ export const books: Book[] = [
     title: "The Removal of Confusion",
     titleAr: "كاشف الإلباس",
     author: "Shaykh Ibrahim Niasse",
-    cover: cover10,
+    cover: cover9,
     language: "English",
     pages: 392,
     tags: ["Faydhah", "Sufism", "Theology", "Tarbiyya"],
