@@ -81,7 +81,11 @@ export async function loadKashifEnSections(): Promise<KashifEnSection[]> {
   let currentMarkerIdx = -1;
   let currentStart = -1;
 
-  for (let i = 0; i < lines.length; i++) {
+  // Skip the Table of Contents (first ~66 lines are title page + TOC)
+  const startLine = lines.findIndex((l, i) => i > 60 && l.trim() === "Acknowledgements");
+  const scanStart = startLine >= 0 ? startLine : 66;
+
+  for (let i = scanStart; i < lines.length; i++) {
     const line = lines[i].trim();
     
     // Check if this line matches any section marker
