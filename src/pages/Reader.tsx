@@ -51,6 +51,8 @@ const Reader = () => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [kashifEnData, setKashifEnData] = useState<KashifEnSection[]>([]);
   const [loading, setLoading] = useState(false);
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
 
   useEffect(() => {
     if (book?.contentModule === "kashif-en") {
@@ -277,7 +279,26 @@ const Reader = () => {
       </div>
 
       {/* Reading content */}
-      <div ref={contentRef} className={`flex-1 overflow-y-auto px-6 py-8 pb-32 max-w-2xl mx-auto w-full ${fontClass} leading-relaxed`} style={{ fontSize }}>
+      <div
+        ref={contentRef}
+        className={`flex-1 overflow-y-auto px-6 py-8 pb-32 max-w-2xl mx-auto w-full ${fontClass} leading-relaxed`}
+        style={{ fontSize }}
+        onTouchStart={(e) => {
+          touchStartX.current = e.touches[0].clientX;
+          touchStartY.current = e.touches[0].clientY;
+        }}
+        onTouchEnd={(e) => {
+          if (touchStartX.current === null || touchStartY.current === null) return;
+          const dx = e.changedTouches[0].clientX - touchStartX.current;
+          const dy = e.changedTouches[0].clientY - touchStartY.current;
+          touchStartX.current = null;
+          touchStartY.current = null;
+          if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+            if (dx < 0 && currentSectionIdx < allSections.length - 1) goToSection(currentSectionIdx + 1);
+            else if (dx > 0 && currentSectionIdx > 0) goToSection(currentSectionIdx - 1);
+          }
+        }}
+      >
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="w-6 h-6 animate-spin text-primary" />
