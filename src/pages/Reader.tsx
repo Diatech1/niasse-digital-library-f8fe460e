@@ -10,6 +10,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ChapterDropdown from "@/components/reader/ChapterDropdown";
 import ReaderBottomBar from "@/components/reader/ReaderBottomBar";
+import FormattedContent from "@/components/reader/FormattedContent";
 
 const themes = [
   { name: "Light", bg: "bg-[hsl(40,20%,95%)]", text: "text-[hsl(0,0%,15%)]" },
@@ -199,23 +200,23 @@ const Reader = () => {
       );
     }
 
-    // Standard section rendering
+    // Standard section rendering with book-style formatting
     return (
       <div>
         {currentSection.part && (
-          <h3 className="text-center font-serif font-bold text-primary mb-2 mt-2 uppercase tracking-wider" style={{ fontSize }}>
+          <h3 className="text-center font-serif font-bold text-primary mb-3 mt-4 uppercase tracking-[0.2em]" style={{ fontSize: fontSize * 0.85 }}>
             {currentSection.part}
           </h3>
         )}
         {currentSection.chapter && (
-          <h4 className="text-center font-serif font-semibold text-primary/80 mb-4" style={{ fontSize: fontSize * 0.9 }}>
+          <h4 className="text-center font-serif font-semibold text-primary/80 mb-6" style={{ fontSize: fontSize * 1.1 }}>
             {currentSection.chapter}
           </h4>
         )}
-        <h5 className="font-serif font-semibold mb-3" style={{ fontSize }}>{currentSection.heading}</h5>
-        {currentSection.content.split("\n\n").map((para, pIdx) => (
-          <p key={pIdx} className="mb-3 text-justify">{para}</p>
-        ))}
+        <h5 className="font-serif font-bold mb-6 text-center" style={{ fontSize: fontSize * 1.05 }}>
+          {currentSection.heading}
+        </h5>
+        <FormattedContent content={currentSection.content} fontSize={fontSize} />
       </div>
     );
   };
