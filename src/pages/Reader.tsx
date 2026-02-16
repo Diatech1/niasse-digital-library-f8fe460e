@@ -299,14 +299,7 @@ const Reader = () => {
         <button onClick={() => navigate(-1)} className="p-2 flex-shrink-0">
           <ArrowLeft className="w-5 h-5" />
         </button>
-        {tocItems.length > 1 && (
-          <ChapterDropdown
-            tocItems={tocItems}
-            currentSectionId={currentSection?.id || ""}
-            onSelectSection={goToSectionById}
-            themeClasses={{ bg: theme.bg, text: theme.text }}
-          />
-        )}
+        <span className="flex-1" />
         <div className="flex items-center gap-1 flex-shrink-0">
           <button onClick={() => setSearchOpen(true)} className="p-2">
             <Search className="w-4 h-4" />
