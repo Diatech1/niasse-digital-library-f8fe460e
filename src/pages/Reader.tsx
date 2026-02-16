@@ -130,24 +130,6 @@ const Reader = () => {
 
   const currentSection = allSections[currentSectionIdx] || allSections[0];
 
-  // Estimate total book pages and current cumulative page using content length ratios
-  const { estimatedTotalPages, currentCumulativePage } = useMemo(() => {
-    if (allSections.length === 0 || totalPages <= 0) return { estimatedTotalPages: 1, currentCumulativePage: 1 };
-    const currentLen = (currentSection?.content || "").length || 1;
-    const pagesPerChar = totalPages / currentLen;
-    let cumBefore = 0;
-    for (let i = 0; i < currentSectionIdx; i++) {
-      cumBefore += Math.max(1, Math.round((allSections[i].content || "").length * pagesPerChar));
-    }
-    let total = 0;
-    for (let i = 0; i < allSections.length; i++) {
-      total += i === currentSectionIdx
-        ? totalPages
-        : Math.max(1, Math.round((allSections[i].content || "").length * pagesPerChar));
-    }
-    return { estimatedTotalPages: total, currentCumulativePage: cumBefore + currentPage + 1 };
-  }, [allSections, currentSectionIdx, currentSection, totalPages, currentPage]);
-
   const goToSection = useCallback((idx: number) => {
     setCurrentSectionIdx(Math.max(0, Math.min(idx, allSections.length - 1)));
     setCurrentPage(0);
@@ -364,8 +346,8 @@ const Reader = () => {
       {/* Reading content - paginated like a physical book */}
       <div
         ref={containerRef}
-        className={`flex-1 overflow-hidden max-w-lg mx-auto w-full ${fontClass} relative`}
-        style={{ fontSize, lineHeight: 1.6 }}
+        className={`flex-1 overflow-hidden max-w-2xl mx-auto w-full ${fontClass} leading-relaxed relative`}
+        style={{ fontSize }}
         onTouchStart={(e) => {
           touchStartX.current = e.touches[0].clientX;
           touchStartY.current = e.touches[0].clientY;
@@ -407,7 +389,7 @@ const Reader = () => {
               transition: "transform 0.3s ease",
             }}
           >
-            <div className="px-6 py-4">
+            <div className="px-6 py-6">
               {currentSectionIdx === 0 && currentPage === 0 && renderMeta()}
               {renderCurrentSection()}
             </div>
@@ -422,7 +404,7 @@ const Reader = () => {
             {currentSection?.heading}
           </span>
           <span className="font-serif tracking-wider flex-shrink-0">
-            {currentCumulativePage} / {estimatedTotalPages}
+            {currentPage + 1} / {totalPages}
           </span>
         </div>
         {/* Overall book progress */}
