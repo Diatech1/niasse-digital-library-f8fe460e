@@ -365,7 +365,7 @@ const Reader = () => {
       <div
         ref={containerRef}
         className={`flex-1 overflow-hidden max-w-lg mx-auto w-full ${fontClass} relative`}
-        style={{ fontSize, lineHeight: 1.9 }}
+        style={{ fontSize, lineHeight: 1.6 }}
         onTouchStart={(e) => {
           touchStartX.current = e.touches[0].clientX;
           touchStartY.current = e.touches[0].clientY;
@@ -407,7 +407,7 @@ const Reader = () => {
               transition: "transform 0.3s ease",
             }}
           >
-            <div className="px-8 py-8">
+            <div className="px-6 py-4">
               {currentSectionIdx === 0 && currentPage === 0 && renderMeta()}
               {renderCurrentSection()}
             </div>
