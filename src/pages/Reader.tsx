@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { books } from "@/data/books";
 import { ruhAlAdabVerses, ruhAlAdabMeta } from "@/data/ruh-al-adab";
 import { comprendreFaydhahSections, comprendreFaydhahMeta } from "@/data/comprendre-faydhah";
-import { kachifulAlbasSections, kachifulAlbasMeta } from "@/data/kachiful-albas";
+import { loadKachifulAlbasSections, kachifulAlbasMeta, type KachifulSection } from "@/data/kachiful-albas";
 import { loadKashifEnSections, kashifEnMeta, type KashifEnSection } from "@/data/kashif-en";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -50,6 +50,7 @@ const Reader = () => {
   const [currentSectionIdx, setCurrentSectionIdx] = useState(0);
   const contentRef = useRef<HTMLDivElement>(null);
   const [kashifEnData, setKashifEnData] = useState<KashifEnSection[]>([]);
+  const [kachifulAlbasData, setKachifulAlbasData] = useState<KachifulSection[]>([]);
   const [loading, setLoading] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
@@ -59,6 +60,13 @@ const Reader = () => {
       setLoading(true);
       loadKashifEnSections().then((sections) => {
         setKashifEnData(sections);
+        setLoading(false);
+      });
+    }
+    if (book?.contentModule === "kachiful-albas") {
+      setLoading(true);
+      loadKachifulAlbasSections().then((sections) => {
+        setKachifulAlbasData(sections);
         setLoading(false);
       });
     }
@@ -81,7 +89,7 @@ const Reader = () => {
       }));
     }
     if (book?.contentModule === "kachiful-albas") {
-      return kachifulAlbasSections.map((s) => ({
+      return kachifulAlbasData.map((s) => ({
         id: s.id,
         part: s.part,
         chapter: s.chapter,
@@ -99,7 +107,7 @@ const Reader = () => {
       }));
     }
     return [{ id: "sample", heading: "Sample", content: "__sample__" }];
-  }, [book?.contentModule, kashifEnData]);
+  }, [book?.contentModule, kashifEnData, kachifulAlbasData]);
 
   const tocItems = useMemo(() => {
     const chapters: { chapter: string; sections: { id: string; heading: string; index: number }[] }[] = [];
