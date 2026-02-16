@@ -130,6 +130,24 @@ const Reader = () => {
 
   const currentSection = allSections[currentSectionIdx] || allSections[0];
 
+  // Estimate total book pages and current cumulative page using content length ratios
+  const { estimatedTotalPages, currentCumulativePage } = useMemo(() => {
+    if (allSections.length === 0 || totalPages <= 0) return { estimatedTotalPages: 1, currentCumulativePage: 1 };
+    const currentLen = (currentSection?.content || "").length || 1;
+    const pagesPerChar = totalPages / currentLen;
+    let cumBefore = 0;
+    for (let i = 0; i < currentSectionIdx; i++) {
+      cumBefore += Math.max(1, Math.round((allSections[i].content || "").length * pagesPerChar));
+    }
+    let total = 0;
+    for (let i = 0; i < allSections.length; i++) {
+      total += i === currentSectionIdx
+        ? totalPages
+        : Math.max(1, Math.round((allSections[i].content || "").length * pagesPerChar));
+    }
+    return { estimatedTotalPages: total, currentCumulativePage: cumBefore + currentPage + 1 };
+  }, [allSections, currentSectionIdx, currentSection, totalPages, currentPage]);
+
   const goToSection = useCallback((idx: number) => {
     setCurrentSectionIdx(Math.max(0, Math.min(idx, allSections.length - 1)));
     setCurrentPage(0);
@@ -404,7 +422,7 @@ const Reader = () => {
             {currentSection?.heading}
           </span>
           <span className="font-serif tracking-wider flex-shrink-0">
-            {currentSectionIdx + 1} / {allSections.length}
+            {currentCumulativePage} / {estimatedTotalPages}
           </span>
         </div>
         {/* Overall book progress */}
