@@ -5,12 +5,13 @@ import { ruhAlAdabVerses, ruhAlAdabMeta } from "@/data/ruh-al-adab";
 import { comprendreFaydhahSections, comprendreFaydhahMeta } from "@/data/comprendre-faydhah";
 import { loadKachifulAlbasSections, kachifulAlbasMeta, type KachifulSection } from "@/data/kachiful-albas";
 import { loadKashifEnSections, kashifEnMeta, type KashifEnSection } from "@/data/kashif-en";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, Search } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ChapterDropdown from "@/components/reader/ChapterDropdown";
 import ReaderBottomBar from "@/components/reader/ReaderBottomBar";
 import FormattedContent from "@/components/reader/FormattedContent";
+import ReaderSearch from "@/components/reader/ReaderSearch";
 
 const themes = [
   { name: "Light", bg: "bg-[hsl(40,20%,95%)]", text: "text-[hsl(0,0%,15%)]" },
@@ -47,6 +48,7 @@ const Reader = () => {
   const [fontIdx, setFontIdx] = useState(1);
   const [fontSize, setFontSize] = useState(16);
   const [tocOpen, setTocOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [currentSectionIdx, setCurrentSectionIdx] = useState(0);
   const contentRef = useRef<HTMLDivElement>(null);
   const [kashifEnData, setKashifEnData] = useState<KashifEnSection[]>([]);
@@ -247,6 +249,9 @@ const Reader = () => {
           />
         )}
         <div className="flex items-center gap-1 flex-shrink-0">
+          <button onClick={() => setSearchOpen(true)} className="p-2">
+            <Search className="w-4 h-4" />
+          </button>
           <button onClick={() => setFontSize(Math.max(12, fontSize - 2))} className="px-2 py-1 text-sm font-medium">A-</button>
           <input
             type="range"
@@ -367,6 +372,14 @@ const Reader = () => {
           </ScrollArea>
         </SheetContent>
       </Sheet>
+      {/* Search */}
+      <ReaderSearch
+        open={searchOpen}
+        onOpenChange={setSearchOpen}
+        sections={allSections}
+        onNavigate={goToSection}
+        themeClasses={{ bg: theme.bg, text: theme.text }}
+      />
     </div>
   );
 };
