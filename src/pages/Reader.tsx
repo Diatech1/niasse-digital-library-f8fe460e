@@ -404,7 +404,7 @@ const Reader = () => {
             {currentSection?.heading}
           </span>
           <span className="font-serif tracking-wider flex-shrink-0">
-            {currentPage + 1} / {totalPages}
+            {currentSectionIdx + 1} / {allSections.length}
           </span>
         </div>
         {/* Overall book progress */}
