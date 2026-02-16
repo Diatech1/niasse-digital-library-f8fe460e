@@ -364,8 +364,8 @@ const Reader = () => {
       {/* Reading content - paginated like a physical book */}
       <div
         ref={containerRef}
-        className={`flex-1 overflow-hidden max-w-2xl mx-auto w-full ${fontClass} leading-relaxed relative`}
-        style={{ fontSize }}
+        className={`flex-1 overflow-hidden max-w-lg mx-auto w-full ${fontClass} relative`}
+        style={{ fontSize, lineHeight: 1.9 }}
         onTouchStart={(e) => {
           touchStartX.current = e.touches[0].clientX;
           touchStartY.current = e.touches[0].clientY;
@@ -407,7 +407,7 @@ const Reader = () => {
               transition: "transform 0.3s ease",
             }}
           >
-            <div className="px-6 py-6">
+            <div className="px-8 py-8">
               {currentSectionIdx === 0 && currentPage === 0 && renderMeta()}
               {renderCurrentSection()}
             </div>
