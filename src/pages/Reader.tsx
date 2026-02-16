@@ -312,47 +312,53 @@ const Reader = () => {
 
   return (
     <div className={`min-h-screen ${theme.bg} ${theme.text} transition-colors duration-300 flex flex-col`}>
-      {/* Compact top bar */}
-      <div className="flex items-center gap-1 px-2 py-1.5 border-b border-border/20">
-        <button onClick={() => navigate(-1)} className="p-1.5 flex-shrink-0">
-          <ArrowLeft className="w-4 h-4" />
+      {/* Top bar */}
+      <div className="flex items-center gap-2 px-3 py-3 border-b border-border/20">
+        <button onClick={() => navigate(-1)} className="p-2 flex-shrink-0">
+          <ArrowLeft className="w-5 h-5" />
         </button>
-        <button onClick={() => setSearchOpen(true)} className="p-1.5">
-          <Search className="w-4 h-4" />
-        </button>
-        <span className="mx-1 text-border/40">|</span>
+        <span className="flex-1" />
+        <div className="flex items-center gap-1 flex-shrink-0">
+          <button onClick={() => setSearchOpen(true)} className="p-2">
+            <Search className="w-4 h-4" />
+          </button>
+          <button onClick={() => setFontSize(Math.max(12, fontSize - 2))} className="px-2 py-1 text-sm font-medium">A-</button>
+          <input
+            type="range"
+            min={12}
+            max={28}
+            value={fontSize}
+            onChange={(e) => setFontSize(Number(e.target.value))}
+            className="w-16 accent-primary"
+          />
+          <button onClick={() => setFontSize(Math.min(28, fontSize + 2))} className="px-2 py-1 text-sm font-bold">A+</button>
+        </div>
+      </div>
+
+      {/* Font selector */}
+      <div className="flex items-center justify-center gap-2 py-2 border-b border-border/20">
         {fonts.map((f, i) => (
           <button
             key={f}
             onClick={() => setFontIdx(i)}
-            className={`px-2.5 py-0.5 rounded-full text-[10px] font-medium transition-all ${
+            className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all ${
               i === fontIdx ? "bg-primary text-primary-foreground" : "bg-muted/30 text-muted-foreground"
             }`}
           >
             {f}
           </button>
         ))}
-        <span className="mx-1 text-border/40">|</span>
+        {/* Theme dots inline */}
+        <span className="mx-2 text-border">|</span>
         {themes.map((t, i) => (
           <button
             key={t.name}
             onClick={() => setThemeIdx(i)}
-            className={`w-5 h-5 rounded-full border-2 transition-all ${t.bg} ${
+            className={`w-6 h-6 rounded-full border-2 transition-all ${t.bg} ${
               i === themeIdx ? "border-primary scale-110" : "border-transparent"
             }`}
           />
         ))}
-        <span className="flex-1" />
-        <button onClick={() => setFontSize(Math.max(12, fontSize - 2))} className="px-1.5 py-0.5 text-xs font-medium">A-</button>
-        <input
-          type="range"
-          min={12}
-          max={28}
-          value={fontSize}
-          onChange={(e) => setFontSize(Number(e.target.value))}
-          className="w-12 accent-primary"
-        />
-        <button onClick={() => setFontSize(Math.min(28, fontSize + 2))} className="px-1.5 py-0.5 text-xs font-bold">A+</button>
       </div>
 
       {/* Reading content - paginated like a physical book */}
@@ -409,9 +415,9 @@ const Reader = () => {
         )}
       </div>
 
-      {/* Bottom bar */}
+      {/* Bottom bar with page navigation */}
       <div className="border-t border-border/20 bg-inherit z-40">
-        <div className="flex items-center justify-between px-4 py-1 text-[10px] text-muted-foreground">
+        <div className="flex items-center justify-between px-6 py-1.5 text-xs text-muted-foreground">
           <span className="font-serif truncate mr-2">
             {currentSection?.heading}
           </span>
@@ -419,38 +425,40 @@ const Reader = () => {
             {currentCumulativePage} / {estimatedTotalPages}
           </span>
         </div>
+        {/* Overall book progress */}
         {(() => {
           const overallProgress = allSections.length > 0
             ? Math.round(((currentSectionIdx + (currentPage + 1) / Math.max(1, totalPages)) / allSections.length) * 100)
             : 0;
           return (
-            <div className="px-4">
-              <div className="h-0.5 bg-muted/30 rounded-full">
+            <div className="px-6 pb-1">
+              <div className="h-1 bg-muted/30 rounded-full">
                 <div
                   className="h-full bg-primary rounded-full transition-all duration-300"
                   style={{ width: `${overallProgress}%` }}
                 />
               </div>
+              <p className="text-[10px] text-muted-foreground text-right mt-0.5">{overallProgress}% of book</p>
             </div>
           );
         })()}
-        <div className="flex items-center justify-around py-1 pb-safe">
+        <div className="flex items-center justify-around py-1.5 pb-safe">
           <button
-            className="p-1.5 disabled:opacity-30"
+            className="p-2 disabled:opacity-30"
             onClick={(e) => { e.stopPropagation(); goPage(currentPage - 1); }}
             disabled={currentPage === 0 && currentSectionIdx === 0}
           >
-            <ChevronLeft className="w-4 h-4 text-muted-foreground" />
+            <ChevronLeft className="w-5 h-5 text-muted-foreground" />
           </button>
-          <button className="p-1.5" onClick={(e) => { e.stopPropagation(); setTocOpen(true); }}>
-            <List className="w-4 h-4 text-muted-foreground" />
+          <button className="p-2" onClick={(e) => { e.stopPropagation(); setTocOpen(true); }}>
+            <List className="w-5 h-5 text-muted-foreground" />
           </button>
           <button
-            className="p-1.5 disabled:opacity-30"
+            className="p-2 disabled:opacity-30"
             onClick={(e) => { e.stopPropagation(); goPage(currentPage + 1); }}
             disabled={currentPage >= totalPages - 1 && currentSectionIdx >= allSections.length - 1}
           >
-            <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            <ChevronRight className="w-5 h-5 text-muted-foreground" />
           </button>
         </div>
       </div>
