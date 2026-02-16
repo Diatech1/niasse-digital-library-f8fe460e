@@ -321,9 +321,13 @@ const Reader = () => {
           <>
             {currentSectionIdx === 0 && renderMeta()}
             {renderCurrentSection()}
-            <p className="text-center text-muted-foreground mt-12 mb-4 text-xs tracking-widest font-serif select-none">
-              — {currentSectionIdx + 1} —
-            </p>
+            <div className="flex items-center justify-center gap-3 mt-16 mb-6 select-none">
+              <span className="h-px w-8 bg-muted-foreground/30" />
+              <span className="text-muted-foreground text-xs font-serif tracking-[0.3em]">
+                {currentSectionIdx + 1}
+              </span>
+              <span className="h-px w-8 bg-muted-foreground/30" />
+            </div>
           </>
         )}
       </div>
