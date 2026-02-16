@@ -1,4 +1,5 @@
-import { ChevronLeft, ChevronRight, List, Search, Type } from "lucide-react";
+import { ChevronLeft, ChevronRight, List } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
 
 interface ReaderBottomBarProps {
   currentPage: number;
@@ -6,6 +7,7 @@ interface ReaderBottomBarProps {
   onPrevPage: () => void;
   onNextPage: () => void;
   onOpenToc: () => void;
+  onGoToPage: (page: number) => void;
   hasPrev: boolean;
   hasNext: boolean;
 }
@@ -16,6 +18,7 @@ const ReaderBottomBar = ({
   onPrevPage,
   onNextPage,
   onOpenToc,
+  onGoToPage,
   hasPrev,
   hasNext,
 }: ReaderBottomBarProps) => {
@@ -29,12 +32,18 @@ const ReaderBottomBar = ({
         </span>
         <span>{progress}%</span>
       </div>
-      <div className="h-1 bg-muted/30 mx-6 mb-2 rounded-full">
-        <div
-          className="h-full bg-primary rounded-full transition-all duration-300"
-          style={{ width: `${progress}%` }}
-        />
-      </div>
+      {totalPages > 1 && (
+        <div className="px-6 mb-2">
+          <Slider
+            min={1}
+            max={totalPages}
+            step={1}
+            value={[currentPage]}
+            onValueChange={([val]) => onGoToPage(val)}
+            className="w-full"
+          />
+        </div>
+      )}
       <div className="flex items-center justify-around py-2 pb-safe">
         <button
           className="p-2 disabled:opacity-30"
