@@ -296,4 +296,58 @@ Seydil Arabî ben Sâ'ih, (ra) à propos de la réponse de Cheikh Omar dit : Nou
 
 Je dis : Les gens entreront dans la voie par multitudes et j'entends par : Les voies disparaîtront, qu'aucune voie n'aura plus désormais l'autorisation d'éduquer. Par ailleurs, on a vu par ces temps-ci, des difficultés ainsi que des calamités que beaucoup d'anciens ne connaissaient pas, tout comme on voit en ce temps-ci que beaucoup de disciples de Cheikh ont accédé à l'ouverture en Dieu ; à la connaissance de Dieu ; qu'ils sont immergés en Dieu et ont abandonné tout ce qui n'est pas Dieu.`,
   },
+  {
+    id: "p2-ch1-4",
+    part: "Deuxième Partie",
+    chapter: "Chapitre I — La Fayda Tijâniya",
+    heading: "L'attestation de la Fayda",
+    content: `Un grand maître, connaissant et grand guide du nom de Seydi Abdallah Ben El hadj Al Alawî m'a dit : « Une Fayda te viendra entre les mains en vérité et sans aucun doute, et si un autre que toi prétend la détenir en ses mains, ce ne sera là que mensonge ; mais tu verras à ton égard de la méchanceté telle que tous tes prédécesseurs n'en ont jamais vu. »
+
+Il me dit toujours : « Tu es le plus grand homme de la voie Tijânia en tout temps. » Et il me dit d'autres choses encore que ma plume ne pourrait rapporter, par humilité. Son propos atteste de la confiance qu'il voue à son seigneur et à ce serviteur.
+
+Quelqu'un atteste que la Fayda dont parlait le maître connaissant de Dieu est arrivée, en ce temps-ci et tous s'accordent à dire que celui là est un grand saint aux yeux de Dieu et qu'il est uni à son seigneur ; qu'il a traversé les océans de valeur du prophète, (saw) et qu'il s'est coiffé du plus pur turban des secrets de Cheikh Ahmad At-tijânî.
+
+Voici quelques unes de paroles que je tins bien des années avant l'apparition de la Fayda :
+
+Elle est imminente, la Fayda promise par le pôle.
+Préparez vous et apaisez vos cœurs,
+Afin qu'elle y trouve sa place lorsqu'elle viendra.`,
+  },
+  {
+    id: "p2-ch1-5",
+    part: "Deuxième Partie",
+    chapter: "Chapitre I — La Fayda Tijâniya",
+    heading: "Poèmes en l'honneur de la Fayda",
+    content: `Un grand connaissant, gnostique réputé et reconnu au plus haut point, mon maître Moustapha Al Alawî a dit :
+
+Ibrahima a fondé sa mosquée sur la crainte de Dieu.
+Et aucun péché ne se trouve sur ton sol et loin de lui le néant.
+Les compagnons d'abil Abbâs, t'accompagnent aussi,
+Et ton degré culmine au firmament.
+Ta cité bénie est la meilleure de toutes,
+Et accueille les déshérités qui y trouvent leur place.
+La religion ne cessera jamais de s'y complaire,
+Elle tient du nom de sa marraine.
+Des connaissances mystérieuses y seront prodiguées
+Et l'on verra que la religion s'y affermit,
+Nous y sommes descendus souillés,
+Et sommes devenus purs en nous y assemblant.
+Il réside à Médina un successeur parmi ceux de Cheikh ;
+Que nul ne saura atteindre, autant que durera le monde.
+
+Il n'est autre que l'élu du temps,
+Entre les mains de qui se trouve la Fayda Tijânia,
+Et qui lorsque l'on parle de lui à ses contemporains,
+Se voit pointer du doigt dans l'acception qu'il s'agit bien lui.
+Il est un miracle en lui-même car son océan englobe,
+Les océans de la Fayda du maître du trône et de l'état divin.
+
+Mouhammad Abderrahmane ben Sâlik ben Bâb El Alawî, (ra) a dit :
+
+Le secret des secrets de Cheikh est à Médina ; que Dieu nous a choisi comme cité.
+Il a été choisi pour être nos joyaux desquels, nous obtenons tout ce que nous désirons.
+Immerge toi dans sa voie, et tu seras uni à Dieu ; ainsi que si tu te conformes à ses préceptes, car l'important est de te conformer.
+Quiconque visite Médina obtiendra ce qu'il convoite et du poids de la peur il sera délivré.
+La vocation d'Ibrahim est de diriger les créatures et non pas la simple connaissance.`,
+  },
 ];
