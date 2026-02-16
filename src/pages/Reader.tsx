@@ -407,13 +407,30 @@ const Reader = () => {
       {/* Bottom bar with page navigation */}
       <div className="border-t border-border/20 bg-inherit z-40">
         <div className="flex items-center justify-between px-6 py-1.5 text-xs text-muted-foreground">
-          <span className="font-serif">
+          <span className="font-serif truncate mr-2">
             {currentSection?.heading}
           </span>
-          <span className="font-serif tracking-wider">
+          <span className="font-serif tracking-wider flex-shrink-0">
             {currentPage + 1} / {totalPages}
           </span>
         </div>
+        {/* Overall book progress */}
+        {(() => {
+          const overallProgress = allSections.length > 0
+            ? Math.round(((currentSectionIdx + (currentPage + 1) / Math.max(1, totalPages)) / allSections.length) * 100)
+            : 0;
+          return (
+            <div className="px-6 pb-1">
+              <div className="h-1 bg-muted/30 rounded-full">
+                <div
+                  className="h-full bg-primary rounded-full transition-all duration-300"
+                  style={{ width: `${overallProgress}%` }}
+                />
+              </div>
+              <p className="text-[10px] text-muted-foreground text-right mt-0.5">{overallProgress}% of book</p>
+            </div>
+          );
+        })()}
         <div className="flex items-center justify-around py-1.5 pb-safe">
           <button
             className="p-2 disabled:opacity-30"
