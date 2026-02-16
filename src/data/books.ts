@@ -1,6 +1,7 @@
 import cover7 from "@/assets/book-cover-7.jpg";
 import cover8 from "@/assets/book-cover-8.jpg";
 import cover9 from "@/assets/book-cover-9.jpg";
+import cover9b from "@/assets/book-cover-9b.jpg";
 
 
 export interface Book {
@@ -54,7 +55,7 @@ export const books: Book[] = [
     title: "Kâchiful Albâs",
     titleAr: "كاشف الإلباس",
     author: "Cheikh Al Islam Elhadji Ibrahima Niass",
-    cover: cover9,
+    cover: cover9b,
     language: "French",
     pages: 201,
     tags: ["Faydhah", "Sufism", "Theology", "Tarbiyya"],
