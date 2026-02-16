@@ -332,6 +332,7 @@ const Reader = () => {
         onPrevPage={() => goToSection(currentSectionIdx - 1)}
         onNextPage={() => goToSection(currentSectionIdx + 1)}
         onOpenToc={() => setTocOpen(true)}
+        onGoToPage={(page) => goToSection(page - 1)}
         hasPrev={currentSectionIdx > 0}
         hasNext={currentSectionIdx < allSections.length - 1}
       />
