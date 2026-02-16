@@ -27,7 +27,7 @@ const FormattedContent = ({ content, fontSize }: FormattedContentProps) => {
           return (
             <div key={idx} className="border-t border-border/30 pt-3 mt-6">
               {footnotes.map((fn, fi) => (
-                <p key={fi} className="opacity-70 mb-1.5" style={{ fontSize: fontSize * 0.8 }}>
+                <p key={fi} className="text-muted-foreground mb-1.5" style={{ fontSize: fontSize * 0.8 }}>
                   {formatInlineText(fn)}
                 </p>
               ))}
@@ -44,7 +44,7 @@ const FormattedContent = ({ content, fontSize }: FormattedContentProps) => {
           return (
             <blockquote key={idx} className="border-l-2 border-primary/40 pl-4 my-6 space-y-1">
               {lines.map((line, li) => (
-                <p key={li} className="opacity-90 italic" style={{ fontSize: fontSize * 0.95 }}>
+                <p key={li} className="text-foreground/90 italic" style={{ fontSize: fontSize * 0.95 }}>
                   {line.trim()}
                 </p>
               ))}
@@ -105,7 +105,7 @@ function formatInlineText(text: string): React.ReactNode {
     if (match[1]) {
       // Parenthesized Arabic term - render in italic
       parts.push(
-        <em key={match.index} className="opacity-80 not-italic" style={{ fontStyle: 'italic' }}>
+        <em key={match.index} className="text-foreground/80 not-italic" style={{ fontStyle: 'italic' }}>
           {match[1]}
         </em>
       );

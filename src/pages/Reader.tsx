@@ -5,10 +5,11 @@ import { ruhAlAdabVerses, ruhAlAdabMeta } from "@/data/ruh-al-adab";
 import { comprendreFaydhahSections, comprendreFaydhahMeta } from "@/data/comprendre-faydhah";
 import { loadKachifulAlbasSections, kachifulAlbasMeta, type KachifulSection } from "@/data/kachiful-albas";
 import { loadKashifEnSections, kashifEnMeta, type KashifEnSection } from "@/data/kashif-en";
-import { ArrowLeft, ChevronLeft, ChevronRight, List, Loader2, Search } from "lucide-react";
+import { ArrowLeft, Loader2, Search } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ChapterDropdown from "@/components/reader/ChapterDropdown";
+import ReaderBottomBar from "@/components/reader/ReaderBottomBar";
 import FormattedContent from "@/components/reader/FormattedContent";
 import ReaderSearch from "@/components/reader/ReaderSearch";
 
@@ -49,16 +50,12 @@ const Reader = () => {
   const [tocOpen, setTocOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [currentSectionIdx, setCurrentSectionIdx] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const innerRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const [kashifEnData, setKashifEnData] = useState<KashifEnSection[]>([]);
   const [kachifulAlbasData, setKachifulAlbasData] = useState<KachifulSection[]>([]);
   const [loading, setLoading] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
-  const [containerHeight, setContainerHeight] = useState(0);
 
   useEffect(() => {
     if (book?.contentModule === "kashif-en") {
@@ -132,64 +129,8 @@ const Reader = () => {
 
   const goToSection = useCallback((idx: number) => {
     setCurrentSectionIdx(Math.max(0, Math.min(idx, allSections.length - 1)));
-    setCurrentPage(0);
+    contentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   }, [allSections.length]);
-
-  // Pagination measurement
-  const measure = useCallback(() => {
-    const container = containerRef.current;
-    const inner = innerRef.current;
-    if (!container || !inner) return;
-    const rect = container.getBoundingClientRect();
-    const w = rect.width;
-    const h = rect.height;
-    setContainerHeight(h);
-    requestAnimationFrame(() => {
-      const pages = Math.max(1, Math.ceil(inner.scrollWidth / w));
-      setTotalPages(pages);
-    });
-  }, []);
-
-  useEffect(() => {
-    measure();
-  }, [currentSectionIdx, fontSize, fontIdx, measure, loading]);
-
-  useEffect(() => {
-    const observer = new ResizeObserver(() => measure());
-    if (containerRef.current) observer.observe(containerRef.current);
-    return () => observer.disconnect();
-  }, [measure]);
-
-  useEffect(() => {
-    document.fonts.ready.then(() => measure());
-  }, [measure]);
-
-  const goPage = useCallback((page: number) => {
-    if (page < 0) {
-      // Go to previous section, last page
-      if (currentSectionIdx > 0) {
-        setCurrentSectionIdx(currentSectionIdx - 1);
-        setCurrentPage(-1); // signal to go to last page
-      }
-      return;
-    }
-    if (page >= totalPages) {
-      // Go to next section, first page
-      if (currentSectionIdx < allSections.length - 1) {
-        setCurrentSectionIdx(currentSectionIdx + 1);
-        setCurrentPage(0);
-      }
-      return;
-    }
-    setCurrentPage(page);
-  }, [totalPages, currentSectionIdx, allSections.length]);
-
-  // When totalPages changes and currentPage is -1, go to last page
-  useEffect(() => {
-    if (currentPage === -1 && totalPages > 0) {
-      setCurrentPage(totalPages - 1);
-    }
-  }, [currentPage, totalPages]);
 
   const goToSectionById = useCallback((id: string) => {
     const idx = allSections.findIndex((s) => s.id === id);
@@ -299,7 +240,14 @@ const Reader = () => {
         <button onClick={() => navigate(-1)} className="p-2 flex-shrink-0">
           <ArrowLeft className="w-5 h-5" />
         </button>
-        <span className="flex-1" />
+        {tocItems.length > 1 && (
+          <ChapterDropdown
+            tocItems={tocItems}
+            currentSectionId={currentSection?.id || ""}
+            onSelectSection={goToSectionById}
+            themeClasses={{ bg: theme.bg, text: theme.text }}
+          />
+        )}
         <div className="flex items-center gap-1 flex-shrink-0">
           <button onClick={() => setSearchOpen(true)} className="p-2">
             <Search className="w-4 h-4" />
@@ -343,10 +291,10 @@ const Reader = () => {
         ))}
       </div>
 
-      {/* Reading content - paginated like a physical book */}
+      {/* Reading content */}
       <div
-        ref={containerRef}
-        className={`flex-1 overflow-hidden max-w-2xl mx-auto w-full ${fontClass} leading-relaxed relative`}
+        ref={contentRef}
+        className={`flex-1 overflow-y-auto px-6 py-8 pb-32 max-w-2xl mx-auto w-full ${fontClass} leading-relaxed`}
         style={{ fontSize }}
         onTouchStart={(e) => {
           touchStartX.current = e.touches[0].clientX;
@@ -359,17 +307,9 @@ const Reader = () => {
           touchStartX.current = null;
           touchStartY.current = null;
           if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
-            if (dx < 0) goPage(currentPage + 1);
-            else goPage(currentPage - 1);
+            if (dx < 0 && currentSectionIdx < allSections.length - 1) goToSection(currentSectionIdx + 1);
+            else if (dx > 0 && currentSectionIdx > 0) goToSection(currentSectionIdx - 1);
           }
-        }}
-        onClick={(e) => {
-          const rect = containerRef.current?.getBoundingClientRect();
-          if (!rect) return;
-          const x = e.clientX - rect.left;
-          const ratio = x / rect.width;
-          if (ratio < 0.25) goPage(currentPage - 1);
-          else if (ratio > 0.75) goPage(currentPage + 1);
         }}
       >
         {loading ? (
@@ -378,72 +318,23 @@ const Reader = () => {
             <span className="ml-2 text-muted-foreground">Loading book...</span>
           </div>
         ) : (
-          <div
-            ref={innerRef}
-            style={{
-              height: containerHeight > 0 ? `${containerHeight}px` : "100%",
-              columnWidth: containerRef.current ? `${containerRef.current.getBoundingClientRect().width}px` : "100%",
-              columnGap: 0,
-              columnFill: "auto" as any,
-              transform: `translateX(-${currentPage * (containerRef.current?.getBoundingClientRect().width || 0)}px)`,
-              transition: "transform 0.3s ease",
-            }}
-          >
-            <div className="px-6 py-6">
-              {currentSectionIdx === 0 && currentPage === 0 && renderMeta()}
-              {renderCurrentSection()}
-            </div>
-          </div>
+          <>
+            {currentSectionIdx === 0 && renderMeta()}
+            {renderCurrentSection()}
+          </>
         )}
       </div>
 
-      {/* Bottom bar with page navigation */}
-      <div className="border-t border-border/20 bg-inherit z-40">
-        <div className="flex items-center justify-between px-6 py-1.5 text-xs text-muted-foreground">
-          <span className="font-serif truncate mr-2">
-            {currentSection?.heading}
-          </span>
-          <span className="font-serif tracking-wider flex-shrink-0">
-            {currentPage + 1} / {totalPages}
-          </span>
-        </div>
-        {/* Overall book progress */}
-        {(() => {
-          const overallProgress = allSections.length > 0
-            ? Math.round(((currentSectionIdx + (currentPage + 1) / Math.max(1, totalPages)) / allSections.length) * 100)
-            : 0;
-          return (
-            <div className="px-6 pb-1">
-              <div className="h-1 bg-muted/30 rounded-full">
-                <div
-                  className="h-full bg-primary rounded-full transition-all duration-300"
-                  style={{ width: `${overallProgress}%` }}
-                />
-              </div>
-              <p className="text-[10px] text-muted-foreground text-right mt-0.5">{overallProgress}% of book</p>
-            </div>
-          );
-        })()}
-        <div className="flex items-center justify-around py-1.5 pb-safe">
-          <button
-            className="p-2 disabled:opacity-30"
-            onClick={(e) => { e.stopPropagation(); goPage(currentPage - 1); }}
-            disabled={currentPage === 0 && currentSectionIdx === 0}
-          >
-            <ChevronLeft className="w-5 h-5 text-muted-foreground" />
-          </button>
-          <button className="p-2" onClick={(e) => { e.stopPropagation(); setTocOpen(true); }}>
-            <List className="w-5 h-5 text-muted-foreground" />
-          </button>
-          <button
-            className="p-2 disabled:opacity-30"
-            onClick={(e) => { e.stopPropagation(); goPage(currentPage + 1); }}
-            disabled={currentPage >= totalPages - 1 && currentSectionIdx >= allSections.length - 1}
-          >
-            <ChevronRight className="w-5 h-5 text-muted-foreground" />
-          </button>
-        </div>
-      </div>
+      {/* Bottom bar with navigation */}
+      <ReaderBottomBar
+        currentPage={currentSectionIdx + 1}
+        totalPages={allSections.length}
+        onPrevPage={() => goToSection(currentSectionIdx - 1)}
+        onNextPage={() => goToSection(currentSectionIdx + 1)}
+        onOpenToc={() => setTocOpen(true)}
+        hasPrev={currentSectionIdx > 0}
+        hasNext={currentSectionIdx < allSections.length - 1}
+      />
 
       {/* TOC Sheet */}
       <Sheet open={tocOpen} onOpenChange={setTocOpen}>
