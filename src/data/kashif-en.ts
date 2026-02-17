@@ -99,6 +99,19 @@ function cleanContent(text: string): string {
     // Collapse multiple blank lines
     .replace(/\n{3,}/g, "\n\n")
     .trim();
+  
+  // Fix displaced drop caps: if content starts with lowercase, find a standalone
+  // capital letter in the text (PDF extraction artifact) and move it to the front
+  if (/^[a-z]/.test(cleaned)) {
+    // Look for a standalone single capital letter on its own line
+    const dropCapMatch = cleaned.match(/^([A-Z])$/m);
+    if (dropCapMatch) {
+      // Remove the standalone letter and prepend it to the content
+      cleaned = cleaned.replace(/^[A-Z]$/m, "").replace(/\n{2,}/g, "\n\n").trim();
+      cleaned = dropCapMatch[1] + cleaned;
+    }
+  }
+  
   return cleaned;
 }
 
@@ -109,8 +122,31 @@ function cleanContent(text: string): string {
  */
 export async function loadKashifEnSections(): Promise<KashifEnSection[]> {
   const response = await fetch("/books/kashif-en.txt");
-  const text = await response.text();
-  const lines = text.split("\n");
+  const rawText = await response.text();
+  
+  // Preprocess: rejoin standalone drop cap letters separated by page headers
+  // Pattern: single capital letter on its own line, followed by header/numeral lines,
+  // then content starting with lowercase — the letter belongs before that content.
+  const rawLines = rawText.split("\n");
+  const headerRegex = /^([ivxlc]+\s+THE REMOVAL OF CONFUSION|[ivxlc]+|\d+\s+THE REMOVAL OF CONFUSION)\s*$/i;
+  
+  for (let i = 0; i < rawLines.length - 1; i++) {
+    if (/^[A-Z]$/.test(rawLines[i].trim())) {
+      // Found standalone capital letter — look ahead past headers/blanks for content
+      for (let j = i + 1; j < Math.min(i + 5, rawLines.length); j++) {
+        const trimJ = rawLines[j].trim();
+        if (trimJ === "" || headerRegex.test(trimJ)) continue;
+        // Found next content line — prepend the letter
+        if (/^[a-z]/.test(trimJ)) {
+          rawLines[j] = rawLines[i].trim() + rawLines[j];
+          rawLines[i] = "";
+        }
+        break;
+      }
+    }
+  }
+  
+  const lines = rawLines;
 
   const oddPageRegex = /^\s*(\d{1,3})\s*$/;
   const evenPageRegex = /^(\d{1,3})\s+THE REMOVAL OF CONFUSION\s*$/;
