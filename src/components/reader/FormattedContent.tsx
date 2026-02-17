@@ -25,12 +25,12 @@ const FormattedContent = ({ content, fontSize }: FormattedContentProps) => {
         const pageMatch = trimmed.match(/^\{\{PAGE:(\d+)\}\}$/);
         if (pageMatch) {
           return (
-            <div key={idx} className="relative h-0 overflow-visible">
+            <div key={idx} className="flex justify-end -my-1">
               <span
-                className="absolute right-[-2.5rem] top-0 text-muted-foreground/50 select-none"
+                className="text-muted-foreground/40 select-none font-serif italic"
                 style={{ fontSize: fontSize * 0.65 }}
               >
-                {pageMatch[1]}
+                p. {pageMatch[1]}
               </span>
             </div>
           );
