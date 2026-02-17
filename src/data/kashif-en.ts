@@ -12,9 +12,10 @@ export interface KashifEnSection {
   chapter: string;
   heading: string;
   content: string;
+  pageNumber?: number;
 }
 
-// Section markers to parse from the raw text
+// Chapter markers for tracking context
 const SECTION_MARKERS = [
   { line: "Acknowledgements", part: "Front Matter", chapter: "Front Matter", heading: "Acknowledgements" },
   { line: "Background to the Text", part: "Front Matter", chapter: "Front Matter", heading: "Background to the Text" },
@@ -61,58 +62,148 @@ function fixEncoding(text: string): string {
     .replace(/╖/g, "Ṣ");
 }
 
-// Normalize various apostrophe/quote characters to a standard ASCII apostrophe
 function normalizeApostrophes(text: string): string {
   return text.replace(/[\u2018\u2019\u201A\u201B\u0060\u00B4\u2032]/g, "'");
 }
 
 function cleanContent(text: string): string {
   return fixEncoding(text)
+    // Remove running headers (e.g., "vi THE REMOVAL OF CONFUSION", "General Introduction")
+    .replace(/^[ivxlc]+\s+THE REMOVAL OF CONFUSION\s*$/gim, "")
     .replace(/^\d+\s+THE REMOVAL OF CONFUSION\s*$/gm, "")
     .replace(/^THE REMOVAL OF CONFUSION\s*$/gm, "")
+    // Remove standalone Roman numerals
     .replace(/^[ivxlc]+\s*$/gim, "")
-    .replace(/^\s*(\d+)\s*$/gm, "\n\n{{PAGE:$1}}\n\n")
-    // Remove section header lines that appear as page headers
+    // Remove sommaire/TOC-style lines with dots
+    .replace(/^.*\.{5,}.*$/gm, "")
+    // Remove running chapter headers (matching section marker names that appear as page headers)
     .replace(/^Concerning the reality of Sufism\s*$/gm, "")
     .replace(/^The Excellence of Allah's Remembrance \(dhikr\)\s*$/gm, "")
     .replace(/^Congregating for the Remembrance\s*$/gm, "")
     .replace(/^Mention of the Flood.*within the Tij.*$/gm, "")
-    .replace(/^Seeking the Shaykh.*$/gm, "")
+    .replace(/^Seeking the Shaykh\s*$/gm, "")
     .replace(/^General Introduction\s*$/gm, "")
     .replace(/^Background to the Text.*$/gm, "")
     .replace(/^Biography of the Author.*$/gm, "")
     .replace(/^Biography of Authors.*$/gm, "")
-    .replace(/^Prominent Personalities.*$/gm, "")
+    .replace(/^Prominent Personalities\s*$/gm, "")
+    .replace(/^Warning Against Criticizing.*$/gm, "")
+    .replace(/^The Vision of Allah\s*$/gm, "")
+    .replace(/^Spiritual Experiences.*$/gm, "")
+    .replace(/^The Sphere of Spiritual Training\s*$/gm, "")
+    .replace(/^Our Confidant Reliance.*$/gm, "")
+    .replace(/^Section [IV]+\s*$/gm, "")
+    .replace(/^CHAPTER \d+\s*$/gm, "")
+    // Collapse multiple blank lines
     .replace(/\n{3,}/g, "\n\n")
     .trim();
 }
 
+/**
+ * Parse the English Kashif text page-by-page using standalone page numbers as split points.
+ * Front matter (before page 1) is kept as chapter-based sections.
+ * Main content (pages 1+) is split at each Arabic page number.
+ */
 export async function loadKashifEnSections(): Promise<KashifEnSection[]> {
   const response = await fetch("/books/kashif-en.txt");
   const text = await response.text();
   const lines = text.split("\n");
 
-  const sections: KashifEnSection[] = [];
-  let currentMarkerIdx = -1;
-  let currentStart = -1;
+  const oddPageRegex = /^\s*(\d{1,3})\s*$/;
+  const evenPageRegex = /^(\d{1,3})\s+THE REMOVAL OF CONFUSION\s*$/;
+  // Running chapter headers on odd pages (e.g., "General Introduction 5")
+  const oddHeaderRegex = /^.+\s+(\d{1,3})\s*$/;
 
-  // Skip the Table of Contents (first ~66 lines are title page + TOC)
-  const startLine = lines.findIndex((l, i) => i > 60 && l.trim() === "Acknowledgements");
-  const scanStart = startLine >= 0 ? startLine : 66;
+  // Find all page boundaries using both odd and even page patterns
+  const pageBoundaries: { lineIdx: number; pageNum: number }[] = [];
+  
+  // Collect ALL candidate page numbers with both patterns
+  const candidates: { lineIdx: number; pageNum: number; confidence: "high" | "low" }[] = [];
+  
+  for (let i = 0; i < lines.length; i++) {
+    // Even pages: "N THE REMOVAL OF CONFUSION" — very reliable
+    const evenMatch = lines[i].match(evenPageRegex);
+    if (evenMatch) {
+      candidates.push({ lineIdx: i, pageNum: parseInt(evenMatch[1], 10), confidence: "high" });
+      continue;
+    }
+    // Odd pages: standalone number — less reliable (could be footnotes)
+    const oddMatch = lines[i].match(oddPageRegex);
+    if (oddMatch) {
+      candidates.push({ lineIdx: i, pageNum: parseInt(oddMatch[1], 10), confidence: "low" });
+    }
+  }
+
+  // Build sequential page boundaries starting from page 1
+  // Use high-confidence matches first, then fill in with low-confidence
+  let lastPageNum = 0;
+  const tocEndLine = 60; // Skip TOC
+  
+  for (const c of candidates) {
+    if (c.lineIdx <= tocEndLine) continue;
+    
+    if (pageBoundaries.length === 0) {
+      // Looking for page 1
+      if (c.pageNum === 1) {
+        pageBoundaries.push({ lineIdx: c.lineIdx, pageNum: 1 });
+        lastPageNum = 1;
+      }
+      continue;
+    }
+    
+    // Handle duplicates (same page number on consecutive lines)
+    if (c.pageNum === lastPageNum) {
+      pageBoundaries[pageBoundaries.length - 1].lineIdx = c.lineIdx;
+      continue;
+    }
+    
+    // Accept next page if it's sequential (allow gaps up to 5 for missing pages)
+    if (c.pageNum === lastPageNum + 1 || c.pageNum === lastPageNum + 2) {
+      pageBoundaries.push({ lineIdx: c.lineIdx, pageNum: c.pageNum });
+      lastPageNum = c.pageNum;
+    } else if (c.confidence === "high" && c.pageNum > lastPageNum && c.pageNum <= lastPageNum + 10) {
+      // Trust high-confidence matches with larger gaps
+      pageBoundaries.push({ lineIdx: c.lineIdx, pageNum: c.pageNum });
+      lastPageNum = c.pageNum;
+    }
+  }
+
+  // Build chapter marker map (scan from after TOC)
+  const tocEnd = lines.findIndex((l, i) => i > 60 && l.trim() === "Acknowledgements");
+  const scanStart = tocEnd >= 0 ? tocEnd : 60;
+
+  let currentMarkerIdx = -1;
+  const lineToMarker: Map<number, number> = new Map();
 
   for (let i = scanStart; i < lines.length; i++) {
-    const line = normalizeApostrophes(lines[i].trim());
-    
-    // Check if this line matches any section marker
+    const normalized = normalizeApostrophes(lines[i].trim());
     for (let m = currentMarkerIdx + 1; m < SECTION_MARKERS.length; m++) {
-      if (line.startsWith(normalizeApostrophes(SECTION_MARKERS[m].line))) {
-        // Save previous section
-        if (currentMarkerIdx >= 0 && currentStart >= 0) {
-          const marker = SECTION_MARKERS[currentMarkerIdx];
-          const content = cleanContent(lines.slice(currentStart, i).join("\n"));
+      if (normalized.startsWith(normalizeApostrophes(SECTION_MARKERS[m].line))) {
+        currentMarkerIdx = m;
+        lineToMarker.set(i, m);
+        break;
+      }
+    }
+  }
+
+  const sections: KashifEnSection[] = [];
+
+  // Front matter: chapter-based sections before page 1
+  const page1Line = pageBoundaries.length > 0 ? pageBoundaries[0].lineIdx : lines.length;
+  let fmMarkerIdx = -1;
+  let fmStart = -1;
+
+  for (let i = scanStart; i < page1Line; i++) {
+    const normalized = normalizeApostrophes(lines[i].trim());
+    for (let m = fmMarkerIdx + 1; m < SECTION_MARKERS.length; m++) {
+      if (normalized.startsWith(normalizeApostrophes(SECTION_MARKERS[m].line))) {
+        // Save previous front matter section
+        if (fmMarkerIdx >= 0 && fmStart >= 0) {
+          const marker = SECTION_MARKERS[fmMarkerIdx];
+          const content = cleanContent(lines.slice(fmStart, i).join("\n"));
           if (content.length > 50) {
             sections.push({
-              id: `kashif-en-${currentMarkerIdx}`,
+              id: `kashif-en-fm-${fmMarkerIdx}`,
               part: marker.part,
               chapter: marker.chapter,
               heading: marker.heading,
@@ -120,26 +211,55 @@ export async function loadKashifEnSections(): Promise<KashifEnSection[]> {
             });
           }
         }
-        currentMarkerIdx = m;
-        currentStart = i + 1;
+        fmMarkerIdx = m;
+        fmStart = i + 1;
         break;
       }
     }
   }
-
-  // Save last section
-  if (currentMarkerIdx >= 0 && currentStart >= 0) {
-    const marker = SECTION_MARKERS[currentMarkerIdx];
-    const content = cleanContent(lines.slice(currentStart).join("\n"));
+  // Save last front matter section
+  if (fmMarkerIdx >= 0 && fmStart >= 0) {
+    const marker = SECTION_MARKERS[fmMarkerIdx];
+    const content = cleanContent(lines.slice(fmStart, page1Line).join("\n"));
     if (content.length > 50) {
       sections.push({
-        id: `kashif-en-${currentMarkerIdx}`,
+        id: `kashif-en-fm-${fmMarkerIdx}`,
         part: marker.part,
         chapter: marker.chapter,
         heading: marker.heading,
         content,
       });
     }
+  }
+
+  // Main content: page-by-page
+  let activeMarkerIdx = fmMarkerIdx >= 0 ? fmMarkerIdx : -1;
+
+  for (let p = 0; p < pageBoundaries.length; p++) {
+    const { lineIdx, pageNum } = pageBoundaries[p];
+    const contentStart = lineIdx + 1;
+    const contentEnd = p + 1 < pageBoundaries.length ? pageBoundaries[p + 1].lineIdx : lines.length;
+
+    // Update marker context for lines within this page
+    for (let i = lineIdx; i < contentEnd; i++) {
+      if (lineToMarker.has(i)) activeMarkerIdx = lineToMarker.get(i)!;
+    }
+
+    const rawContent = lines.slice(contentStart, contentEnd).join("\n");
+    const content = cleanContent(rawContent);
+
+    if (content.length < 5) continue;
+
+    const marker = activeMarkerIdx >= 0 ? SECTION_MARKERS[activeMarkerIdx] : null;
+
+    sections.push({
+      id: `kashif-en-page-${pageNum}`,
+      part: marker?.part || "",
+      chapter: marker?.chapter || "",
+      heading: marker?.heading || `Page ${pageNum}`,
+      content,
+      pageNumber: pageNum,
+    });
   }
 
   return sections;
