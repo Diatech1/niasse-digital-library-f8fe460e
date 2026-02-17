@@ -17,21 +17,21 @@ export interface KachifulSection {
 const SECTION_MARKERS = [
   { line: "AVANT PROPOS", part: "", chapter: "Avant-propos", heading: "Avant-propos" },
   { line: "INTRODUCTION", part: "", chapter: "Introduction", heading: "Introduction — L'éducation spirituelle (Tarbiya)" },
-  { line: "PREMIERE PARTIE", part: "Première Partie", chapter: "Première Partie", heading: "Première Partie" },
+  { line: "PREMIERE PARTIE", part: "", chapter: "Première Partie", heading: "Première Partie" },
   { line: "LES REALITES DU SOUFISME ET L'ORIGINE DE LA TRANSMISSION DES ZIKR", part: "Première Partie", chapter: "Chapitre I — Les réalités du soufisme", heading: "Les réalités du soufisme et l'origine de la transmission des Zikr" },
   { line: "LES BIENFAITS DU ZIKR", part: "Première Partie", chapter: "Chapitre II — Les bienfaits du Zikr", heading: "Les bienfaits du Zikr" },
   { line: "LA REUNION POUR LE ZIKR", part: "Première Partie", chapter: "Chapitre III — La récitation du Coran", heading: "La réunion pour le Zikr ; l'exhortation à l'apprentissage du Coran et le rassemblement pour la récitation du Coran" },
-  { line: "DEUXIEME PARTIE", part: "Deuxième Partie", chapter: "Deuxième Partie", heading: "Deuxième Partie" },
+  { line: "DEUXIEME PARTIE", part: "", chapter: "Deuxième Partie", heading: "Deuxième Partie" },
   { line: "LA FAYDA TIJANIYA", part: "Deuxième Partie", chapter: "Chapitre I — La Fayda Tijâniya", heading: "La Fayda Tijâniya ; ce que son fondateur en a dit ainsi que les hommes de Dieu et ses références dans le Coran et la Tradition" },
   { line: "LES CONNAISSANCES EXPERIMENTALES", part: "Deuxième Partie", chapter: "Chapitre II — Les connaissances expérimentales", heading: "Les connaissances expérimentales et leur argumentation dans le Coran et la Tradition" },
   { line: "LES METHODES D'EDUCATION SPIRITUELLE", part: "Deuxième Partie", chapter: "Chapitre III — L'éducation spirituelle", heading: "Les méthodes d'éducation spirituelle dans la voie Tijâne" },
-  { line: "TROISIEME PARTIE", part: "Troisième Partie", chapter: "Troisième Partie", heading: "Troisième Partie" },
+  { line: "TROISIEME PARTIE", part: "", chapter: "Troisième Partie", heading: "Troisième Partie" },
   { line: "MISE EN GARDE CONTRE LA CONTRADICTION", part: "Troisième Partie", chapter: "Chapitre I — Mise en garde", heading: "Mise en garde contre la contradiction des élus de Dieu et ce que doivent être les qualités de celui qui a droit à la contradiction" },
   { line: "LA NECESSITE DE RECHERCHER UN GUIDE", part: "Troisième Partie", chapter: "Chapitre II — Le guide spirituel", heading: "La nécessité de rechercher un guide droit ; les qualités qui définissent le guide et les relations du disciple avec ce guide" },
   { line: "PROPOS DESTINES A UN CHAPITRE PRECEDENT", part: "Troisième Partie", chapter: "Chapitre II (suite)", heading: "Propos destinés à un chapitre précédent du livre et rapportés dans ce chapitre" },
   { line: "LA VERACITE DE LA VISION", part: "Troisième Partie", chapter: "Chapitre III — La vision divine", heading: "La véracité de la vision que prétendent avoir eu les hommes de Dieu et ce qu'en ont dit les savants" },
-  { line: "CONCLUSION", part: "Conclusion", chapter: "Conclusion", heading: "Conclusion" },
-  { line: "Présentation de l", part: "Annexes", chapter: "Autorisations (Idjâzah)", heading: "Présentation des autorisations (Idjâzah)" },
+  { line: "CONCLUSION", part: "", chapter: "Conclusion", heading: "Conclusion" },
+  { line: "Présentation de l", part: "", chapter: "Annexes", heading: "Présentation des autorisations (Idjâzah)" },
 ];
 
 function normalizeApostrophes(text: string): string {
@@ -99,7 +99,7 @@ export async function loadKachifulAlbasSections(): Promise<KachifulSection[]> {
         if (currentMarkerIdx >= 0 && currentStart >= 0) {
           const marker = SECTION_MARKERS[currentMarkerIdx];
           const content = cleanContent(lines.slice(currentStart, i).join("\n"));
-          if (content.length > 50) {
+          if (content.length > 10 || marker.heading === marker.chapter) {
             rawSections.push({
               id: `kfr-${currentMarkerIdx}`,
               part: marker.part,
@@ -120,7 +120,7 @@ export async function loadKachifulAlbasSections(): Promise<KachifulSection[]> {
   if (currentMarkerIdx >= 0 && currentStart >= 0) {
     const marker = SECTION_MARKERS[currentMarkerIdx];
     const content = cleanContent(lines.slice(currentStart).join("\n"));
-    if (content.length > 50) {
+    if (content.length > 10 || marker.heading === marker.chapter) {
       rawSections.push({
         id: `kfr-${currentMarkerIdx}`,
         part: marker.part,
