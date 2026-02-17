@@ -67,7 +67,9 @@ function normalizeApostrophes(text: string): string {
 }
 
 function cleanContent(text: string): string {
-  return fixEncoding(text)
+  let cleaned = fixEncoding(text)
+    // Rejoin standalone drop cap letters (PDF extraction artifact: "T\nhe" → "The")
+    .replace(/^([A-Z])\n([a-z])/gm, "$1$2")
     // Remove running headers (e.g., "vi THE REMOVAL OF CONFUSION", "General Introduction")
     .replace(/^[ivxlc]+\s+THE REMOVAL OF CONFUSION\s*$/gim, "")
     .replace(/^\d+\s+THE REMOVAL OF CONFUSION\s*$/gm, "")
@@ -97,6 +99,7 @@ function cleanContent(text: string): string {
     // Collapse multiple blank lines
     .replace(/\n{3,}/g, "\n\n")
     .trim();
+  return cleaned;
 }
 
 /**
