@@ -55,28 +55,6 @@ function cleanContent(text: string): string {
 /**
  * Split a long section into smaller sub-sections of roughly `maxParagraphs` paragraphs each.
  */
-function splitSection(
-  section: KachifulSection,
-  maxParagraphs: number = 12
-): KachifulSection[] {
-  const paragraphs = section.content.split("\n\n").filter((p) => p.trim().length > 0);
-  if (paragraphs.length <= maxParagraphs) return [section];
-
-  const result: KachifulSection[] = [];
-  for (let i = 0; i < paragraphs.length; i += maxParagraphs) {
-    const chunk = paragraphs.slice(i, i + maxParagraphs);
-    const subIdx = Math.floor(i / maxParagraphs) + 1;
-    result.push({
-      id: `${section.id}-${subIdx}`,
-      part: section.part,
-      chapter: section.chapter,
-      heading: subIdx === 1 ? section.heading : `${section.heading} (suite ${subIdx})`,
-      content: chunk.join("\n\n"),
-    });
-  }
-  return result;
-}
-
 export async function loadKachifulAlbasSections(): Promise<KachifulSection[]> {
   const response = await fetch("/books/kachiful-albas-fr.txt");
   const text = await response.text();
@@ -131,11 +109,5 @@ export async function loadKachifulAlbasSections(): Promise<KachifulSection[]> {
     }
   }
 
-  // Split long sections into manageable sub-sections
-  const sections: KachifulSection[] = [];
-  for (const s of rawSections) {
-    sections.push(...splitSection(s));
-  }
-
-  return sections;
+  return rawSections;
 }
