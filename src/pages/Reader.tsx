@@ -220,14 +220,16 @@ const Reader = () => {
             {currentSection.part}
           </h3>
         )}
-        {currentSection.chapter && (
+        {currentSection.chapter && currentSection.chapter !== currentSection.part && (
           <h4 className="text-center font-serif font-semibold text-primary/80 mb-6" style={{ fontSize: fontSize * 1.1 }}>
             {currentSection.chapter}
           </h4>
         )}
-        <h5 className="font-serif font-bold mb-6 text-center" style={{ fontSize: fontSize * 1.05 }}>
-          {currentSection.heading}
-        </h5>
+        {currentSection.heading !== currentSection.chapter && currentSection.heading !== currentSection.part && (
+          <h5 className="font-serif font-bold mb-6 text-center" style={{ fontSize: fontSize * 1.05 }}>
+            {currentSection.heading}
+          </h5>
+        )}
         <FormattedContent content={currentSection.content} fontSize={fontSize} />
       </div>
     );
