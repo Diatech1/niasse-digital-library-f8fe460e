@@ -1,48 +1,26 @@
 
 
-# Add PDF Page Break Markers with Margin Page Numbers
+# Fix Section Count to Match Original PDF Structure
 
-## Overview
-Preserve the original PDF page numbers from the text file and display them as margin-style page numbers in the reader, replicating the look of a printed book.
+## Problem
+The `splitSection()` function in `kachiful-albas.ts` artificially splits long chapters into sub-sections of 12 paragraphs, inflating the count from the book's real ~16 sections to 29. The bottom bar showing "Page 1 of 29" is misleading and doesn't reflect the actual book structure.
 
-## How It Works Today
-- The text file (`kachiful-albas-fr.txt`) contains standalone numbers like "4", "6", "69" on their own lines, corresponding to PDF page numbers.
-- The `cleanContent()` function in `kachiful-albas.ts` currently **strips these out** with the regex `^\d{1,3}\s*$`.
-- As a result, no page break information reaches the reader.
+## Solution
+Remove the `splitSection()` chunking so each section in the reader corresponds to a real chapter/section from the original PDF. The reader already supports scrolling within long sections, so there's no functional need to split them.
 
-## Plan
+## Changes
 
-### 1. Preserve Page Numbers as Markers in the Text
-**File: `src/data/kachiful-albas.ts`**
-- Modify `cleanContent()` to convert standalone page numbers into a special inline marker instead of removing them.
-- Example: a line containing just "4" becomes `\n\n{{PAGE:4}}\n\n` in the content string.
-- This ensures the page number data flows through to `FormattedContent`.
+### 1. Remove splitSection from kachiful-albas.ts
+- Remove the `splitSection()` function
+- In `loadKachifulAlbasSections()`, push `rawSections` directly into the final array without splitting
+- The bottom bar will then show "Page 1 of ~16" matching the real book divisions
 
-### 2. Render Page Numbers in the Margin
-**File: `src/components/reader/FormattedContent.tsx`**
-- In the paragraph rendering loop, detect `{{PAGE:N}}` markers.
-- Render them as a small page number positioned in the right margin area using absolute positioning.
-- Style: small font size (~70% of body), muted color, right-aligned, similar to printed book margin numbers.
+### 2. Apply same fix to kashif-en.ts
+- Check if `kashif-en.ts` uses a similar splitting function and remove it as well to keep consistency
 
-```text
-+--------------------------------------------------+
-|                                                   |
-|  Lorem ipsum dolor sit amet, consectetur     4    |
-|  adipiscing elit. Sed do eiusmod tempor           |
-|  incididunt ut labore et dolore magna aliqua.     |
-|                                                   |
-+--------------------------------------------------+
-```
-
-### 3. Apply to All Books Using Text Files
-- The same approach will work for `kashif-en.txt` if it has similar page number patterns.
-- Check and apply the same logic in `src/data/kashif-en.ts`.
-
-## Technical Details
-
-**Marker format**: `{{PAGE:N}}` where N is the original PDF page number.
-
-**CSS approach**: A relatively-positioned paragraph wrapper with an absolutely-positioned span for the page number, placed outside the text flow in the right margin.
-
-**Theme compatibility**: The page number will use `text-muted-foreground` with reduced opacity to work across all four reader themes (Light, Sepia, Dark, Midnight).
+## Result
+- Bottom bar shows "Page 1 of 16" (or however many real sections exist)
+- Each "page" in the reader corresponds to a real chapter or section from the PDF
+- Navigation (TOC, swipe, arrows) moves between actual book divisions
+- Long chapters simply scroll within their section
 
