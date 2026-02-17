@@ -74,8 +74,8 @@ const FormattedContent = ({ content, fontSize }: FormattedContentProps) => {
           return (
             <p key={idx} className="text-justify leading-relaxed" style={{ fontSize }}>
               <span
-                className="float-left font-serif font-bold text-primary leading-none"
-                style={{ fontSize: fontSize * 3.2, marginTop: '0.05em', marginRight: '0.08em' }}
+                className="float-left font-serif font-bold text-primary"
+                style={{ fontSize: fontSize * 3.2, lineHeight: 0.8, marginRight: '0.08em', paddingTop: '0.05em' }}
               >
                 {firstChar}
               </span>
