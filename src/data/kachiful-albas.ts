@@ -11,9 +11,10 @@ export interface KachifulSection {
   chapter: string;
   heading: string;
   content: string;
+  pageNumber: number;
 }
 
-// Section markers to parse from the raw text file
+// Chapter markers – used to track part/chapter context for each page
 const SECTION_MARKERS = [
   { line: "AVANT PROPOS", part: "", chapter: "Avant-propos", heading: "Avant-propos" },
   { line: "INTRODUCTION", part: "", chapter: "Introduction", heading: "Introduction — L'éducation spirituelle (Tarbiya)" },
@@ -40,9 +41,27 @@ function normalizeApostrophes(text: string): string {
 
 function cleanContent(text: string): string {
   return text
-    // Convert standalone page numbers into markers
-    .replace(/^\s*(\d{1,3})\s*$/gm, "\n\n{{PAGE:$1}}\n\n")
-    // Remove chapter headers that appear inline (all-caps lines that are section markers)
+    // Remove sommaire/TOC-style lines (containing sequences of dots)
+    .replace(/^.*\.{5,}.*$/gm, "")
+    // Remove standalone section marker lines (all-caps chapter titles)
+    .replace(/^AVANT PROPOS\s*$/gm, "")
+    .replace(/^INTRODUCTION\s*$/gm, "")
+    .replace(/^PREMIERE PARTIE\s*$/gm, "")
+    .replace(/^DEUXIEME PARTIE\s*$/gm, "")
+    .replace(/^TROISIEME PARTIE\s*$/gm, "")
+    .replace(/^CONCLUSION\s*$/gm, "")
+    .replace(/^LES REALITES DU SOUFISME.*$/gm, "")
+    .replace(/^LES BIENFAITS DU ZIKR\s*$/gm, "")
+    .replace(/^LA REUNION POUR LE ZIKR.*$/gm, "")
+    .replace(/^LA FAYDA TIJANIYA.*$/gm, "")
+    .replace(/^LES CONNAISSANCES EXPERIMENTALES.*$/gm, "")
+    .replace(/^LES METHODES D.EDUCATION SPIRITUELLE.*$/gm, "")
+    .replace(/^MISE EN GARDE CONTRE LA CONTRADICTION.*$/gm, "")
+    .replace(/^LA NECESSITE DE RECHERCHER UN GUIDE.*$/gm, "")
+    .replace(/^PROPOS DESTINES A UN CHAPITRE PRECEDENT.*$/gm, "")
+    .replace(/^LA VERACITE DE LA VISION.*$/gm, "")
+    .replace(/^Présentation de l.*(Idi|Idj).*$/gm, "")
+    // Remove chapter headers
     .replace(/^CHAPITRE [IVX]+\s*$/gm, "")
     .replace(/^Chapitre [IVX]+\s*$/gm, "")
     .replace(/^Elle contient trois chap[iî]tres[.:]\s*$/gm, "")
@@ -53,61 +72,118 @@ function cleanContent(text: string): string {
 }
 
 /**
- * Split a long section into smaller sub-sections of roughly `maxParagraphs` paragraphs each.
+ * Parse the TXT file page-by-page using standalone page numbers as split points.
+ * Each resulting section corresponds to one physical page from the original PDF.
  */
 export async function loadKachifulAlbasSections(): Promise<KachifulSection[]> {
   const response = await fetch("/books/kachiful-albas-fr.txt");
   const text = await response.text();
   const lines = text.split("\n");
 
-  const rawSections: KachifulSection[] = [];
-  let currentMarkerIdx = -1;
-  let currentStart = -1;
+  // Regex to detect standalone page numbers
+  const pageNumRegex = /^\s*(\d{1,3})\s*$/;
 
-  // Skip the title page + table of contents (first ~48 lines)
-  const scanStart = 48;
-
-  for (let i = scanStart; i < lines.length; i++) {
-    const line = normalizeApostrophes(lines[i].trim()).toUpperCase();
-
-    // Check if this line matches any section marker (in order)
-    for (let m = currentMarkerIdx + 1; m < SECTION_MARKERS.length; m++) {
-      if (line.startsWith(normalizeApostrophes(SECTION_MARKERS[m].line).toUpperCase())) {
-        // Save previous section
-        if (currentMarkerIdx >= 0 && currentStart >= 0) {
-          const marker = SECTION_MARKERS[currentMarkerIdx];
-          const content = cleanContent(lines.slice(currentStart, i).join("\n"));
-          if (content.length > 10 || marker.heading === marker.chapter) {
-            rawSections.push({
-              id: `kfr-${currentMarkerIdx}`,
-              part: marker.part,
-              chapter: marker.chapter,
-              heading: marker.heading,
-              content,
-            });
-          }
+  // First pass: find all page boundaries (line index → page number)
+  const pageBoundaries: { lineIdx: number; pageNum: number }[] = [];
+  for (let i = 0; i < lines.length; i++) {
+    const match = lines[i].match(pageNumRegex);
+    if (match) {
+      const num = parseInt(match[1], 10);
+      // Only accept sequential or near-sequential page numbers
+      if (pageBoundaries.length === 0) {
+        if (num <= 3) pageBoundaries.push({ lineIdx: i, pageNum: num });
+      } else {
+        const lastNum = pageBoundaries[pageBoundaries.length - 1].pageNum;
+        // Allow pages in order (some pages might be missing)
+        if (num > lastNum && num <= lastNum + 5) {
+          pageBoundaries.push({ lineIdx: i, pageNum: num });
         }
+      }
+    }
+  }
+
+  // Find where actual content begins (after the sommaire/TOC).
+  // The sommaire contains chapter titles with "..." dots. The actual "AVANT PROPOS" 
+  // section starts on a line without dots, after the TOC.
+  let scanStartLine = 0;
+  for (let i = 0; i < lines.length; i++) {
+    const trimmed = lines[i].trim().toUpperCase();
+    // Find "AVANT PROPOS" that is NOT a sommaire entry (no dots)
+    if (trimmed === "AVANT PROPOS" || trimmed === "AVANT-PROPOS") {
+      scanStartLine = i;
+      break;
+    }
+  }
+
+  // Second pass: for each page, track which chapter marker applies
+  // Only scan AFTER the sommaire to avoid false matches in the table of contents
+  let currentMarkerIdx = -1;
+  const lineToMarker: Map<number, number> = new Map(); // lineIdx → marker index changes
+
+  for (let i = scanStartLine; i < lines.length; i++) {
+    const normalized = normalizeApostrophes(lines[i].trim()).toUpperCase();
+    for (let m = currentMarkerIdx + 1; m < SECTION_MARKERS.length; m++) {
+      if (normalized.startsWith(normalizeApostrophes(SECTION_MARKERS[m].line).toUpperCase())) {
         currentMarkerIdx = m;
-        currentStart = i + 1;
+        lineToMarker.set(i, m);
         break;
       }
     }
   }
 
-  // Save last section
-  if (currentMarkerIdx >= 0 && currentStart >= 0) {
-    const marker = SECTION_MARKERS[currentMarkerIdx];
-    const content = cleanContent(lines.slice(currentStart).join("\n"));
-    if (content.length > 10 || marker.heading === marker.chapter) {
-      rawSections.push({
-        id: `kfr-${currentMarkerIdx}`,
-        part: marker.part,
-        chapter: marker.chapter,
-        heading: marker.heading,
-        content,
-      });
+  // Build sections: skip pages 1-2 (title + TOC)
+  const sections: KachifulSection[] = [];
+  let activeMarkerIdx = -1;
+
+  for (let p = 0; p < pageBoundaries.length; p++) {
+    const { lineIdx, pageNum } = pageBoundaries[p];
+
+    // Skip front matter (pages 1 and 2)
+    if (pageNum <= 2) {
+      // But still update marker context for lines in these pages
+      const endLine = p + 1 < pageBoundaries.length ? pageBoundaries[p + 1].lineIdx : lines.length;
+      for (let i = lineIdx; i < endLine; i++) {
+        if (lineToMarker.has(i)) activeMarkerIdx = lineToMarker.get(i)!;
+      }
+      continue;
     }
+
+    // Determine content range: from line after page number to next page boundary
+    let contentStart = lineIdx + 1;
+    const contentEnd = p + 1 < pageBoundaries.length ? pageBoundaries[p + 1].lineIdx : lines.length;
+
+    // For the first content page (page 3), skip remaining sommaire lines
+    // by starting from the first section marker found on that page
+    if (pageNum === 3) {
+      for (let i = contentStart; i < contentEnd; i++) {
+        if (lineToMarker.has(i)) {
+          contentStart = i;
+          break;
+        }
+      }
+    }
+
+    // Update marker context for lines within this page
+    for (let i = lineIdx; i < contentEnd; i++) {
+      if (lineToMarker.has(i)) activeMarkerIdx = lineToMarker.get(i)!;
+    }
+
+    const rawContent = lines.slice(contentStart, contentEnd).join("\n");
+    const content = cleanContent(rawContent);
+
+    if (content.length < 5) continue; // skip empty pages
+
+    const marker = activeMarkerIdx >= 0 ? SECTION_MARKERS[activeMarkerIdx] : null;
+
+    sections.push({
+      id: `kfr-page-${pageNum}`,
+      part: marker?.part || "",
+      chapter: marker?.chapter || "",
+      heading: marker?.heading || `Page ${pageNum}`,
+      content,
+      pageNumber: pageNum,
+    });
   }
 
-  return rawSections;
+  return sections;
 }
