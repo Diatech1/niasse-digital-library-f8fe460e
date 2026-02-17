@@ -114,12 +114,19 @@ const Reader = () => {
   const tocItems = useMemo(() => {
     const chapters: { chapter: string; sections: { id: string; heading: string; index: number }[] }[] = [];
     allSections.forEach((s, idx) => {
-      const chKey = s.part && s.chapter ? `${s.part} — ${s.chapter}` : s.chapter || s.heading;
+      // Build chapter key, avoiding redundant "X — X" when part === chapter
+      const chKey = s.part && s.chapter
+        ? (s.part === s.chapter ? s.part : `${s.part} — ${s.chapter}`)
+        : s.chapter || s.heading;
       const last = chapters[chapters.length - 1];
+      // Build display heading: use page number if heading matches chapter to avoid repetition
+      const displayHeading = (last && last.chapter === chKey && s.heading === last.sections[0]?.heading)
+        ? `Page ${idx + 1}`
+        : s.heading;
       if (!last || last.chapter !== chKey) {
         chapters.push({ chapter: chKey, sections: [{ id: s.id, heading: s.heading, index: idx }] });
       } else {
-        last.sections.push({ id: s.id, heading: s.heading, index: idx });
+        last.sections.push({ id: s.id, heading: displayHeading, index: idx });
       }
     });
     return chapters;
