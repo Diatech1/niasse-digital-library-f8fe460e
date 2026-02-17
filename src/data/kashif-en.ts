@@ -71,7 +71,7 @@ function cleanContent(text: string): string {
     .replace(/^\d+\s+THE REMOVAL OF CONFUSION\s*$/gm, "")
     .replace(/^THE REMOVAL OF CONFUSION\s*$/gm, "")
     .replace(/^[ivxlc]+\s*$/gim, "")
-    .replace(/^\d+\s*$/gm, "")
+    .replace(/^\s*(\d+)\s*$/gm, "\n\n{{PAGE:$1}}\n\n")
     // Remove section header lines that appear as page headers
     .replace(/^Concerning the reality of Sufism\s*$/gm, "")
     .replace(/^The Excellence of Allah's Remembrance \(dhikr\)\s*$/gm, "")

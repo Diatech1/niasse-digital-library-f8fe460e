@@ -38,8 +38,8 @@ function normalizeApostrophes(text: string): string {
 
 function cleanContent(text: string): string {
   return text
-    // Remove standalone page numbers
-    .replace(/^\d{1,3}\s*$/gm, "")
+    // Convert standalone page numbers into markers
+    .replace(/^\s*(\d{1,3})\s*$/gm, "\n\n{{PAGE:$1}}\n\n")
     // Remove chapter headers that appear inline (all-caps lines that are section markers)
     .replace(/^CHAPITRE [IVX]+\s*$/gm, "")
     .replace(/^Chapitre [IVX]+\s*$/gm, "")
