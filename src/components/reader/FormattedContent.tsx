@@ -21,6 +21,21 @@ const FormattedContent = ({ content, fontSize }: FormattedContentProps) => {
       {paragraphs.map((para, idx) => {
         const trimmed = para.trim();
 
+        // Detect page number markers {{PAGE:N}}
+        const pageMatch = trimmed.match(/^\{\{PAGE:(\d+)\}\}$/);
+        if (pageMatch) {
+          return (
+            <div key={idx} className="relative h-0 overflow-visible">
+              <span
+                className="absolute right-[-2.5rem] top-0 text-muted-foreground/50 select-none"
+                style={{ fontSize: fontSize * 0.65 }}
+              >
+                {pageMatch[1]}
+              </span>
+            </div>
+          );
+        }
+
         // Detect footnote blocks (lines starting with numbers followed by period)
         if (/^\d+\.\s/.test(trimmed) && trimmed.length < 500) {
           const footnotes = trimmed.split(/\n/).filter((l) => l.trim());
