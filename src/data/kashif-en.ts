@@ -66,6 +66,15 @@ function normalizeApostrophes(text: string): string {
   return text.replace(/[\u2018\u2019\u201A\u201B\u0060\u00B4\u2032]/g, "'");
 }
 
+// Known missing drop cap initials from PDF extraction (letter completely lost)
+const MISSING_INITIAL_FIXES: [RegExp, string][] = [
+  [/^ll thanks/m, "All thanks"],
+  [/^he Kāshif al-Ilbās/m, "The Kāshif al-Ilbās"],
+  [/^his translation/m, "This translation"],
+  [/^ccording to/m, "According to"],
+  [/^ufism/m, "Sufism"],
+];
+
 function cleanContent(text: string): string {
   let cleaned = fixEncoding(text)
     // Rejoin standalone drop cap letters (PDF extraction artifact: "T\nhe" → "The")
@@ -109,6 +118,14 @@ function cleanContent(text: string): string {
       // Remove the standalone letter and prepend it to the content
       cleaned = cleaned.replace(/^[A-Z]$/m, "").replace(/\n{2,}/g, "\n\n").trim();
       cleaned = dropCapMatch[1] + cleaned;
+    }
+  }
+  
+  // Fix known missing drop cap initials (PDF completely lost the letter)
+  for (const [pattern, replacement] of MISSING_INITIAL_FIXES) {
+    if (pattern.test(cleaned)) {
+      cleaned = cleaned.replace(pattern, replacement);
+      break;
     }
   }
   

@@ -67,8 +67,8 @@ const FormattedContent = ({ content, fontSize }: FormattedContentProps) => {
           );
         }
 
-        // First paragraph gets a drop cap
-        if (idx === 0 && trimmed.length > 100) {
+        // First paragraph gets a drop cap (only if starts with uppercase)
+        if (idx === 0 && trimmed.length > 100 && /^[A-Z]/.test(trimmed)) {
           const firstChar = trimmed[0];
           const rest = trimmed.slice(1);
           return (
