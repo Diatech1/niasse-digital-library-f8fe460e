@@ -398,9 +398,14 @@ const Reader = () => {
           const dy = e.changedTouches[0].clientY - touchStartY.current;
           touchStartX.current = null;
           touchStartY.current = null;
+          // Horizontal swipe → navigate sections
           if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
             if (dx < 0 && currentSectionIdx < allSections.length - 1) goToSection(currentSectionIdx + 1);
             else if (dx > 0 && currentSectionIdx > 0) goToSection(currentSectionIdx - 1);
+          }
+          // Swipe-up → reveal chrome when hidden
+          if (!chromeVisible && dy < -60 && Math.abs(dy) > Math.abs(dx) * 1.5) {
+            setChromeVisible(true);
           }
         }}
       >
