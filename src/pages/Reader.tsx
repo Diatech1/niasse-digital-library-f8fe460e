@@ -57,6 +57,7 @@ const Reader = () => {
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [chromeVisible, setChromeVisible] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const toggleFullscreen = useCallback(() => {
@@ -259,7 +260,7 @@ const Reader = () => {
   return (
     <div ref={containerRef} className={`min-h-screen ${theme.bg} ${theme.text} transition-colors duration-300 flex flex-col`}>
       {/* Top bar */}
-      <div className="flex items-center gap-2 px-3 py-3 border-b border-border/20">
+      <div className={`flex items-center gap-2 px-3 py-3 border-b border-border/20 transition-all duration-300 ${chromeVisible ? '' : 'opacity-0 max-h-0 overflow-hidden !py-0 !border-b-0'}`}>
         <button onClick={() => navigate(-1)} className="p-2 flex-shrink-0">
           <ArrowLeft className="w-5 h-5" />
         </button>
@@ -292,7 +293,7 @@ const Reader = () => {
       </div>
 
       {/* Font selector */}
-      <div className="flex items-center justify-center gap-2 py-2 border-b border-border/20">
+      <div className={`flex items-center justify-center gap-2 py-2 border-b border-border/20 transition-all duration-300 ${chromeVisible ? '' : 'opacity-0 max-h-0 overflow-hidden !py-0 !border-b-0'}`}>
         {fonts.map((f, i) => (
           <button
             key={f}
@@ -320,8 +321,9 @@ const Reader = () => {
       {/* Reading content */}
       <div
         ref={contentRef}
-        className={`flex-1 overflow-y-auto px-6 py-8 pb-32 max-w-2xl mx-auto w-full ${fontClass} leading-relaxed`}
+        className={`flex-1 overflow-y-auto px-6 py-8 ${chromeVisible ? 'pb-32' : 'pb-8'} max-w-2xl mx-auto w-full ${fontClass} leading-relaxed cursor-pointer`}
         style={{ fontSize }}
+        onClick={() => setChromeVisible((v) => !v)}
         onTouchStart={(e) => {
           touchStartX.current = e.touches[0].clientX;
           touchStartY.current = e.touches[0].clientY;
@@ -352,15 +354,17 @@ const Reader = () => {
       </div>
 
       {/* Bottom bar with navigation */}
-      <ReaderBottomBar
-        currentPage={currentSectionIdx + 1}
-        totalPages={allSections.length}
-        onPrevPage={() => goToSection(currentSectionIdx - 1)}
-        onNextPage={() => goToSection(currentSectionIdx + 1)}
-        onOpenToc={() => setTocOpen(true)}
-        hasPrev={currentSectionIdx > 0}
-        hasNext={currentSectionIdx < allSections.length - 1}
-      />
+      <div className={`transition-all duration-300 ${chromeVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-full pointer-events-none'}`}>
+        <ReaderBottomBar
+          currentPage={currentSectionIdx + 1}
+          totalPages={allSections.length}
+          onPrevPage={() => goToSection(currentSectionIdx - 1)}
+          onNextPage={() => goToSection(currentSectionIdx + 1)}
+          onOpenToc={() => setTocOpen(true)}
+          hasPrev={currentSectionIdx > 0}
+          hasNext={currentSectionIdx < allSections.length - 1}
+        />
+      </div>
 
       {/* TOC Sheet */}
       <Sheet open={tocOpen} onOpenChange={setTocOpen}>
