@@ -21,7 +21,7 @@ const themes = [
   { name: "Midnight", bg: "bg-[hsl(240,20%,8%)]", text: "text-[hsl(40,10%,80%)]" },
 ];
 
-const fonts = ["Sans", "Serif", "Arabic"];
+const fonts = ["Sans", "Serif", "Mono"];
 
 const sampleTextEn = `In the name of Allah, the Most Merciful, the Most Compassionate.
 
@@ -193,7 +193,7 @@ const Reader = () => {
     if (idx >= 0) goToSection(idx);
   }, [allSections, goToSection]);
 
-  const fontClass = fontIdx === 0 ? "font-sans" : fontIdx === 1 ? "font-serif" : "font-arabic";
+  const fontClass = fontIdx === 0 ? "font-sans" : fontIdx === 1 ? "font-serif" : "font-mono";
 
   if (!book) return null;
 
