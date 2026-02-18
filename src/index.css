@@ -141,3 +141,7 @@
     }
   }
 }
+
+body.reader-chrome-hidden .bottom-nav {
+  display: none;
+}
