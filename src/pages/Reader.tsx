@@ -5,7 +5,7 @@ import { ruhAlAdabVerses, ruhAlAdabMeta } from "@/data/ruh-al-adab";
 import { comprendreFaydhahSections, comprendreFaydhahMeta } from "@/data/comprendre-faydhah";
 import { loadKachifulAlbasSections, kachifulAlbasMeta, type KachifulSection } from "@/data/kachiful-albas";
 import { loadKashifEnSections, kashifEnMeta, type KashifEnSection } from "@/data/kashif-en";
-import { ArrowLeft, Loader2, Search, Maximize, Minimize, Headphones, Play, Pause, Square, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, Loader2, Search, Maximize, Minimize, Headphones, Play, Pause, Square, ChevronLeft, ChevronRight, Bookmark, BookmarkCheck } from "lucide-react";
 import { useReadAlong, splitIntoSentences, stripForSpeech } from "@/hooks/use-read-along";
 import { useSaveProgress, getSavedProgress } from "@/hooks/use-reading-progress";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -14,6 +14,8 @@ import ChapterDropdown from "@/components/reader/ChapterDropdown";
 import ReaderBottomBar from "@/components/reader/ReaderBottomBar";
 import FormattedContent from "@/components/reader/FormattedContent";
 import ReaderSearch from "@/components/reader/ReaderSearch";
+import BookmarkDialog from "@/components/reader/BookmarkDialog";
+import { useBookmarks } from "@/hooks/use-bookmarks";
 
 const themes = [
   { name: "Light", bg: "bg-[hsl(40,20%,95%)]", text: "text-[hsl(0,0%,15%)]" },
@@ -68,6 +70,8 @@ const Reader = () => {
   const readAlong = useReadAlong();
   const [readAlongActive, setReadAlongActive] = useState(false);
   const saveProgress = useSaveProgress(id);
+  const { bookmarks, addBookmark, removeBookmark, isBookmarked } = useBookmarks(id);
+  const [bookmarkDialogOpen, setBookmarkDialogOpen] = useState(false);
 
   const toggleFullscreen = useCallback(() => {
     if (!document.fullscreenElement) {
@@ -350,6 +354,18 @@ const Reader = () => {
           <button onClick={toggleFullscreen} className="p-2">
             {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
           </button>
+          {/* Bookmark trigger */}
+          {currentSection && currentSection.content !== "__sample__" && currentSection.content !== "__ruh__" && (
+            <button
+              onClick={() => setBookmarkDialogOpen(true)}
+              className="p-2 rounded-full hover:bg-primary/10 transition-colors"
+              title={isBookmarked(currentSectionIdx) ? "Edit bookmark" : "Add bookmark"}
+            >
+              {isBookmarked(currentSectionIdx)
+                ? <BookmarkCheck className="w-4 h-4 text-primary" />
+                : <Bookmark className="w-4 h-4" />}
+            </button>
+          )}
           {/* Read Along trigger */}
           {canReadAlong && !readAlongActive && (
             <button
@@ -546,6 +562,37 @@ const Reader = () => {
           </SheetHeader>
           <ScrollArea className="h-[calc(100vh-60px)]">
             <div className="px-4 py-3 space-y-4">
+              {/* Bookmarks section */}
+              {bookmarks.length > 0 && (
+                <div>
+                  <p className="text-xs font-bold text-primary uppercase tracking-wider mb-2 flex items-center gap-1">
+                    <Bookmark className="w-3 h-3" /> Bookmarks
+                  </p>
+                  <div className="space-y-1">
+                    {bookmarks.map((bm) => (
+                      <button
+                        key={bm.id}
+                        onClick={() => {
+                          setTocOpen(false);
+                          setTimeout(() => goToSection(bm.sectionIdx), 300);
+                        }}
+                        className={`block w-full text-left text-sm py-1.5 px-2 rounded hover:bg-primary/10 transition-colors ${
+                          bm.sectionIdx === currentSectionIdx ? "bg-primary/15 font-semibold" : ""
+                        }`}
+                      >
+                        <span className="text-xs text-muted-foreground block">p.{bm.pageNumber}</span>
+                        <span className="line-clamp-1">{bm.heading}</span>
+                        {bm.note && (
+                          <span className="text-xs text-muted-foreground italic line-clamp-1 mt-0.5">{bm.note}</span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="border-t border-border/20 my-3" />
+                </div>
+              )}
+
+              {/* Chapters */}
               {tocItems.map((ch) => (
                 <div key={ch.chapter}>
                   <p className="text-xs font-bold text-primary uppercase tracking-wider mb-2">{ch.chapter}</p>
@@ -575,6 +622,20 @@ const Reader = () => {
         </SheetContent>
       </Sheet>
 
+      {/* Bookmark Dialog */}
+      {currentSection && (
+        <BookmarkDialog
+          open={bookmarkDialogOpen}
+          pageNumber={currentSectionIdx + 1}
+          heading={currentSection.heading}
+          existingNote={bookmarks.find((b) => b.sectionIdx === currentSectionIdx)?.note}
+          onSave={(note) => addBookmark(currentSectionIdx, currentSectionIdx + 1, currentSection.heading, note)}
+          onRemove={() => removeBookmark(currentSectionIdx)}
+          onClose={() => setBookmarkDialogOpen(false)}
+          themeClasses={{ bg: theme.bg, text: theme.text }}
+        />
+      )}
+
       {/* Search */}
       <ReaderSearch
         open={searchOpen}
@@ -588,3 +649,4 @@ const Reader = () => {
 };
 
 export default Reader;
+
