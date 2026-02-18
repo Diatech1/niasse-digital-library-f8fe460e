@@ -140,16 +140,25 @@ const Reader = () => {
   }, [book?.contentModule, kashifEnData, kachifulAlbasData]);
 
   const tocItems = useMemo(() => {
+    // For page-by-page books (kashif-en, kachiful-albas), build a deduplicated TOC:
+    // one entry per unique chapter/heading combination, pointing to the first page of that section.
     const chapters: { chapter: string; sections: { id: string; heading: string; index: number }[] }[] = [];
+    const seenHeadings = new Set<string>();
+
     allSections.forEach((s, idx) => {
       const chKey = s.part && s.chapter
         ? (s.part === s.chapter ? s.part : `${s.part} — ${s.chapter}`)
         : s.chapter || s.heading;
+
+      // Deduplicate: skip if this exact heading was already added under this chapter
+      const dedupeKey = `${chKey}||${s.heading}`;
+      if (seenHeadings.has(dedupeKey)) return;
+      seenHeadings.add(dedupeKey);
+
       const last = chapters[chapters.length - 1];
-      const isDuplicate = last && last.chapter === chKey && s.heading === last.sections[0]?.heading;
       if (!last || last.chapter !== chKey) {
         chapters.push({ chapter: chKey, sections: [{ id: s.id, heading: s.heading, index: idx }] });
-      } else if (!isDuplicate) {
+      } else {
         last.sections.push({ id: s.id, heading: s.heading, index: idx });
       }
     });
