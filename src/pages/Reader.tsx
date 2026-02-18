@@ -5,6 +5,7 @@ import { ruhAlAdabVerses, ruhAlAdabMeta } from "@/data/ruh-al-adab";
 import { comprendreFaydhahSections, comprendreFaydhahMeta } from "@/data/comprendre-faydhah";
 import { loadKachifulAlbasSections, kachifulAlbasMeta, type KachifulSection } from "@/data/kachiful-albas";
 import { loadKashifEnSections, kashifEnMeta, type KashifEnSection } from "@/data/kashif-en";
+import { wirdTidjaneSections, wirdTidjaneMeta } from "@/data/wird-tidjane";
 import { ArrowLeft, Loader2, Search, Maximize, Minimize, Headphones, Play, Pause, Square, ChevronLeft, ChevronRight, Bookmark, BookmarkCheck } from "lucide-react";
 import { useReadAlong, splitIntoSentences, stripForSpeech } from "@/hooks/use-read-along";
 import { useSaveProgress, getSavedProgress } from "@/hooks/use-reading-progress";
@@ -125,6 +126,14 @@ const Reader = () => {
     }
     if (book?.contentModule === "comprendre-faydhah") {
       return comprendreFaydhahSections.map((s) => ({
+        id: s.id,
+        chapter: s.chapter,
+        heading: s.heading,
+        content: s.content,
+      }));
+    }
+    if (book?.contentModule === "wird-tidjane") {
+      return wirdTidjaneSections.map((s) => ({
         id: s.id,
         chapter: s.chapter,
         heading: s.heading,
