@@ -348,7 +348,7 @@ const Reader = () => {
       </div>
 
       {/* Font selector */}
-      <div className={`flex items-center justify-center gap-2 py-2 border-b border-border/20 transition-all duration-300 ${chromeVisible ? '' : 'opacity-0 max-h-0 overflow-hidden !py-0 !border-b-0'}`}>
+      <div className={`flex items-center justify-center gap-2 py-2 border-b border-border/20 transition-all duration-300 ${chromeVisible && !isFullscreen ? '' : 'opacity-0 max-h-0 overflow-hidden !py-0 !border-b-0'}`}>
         {fonts.map((f, i) => (
           <button
             key={f}
