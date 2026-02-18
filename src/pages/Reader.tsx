@@ -7,6 +7,7 @@ import { loadKachifulAlbasSections, kachifulAlbasMeta, type KachifulSection } fr
 import { loadKashifEnSections, kashifEnMeta, type KashifEnSection } from "@/data/kashif-en";
 import { ArrowLeft, Loader2, Search, Maximize, Minimize, Headphones, Play, Pause, Square, ChevronLeft, ChevronRight } from "lucide-react";
 import { useReadAlong, splitIntoSentences, stripForSpeech } from "@/hooks/use-read-along";
+import { useSaveProgress, getSavedProgress } from "@/hooks/use-reading-progress";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ChapterDropdown from "@/components/reader/ChapterDropdown";
@@ -52,7 +53,7 @@ const Reader = () => {
   const [fontSize, setFontSize] = useState(16);
   const [tocOpen, setTocOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [currentSectionIdx, setCurrentSectionIdx] = useState(0);
+  const [currentSectionIdx, setCurrentSectionIdx] = useState(() => getSavedProgress(id));
   const contentRef = useRef<HTMLDivElement>(null);
   const [kashifEnData, setKashifEnData] = useState<KashifEnSection[]>([]);
   const [kachifulAlbasData, setKachifulAlbasData] = useState<KachifulSection[]>([]);
@@ -66,6 +67,7 @@ const Reader = () => {
   // Read along state
   const readAlong = useReadAlong();
   const [readAlongActive, setReadAlongActive] = useState(false);
+  const saveProgress = useSaveProgress(id);
 
   const toggleFullscreen = useCallback(() => {
     if (!document.fullscreenElement) {
@@ -92,6 +94,9 @@ const Reader = () => {
       loadKashifEnSections().then((sections) => {
         setKashifEnData(sections);
         setLoading(false);
+        // Restore saved position after async load (clamp to valid range)
+        const saved = getSavedProgress(id);
+        if (saved > 0) setCurrentSectionIdx(Math.min(saved, sections.length - 1));
       });
     }
     if (book?.contentModule === "kachiful-albas") {
@@ -99,9 +104,11 @@ const Reader = () => {
       loadKachifulAlbasSections().then((sections) => {
         setKachifulAlbasData(sections);
         setLoading(false);
+        const saved = getSavedProgress(id);
+        if (saved > 0) setCurrentSectionIdx(Math.min(saved, sections.length - 1));
       });
     }
-  }, [book?.contentModule]);
+  }, [book?.contentModule, id]);
 
   const theme = themes[themeIdx];
 
@@ -201,9 +208,11 @@ const Reader = () => {
   }, [readAlong]);
 
   const goToSection = useCallback((idx: number) => {
-    setCurrentSectionIdx(Math.max(0, Math.min(idx, allSections.length - 1)));
+    const clamped = Math.max(0, Math.min(idx, allSections.length - 1));
+    setCurrentSectionIdx(clamped);
+    saveProgress(clamped);
     contentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
-  }, [allSections.length]);
+  }, [allSections.length, saveProgress]);
 
   const goToSectionById = useCallback((id: string) => {
     const idx = allSections.findIndex((s) => s.id === id);
