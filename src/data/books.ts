@@ -2,6 +2,7 @@ import cover7 from "@/assets/book-cover-7.jpg";
 import cover8 from "@/assets/book-cover-8.jpg";
 import cover9 from "@/assets/book-cover-9.jpg";
 import cover9b from "@/assets/book-cover-9b.jpg";
+import cover11 from "@/assets/book-cover-11.jpg";
 
 
 export interface Book {
@@ -75,5 +76,18 @@ export const books: Book[] = [
     description: "The Removal of Confusion Concerning the Flood of the Saintly Seal Aḥmad al-Tijānī — The magnum opus of Shaykh al-Islam Ibrāhīm Niasse, a comprehensive treatise on Sufism, spiritual training, and the Tijānī Flood. Translated by Zachary Wright, Muhtar Holland and Abdullahi El-Okene.",
     hasAudio: false,
     contentModule: "kashif-en",
+  },
+  {
+    id: "11",
+    title: "Le Wird Tidjane",
+    titleAr: "الورد التجاني",
+    author: "Tradition Tijâniyya",
+    cover: cover11,
+    language: "French",
+    pages: 10,
+    tags: ["Wird", "Dhikr", "Pratique", "Tarbiyya"],
+    description: "Le Wird Tidjane — Les conditions de la voie, le Lazim, la Wazifa, la Jawaratoul Kamal, le Dhikr du vendredi et les règles de réparation. Un guide complet pour la pratique quotidienne de la Tarîqa Tijâniyya.",
+    hasAudio: false,
+    contentModule: "wird-tidjane",
   },
 ];
