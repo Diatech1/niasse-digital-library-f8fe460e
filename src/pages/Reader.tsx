@@ -62,6 +62,7 @@ const Reader = () => {
   const [loading, setLoading] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
+  const touchHasMoved = useRef(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [chromeVisible, setChromeVisible] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -450,6 +451,8 @@ const Reader = () => {
           paddingBottom: chromeVisible ? (readAlongActive ? '12rem' : '11rem') : '5rem',
         }}
         onClick={() => {
+          // Only act if touch didn't move (i.e. it was a real tap, not a scroll)
+          if (touchHasMoved.current) return;
           if (readAlongActive) return;
           if (isFullscreen) {
             document.exitFullscreen().then(() => setIsFullscreen(false)).catch(() => {});
@@ -460,6 +463,13 @@ const Reader = () => {
         onTouchStart={(e) => {
           touchStartX.current = e.touches[0].clientX;
           touchStartY.current = e.touches[0].clientY;
+          touchHasMoved.current = false;
+        }}
+        onTouchMove={(e) => {
+          if (touchStartX.current === null || touchStartY.current === null) return;
+          const dx = Math.abs(e.touches[0].clientX - touchStartX.current);
+          const dy = Math.abs(e.touches[0].clientY - touchStartY.current);
+          if (dx > 8 || dy > 8) touchHasMoved.current = true;
         }}
         onTouchEnd={(e) => {
           if (touchStartX.current === null || touchStartY.current === null) return;
@@ -467,13 +477,13 @@ const Reader = () => {
           const dy = e.changedTouches[0].clientY - touchStartY.current;
           touchStartX.current = null;
           touchStartY.current = null;
-          // Horizontal swipe → navigate sections
-          if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+          // Horizontal swipe → navigate sections (not in fullscreen)
+          if (!isFullscreen && Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
             if (dx < 0 && currentSectionIdx < allSections.length - 1) goToSection(currentSectionIdx + 1);
             else if (dx > 0 && currentSectionIdx > 0) goToSection(currentSectionIdx - 1);
           }
-          // Swipe-up → reveal chrome when hidden
-          if (!chromeVisible && dy < -60 && Math.abs(dy) > Math.abs(dx) * 1.5) {
+          // Swipe-up → reveal chrome when hidden — only outside fullscreen
+          if (!isFullscreen && !chromeVisible && dy < -60 && Math.abs(dy) > Math.abs(dx) * 1.5) {
             setChromeVisible(true);
           }
         }}
