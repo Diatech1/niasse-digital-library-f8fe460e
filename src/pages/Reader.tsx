@@ -72,6 +72,7 @@ const Reader = () => {
   const saveProgress = useSaveProgress(id);
   const { bookmarks, addBookmark, removeBookmark, isBookmarked } = useBookmarks(id);
   const [bookmarkDialogOpen, setBookmarkDialogOpen] = useState(false);
+  const [showResumeBanner, setShowResumeBanner] = useState(() => getSavedProgress(id) > 0);
 
   const toggleFullscreen = useCallback(() => {
     if (!document.fullscreenElement) {
@@ -413,6 +414,32 @@ const Reader = () => {
           />
         ))}
       </div>
+
+      {/* Resume banner */}
+      {showResumeBanner && currentSectionIdx > 0 && (
+        <div className="flex items-center justify-between gap-3 px-4 py-2.5 bg-primary/10 border-b border-primary/20 text-sm">
+          <span className="text-foreground/80">
+            Resuming from <span className="font-semibold text-primary">page {currentSectionIdx + 1}</span>
+          </span>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <button
+              onClick={() => {
+                goToSection(0);
+                setShowResumeBanner(false);
+              }}
+              className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
+            >
+              Start over
+            </button>
+            <button
+              onClick={() => setShowResumeBanner(false)}
+              className="text-xs px-2.5 py-1 rounded-full bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Reading content */}
       <div
