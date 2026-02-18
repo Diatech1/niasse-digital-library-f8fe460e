@@ -406,6 +406,11 @@ const Reader = () => {
           </div>
         ) : (
           <>
+            {allSections.length > 1 && (
+              <p className="text-center text-xs text-muted-foreground/50 mb-6 tracking-widest select-none">
+                {currentSectionIdx + 1} / {allSections.length}
+              </p>
+            )}
             {currentSectionIdx === 0 && renderMeta()}
             {renderCurrentSection()}
           </>
