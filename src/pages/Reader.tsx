@@ -82,6 +82,11 @@ const Reader = () => {
   }, []);
 
   useEffect(() => {
+    document.body.classList.toggle("reader-chrome-hidden", !chromeVisible);
+    return () => document.body.classList.remove("reader-chrome-hidden");
+  }, [chromeVisible]);
+
+  useEffect(() => {
     if (book?.contentModule === "kashif-en") {
       setLoading(true);
       loadKashifEnSections().then((sections) => {
