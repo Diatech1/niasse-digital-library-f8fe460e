@@ -43,7 +43,7 @@ export const wirdTidjaneSections: WirdSection[] = [
 
 14. Ne jamais rompre ses liens avec qui que ce soit et surtout avec les Co-disciples.
 
-15. Il faut éviter toute négligence dans la pratique des oraisons, tel le fait de les accomplir hors de leur temps légal sans une excuse valable (ou quelque chose de ce genre).
+15. Il faut éviter toute négligence dans la pratique des oraisons, tel le fait de les accomplir hors de leur temps légal sans une excuse valable.
 
 16. Il ne faut pas donner aux autres la permission de réciter les oraisons Tidjani sans avoir l'autorisation authentique légitimant cet acte.
 
@@ -51,7 +51,7 @@ export const wirdTidjaneSections: WirdSection[] = [
 
 18 & 19. La propreté du corps et des habits si possible.
 
-20. Il faut s'asseoir vers la Qibla pendant la récitation des oraisons sauf en cas d'exception prévue, tel le voyage (même s'il est proche), l'assise en groupe.
+20. Il faut s'asseoir vers la Qibla pendant la récitation des oraisons sauf en cas d'exception prévue, tel le voyage, l'assise en groupe.
 
 21. Ne jamais interrompre la récitation pour d'autres paroles sauf en cas de force majeure.
 
@@ -63,83 +63,71 @@ export const wirdTidjaneSections: WirdSection[] = [
     id: "wt-2",
     chapter: "Sourate Al Fatiha",
     heading: "Sourate Al Fatiha",
-    content: `1. Bismi Allahi alrrahmani alrraheemi
-
-2. Alhamdu lillahi rabbi al'alameena
-
-3. Alrrahmani alrraheemi
-
-4. Maliki yawmi alddeeni
-
-5. Iyyaka na'budu wa-iyyaka nasta'eenu
-
-6. Ihdina alssirata almustaqeema
-
-7. Sirata allatheena an'amta 'alayhim ghayri almaghdoobi 'alayhim wala alddalleena`,
+    content: `Bismi Allahi alrrahmani alrraheemi
+Alhamdu lillahi rabbi al'alameena
+Alrrahmani alrraheemi
+Maliki yawmi alddeeni
+Iyyaka na'budu wa-iyyaka nasta'eenu
+Ihdina alssirata almustaqeema
+Sirata allatheena an'amta 'alayhim ghayri almaghdoobi 'alayhim wala alddalleena`,
   },
   {
     id: "wt-3",
     chapter: "Le Lazim",
     heading: "Le Lazim — Temps d'accomplissement",
-    content: `Le temps d'accomplissement :
+    content: `Le Lazim est le wird quotidien obligatoire, accompli deux fois par jour — le matin et le soir.
 
-Lazim du matin :
+Le Lazim du matin
 
-Le temps préférable (Ikhtiyari) : Après Salat Soubh et jusqu'à la période précédent le zénith (Douha El A'la).
+Le temps préférable (Ikhtiyari) s'étend après la Salat Soubh jusqu'à la période précédant le zénith (Douha El A'la). Le temps de nécessité dure jusqu'au coucher du soleil (Ghouroub).
 
-Le temps de nécessité : Jusqu'au coucher du soleil (Ghouroub).
+Le Lazim du soir
 
-Le Lazim du soir :
+Le temps préférable s'étend après la Salat 'Asr jusqu'à la prière du Icha. Le temps de nécessité dure jusqu'au Fajr.
 
-Le temps préférable : Après Salat 'Asr jusqu'à celle du Icha.
+Seïdina Ahmed Tidjani (qu'Allah sanctifie son précieux secret) a dit dans une lettre adressée aux disciples de Guemar : « Le temps d'accomplissement du wird (Lazim) est large. Celui de fin de journée, son temps va de la prière du 'Asr jusqu'à l'heure du 'Icha et toute cette période constitue son temps préférable d'accomplissement. Celui qui l'a dépassé en raison du travail, de la maladie, ou ce qui se rapporte à cela, le rattrape à n'importe quel moment de la nuit qui lui est possible. »
 
-Le temps de nécessité : Jusqu'au Fajr.
+Le wird du début de journée a son temps préférable d'accomplissement qui va de la prière du Soubh jusqu'au moment qui précède le Zénith (Douha El A'la) et celui qui a une excuse valide, il le rattrape à n'importe quel moment de la journée.
 
-Seïdina Ahmed Tidjani (qu'Allah sanctifie son précieux secret) a dit dans une lettre adressée aux disciples de Guemar : « Le temps d'accomplissement du wird (Lazim) est large. Celui de fin de journée, son temps va de la prière du 'Asr jusqu'à l'heure du 'Icha et toute cette période constitue son temps préférable d'accomplissement. Celui qui l'a dépassé en raison du travail, de la maladie, ou ce qui se rapporte à cela, le rattrape à n'importe quel moment de la nuit qui lui est possible.
+Il est rapporté dans Ifadatoul-Ahmediya que Seïdina Ahmed Tidjani a dit : « Celui qui a devancé son wird du Soubh et qu'il a été surpris par l'apparition du Fajr alors qu'il se trouvait dans sa récitation, qu'il le termine. »
 
-Le wird du début de journée a son temps préférable d'accomplissement qui va de la prière du Soubh jusqu'au moment qui précède le Zénith (Douha El A'la) et celui qui a une excuse valide, il le rattrape à n'importe quel moment de la journée ».
+Il est aussi rapporté que Seïdina Ahmed Tidjani a dit : « Celui qui désire devancer le wird du 'Asr (c'est-à-dire le Lazim du soir) il ne peut que s'il a un empêchement à ce moment-là, et qu'il le devance alors au cours de la nuit. »
 
-Il est rapporté dans Ifadatoul-Ahmediya que Seïdina Ahmed Tidjani (qu'Allah sanctifie son précieux secret) a dit : « Celui qui a devancé son wird du Soubh et qu'il a été surpris par l'apparition du Fajr (l'aube) alors qu'il se trouvait dans sa récitation, qu'il le termine ».
-
-Il est aussi rapporté par Sidi Taïeb Sefiani dans Ifadatoul-l-Ahmediya que Seïdina Ahmed Tidjani (qu'Allah sanctifie son précieux secret) a dit : « Celui qui désire devancer le wird du 'Asr (c'est-à-dire le Lazim du soir) il ne peut que s'il a un empêchement à ce moment-là, et qu'il le devance alors au cours de la nuit ».
-
-Sidi Taïeb Sefiani rapporte dans Ifadatoul-l-Ahmediya que quelqu'un demanda à Seïdina Ahmed Tidjani (qu'Allah sanctifie son précieux secret) sur le cas de celui qui est fiévreux : doit-il faire tout de même son Lazim, il a dit : « Le malade a le choix pour l'évocation de son wird sauf s'il en est capable ».`,
+Sidi Taïeb Sefiani rapporte que quelqu'un demanda à Seïdina Ahmed Tidjani sur le cas de celui qui est fiévreux : doit-il faire tout de même son Lazim ? Il a dit : « Le malade a le choix pour l'évocation de son wird sauf s'il en est capable. »`,
   },
   {
     id: "wt-4",
     chapter: "Le Lazim",
     heading: "Le Lazim — Formules et pratique",
-    content: `Depuis l'époque de Seïdina Ahmed Tîdjâni (qu'Allah sanctifie son précieux secret), ce qu'il reçut du Prophète (Sws) et qu'il autorisa à transmettre à ses compagnons et qu'eux, à leurs tours, ont transmis jusqu'à nos jours est :
+    content: `Depuis l'époque de Seïdina Ahmed Tîdjâni (qu'Allah sanctifie son précieux secret), ce qu'il reçut du Prophète ﷺ et qu'il autorisa à transmettre à ses compagnons, transmis jusqu'à nos jours, est le suivant :
 
-Aouzou Billahi mina chaytani radjim.
+Aouzou Billahi mina chaytani radjim — La Sourate Al Fatiha (1 fois).
 
-La Sourate Al Fatiha 1 fois.
+Astaghfiroullah — 100 fois.
 
-La formule de demande de pardon « Astaghfiroullah » 100 fois.
+La Salatoul Fatiha — 100 fois :
 
-La formule de Prière sur le Prophète (Sws) 100 fois :
+Allâhumma çalli alâ Seïdina Muhammadinil-fâtihi lima ughliqa ; wal-khâtimi limâ sabaqa ; nâçiril-haqqi bil-haqqi ; wal-hâdî ilâ çirâtikal-mustaqîmi wa 'alâ âlihî haqqa qadrihî wa miqdârihil-'azîm.
 
-Salatoul Fatiha : Allâhumma çalli alâ Seïdina Muhammadinil-fâtihi lima ughliqa ; wal-khâtimi limâ sabaqa ; nâçiril-haqqi bil-haqqi ; wal-hâdî ilâ çirâtikal-mustaqîmi wa 'alâ âlihî haqqa qadrihî wa miqdârihil-'azîm.
+De préférence, il faut utiliser la Salatoul Fatiha en raison de ses multiples mérites. Mais il est permis de la remplacer par une autre formule si on ne la connaît pas, ou qu'on est malade, en voyage, ou au travail. Dans ce cas, la formule que conseille Sidi Arbi ibn Sa-ih (rda) dans son Boughiyat est : « Allâhumma salli wa sallim ala Seïdina Mouhamadin wa ala alihi. »
 
-De préférence, il faut utiliser la Salatoul Fatiha en raison de ses multiples mérites, mais il est permis de la remplacer par une autre formule si on ne la connait pas ou qu'on est malade ou en voyage ou qu'on travaille, et qu'on désire ainsi l'alléger. Dans ce cas, la formule que conseille Sidi Arbi ibn Sa-ih (rda) dans son Boughiyat est : « Allâhumma salli wa sallim ala Seïdina Mouhamadin wa ala alihi ».
+Formule de transition méritoire (entre la Salatoul Fatiha et La Ilaha Ila Allah) :
 
-Prononcer cette formule de transition méritoire entre la Salatoul Fatiha et La Ilaha Ila Allah :
+Soub-hana rabbika rabbil izzati amma yassifouna wa salamoun anlal moursalina wal hamdoulillahi rabbil alamin.
 
-« Soub-hana rabbika rabbil izzati amma yassifouna wa salamoun anlal moursalina wal hamdoulillahi rabbil alamin ».
+La Ilaha Ila Allah — 100 fois.
 
-La proclamation de l'Unicité par la parole : « La Ilaha Ila Allah » 100 fois.
+Il est un devoir de clôturer le 100ème grain par la formule : « Seïdina Mouhamadou Rassouloullahi anleyhi sallamoullah. »
 
-Il est un devoir de clôturer le 100ème grain par la formule « Seïdina Mouhamadou Rassouloullahi anleyhi sallamoullah » (il existe des variantes de cette formule).
+Formule de clôture méritoire à la fin du Lazim :
 
-Prononcer cette formule de transition méritoire à la fin du Lazim :
-
-Innal lahâ wal malaa-ikatahu yussalouna alâ nabiyi yaa ayuhal lazina amanou sallou anleyhi wa sallimou tasliman sallal lahou anleyhi wa anla âlihi wa sahbihi wa salama tasliman, Soub-hana rabbika rabbil izzati amma yassifouna wa salamoun anlal moursalina wal hamdoulillahi rabbil alamin.`,
+Innal lahâ wal malaa-ikatahu yussalouna alâ nabiyi yaa ayuhal lazina amanou sallou anleyhi wa sallimou tasliman sallal lahou anleyhi wa anla âlihi wa sahbihi wa salama tasliman. Soub-hana rabbika rabbil izzati amma yassifouna wa salamoun anlal moursalina wal hamdoulillahi rabbil alamin.`,
   },
   {
     id: "wt-5",
     chapter: "La Wazifa",
     heading: "La Wazifa — Temps d'accomplissement",
-    content: `Le temps d'accomplissement : La Wadhifa n'est obligatoire qu'une fois par jour. Le meilleur moment pour l'accomplir est de le faire après le Maghreb. Son temps va du Asr d'un jour jusqu'au Asr de l'autre jour, et son temps de nécessité s'étend jusqu'au Maghreb de cet autre jour. C'est ainsi qu'agissait Seïdina Ahmed Tidjani (qu'Allah sanctifie son précieux secret) à la fin de sa vie.`,
+    content: `La Wadhifa n'est obligatoire qu'une fois par jour. Le meilleur moment pour l'accomplir est après le Maghreb. Son temps s'étend du 'Asr d'un jour jusqu'au 'Asr de l'autre jour, et son temps de nécessité jusqu'au Maghreb de cet autre jour. C'est ainsi qu'agissait Seïdina Ahmed Tidjani (qu'Allah sanctifie son précieux secret) à la fin de sa vie.`,
   },
   {
     id: "wt-6",
@@ -147,49 +135,41 @@ Innal lahâ wal malaa-ikatahu yussalouna alâ nabiyi yaa ayuhal lazina amanou sa
     heading: "La Wazifa — Piliers et pratique",
     content: `En voici les piliers :
 
-Aouzou Billahi mina chaytani radjim.
+Aouzou Billahi mina chaytani radjim — La Sourate Al Fatiha (1 fois).
 
-La Sourate Al Fatiha 1 fois.
+Astaghfiroullah al azimal lazi La Ilaha Ila houwal hayyul qayyum — 30 fois.
 
-Astaghfiroullah al azimal lazi La Ilaha Ila houwal hayyul qayyum 30 fois.
+La Salatoul Fatiha — 50 fois :
 
-La formule de Prière sur le Prophète (Sws) avec la Salatoul Fatiha 50 fois :
+Allâhumma çalli alâ Seïdina Muhammadinil-fâtihi lima ughliqa ; wal-khâtimi limâ sabaqa ; nâçiril-haqqi bil-haqqi ; wal-hâdî ilâ çirâtikal-mustaqîmi wa 'alâ âlihî haqqa qadrihî wa miqdârihil-'azîm.
 
-Salatoul Fatiha : Allâhumma çalli alâ Seïdina Muhammadinil-fâtihi lima ughliqa ; wal-khâtimi limâ sabaqa ; nâçiril-haqqi bil-haqqi ; wal-hâdî ilâ çirâtikal-mustaqîmi wa 'alâ âlihî haqqa qadrihî wa miqdârihil-'azîm.
+Il est important de le faire avec la Salatoul Fatiha uniquement — c'est une des conditions de validité de la Wazifa. On ne peut remplacer la Salatoul Fatiha par une autre formule de prière dans ce cas.
 
-Ici il est important de le faire avec la Salatoul Fatiha uniquement, et c'est même une des conditions de validité de la Wazifa, on ne peut remplacer dans ce cas la Salatoul Fatiha par une autre formule de prière.
+Formule de transition méritoire (entre la Salatoul Fatiha et La Ilaha Ila Allah) :
 
-Prononcer cette formule de transition méritoire avant l'autre pilier du Lazim (entre la Salatoul Fatiha et La Ilaha Ila Allah) :
+Soub-hana rabbika rabbil izzati amma yassifouna wa salamoun anlal moursalina wal hamdoulillahi rabbil alamin. (Sourate 37 Saffat, versets 180-181-182)
 
-« Soub-hana rabbika rabbil izzati amma yassifouna wa salamoun anlal moursalina wal hamdoulillahi rabbil alamin » (Sourate 37 Saffat, versets 180-181-182).
+La Ilaha Ila Allah — 100 fois.
 
-La proclamation de l'Unicité par la parole : « La Ilaha Ila Allah » 100 fois.
+Formule de transition méritoire (entre La Ilaha Ila Allah et la Jawaratoul Kamal) :
 
-Prononcer cette formule de transition méritoire entre La Ilaha Ila Allah et le Jawartoul Kamal :
-
-« Seïdina Mouhamadou Rassouloullahi anleyhi sallamoullah ».`,
+Seïdina Mouhamadou Rassouloullahi anleyhi sallamoullah.`,
   },
   {
     id: "wt-7",
     chapter: "La Wazifa",
     heading: "La Jawaratoul Kamal — Conditions et texte",
-    content: `La formule de Prière Jawaratoul Kamal.
+    content: `Conditions de récitation de la Jawaratoul Kamal
 
-Les conditions de récitation de la Jawaratoul Kamal :
+La pureté rituelle est requise : du corps, des vêtements et de l'endroit, avec les ablutions à l'eau. Il faut s'asseoir lors de la récitation.
 
-La pureté : Du corps, des vêtements, de l'endroit et l'ablution à l'eau.
+Sidi 'Arbi ibn Sa-ih (qu'Allah l'agrée) dit dans son Boughiyat : « Durant les voyages, lorsqu'on arrive à la Djaouharatou-l-Kamel, on doit descendre et la réciter en marchant, à condition que l'endroit soit pur. Certains compagnons disent que le voyageur peut la faire en marchant et s'asseoir à partir de la 7e perle jusqu'à la fin — c'est le plus préférable sauf en cas de nécessité. »
 
-S'asseoir lors de la récitation de Djaouharatou-l-Kamel.
+Seïdina Ahmed Tîdjâni a dit : « Celui qui se purifie par le Tayyamoum ne doit pas réciter Djaouharatou-l-Kamel, mais il la remplace par vingt Salat Fatiha lima ughliqa, car elle ne peut se réciter que par la pureté à l'eau et sur un tapis pur qui peut contenir six personnes. »
 
-Sidi 'Arbi ibn Sa-ih (qu'Allah l'agrée) dit dans son Boughiyat :
+Seïdina Ahmed Tîdjâni a dit aussi : « Pour celui qui n'arrive pas à apprendre la prière appelée Djaouharatou-l-Kamel, qu'il la remplace par vingt Salat Fatiha. »
 
-« Durant les voyages, on peut réciter les oraisons sur une monture, mais lorsqu'on arrive à la Djaouharatou-l-Kamel, on doit descendre et la réciter en marchant avec la condition toutefois que l'endroit où l'on marche soit pur. Certains compagnons (qu'Allah les agrée) disent que le voyageur peut la faire en marchant et que lorsqu'il arrive à la 7e perle, il s'assoit jusqu'à la fin de la récitation, pour moi (Sidi 'Arbi) c'est le plus préférable sauf dans les cas de nécessité telle la peur et Allah est le plus savant ».
-
-Il est rapporté, dans El Ifadatoul Ahmediya, que Seïdina Ahmed Tîdjâni (qu'Allah sanctifie son précieux secret) a dit : « Celui qui se purifie par le Tayyamoum ne doit pas réciter Djaouharatou-l-Kamel, mais il la remplace par vingt Salat Fatiha lima ughliqa, car elle ne peut se réciter que par la pureté à l'eau et sur un tapis pur qui peut contenir six personnes ; le Prophète (que la prière et la paix d'Allah soient sur lui) et les quatre khalifes assistent dès le septième Djaouharatou-l-Kamel ».
-
-Seïdina Ahmed Tîdjâni (qu'Allah sanctifie son précieux secret) a dit aussi dans une lettre : « Pour celui qui n'arrive pas à apprendre la prière appelée Djaouharatou-l-Kamel qu'il la remplace par vingt Salat Fatiha ».
-
-Jawaratoul Kamal :
+Jawaratoul Kamal
 
 Allâhumma salli wa sallim alâ aynir rahmatir rabbâniyyati wal yâqoutatil moutahaqqiqatil hâitati bimarkazil fouhoûmi wal ma'ânî wa noûril akwânil moutakawwinati ââdammiyyi sâhibil haqqir rabbâniyyil al barqil asta'i bimouzoûnil arbâhil mâliati likoulli moutagharridine minal bouhoûri wal awâni wa nôurikal lâmighil lazî malata bihi kawnakal hâita biamkinatil makânî.
 
@@ -201,74 +181,64 @@ Allâhumma salli wa sallim anla tal'atil haqqi bil haqqil kanezil anzami ifâdat
     id: "wt-8",
     chapter: "Le Dhikr du vendredi",
     heading: "Le Dhikr (hadara) du vendredi",
-    content: `Le temps d'accomplissement : Il ne s'accomplit que le vendredi, et seulement entre la prière du 'Asr et du Maghreb, le meilleur moment étant de lier sa récitation à la venue du Maghreb.
+    content: `Le Dhikr du vendredi ne s'accomplit que le vendredi, entre la prière du 'Asr et du Maghreb. Le meilleur moment est de lier sa récitation à la venue du Maghreb.
 
-Aouzou Billahi mina chaytani radjim.
+Aouzou Billahi mina chaytani radjim — La Sourate Al Fatiha (1 fois).
 
-La Sourate Al Fatiha 1 fois.
+Astaghfiroullah al azimal lazi La Ilaha Ila houwal hayyul qayyum — 3 fois.
 
-Astaghfiroullah al azimal lazi La Ilaha Ila houwal hayyul qayyum 3 fois.
+La Salatoul Fatiha — 3 fois :
 
-La formule de Prière sur le Prophète (Sws) avec la Salatoul Fatiha 3 fois :
+Allâhumma çalli alâ Seïdina Muhammadinil-fâtihi lima ughliqa ; wal-khâtimi limâ sabaqa ; nâçiril-haqqi bil-haqqi ; wal-hâdî ilâ çirâtikal-mustaqîmi wa 'alâ âlihî haqqa qadrihî wa miqdârihil-'azîm.
 
-Salatoul Fatiha : Allâhumma çalli alâ Seïdina Muhammadinil-fâtihi lima ughliqa ; wal-khâtimi limâ sabaqa ; nâçiril-haqqi bil-haqqi ; wal-hâdî ilâ çirâtikal-mustaqîmi wa 'alâ âlihî haqqa qadrihî wa miqdârihil-'azîm.
+Formule de transition méritoire (entre la Salatoul Fatiha et La Ilaha Ila Allah) :
 
-Prononcer cette formule de transition méritoire avant l'autre pilier du Lazim (entre la Salatoul Fatiha et La Ilaha Ila Allah) :
+Soub-hana rabbika rabbil izzati amma yassifouna wa salamoun anlal moursalina wal hamdoulillahi rabbil alamin. (Sourate 37 Saffat, versets 180-181-182)
 
-« Soub-hana rabbika rabbil izzati amma yassifouna wa salamoun anlal moursalina wal hamdoulillahi rabbil alamin » (Sourate 37 Saffat, versets 180-181-182).
+La Ilaha Ila Allah — entre 600 et 1600 fois.
 
-La proclamation de l'Unicité par la parole : « La Ilaha Ila Allah » (600 - 1600).
+Formule de transition méritoire (à la fin de La Ilaha Ila Allah) :
 
-Prononcer cette formule de transition méritoire à la fin de La Ilaha Ila Allah :
+Seïdina Mouhamadou Rassouloullahi anleyhi sallamoullah.
 
-« Seïdina Mouhamadou Rassouloullahi anleyhi sallamoullah ».
+Formule de fermeture méritoire à la fin de la Hadara :
 
-Puis prononcer cette formule de fermeture méritoire à la fin de la Hadara :
-
-Innal lahâ wal malaa-ikatahu yussalouna alâ nabiyi yaa ayuhal lazina amanou sallou anleyhi wa sallimou tasliman sallal lahou anleyhi wa anla âlihi wa sahbihi wa salama tasliman, Soub-hana rabbika rabbil izzati amma yassifouna wa salamoun anlal moursalina wal hamdoulillahi rabbil alamin.`,
+Innal lahâ wal malaa-ikatahu yussalouna alâ nabiyi yaa ayuhal lazina amanou sallou anleyhi wa sallimou tasliman sallal lahou anleyhi wa anla âlihi wa sahbihi wa salama tasliman. Soub-hana rabbika rabbil izzati amma yassifouna wa salamoun anlal moursalina wal hamdoulillahi rabbil alamin.`,
   },
   {
     id: "wt-9",
     chapter: "Devoirs de la Wazifa et de la Hadara",
     heading: "Devoirs de la Wazifa et de la Hadaratoul Jumha",
-    content: `Le non-accomplissement des points qui vont suivre n'entraîne pas la nullité des oraisons appelées Wadhifa et Heïlala (ou Asr). Mais il faut savoir que ce sont des devoirs exigés et que leur délaissement est une faute grave. C'est un signe qui montre que l'accomplissement des préceptes de la Tarîqa est pris à la légère et il est à craindre pour telle personne qu'elle finisse mal. Il est à l'exemple de quelqu'un voguant en mer qui négligerait les fuites de la coque de son bateau, celui-là, s'il reste ainsi, son issue est forcément fatale.
+    content: `Le non-accomplissement des devoirs qui suivent n'entraîne pas la nullité des oraisons. Mais ce sont des devoirs exigés et leur délaissement est une faute grave — signe que les préceptes de la Tarîqa sont pris à la légère. Il en est comme de quelqu'un voguant en mer qui négligerait les fuites de la coque de son bateau.
 
 Ces devoirs sont :
 
-Les accomplir en groupe :
+Les accomplir en groupe. Concernant la participation des femmes à l'assemblée, cela n'est permis que si deux conditions sont réunies : elles doivent y participer à l'écart du groupe des hommes, dans un endroit où elles ne peuvent ni voir ni être vues par eux ; et il leur est interdit de réciter à voix haute — tous les Dhikr des femmes se font à voix basse, comme pour la récitation du Coran dans les cinq prières obligatoires.
 
-Concernant la participation éventuelle des femmes à l'assemblée, il faut savoir que cela n'est permis que si deux conditions sont réunies :
+Réciter à voix haute. Pour les femmes, toutes les oraisons se font à voix basse, juste de quoi s'entendre elles-mêmes.
 
-La première, c'est qu'elles doivent y participer à l'écart du groupe des hommes dans un endroit où elles ne peuvent voir ou être vues par eux.
+Se mettre en rang en veillant à bien aligner les rangs et à les compléter, comme pour la prière.
 
-La seconde est qu'il leur est interdit de réciter à voix haute et de se faire entendre (tous les Dhikr des femmes se font à voix basse comme pour la récitation du Coran dans les cinq prières obligatoires).
-
-Réciter à voix haute :
-
-Pour les femmes toutes les oraisons se font à voix basse, juste de quoi s'entendre elles-mêmes.
-
-Se mettre en rang en veillant à bien aligner les rangs et à les compléter comme pour la prière.
-
-Faire concorder les voix et les sons avec celui du groupe de façon à ne pas les perturber (si cela n'est pas possible alors il faut baisser sa voix en dessous des autres, mais attention à ne pas se taire sinon on perd la récompense du Dhikr).`,
+Faire concorder les voix et les sons avec celui du groupe de façon à ne pas les perturber. Si cela n'est pas possible, il faut baisser sa voix en dessous des autres — mais attention à ne pas se taire, sinon on perd la récompense du Dhikr.`,
   },
   {
     id: "wt-10",
     chapter: "Réparation",
     heading: "Réparation (Niya Jabr)",
-    content: `Si on doute du nombre, on doit tout d'abord se baser sur la certitude (c'est-à-dire le nombre inférieur) et quand on finit le Dhikr, on met l'intention de réparer (Niya Jabr) et on récite 100 fois « Astaghfiroullah ».
+    content: `Si on doute du nombre, on doit se baser sur la certitude (le nombre inférieur) et, une fois le Dhikr terminé, mettre l'intention de réparer (Niya Jabr) en récitant 100 fois « Astaghfiroullah ».
 
-Seïdina Ahmed Tîdjâni (qu'Allah sanctifie son précieux secret) a dit : « Celui qui doute dans le rajout ou la diminution qu'il construise sur la certitude puis il rajoute 100 Istighfar en mettant l'intention de réparer, certes cela réparera » (Ifadatoul-Ahmediya).
+Seïdina Ahmed Tîdjâni a dit : « Celui qui doute dans le rajout ou la diminution, qu'il construise sur la certitude puis rajoute 100 Istighfar avec l'intention de réparer — certes cela réparera. » (Ifadatoul-Ahmediya)
 
-Celui qui manque un pilier de l'oraison par oubli, par exemple en commençant par la prière sur le Prophète (Sws), il reprend le pilier de l'Istighfar (demande de pardon) puis fait celui de la prière du Prophète (Sws). Une fois complété l'ensemble de son oraison, il répare avec 100 Istighfar en mettant l'intention de réparer. Par contre, si ce manque est volontaire et non par oubli, alors l'oraison est nulle.
+Celui qui manque un pilier de l'oraison par oubli reprend le pilier de l'Istighfar, puis fait celui de la prière du Prophète. Une fois l'oraison complétée, il répare avec 100 Istighfar avec l'intention de réparer. Si le manque est volontaire, l'oraison est nulle.
 
-Celui qui rajoute au pilier dans le nombre par oubli, alors il répare en faisant 100 fois l'Istighfar avec l'intention de réparation (Niya Jabr), si ce rajout est volontaire, alors l'oraison est nulle.
+Celui qui rajoute au pilier dans le nombre par oubli répare en faisant 100 fois l'Istighfar avec l'intention de réparation (Niya Jabr). Si ce rajout est volontaire, l'oraison est nulle.
 
-Celui qui constate une ou plusieurs perles manquantes dans son chapelet avec lesquelles il accomplissait ses oraisons, la règle est que s'il connaît le nombre de jours exact alors son rattrapage est une nécessité. Par contre s'il ignore le nombre de jours alors certains ont mentionné qu'il doit accomplir 600 fois « Astaghfiroullah » + 3 fois Jawaratoul Kamal cela lui réparera tout manque et rajout.
+Celui qui constate des perles manquantes dans son chapelet — si le nombre de jours exact est connu, le rattrapage est une nécessité. Si le nombre est inconnu, il doit accomplir 600 fois « Astaghfiroullah » et 3 fois Jawaratoul Kamal, ce qui réparera tout manque et rajout.
 
-Celui qui n'était pas en état de Présence (Houdour) lors de l'accomplissement d'un acte obligatoire ou méritoire, il peut réparer cela en récitant 3 fois Jawaratoul Kamal avec l'intention de réparer (Niya Jabr) après l'accomplissement d'un tel acte.
+Celui qui n'était pas en état de Présence (Houdour) lors d'un acte obligatoire ou méritoire peut réparer en récitant 3 fois Jawaratoul Kamal avec l'intention de réparer (Niya Jabr).
 
-La Présence est l'âme des œuvres, c'est pourquoi les 3 Jawaratoul doivent être lues avec toute la Présence possible comme l'a dit Seïdina (qu'Allah sanctifie son précieux secret). Cette réparation de la Présence, par Jawaratoul, est particulière aux gens de cette voie, ainsi celui qui répare son manque de Présence avec cette méthode, il lui est compté son adoration avec la Présence et il est récompensé pour son adoration comme l'est le Connaissant plongé dans la Présence Divine.
+La Présence est l'âme des œuvres. Cette réparation par Jawaratoul est particulière aux gens de cette voie — celui qui répare ainsi se voit compter son adoration avec la Présence, récompensé comme l'est le Connaissant plongé dans la Présence Divine.
 
-Si c'est l'heure de la prière la personne poursuit son Dhikr jusqu'à ce que l'Imam se lève pour la prière, il repère le grain où il s'arrête et après la salutation finale de la prière il reprend directement son Dhikr d'où il l'a arrêté, il doit prendre soin de ne pas parler entre temps.`,
+Si c'est l'heure de la prière, la personne poursuit son Dhikr jusqu'à ce que l'Imam se lève. Elle repère le grain où elle s'arrête et, après la salutation finale de la prière, reprend directement son Dhikr d'où elle l'a arrêté, en prenant soin de ne pas parler entre temps.`,
   },
 ];
