@@ -1,4 +1,5 @@
-import { ChevronLeft, ChevronRight, List, Search, Type } from "lucide-react";
+import { ChevronLeft, ChevronRight, List } from "lucide-react";
+import { useState, useRef } from "react";
 
 interface ReaderBottomBarProps {
   currentPage: number;
@@ -6,6 +7,7 @@ interface ReaderBottomBarProps {
   onPrevPage: () => void;
   onNextPage: () => void;
   onOpenToc: () => void;
+  onJumpToPage: (page: number) => void;
   hasPrev: boolean;
   hasNext: boolean;
 }
@@ -16,17 +18,66 @@ const ReaderBottomBar = ({
   onPrevPage,
   onNextPage,
   onOpenToc,
+  onJumpToPage,
   hasPrev,
   hasNext,
 }: ReaderBottomBarProps) => {
   const progress = totalPages > 0 ? Math.round((currentPage / totalPages) * 100) : 0;
+  const [editing, setEditing] = useState(false);
+  const [inputVal, setInputVal] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const startEditing = () => {
+    setInputVal(String(currentPage));
+    setEditing(true);
+    setTimeout(() => {
+      inputRef.current?.focus();
+      inputRef.current?.select();
+    }, 0);
+  };
+
+  const commitJump = () => {
+    const n = parseInt(inputVal, 10);
+    if (!isNaN(n) && n >= 1 && n <= totalPages) {
+      onJumpToPage(n);
+    }
+    setEditing(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") commitJump();
+    if (e.key === "Escape") setEditing(false);
+  };
 
   return (
     <div className="fixed bottom-0 left-0 right-0 border-t border-border/20 bg-inherit z-40">
       <div className="flex items-center justify-between px-6 py-2 text-xs text-muted-foreground">
-        <span>
-          Page {currentPage} of {totalPages}
-        </span>
+        {editing ? (
+          <div className="flex items-center gap-1">
+            <span>Page</span>
+            <input
+              ref={inputRef}
+              type="number"
+              min={1}
+              max={totalPages}
+              value={inputVal}
+              onChange={(e) => setInputVal(e.target.value)}
+              onKeyDown={handleKeyDown}
+              onBlur={commitJump}
+              className="w-14 text-center rounded border border-primary/40 bg-transparent px-1 py-0.5 text-xs focus:outline-none focus:border-primary"
+              style={{ appearance: "textfield" }}
+            />
+            <span>of {totalPages}</span>
+          </div>
+        ) : (
+          <button
+            onClick={startEditing}
+            className="hover:text-primary transition-colors underline-offset-2 hover:underline"
+            title="Tap to jump to a page"
+          >
+            Page {currentPage} of {totalPages}
+          </button>
+        )}
         <span>{progress}%</span>
       </div>
       <div className="h-1 bg-muted/30 mx-6 mb-2 rounded-full">
