@@ -378,7 +378,7 @@ const Reader = () => {
         className={`flex-1 overflow-y-auto px-6 py-8 max-w-2xl mx-auto w-full ${fontClass} leading-relaxed cursor-pointer`}
         style={{
           fontSize,
-          paddingBottom: chromeVisible ? (readAlongActive ? '9rem' : '8rem') : '2rem',
+          paddingBottom: chromeVisible ? (readAlongActive ? '12rem' : '11rem') : '5rem',
         }}
         onClick={() => {
           if (!readAlongActive) setChromeVisible((v) => !v);
