@@ -5,7 +5,8 @@ import { ruhAlAdabVerses, ruhAlAdabMeta } from "@/data/ruh-al-adab";
 import { comprendreFaydhahSections, comprendreFaydhahMeta } from "@/data/comprendre-faydhah";
 import { loadKachifulAlbasSections, kachifulAlbasMeta, type KachifulSection } from "@/data/kachiful-albas";
 import { loadKashifEnSections, kashifEnMeta, type KashifEnSection } from "@/data/kashif-en";
-import { ArrowLeft, Loader2, Search, Maximize, Minimize } from "lucide-react";
+import { ArrowLeft, Loader2, Search, Maximize, Minimize, Headphones, Play, Pause, Square } from "lucide-react";
+import { useReadAlong, splitIntoSentences, stripForSpeech } from "@/hooks/use-read-along";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ChapterDropdown from "@/components/reader/ChapterDropdown";
@@ -31,6 +32,8 @@ The seeker must approach the path with sincerity and devotion, for the journey o
 Let the words of the righteous ones guide your steps, for they have walked the path before you and left behind lanterns of wisdom for those who follow.`;
 
 const sampleTextAr = `بسم الله الرحمن الرحيم. الحمد لله رب العالمين، والصلاة والسلام على سيدنا محمد وعلى آله وصحبه أجمعين. إن المعرفة نور يهدي إلى الحق، وبها ترتقي الأمم وتسمو الأرواح.`;
+
+const SPEED_OPTIONS = [0.75, 1, 1.25, 1.5, 2];
 
 interface Section {
   id: string;
@@ -59,6 +62,10 @@ const Reader = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [chromeVisible, setChromeVisible] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Read along state
+  const readAlong = useReadAlong();
+  const [readAlongActive, setReadAlongActive] = useState(false);
 
   const toggleFullscreen = useCallback(() => {
     if (!document.fullscreenElement) {
@@ -96,7 +103,6 @@ const Reader = () => {
   // Flatten all sections into a unified array
   const allSections: Section[] = useMemo(() => {
     if (book?.contentModule === "ruh-al-adab") {
-      // Treat as single section
       return [{ id: "ruh-al-adab-all", heading: ruhAlAdabMeta.title, content: "__ruh__" }];
     }
     if (book?.contentModule === "comprendre-faydhah") {
@@ -131,12 +137,10 @@ const Reader = () => {
   const tocItems = useMemo(() => {
     const chapters: { chapter: string; sections: { id: string; heading: string; index: number }[] }[] = [];
     allSections.forEach((s, idx) => {
-      // Build chapter key, avoiding redundant "X — X" when part === chapter
       const chKey = s.part && s.chapter
         ? (s.part === s.chapter ? s.part : `${s.part} — ${s.chapter}`)
         : s.chapter || s.heading;
       const last = chapters[chapters.length - 1];
-      // Skip duplicate headings within the same chapter group
       const isDuplicate = last && last.chapter === chKey && s.heading === last.sections[0]?.heading;
       if (!last || last.chapter !== chKey) {
         chapters.push({ chapter: chKey, sections: [{ id: s.id, heading: s.heading, index: idx }] });
@@ -148,6 +152,36 @@ const Reader = () => {
   }, [allSections]);
 
   const currentSection = allSections[currentSectionIdx] || allSections[0];
+
+  // Read-along: sentences derived from current section content
+  const currentSectionSentences = useMemo(() => {
+    if (!readAlongActive || !currentSection) return undefined;
+    const content = currentSection.content;
+    if (content === "__ruh__" || content === "__sample__") return undefined;
+    return splitIntoSentences(stripForSpeech(content));
+  }, [readAlongActive, currentSection]);
+
+  // Stop read-along when section changes
+  useEffect(() => {
+    readAlong.stop();
+    setReadAlongActive(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentSectionIdx]);
+
+  const handleStartReadAlong = useCallback(() => {
+    if (!currentSection) return;
+    const content = currentSection.content;
+    if (content === "__ruh__" || content === "__sample__") return;
+    const plain = stripForSpeech(content);
+    setReadAlongActive(true);
+    setChromeVisible(true);
+    readAlong.start(plain);
+  }, [currentSection, readAlong]);
+
+  const handleStopReadAlong = useCallback(() => {
+    readAlong.stop();
+    setReadAlongActive(false);
+  }, [readAlong]);
 
   const goToSection = useCallback((idx: number) => {
     setCurrentSectionIdx(Math.max(0, Math.min(idx, allSections.length - 1)));
@@ -162,6 +196,15 @@ const Reader = () => {
   const fontClass = fontIdx === 0 ? "font-sans" : fontIdx === 1 ? "font-serif" : "font-arabic";
 
   if (!book) return null;
+
+  const isReadAlongSupported =
+    typeof window !== "undefined" && "speechSynthesis" in window;
+
+  const canReadAlong =
+    isReadAlongSupported &&
+    currentSection &&
+    currentSection.content !== "__ruh__" &&
+    currentSection.content !== "__sample__";
 
   const renderMeta = () => {
     if (book.contentModule === "ruh-al-adab") {
@@ -209,7 +252,6 @@ const Reader = () => {
   const renderCurrentSection = () => {
     if (!currentSection) return null;
 
-    // Special: ruh-al-adab renders all verses
     if (currentSection.content === "__ruh__") {
       return (
         <div className="space-y-3">
@@ -224,7 +266,6 @@ const Reader = () => {
       );
     }
 
-    // Special: sample text
     if (currentSection.content === "__sample__") {
       return (
         <>
@@ -234,7 +275,6 @@ const Reader = () => {
       );
     }
 
-    // Standard section rendering with book-style formatting
     return (
       <div>
         {currentSection.part && (
@@ -252,7 +292,12 @@ const Reader = () => {
             {currentSection.heading}
           </h5>
         )}
-        <FormattedContent content={currentSection.content} fontSize={fontSize} />
+        <FormattedContent
+          content={currentSection.content}
+          fontSize={fontSize}
+          activeSentenceIndex={readAlongActive ? readAlong.activeSentenceIndex : undefined}
+          sentences={currentSectionSentences}
+        />
       </div>
     );
   };
@@ -279,6 +324,16 @@ const Reader = () => {
           <button onClick={toggleFullscreen} className="p-2">
             {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
           </button>
+          {/* Read Along trigger */}
+          {canReadAlong && !readAlongActive && (
+            <button
+              onClick={handleStartReadAlong}
+              className="p-2 rounded-full hover:bg-primary/10 transition-colors"
+              title="Read Along"
+            >
+              <Headphones className="w-4 h-4" />
+            </button>
+          )}
           <button onClick={() => setFontSize(Math.max(12, fontSize - 2))} className="px-2 py-1 text-sm font-medium">A-</button>
           <input
             type="range"
@@ -305,7 +360,6 @@ const Reader = () => {
             {f}
           </button>
         ))}
-        {/* Theme dots inline */}
         <span className="mx-2 text-border">|</span>
         {themes.map((t, i) => (
           <button
@@ -321,9 +375,14 @@ const Reader = () => {
       {/* Reading content */}
       <div
         ref={contentRef}
-        className={`flex-1 overflow-y-auto px-6 py-8 ${chromeVisible ? 'pb-32' : 'pb-8'} max-w-2xl mx-auto w-full ${fontClass} leading-relaxed cursor-pointer`}
-        style={{ fontSize }}
-        onClick={() => setChromeVisible((v) => !v)}
+        className={`flex-1 overflow-y-auto px-6 py-8 max-w-2xl mx-auto w-full ${fontClass} leading-relaxed cursor-pointer`}
+        style={{
+          fontSize,
+          paddingBottom: chromeVisible ? (readAlongActive ? '9rem' : '8rem') : '2rem',
+        }}
+        onClick={() => {
+          if (!readAlongActive) setChromeVisible((v) => !v);
+        }}
         onTouchStart={(e) => {
           touchStartX.current = e.touches[0].clientX;
           touchStartY.current = e.touches[0].clientY;
@@ -353,18 +412,72 @@ const Reader = () => {
         )}
       </div>
 
-      {/* Bottom bar with navigation */}
-      <div className={`transition-all duration-300 ${chromeVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-full pointer-events-none'}`}>
-        <ReaderBottomBar
-          currentPage={currentSectionIdx + 1}
-          totalPages={allSections.length}
-          onPrevPage={() => goToSection(currentSectionIdx - 1)}
-          onNextPage={() => goToSection(currentSectionIdx + 1)}
-          onOpenToc={() => setTocOpen(true)}
-          hasPrev={currentSectionIdx > 0}
-          hasNext={currentSectionIdx < allSections.length - 1}
-        />
-      </div>
+      {/* Read Along control bar — always visible when active */}
+      {readAlongActive && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-primary/20 bg-inherit shadow-lg">
+          <div className="flex items-center justify-between px-4 py-3 max-w-2xl mx-auto">
+            {/* Play / Pause */}
+            <div className="flex items-center gap-2">
+              {readAlong.isPlaying ? (
+                <button
+                  onClick={readAlong.pause}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors text-sm font-medium"
+                >
+                  <Pause className="w-4 h-4" />
+                  Pause
+                </button>
+              ) : (
+                <button
+                  onClick={readAlong.resume}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors text-sm font-medium"
+                >
+                  <Play className="w-4 h-4" />
+                  Resume
+                </button>
+              )}
+              <button
+                onClick={handleStopReadAlong}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-destructive/10 hover:bg-destructive/20 transition-colors text-sm font-medium text-destructive"
+              >
+                <Square className="w-4 h-4" />
+                Stop
+              </button>
+            </div>
+
+            {/* Speed selector */}
+            <div className="flex items-center gap-1">
+              {SPEED_OPTIONS.map((s) => (
+                <button
+                  key={s}
+                  onClick={() => readAlong.setRate(s)}
+                  className={`px-2 py-1 text-xs rounded-full transition-all font-medium ${
+                    readAlong.rate === s
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted/30 text-muted-foreground hover:bg-muted/50"
+                  }`}
+                >
+                  {s}×
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bottom bar with navigation — hidden when read-along is active */}
+      {!readAlongActive && (
+        <div className={`transition-all duration-300 ${chromeVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-full pointer-events-none'}`}>
+          <ReaderBottomBar
+            currentPage={currentSectionIdx + 1}
+            totalPages={allSections.length}
+            onPrevPage={() => goToSection(currentSectionIdx - 1)}
+            onNextPage={() => goToSection(currentSectionIdx + 1)}
+            onOpenToc={() => setTocOpen(true)}
+            hasPrev={currentSectionIdx > 0}
+            hasNext={currentSectionIdx < allSections.length - 1}
+          />
+        </div>
+      )}
 
       {/* TOC Sheet */}
       <Sheet open={tocOpen} onOpenChange={setTocOpen}>
@@ -402,6 +515,7 @@ const Reader = () => {
           </ScrollArea>
         </SheetContent>
       </Sheet>
+
       {/* Search */}
       <ReaderSearch
         open={searchOpen}

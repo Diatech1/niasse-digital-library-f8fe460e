@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
+import { splitIntoSentences } from "@/hooks/use-read-along";
 
 interface FormattedContentProps {
   content: string;
   fontSize: number;
+  activeSentenceIndex?: number;
+  sentences?: string[];
 }
 
 /**
@@ -12,9 +15,21 @@ interface FormattedContentProps {
  * - Footnote numbers as superscript
  * - Poetry/verse blocks with indentation
  * - Proper paragraph spacing with justified text
+ * - Read-along sentence highlighting when activeSentenceIndex is provided
  */
-const FormattedContent = ({ content, fontSize }: FormattedContentProps) => {
+const FormattedContent = ({ content, fontSize, activeSentenceIndex, sentences }: FormattedContentProps) => {
+  const readAlongActive = activeSentenceIndex !== undefined && activeSentenceIndex >= 0 && sentences && sentences.length > 0;
   const paragraphs = content.split("\n\n").filter((p) => p.trim().length > 0);
+
+  if (readAlongActive && sentences) {
+    return (
+      <ReadAlongContent
+        sentences={sentences}
+        activeSentenceIndex={activeSentenceIndex!}
+        fontSize={fontSize}
+      />
+    );
+  }
 
   return (
     <div className="formatted-content space-y-4">
@@ -89,6 +104,46 @@ const FormattedContent = ({ content, fontSize }: FormattedContentProps) => {
           <p key={idx} className="text-justify leading-relaxed indent-6" style={{ fontSize }}>
             {formatInlineText(trimmed)}
           </p>
+        );
+      })}
+    </div>
+  );
+};
+
+/** Read-along mode: renders sentences as individual spans with active highlighting */
+const ReadAlongContent = ({
+  sentences,
+  activeSentenceIndex,
+  fontSize,
+}: {
+  sentences: string[];
+  activeSentenceIndex: number;
+  fontSize: number;
+}) => {
+  const activeRef = useRef<HTMLSpanElement | null>(null);
+
+  useEffect(() => {
+    if (activeRef.current) {
+      activeRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [activeSentenceIndex]);
+
+  return (
+    <div className="formatted-content leading-relaxed text-justify" style={{ fontSize }}>
+      {sentences.map((sentence, idx) => {
+        const isActive = idx === activeSentenceIndex;
+        return (
+          <span
+            key={idx}
+            ref={isActive ? activeRef : null}
+            className={`transition-all duration-300 rounded-sm ${
+              isActive
+                ? "bg-primary/20 text-foreground px-0.5 py-0.5"
+                : "text-foreground/70"
+            }`}
+          >
+            {sentence}{" "}
+          </span>
         );
       })}
     </div>
