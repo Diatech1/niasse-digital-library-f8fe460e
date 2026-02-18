@@ -173,9 +173,9 @@ function formatInlineText(text: string): React.ReactNode {
     }
 
     if (match[1]) {
-      // Parenthesized Arabic term - render in italic
+      // Parenthesized Arabic term - render in italic, same color as surrounding text
       parts.push(
-        <em key={match.index} className="text-foreground/80 not-italic" style={{ fontStyle: 'italic' }}>
+        <em key={match.index} style={{ fontStyle: 'italic', color: 'inherit' }}>
           {match[1]}
         </em>
       );
