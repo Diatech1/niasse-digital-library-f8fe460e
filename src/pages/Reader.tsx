@@ -146,6 +146,9 @@ const Reader = () => {
     const seenHeadings = new Set<string>();
 
     allSections.forEach((s, idx) => {
+      // Skip generic page headings like "Page xi", "Page 3", "Page 12" — only named headings belong in the TOC
+      if (/^Page\s+([ivxlc]+|\d+)$/i.test(s.heading)) return;
+
       const chKey = s.part && s.chapter
         ? (s.part === s.chapter ? s.part : `${s.part} — ${s.chapter}`)
         : s.chapter || s.heading;
