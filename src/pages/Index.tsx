@@ -45,11 +45,6 @@ const Index = () => {
         </motion.div>
       </div>
 
-      {/* Search */}
-      <div className="px-5 mb-6">
-        <SearchBar onSearch={setSearchQuery} />
-      </div>
-
       {/* Continue Reading — real progress from localStorage */}
       {continueReading.length > 0 && !searchQuery && (
         <motion.section
@@ -98,6 +93,11 @@ const Index = () => {
           </div>
         </motion.section>
       )}
+
+      {/* Search */}
+      <div className="px-5 mb-6">
+        <SearchBar onSearch={setSearchQuery} />
+      </div>
 
       {/* Favorites */}
       {favorites.length > 0 && !searchQuery && (
