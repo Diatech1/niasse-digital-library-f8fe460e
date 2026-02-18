@@ -491,8 +491,8 @@ const Reader = () => {
         )}
       </div>
 
-      {/* Side navigation arrows */}
-      {!readAlongActive && chromeVisible && allSections.length > 1 && (
+      {/* Side navigation arrows — always visible in fullscreen, otherwise follow chrome visibility */}
+      {!readAlongActive && (chromeVisible || isFullscreen) && allSections.length > 1 && (
         <>
           <button
             onClick={() => goToSection(currentSectionIdx - 1)}
