@@ -51,8 +51,28 @@ const FormattedContent = ({ content, fontSize, activeSentenceIndex, sentences }:
           );
         }
 
-        // Detect footnote blocks (lines starting with numbers followed by period)
-        if (/^\d+\.\s/.test(trimmed) && trimmed.length < 500) {
+        // Detect numbered list items (e.g. "1. Text..." or "1 & 2. Text...")
+        const numberedItemMatch = trimmed.match(/^(\d+(?:\s*[&]\s*\d+)?)\.\s+([\s\S]+)$/);
+        if (numberedItemMatch) {
+          const num = numberedItemMatch[1];
+          const text = numberedItemMatch[2];
+          return (
+            <div key={idx} className="flex gap-3 items-start py-1">
+              <span
+                className="shrink-0 font-semibold text-primary/80 tabular-nums"
+                style={{ fontSize: fontSize * 0.85, minWidth: '1.6em', paddingTop: '0.1em' }}
+              >
+                {num}.
+              </span>
+              <p className="leading-relaxed text-justify flex-1" style={{ fontSize }}>
+                {formatInlineText(text)}
+              </p>
+            </div>
+          );
+        }
+
+        // Detect footnote blocks (lines starting with numbers followed by period, short text)
+        if (/^\d+\.\s/.test(trimmed) && trimmed.length < 200) {
           const footnotes = trimmed.split(/\n/).filter((l) => l.trim());
           return (
             <div key={idx} className="border-t border-border/30 pt-3 mt-6">
