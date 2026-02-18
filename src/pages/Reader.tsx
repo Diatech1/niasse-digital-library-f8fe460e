@@ -5,7 +5,7 @@ import { ruhAlAdabVerses, ruhAlAdabMeta } from "@/data/ruh-al-adab";
 import { comprendreFaydhahSections, comprendreFaydhahMeta } from "@/data/comprendre-faydhah";
 import { loadKachifulAlbasSections, kachifulAlbasMeta, type KachifulSection } from "@/data/kachiful-albas";
 import { loadKashifEnSections, kashifEnMeta, type KashifEnSection } from "@/data/kashif-en";
-import { ArrowLeft, Loader2, Search } from "lucide-react";
+import { ArrowLeft, Loader2, Search, Maximize, Minimize } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ChapterDropdown from "@/components/reader/ChapterDropdown";
@@ -56,6 +56,22 @@ const Reader = () => {
   const [loading, setLoading] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const toggleFullscreen = useCallback(() => {
+    if (!document.fullscreenElement) {
+      containerRef.current?.requestFullscreen().then(() => setIsFullscreen(true)).catch(() => {});
+    } else {
+      document.exitFullscreen().then(() => setIsFullscreen(false)).catch(() => {});
+    }
+  }, []);
+
+  useEffect(() => {
+    const handler = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener("fullscreenchange", handler);
+    return () => document.removeEventListener("fullscreenchange", handler);
+  }, []);
 
   useEffect(() => {
     if (book?.contentModule === "kashif-en") {
@@ -241,7 +257,7 @@ const Reader = () => {
   };
 
   return (
-    <div className={`min-h-screen ${theme.bg} ${theme.text} transition-colors duration-300 flex flex-col`}>
+    <div ref={containerRef} className={`min-h-screen ${theme.bg} ${theme.text} transition-colors duration-300 flex flex-col`}>
       {/* Top bar */}
       <div className="flex items-center gap-2 px-3 py-3 border-b border-border/20">
         <button onClick={() => navigate(-1)} className="p-2 flex-shrink-0">
@@ -258,6 +274,9 @@ const Reader = () => {
         <div className="flex items-center gap-1 flex-shrink-0">
           <button onClick={() => setSearchOpen(true)} className="p-2">
             <Search className="w-4 h-4" />
+          </button>
+          <button onClick={toggleFullscreen} className="p-2">
+            {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
           </button>
           <button onClick={() => setFontSize(Math.max(12, fontSize - 2))} className="px-2 py-1 text-sm font-medium">A-</button>
           <input
