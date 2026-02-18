@@ -192,8 +192,11 @@ export async function loadKashifEnSections(): Promise<KashifEnSection[]> {
   // Even-page header: "vii THE REMOVAL OF CONFUSION" or "4 THE REMOVAL OF CONFUSION"
   const evenRomanRegex  = /^([ivxlc]+)\s+THE REMOVAL OF CONFUSION\s*$/i;
   const evenArabicRegex = /^(\d{1,3})\s+THE REMOVAL OF CONFUSION\s*$/;
-  // Odd-page running chapter header: "General Introduction 5", "Seeking the Shaykh 175"
+  // Odd-page running chapter header with Arabic numeral: "General Introduction 5"
   const oddHeaderRegex  = /^[A-Z][^.]{4,90}\s(\d{1,3})\s*$/;
+  // Odd front-matter running header with Roman numeral on same line: "Background to the Text xi"
+  // Require at least 2 Roman-numeral chars to avoid false-positives on single letters
+  const oddRomanHeaderRegex = /^[A-Z].{3,80}\s([ivxlc]{2,})\s*$/;
   // Odd front-matter: standalone Roman numeral on its own line
   const oddRomanRegex   = /^([ivxlc]+)\s*$/i;
   // Odd main-content: standalone Arabic numeral
@@ -230,13 +233,28 @@ export async function loadKashifEnSections(): Promise<KashifEnSection[]> {
       continue;
     }
 
-    // High-confidence: odd-page running chapter header (main content only)
+    // High-confidence: odd-page running chapter header with Arabic numeral (main content only)
     const oddHeader = trimmed.match(oddHeaderRegex);
     if (oddHeader) {
       const vp = parseInt(oddHeader[1], 10);
       if (vp >= 1 && vp <= 500 && !seenHigh.has(vp)) {
         seenHigh.add(vp);
         boundaries.push({ lineIdx: i, virtualPage: vp, label: String(vp) });
+      }
+      continue;
+    }
+
+    // High-confidence: odd front-matter running header with Roman numeral on same line
+    // e.g. "Background to the Text xi", "Biography of Authors xxv"
+    // Guard: must not also match even-page headers (those contain "THE REMOVAL OF CONFUSION")
+    const oddRomanHeader = trimmed.match(oddRomanHeaderRegex);
+    if (oddRomanHeader && !trimmed.includes("THE REMOVAL OF CONFUSION")) {
+      const romanStr = oddRomanHeader[1].toLowerCase();
+      const vp = -fromRoman(romanStr);
+      // Only accept plausible front-matter Roman numerals (ii..lxx range)
+      if (vp < -1 && vp >= -70 && !seenHigh.has(vp)) {
+        seenHigh.add(vp);
+        boundaries.push({ lineIdx: i, virtualPage: vp, label: romanStr });
       }
       continue;
     }
