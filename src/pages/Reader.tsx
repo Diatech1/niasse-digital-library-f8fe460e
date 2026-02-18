@@ -21,7 +21,7 @@ const themes = [
   { name: "Midnight", bg: "bg-[hsl(240,20%,8%)]", text: "text-[hsl(40,10%,80%)]" },
 ];
 
-const fonts = ["Sans", "Serif", "Arabic"];
+const fonts = ["Sans", "Serif", "Amiri"];
 
 const sampleTextEn = `In the name of Allah, the Most Merciful, the Most Compassionate.
 
