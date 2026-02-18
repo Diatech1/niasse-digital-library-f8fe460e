@@ -406,13 +406,13 @@ const Reader = () => {
           </div>
         ) : (
           <>
+            {currentSectionIdx === 0 && renderMeta()}
+            {renderCurrentSection()}
             {allSections.length > 1 && (
-              <p className="text-center text-xs text-muted-foreground/50 mb-6 tracking-widest select-none">
+              <p className="text-center text-xs text-muted-foreground/50 mt-10 tracking-widest select-none">
                 {currentSectionIdx + 1} / {allSections.length}
               </p>
             )}
-            {currentSectionIdx === 0 && renderMeta()}
-            {renderCurrentSection()}
           </>
         )}
       </div>
