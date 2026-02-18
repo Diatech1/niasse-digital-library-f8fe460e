@@ -136,28 +136,38 @@ function cleanContent(text: string): string {
   return cleaned;
 }
 
+// Convert Roman numeral string to integer
+function fromRoman(s: string): number {
+  const map: Record<string, number> = { i: 1, v: 5, x: 10, l: 50, c: 100 };
+  let result = 0;
+  const lower = s.toLowerCase();
+  for (let i = 0; i < lower.length; i++) {
+    const cur = map[lower[i]] ?? 0;
+    const next = map[lower[i + 1]] ?? 0;
+    result += cur < next ? -cur : cur;
+  }
+  return result;
+}
+
 /**
- * Parse the English Kashif text page-by-page using standalone page numbers as split points.
- * Front matter (before page 1) is kept as chapter-based sections.
- * Main content (pages 1+) is split at each Arabic page number.
+ * Parse the English Kashif text fully page-by-page.
+ * Both front matter (Roman numeral pages) and main content (Arabic numeral pages)
+ * are split at every physical page boundary found in the PDF-extracted text.
+ * This yields ~452 pages matching the original book.
  */
 export async function loadKashifEnSections(): Promise<KashifEnSection[]> {
   const response = await fetch("/books/kashif-en.txt");
   const rawText = await response.text();
-  
+
   // Preprocess: rejoin standalone drop cap letters separated by page headers
-  // Pattern: single capital letter on its own line, followed by header/numeral lines,
-  // then content starting with lowercase — the letter belongs before that content.
   const rawLines = rawText.split("\n");
   const headerRegex = /^([ivxlc]+\s+THE REMOVAL OF CONFUSION|[ivxlc]+|\d+\s+THE REMOVAL OF CONFUSION)\s*$/i;
-  
+
   for (let i = 0; i < rawLines.length - 1; i++) {
     if (/^[A-Z]$/.test(rawLines[i].trim())) {
-      // Found standalone capital letter — look ahead past headers/blanks for content
       for (let j = i + 1; j < Math.min(i + 5, rawLines.length); j++) {
         const trimJ = rawLines[j].trim();
         if (trimJ === "" || headerRegex.test(trimJ)) continue;
-        // Found next content line — prepend the letter
         if (/^[a-z]/.test(trimJ)) {
           rawLines[j] = rawLines[i].trim() + rawLines[j];
           rawLines[i] = "";
@@ -166,78 +176,104 @@ export async function loadKashifEnSections(): Promise<KashifEnSection[]> {
       }
     }
   }
-  
+
   const lines = rawLines;
+  const tocEndLine = 65; // skip title page + TOC lines
 
-  const oddPageRegex = /^\s*(\d{1,3})\s*$/;
-  const evenPageRegex = /^(\d{1,3})\s+THE REMOVAL OF CONFUSION\s*$/;
-  // Running chapter headers on odd pages (e.g., "General Introduction 5", "Seeking the Shaykh 175")
-  // These start with a capital letter, contain no period (excludes footnotes), and end with a page number.
-  const oddHeaderRegex = /^[A-Z][^.]{4,90}\s(\d{1,3})\s*$/;
+  // ── Page boundary detection ──────────────────────────────────────────────
+  // We use a unified virtual page number scheme:
+  //   Front matter Roman pages (vii → 7) map to negative virtual pages: -(fromRoman)
+  //   Main content Arabic pages map to positive virtual pages
+  // This lets us sort everything in order and emit pages sequentially.
 
-  // Find all page boundaries using both odd and even page patterns
-  const pageBoundaries: { lineIdx: number; pageNum: number }[] = [];
-  
-  // Collect ALL candidate page numbers with both patterns
-  const candidates: { lineIdx: number; pageNum: number; confidence: "high" | "low" }[] = [];
-  
-  for (let i = 0; i < lines.length; i++) {
-    // Even pages: "N THE REMOVAL OF CONFUSION" — very reliable
-    const evenMatch = lines[i].match(evenPageRegex);
-    if (evenMatch) {
-      candidates.push({ lineIdx: i, pageNum: parseInt(evenMatch[1], 10), confidence: "high" });
+  type Boundary = { lineIdx: number; virtualPage: number; label: string };
+  const boundaries: Boundary[] = [];
+
+  // Even-page header: "vii THE REMOVAL OF CONFUSION" or "4 THE REMOVAL OF CONFUSION"
+  const evenRomanRegex  = /^([ivxlc]+)\s+THE REMOVAL OF CONFUSION\s*$/i;
+  const evenArabicRegex = /^(\d{1,3})\s+THE REMOVAL OF CONFUSION\s*$/;
+  // Odd-page running chapter header: "General Introduction 5", "Seeking the Shaykh 175"
+  const oddHeaderRegex  = /^[A-Z][^.]{4,90}\s(\d{1,3})\s*$/;
+  // Odd front-matter: standalone Roman numeral on its own line
+  const oddRomanRegex   = /^([ivxlc]+)\s*$/i;
+  // Odd main-content: standalone Arabic numeral
+  const oddArabicRegex  = /^\s*(\d{1,3})\s*$/;
+
+  // Track which virtual pages we've already recorded (prefer first occurrence)
+  const seenHigh = new Set<number>();
+  const seenLow  = new Set<number>();
+  const lowBoundaries: Boundary[] = [];
+
+  for (let i = tocEndLine; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    // High-confidence: even-page Roman header
+    const evenRoman = trimmed.match(evenRomanRegex);
+    if (evenRoman) {
+      const vp = -fromRoman(evenRoman[1]);
+      if (!seenHigh.has(vp)) {
+        seenHigh.add(vp);
+        boundaries.push({ lineIdx: i, virtualPage: vp, label: evenRoman[1].toLowerCase() });
+      }
       continue;
     }
-    // Odd pages: running chapter header ending with page number — high confidence
-    // e.g. "General Introduction 5", "Seeking the Shaykh 175"
-    const oddHeaderMatch = lines[i].match(oddHeaderRegex);
-    if (oddHeaderMatch) {
-      const num = parseInt(oddHeaderMatch[1], 10);
-      // Only treat as page header if number is plausible (odd pages only, but allow both)
-      if (num >= 1 && num <= 500) {
-        candidates.push({ lineIdx: i, pageNum: num, confidence: "high" });
-        continue;
+
+    // High-confidence: even-page Arabic header
+    const evenArabic = trimmed.match(evenArabicRegex);
+    if (evenArabic) {
+      const vp = parseInt(evenArabic[1], 10);
+      if (!seenHigh.has(vp)) {
+        seenHigh.add(vp);
+        boundaries.push({ lineIdx: i, virtualPage: vp, label: String(vp) });
+      }
+      continue;
+    }
+
+    // High-confidence: odd-page running chapter header (main content only)
+    const oddHeader = trimmed.match(oddHeaderRegex);
+    if (oddHeader) {
+      const vp = parseInt(oddHeader[1], 10);
+      if (vp >= 1 && vp <= 500 && !seenHigh.has(vp)) {
+        seenHigh.add(vp);
+        boundaries.push({ lineIdx: i, virtualPage: vp, label: String(vp) });
+      }
+      continue;
+    }
+
+    // Low-confidence: standalone Roman numeral (front matter odd pages)
+    const oddRoman = trimmed.match(oddRomanRegex);
+    if (oddRoman) {
+      const vp = -fromRoman(oddRoman[1]);
+      if (vp < 0 && !seenLow.has(vp)) {
+        seenLow.add(vp);
+        lowBoundaries.push({ lineIdx: i, virtualPage: vp, label: oddRoman[1].toLowerCase() });
+      }
+      continue;
+    }
+
+    // Low-confidence: standalone Arabic numeral (main content odd pages)
+    const oddArabic = trimmed.match(oddArabicRegex);
+    if (oddArabic) {
+      const vp = parseInt(oddArabic[1], 10);
+      if (vp >= 1 && !seenLow.has(vp)) {
+        seenLow.add(vp);
+        lowBoundaries.push({ lineIdx: i, virtualPage: vp, label: String(vp) });
       }
     }
-    // Odd pages: standalone number — less reliable (could be footnotes)
-    const oddMatch = lines[i].match(oddPageRegex);
-    if (oddMatch) {
-      candidates.push({ lineIdx: i, pageNum: parseInt(oddMatch[1], 10), confidence: "low" });
+  }
+
+  // Merge: add low-confidence only where high-confidence has no entry for that virtual page
+  for (const b of lowBoundaries) {
+    if (!seenHigh.has(b.virtualPage)) {
+      boundaries.push(b);
     }
   }
 
-  // Build page boundaries:
-  // Strategy: collect all high-confidence candidates (even-page headers + odd running headers)
-  // and low-confidence (standalone numbers), then merge by page number preferring high-conf.
-  const tocEndLine = 60; // Skip TOC
+  // Sort by line index (text order)
+  boundaries.sort((a, b) => a.lineIdx - b.lineIdx);
 
-  // Separate into high-confidence (even-page + odd-header) and low-confidence (standalone)
-  const highConf = candidates.filter(c => c.confidence === "high" && c.lineIdx > tocEndLine);
-  const lowConf  = candidates.filter(c => c.confidence === "low"  && c.lineIdx > tocEndLine);
-
-  // Deduplicate: keep first occurrence per page number in each bucket
-  const highByPage = new Map<number, number>(); // pageNum → lineIdx
-  for (const c of highConf) {
-    if (!highByPage.has(c.pageNum)) highByPage.set(c.pageNum, c.lineIdx);
-  }
-  const lowByPage = new Map<number, number>();
-  for (const c of lowConf) {
-    if (!lowByPage.has(c.pageNum)) lowByPage.set(c.pageNum, c.lineIdx);
-  }
-
-  // Find max page detected
-  const allPageNums = [...highByPage.keys(), ...lowByPage.keys()];
-  const maxPage = allPageNums.length > 0 ? Math.max(...allPageNums) : 0;
-
-  // Build final boundaries in order, preferring high-confidence, falling back to low
-  for (let p = 1; p <= maxPage; p++) {
-    const lineIdx = highByPage.get(p) ?? lowByPage.get(p);
-    if (lineIdx !== undefined) {
-      pageBoundaries.push({ lineIdx, pageNum: p });
-    }
-  }
-
-  // Build chapter marker map (scan from after TOC)
+  // ── Chapter marker map ───────────────────────────────────────────────────
   const tocEnd = lines.findIndex((l, i) => i > 60 && l.trim() === "Acknowledgements");
   const scanStart = tocEnd >= 0 ? tocEnd : 60;
 
@@ -255,81 +291,40 @@ export async function loadKashifEnSections(): Promise<KashifEnSection[]> {
     }
   }
 
+  // ── Build sections ────────────────────────────────────────────────────────
+  // Assign sequential display page numbers starting from 1 (covers front matter + main)
   const sections: KashifEnSection[] = [];
+  let activeMarkerIdx = -1;
+  let displayPage = 0;
 
-  // Front matter: chapter-based sections before page 1
-  const page1Line = pageBoundaries.length > 0 ? pageBoundaries[0].lineIdx : lines.length;
-  let fmMarkerIdx = -1;
-  let fmStart = -1;
-
-  for (let i = scanStart; i < page1Line; i++) {
-    const normalized = normalizeApostrophes(lines[i].trim());
-    for (let m = fmMarkerIdx + 1; m < SECTION_MARKERS.length; m++) {
-      if (normalized.startsWith(normalizeApostrophes(SECTION_MARKERS[m].line))) {
-        // Save previous front matter section
-        if (fmMarkerIdx >= 0 && fmStart >= 0) {
-          const marker = SECTION_MARKERS[fmMarkerIdx];
-          const content = cleanContent(lines.slice(fmStart, i).join("\n"));
-          if (content.length > 50) {
-            sections.push({
-              id: `kashif-en-fm-${fmMarkerIdx}`,
-              part: marker.part,
-              chapter: marker.chapter,
-              heading: marker.heading,
-              content,
-            });
-          }
-        }
-        fmMarkerIdx = m;
-        fmStart = i + 1;
-        break;
-      }
-    }
-  }
-  // Save last front matter section
-  if (fmMarkerIdx >= 0 && fmStart >= 0) {
-    const marker = SECTION_MARKERS[fmMarkerIdx];
-    const content = cleanContent(lines.slice(fmStart, page1Line).join("\n"));
-    if (content.length > 50) {
-      sections.push({
-        id: `kashif-en-fm-${fmMarkerIdx}`,
-        part: marker.part,
-        chapter: marker.chapter,
-        heading: marker.heading,
-        content,
-      });
-    }
-  }
-
-  // Main content: page-by-page
-  let activeMarkerIdx = fmMarkerIdx >= 0 ? fmMarkerIdx : -1;
-
-  for (let p = 0; p < pageBoundaries.length; p++) {
-    const { lineIdx, pageNum } = pageBoundaries[p];
+  for (let p = 0; p < boundaries.length; p++) {
+    const { lineIdx, virtualPage, label } = boundaries[p];
     const contentStart = lineIdx + 1;
-    const contentEnd = p + 1 < pageBoundaries.length ? pageBoundaries[p + 1].lineIdx : lines.length;
+    const contentEnd = p + 1 < boundaries.length ? boundaries[p + 1].lineIdx : lines.length;
 
-    // Update marker context for lines within this page
+    // Update chapter marker context
     for (let i = lineIdx; i < contentEnd; i++) {
       if (lineToMarker.has(i)) activeMarkerIdx = lineToMarker.get(i)!;
     }
 
     const rawContent = lines.slice(contentStart, contentEnd).join("\n");
     const content = cleanContent(rawContent);
-
     if (content.length < 5) continue;
 
+    displayPage++;
     const marker = activeMarkerIdx >= 0 ? SECTION_MARKERS[activeMarkerIdx] : null;
+    const isFrontMatter = virtualPage < 0;
 
     sections.push({
-      id: `kashif-en-page-${pageNum}`,
-      part: marker?.part || "",
-      chapter: marker?.chapter || "",
-      heading: marker?.heading || `Page ${pageNum}`,
+      id: `kashif-en-page-${displayPage}`,
+      part: marker?.part || (isFrontMatter ? "Front Matter" : ""),
+      chapter: marker?.chapter || (isFrontMatter ? "Front Matter" : ""),
+      heading: marker?.heading || `Page ${label}`,
       content,
-      pageNumber: pageNum,
+      pageNumber: displayPage,
     });
   }
 
   return sections;
 }
+
