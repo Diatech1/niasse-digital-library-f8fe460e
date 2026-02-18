@@ -450,7 +450,12 @@ const Reader = () => {
           paddingBottom: chromeVisible ? (readAlongActive ? '12rem' : '11rem') : '5rem',
         }}
         onClick={() => {
-          if (!readAlongActive) setChromeVisible((v) => !v);
+          if (readAlongActive) return;
+          if (isFullscreen) {
+            document.exitFullscreen().then(() => setIsFullscreen(false)).catch(() => {});
+          } else {
+            setChromeVisible((v) => !v);
+          }
         }}
         onTouchStart={(e) => {
           touchStartX.current = e.touches[0].clientX;
