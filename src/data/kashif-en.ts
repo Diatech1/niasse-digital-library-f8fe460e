@@ -88,7 +88,10 @@ function cleanContent(text: string): string {
     // Remove sommaire/TOC-style lines with dots
     .replace(/^.*\.{5,}.*$/gm, "")
     // Remove running chapter headers (matching section marker names that appear as page headers)
-    .replace(/^Concerning the reality of Sufism\s*$/gm, "")
+    // These appear both as standalone titles and as "Chapter Title N" on odd pages.
+    // The odd-page variants are now used as page boundaries (so lineIdx+1 skips them),
+    // but standalone forms may still appear within content due to PDF extraction quirks.
+    .replace(/^Concerning the [Rr]eality of Sufism\s*$/gm, "")
     .replace(/^The Excellence of Allah's Remembrance \(dhikr\)\s*$/gm, "")
     .replace(/^Congregating for the Remembrance\s*$/gm, "")
     .replace(/^Mention of the Flood.*within the Tij.*$/gm, "")
@@ -105,6 +108,7 @@ function cleanContent(text: string): string {
     .replace(/^Our Confidant Reliance.*$/gm, "")
     .replace(/^Section [IV]+\s*$/gm, "")
     .replace(/^CHAPTER \d+\s*$/gm, "")
+    .replace(/^APPENDIX [IVX]+\s*$/gm, "")
     // Collapse multiple blank lines
     .replace(/\n{3,}/g, "\n\n")
     .trim();
@@ -167,8 +171,9 @@ export async function loadKashifEnSections(): Promise<KashifEnSection[]> {
 
   const oddPageRegex = /^\s*(\d{1,3})\s*$/;
   const evenPageRegex = /^(\d{1,3})\s+THE REMOVAL OF CONFUSION\s*$/;
-  // Running chapter headers on odd pages (e.g., "General Introduction 5")
-  const oddHeaderRegex = /^.+\s+(\d{1,3})\s*$/;
+  // Running chapter headers on odd pages (e.g., "General Introduction 5", "Seeking the Shaykh 175")
+  // These start with a capital letter, contain no period (excludes footnotes), and end with a page number.
+  const oddHeaderRegex = /^[A-Z][^.]{4,90}\s(\d{1,3})\s*$/;
 
   // Find all page boundaries using both odd and even page patterns
   const pageBoundaries: { lineIdx: number; pageNum: number }[] = [];
@@ -183,6 +188,17 @@ export async function loadKashifEnSections(): Promise<KashifEnSection[]> {
       candidates.push({ lineIdx: i, pageNum: parseInt(evenMatch[1], 10), confidence: "high" });
       continue;
     }
+    // Odd pages: running chapter header ending with page number — high confidence
+    // e.g. "General Introduction 5", "Seeking the Shaykh 175"
+    const oddHeaderMatch = lines[i].match(oddHeaderRegex);
+    if (oddHeaderMatch) {
+      const num = parseInt(oddHeaderMatch[1], 10);
+      // Only treat as page header if number is plausible (odd pages only, but allow both)
+      if (num >= 1 && num <= 500) {
+        candidates.push({ lineIdx: i, pageNum: num, confidence: "high" });
+        continue;
+      }
+    }
     // Odd pages: standalone number — less reliable (could be footnotes)
     const oddMatch = lines[i].match(oddPageRegex);
     if (oddMatch) {
@@ -190,37 +206,34 @@ export async function loadKashifEnSections(): Promise<KashifEnSection[]> {
     }
   }
 
-  // Build sequential page boundaries starting from page 1
-  // Use high-confidence matches first, then fill in with low-confidence
-  let lastPageNum = 0;
+  // Build page boundaries:
+  // Strategy: collect all high-confidence candidates (even-page headers + odd running headers)
+  // and low-confidence (standalone numbers), then merge by page number preferring high-conf.
   const tocEndLine = 60; // Skip TOC
-  
-  for (const c of candidates) {
-    if (c.lineIdx <= tocEndLine) continue;
-    
-    if (pageBoundaries.length === 0) {
-      // Looking for page 1
-      if (c.pageNum === 1) {
-        pageBoundaries.push({ lineIdx: c.lineIdx, pageNum: 1 });
-        lastPageNum = 1;
-      }
-      continue;
-    }
-    
-    // Handle duplicates (same page number on consecutive lines)
-    if (c.pageNum === lastPageNum) {
-      pageBoundaries[pageBoundaries.length - 1].lineIdx = c.lineIdx;
-      continue;
-    }
-    
-    // Accept next page if it's sequential (allow gaps up to 5 for missing pages)
-    if (c.pageNum === lastPageNum + 1 || c.pageNum === lastPageNum + 2) {
-      pageBoundaries.push({ lineIdx: c.lineIdx, pageNum: c.pageNum });
-      lastPageNum = c.pageNum;
-    } else if (c.confidence === "high" && c.pageNum > lastPageNum && c.pageNum <= lastPageNum + 10) {
-      // Trust high-confidence matches with larger gaps
-      pageBoundaries.push({ lineIdx: c.lineIdx, pageNum: c.pageNum });
-      lastPageNum = c.pageNum;
+
+  // Separate into high-confidence (even-page + odd-header) and low-confidence (standalone)
+  const highConf = candidates.filter(c => c.confidence === "high" && c.lineIdx > tocEndLine);
+  const lowConf  = candidates.filter(c => c.confidence === "low"  && c.lineIdx > tocEndLine);
+
+  // Deduplicate: keep first occurrence per page number in each bucket
+  const highByPage = new Map<number, number>(); // pageNum → lineIdx
+  for (const c of highConf) {
+    if (!highByPage.has(c.pageNum)) highByPage.set(c.pageNum, c.lineIdx);
+  }
+  const lowByPage = new Map<number, number>();
+  for (const c of lowConf) {
+    if (!lowByPage.has(c.pageNum)) lowByPage.set(c.pageNum, c.lineIdx);
+  }
+
+  // Find max page detected
+  const allPageNums = [...highByPage.keys(), ...lowByPage.keys()];
+  const maxPage = allPageNums.length > 0 ? Math.max(...allPageNums) : 0;
+
+  // Build final boundaries in order, preferring high-confidence, falling back to low
+  for (let p = 1; p <= maxPage; p++) {
+    const lineIdx = highByPage.get(p) ?? lowByPage.get(p);
+    if (lineIdx !== undefined) {
+      pageBoundaries.push({ lineIdx, pageNum: p });
     }
   }
 
