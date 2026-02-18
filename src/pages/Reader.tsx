@@ -5,7 +5,7 @@ import { ruhAlAdabVerses, ruhAlAdabMeta } from "@/data/ruh-al-adab";
 import { comprendreFaydhahSections, comprendreFaydhahMeta } from "@/data/comprendre-faydhah";
 import { loadKachifulAlbasSections, kachifulAlbasMeta, type KachifulSection } from "@/data/kachiful-albas";
 import { loadKashifEnSections, kashifEnMeta, type KashifEnSection } from "@/data/kashif-en";
-import { ArrowLeft, Loader2, Search, Maximize, Minimize, Headphones, Play, Pause, Square } from "lucide-react";
+import { ArrowLeft, Loader2, Search, Maximize, Minimize, Headphones, Play, Pause, Square, ChevronLeft, ChevronRight } from "lucide-react";
 import { useReadAlong, splitIntoSentences, stripForSpeech } from "@/hooks/use-read-along";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -426,6 +426,28 @@ const Reader = () => {
           </>
         )}
       </div>
+
+      {/* Side navigation arrows */}
+      {!readAlongActive && chromeVisible && allSections.length > 1 && (
+        <>
+          <button
+            onClick={() => goToSection(currentSectionIdx - 1)}
+            disabled={currentSectionIdx === 0}
+            className="fixed left-2 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-background/60 backdrop-blur-sm border border-border/30 shadow-md disabled:opacity-20 transition-opacity hover:bg-background/80"
+            aria-label="Previous page"
+          >
+            <ChevronLeft className="w-5 h-5 text-foreground" />
+          </button>
+          <button
+            onClick={() => goToSection(currentSectionIdx + 1)}
+            disabled={currentSectionIdx === allSections.length - 1}
+            className="fixed right-2 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-background/60 backdrop-blur-sm border border-border/30 shadow-md disabled:opacity-20 transition-opacity hover:bg-background/80"
+            aria-label="Next page"
+          >
+            <ChevronRight className="w-5 h-5 text-foreground" />
+          </button>
+        </>
+      )}
 
       {/* Read Along control bar — always visible when active */}
       {readAlongActive && (
