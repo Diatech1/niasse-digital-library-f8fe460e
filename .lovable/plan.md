@@ -1,49 +1,76 @@
 
+# Read Along Feature
 
-# Page-by-Page Navigation Matching the PDF
+## What It Does
+"Read Along" uses the browser's built-in **Web Speech API (text-to-speech)** to read the current section aloud while **highlighting each sentence** in real-time as it is spoken. No external audio files or services are required — it works entirely in the browser.
 
-## Overview
-Rewrite the content parsing in `kachiful-albas.ts` so that each "page" in the reader corresponds to a physical page from the original PDF. The TXT file already contains standalone page numbers (e.g., "3", "4", ..., "109") on their own lines. These will be used as split points instead of chapter markers.
+The feature will:
+- Add a **microphone/speaker button** in the bottom bar (or top bar)
+- Read the visible section's text aloud
+- Highlight the **currently spoken sentence** with a soft background color
+- Allow **pause/resume/stop** controls
+- Respect the currently selected **reading speed** (adjustable)
+- Disappear cleanly when the user navigates to another section
 
-## How It Works
-The TXT file contains lines like:
+---
+
+## User Flow
+
+```text
+Tap "Read Along" button  →  Browser starts speaking current section
+                         →  Each sentence highlights as it is read
+Tap Pause               →  Speech pauses, highlight stays
+Tap Resume              →  Speech resumes from paused sentence
+Navigate to next section →  Speech stops, resets
+Tap Stop                →  Speech stops, highlights clear
 ```
-3
-Avant propos text...
-...
-4
-More text...
-```
 
-Each standalone number marks the start of a new PDF page. The parser will split at these boundaries, producing ~109 pages (matching the PDF). Chapter markers will still be tracked to label each page with its part/chapter for the TOC.
+---
 
-## Changes
+## Technical Approach
 
-### 1. Rewrite `loadKachifulAlbasSections()` in `src/data/kachiful-albas.ts`
+### 1. New hook: `src/hooks/use-read-along.ts`
+Encapsulates all Web Speech API logic:
+- `utterance` — a `SpeechSynthesisUtterance` wrapping the text
+- `activeSentenceIndex` — tracks which sentence is currently being spoken
+- Uses `utterance.onboundary` events to detect word/sentence boundaries and update the active index
+- Exposes: `start()`, `pause()`, `resume()`, `stop()`, `isPlaying`, `isPaused`, `activeSentenceIndex`, `rate`, `setRate`
 
-- **New parsing strategy**: Scan the TXT file for standalone page numbers (`/^\s*(\d{1,3})\s*$/`). Each page number starts a new section.
-- **Chapter tracking**: As we encounter lines matching `SECTION_MARKERS`, update the current part/chapter/heading context. Each page inherits the most recent chapter context.
-- **Section output**: Each section gets:
-  - `id`: `kfr-page-N` (where N is the PDF page number)
-  - `part`/`chapter`/`heading`: inherited from the current chapter marker
-  - `content`: the text between two consecutive page numbers
-- **Skip front matter**: Pages 1-2 (title page and table of contents) are skipped as before.
-- **Remove `cleanContent`'s page-number-to-marker conversion**: Since pages are now split at page boundaries, standalone page numbers no longer appear inside content. The `{{PAGE:N}}` conversion is no longer needed.
-- **Keep other cleanContent rules**: Chapter header removal, blank line collapsing still apply.
+### 2. Text splitting utility
+A `splitIntoSentences(text: string): string[]` function will split content into sentences using punctuation boundaries (`. `, `? `, `! `). This array is used both for TTS input and for rendering highlighted spans.
 
-### 2. Update TOC behavior in `Reader.tsx`
+### 3. Updates to `FormattedContent.tsx`
+- Accept two new optional props: `activeSentenceIndex?: number` and `sentences?: string[]`
+- When read-along is active, instead of rendering raw paragraph text, render each sentence as a `<span>` — with a yellow/amber highlight on the active one
+- The highlighted span auto-scrolls into view using `scrollIntoView({ behavior: 'smooth', block: 'center' })`
 
-- The `tocItems` logic already groups sections by chapter. Since each page now carries its chapter label, the TOC will show chapters with their constituent pages listed underneath.
-- The bottom bar will show "Page 3 of 109" (matching PDF page numbers).
+### 4. Updates to `Reader.tsx`
+- Import and use `useReadAlong` hook
+- Pass `activeSentenceIndex` and `sentences` to `FormattedContent`
+- Add a **Read Along control bar** that appears above the bottom bar when active:
+  - Play/Pause button
+  - Stop button  
+  - Speed selector (0.75×, 1×, 1.25×, 1.5×, 2×)
+- Add a **headphone/speaker icon button** in the top controls row to activate read-along
+- When the section changes (`currentSectionIdx` changes), auto-stop the current read-along
 
-### 3. No changes needed to:
-- `FormattedContent.tsx` -- page markers won't appear inside content anymore since each page is its own section
-- `ReaderBottomBar.tsx` -- already displays page count
-- `ChapterDropdown.tsx` -- already reads from tocItems
+---
 
-## Result
-- Reader shows "Page 1 of ~107" (excluding title/TOC pages)
-- Each swipe or arrow press moves to the next PDF page
-- TOC groups pages under their chapter headings
-- Scrolling within a page is minimal (each page is ~1 screen of text)
+## Files to Create / Modify
 
+| File | Action |
+|---|---|
+| `src/hooks/use-read-along.ts` | **Create** — Web Speech API hook |
+| `src/components/reader/FormattedContent.tsx` | **Modify** — accept active sentence props, render highlighted spans |
+| `src/pages/Reader.tsx` | **Modify** — wire hook, add controls button + floating control bar |
+
+---
+
+## Implementation Notes
+
+- **Browser compatibility**: Web Speech API is supported on all modern browsers (Chrome, Safari, Firefox, Edge). On unsupported browsers, the button will be hidden.
+- **Content stripping**: Before feeding to TTS, strip `{{PAGE:N}}` markers and other formatting tokens.
+- **Sentence boundary detection**: Uses `onboundary` event with `charIndex` to track position precisely within the full text string, then maps back to sentence index.
+- **Stop on section change**: A `useEffect` watching `currentSectionIdx` calls `stop()` to reset state cleanly.
+- **Chrome quirk**: Chrome cancels long utterances after ~15 seconds of silence. The hook will chunk text by paragraph to avoid this.
+- **The tap-to-hide chrome feature**: Read-along controls will remain visible even when `chromeVisible` is false, or will be tied to `chromeVisible` — user taps once to bring chrome back before stopping.
