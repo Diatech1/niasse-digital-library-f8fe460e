@@ -12,11 +12,6 @@ const BottomNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Hide on reader and audio player pages
-  if (location.pathname.startsWith("/read/") || location.pathname.startsWith("/listen/")) {
-    return null;
-  }
-
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 glass border-t border-border/50">
       <div className="flex items-center justify-around py-2 pb-safe max-w-lg mx-auto">
