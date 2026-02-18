@@ -1,13 +1,25 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { books } from "@/data/books";
 import BookCard from "@/components/BookCard";
 import SearchBar from "@/components/SearchBar";
+import { getSavedProgress } from "@/hooks/use-reading-progress";
+import { BookOpen } from "lucide-react";
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
 
-  const continueReading = books.filter((b) => b.progress !== undefined);
+  // Books with real saved progress from localStorage
+  const continueReading = useMemo(() =>
+    books
+      .map((b) => ({ book: b, idx: getSavedProgress(b.id) }))
+      .filter(({ idx }) => idx > 0)
+      .sort((a, b) => b.idx - a.idx), // most-advanced first
+    []
+  );
+
   const favorites = books.filter((b) => b.isFavorite);
   const filteredBooks = books.filter(
     (b) =>
@@ -38,20 +50,53 @@ const Index = () => {
         <SearchBar onSearch={setSearchQuery} />
       </div>
 
-      {/* Continue Reading */}
+      {/* Continue Reading — real progress from localStorage */}
       {continueReading.length > 0 && !searchQuery && (
-        <section className="mb-8">
-          <h2 className="text-gold font-serif text-lg font-semibold px-5 mb-3">
+        <motion.section
+          className="mb-8"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          <h2 className="text-gold font-serif text-lg font-semibold px-5 mb-3 flex items-center gap-2">
+            <BookOpen className="w-4 h-4 text-primary" />
             Continue Reading
           </h2>
           <div className="flex gap-4 overflow-x-auto px-5 pb-2 scrollbar-hide">
-            {continueReading.map((book) => (
-              <div key={book.id} className="min-w-[140px] max-w-[140px]">
-                <BookCard book={book} index={0} />
-              </div>
-            ))}
+            {continueReading.map(({ book, idx }) => {
+              const progress = book.pages > 0 ? Math.round((idx / book.pages) * 100) : 0;
+              return (
+                <motion.div
+                  key={book.id}
+                  className="min-w-[150px] max-w-[150px] flex-shrink-0 cursor-pointer"
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => navigate(`/read/${book.id}`)}
+                >
+                  <div className="relative rounded-xl overflow-hidden shadow-md">
+                    <img
+                      src={book.cover}
+                      alt={book.title}
+                      className="w-full aspect-[2/3] object-cover"
+                    />
+                    {/* Progress overlay */}
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-2 pt-4 pb-2">
+                      <div className="h-1 bg-white/30 rounded-full">
+                        <div
+                          className="h-full bg-primary rounded-full transition-all"
+                          style={{ width: `${Math.min(progress, 100)}%` }}
+                        />
+                      </div>
+                      <p className="text-white text-[10px] mt-1 opacity-80">
+                        Page {idx + 1} · {Math.min(progress, 100)}%
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-xs font-medium mt-2 line-clamp-2 leading-tight">{book.title}</p>
+                </motion.div>
+              );
+            })}
           </div>
-        </section>
+        </motion.section>
       )}
 
       {/* Favorites */}
@@ -91,3 +136,4 @@ const Index = () => {
 };
 
 export default Index;
+
