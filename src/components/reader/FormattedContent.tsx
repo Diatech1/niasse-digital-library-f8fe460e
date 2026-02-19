@@ -92,9 +92,9 @@ const FormattedContent = ({ content, fontSize, activeSentenceIndex, sentences }:
           && !trimmed.includes(". "); // Poetry rarely has full sentences with periods
         if (isPoetry) {
           return (
-            <blockquote key={idx} className="border-l-2 border-primary/40 pl-4 my-6 space-y-1">
+            <blockquote key={idx} className="border-l-2 border-primary/60 pl-4 my-6 space-y-1">
               {lines.map((line, li) => (
-                <p key={li} className="text-foreground/90 italic" style={{ fontSize: fontSize * 0.95 }}>
+                <p key={li} className="text-foreground" style={{ fontSize: fontSize * 0.95 }}>
                   {line.trim()}
                 </p>
               ))}
