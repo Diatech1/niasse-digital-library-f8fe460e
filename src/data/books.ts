@@ -3,6 +3,7 @@ import cover8 from "@/assets/book-cover-8.jpg";
 import cover9 from "@/assets/book-cover-9.jpg";
 import cover9b from "@/assets/book-cover-9b.jpg";
 import cover11 from "@/assets/book-cover-11.jpg";
+import cover12 from "@/assets/book-cover-12.jpg";
 
 
 export interface Book {
@@ -89,5 +90,18 @@ export const books: Book[] = [
     description: "Le Wird Tidjane — Les conditions de la voie, le Lazim, la Wazifa, la Jawaratoul Kamal, le Dhikr du vendredi et les règles de réparation. Un guide complet pour la pratique quotidienne de la Tarîqa Tijâniyya.",
     hasAudio: false,
     contentModule: "wird-tidjane",
+  },
+  {
+    id: "12",
+    title: "Les Stations de l'Islam",
+    titleAr: "مقامات ومنازل وحضرات",
+    author: "Cheikh Ibrahim Niass",
+    cover: cover12,
+    language: "French",
+    pages: 8,
+    tags: ["Maqamat", "Tasawwuf", "Doctrine", "Tarbiyya"],
+    description: "Synthèse de deux lettres de Cheikh Ibrahim Niass sur la classification des étapes de la religion — Islam, Imân, Ihsân — et des neuf stations mystiques du cheminement spirituel.",
+    hasAudio: false,
+    contentModule: "stations-islam",
   },
 ];

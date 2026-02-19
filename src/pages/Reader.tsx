@@ -6,6 +6,7 @@ import { comprendreFaydhahSections, comprendreFaydhahMeta } from "@/data/compren
 import { loadKachifulAlbasSections, kachifulAlbasMeta, type KachifulSection } from "@/data/kachiful-albas";
 import { loadKashifEnSections, kashifEnMeta, type KashifEnSection } from "@/data/kashif-en";
 import { wirdTidjaneSections, wirdTidjaneMeta } from "@/data/wird-tidjane";
+import { stationsIslamSections, stationsIslamMeta } from "@/data/stations-islam";
 import { ArrowLeft, Loader2, Search, Maximize, Minimize, Headphones, Play, Pause, Square, ChevronLeft, ChevronRight, Bookmark, BookmarkCheck } from "lucide-react";
 import { useReadAlong, splitIntoSentences, stripForSpeech } from "@/hooks/use-read-along";
 import { useSaveProgress, getSavedProgress } from "@/hooks/use-reading-progress";
@@ -134,6 +135,14 @@ const Reader = () => {
     }
     if (book?.contentModule === "wird-tidjane") {
       return wirdTidjaneSections.map((s) => ({
+        id: s.id,
+        chapter: s.chapter,
+        heading: s.heading,
+        content: s.content,
+      }));
+    }
+    if (book?.contentModule === "stations-islam") {
+      return stationsIslamSections.map((s) => ({
         id: s.id,
         chapter: s.chapter,
         heading: s.heading,
@@ -284,6 +293,14 @@ const Reader = () => {
           <p className="text-center text-sm text-muted-foreground mb-1">{kashifEnMeta.subtitle}</p>
           <p className="text-center text-xs text-muted-foreground mb-1">by {kashifEnMeta.author}</p>
           <p className="text-center text-xs text-muted-foreground mb-6">Translated by: {kashifEnMeta.translators}</p>
+        </>
+      );
+    }
+    if (book.contentModule === "stations-islam") {
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{stationsIslamMeta.title}</h2>
+          <p className="text-center text-xs text-muted-foreground mb-6">par {stationsIslamMeta.author}</p>
         </>
       );
     }
