@@ -177,6 +177,9 @@ const ReadAlongContent = ({
  * - Italic for book/work titles detected by patterns
  */
 function formatInlineText(text: string): React.ReactNode {
+  // French typography: non-breaking space before :, ;, !, ?
+  text = text.replace(/ :/g, '\u00a0:').replace(/ ;/g, '\u00a0;');
+
   // Split on patterns we want to style
   const parts: React.ReactNode[] = [];
   
