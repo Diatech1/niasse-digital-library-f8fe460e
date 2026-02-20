@@ -61,152 +61,228 @@ export const wirdTidjaneSections: WirdSection[] = [
   },
   {
     id: "wt-2",
-    chapter: "Sourate Al Fatiha",
-    heading: "Sourate Al Fatiha",
-    content: `Bismi Allahi alrrahmani alrraheemi
-Alhamdu lillahi rabbi al'alameena
-Alrrahmani alrraheemi
-Maliki yawmi alddeeni
-Iyyaka na'budu wa-iyyaka nasta'eenu
-Ihdina alssirata almustaqeema
-Sirata allatheena an'amta 'alayhim ghayri almaghdoobi 'alayhim wala alddalleena`,
+    chapter: "Le Lazim",
+    heading: "Le Lazim — Introduction",
+    content: `Le Lazim est le wird quotidien obligatoire, accompli deux fois par jour — le matin et le soir.
+
+Le Lazim du matin : le temps préférable s'étend après la Salat Soubh jusqu'à la période précédant le zénith (Douha El A'la). Le temps de nécessité dure jusqu'au coucher du soleil (Ghouroub).
+
+Le Lazim du soir : le temps préférable s'étend après la Salat 'Asr jusqu'à la prière du Icha. Le temps de nécessité dure jusqu'au Fajr.`,
   },
   {
     id: "wt-3",
     chapter: "Le Lazim",
-    heading: "Le Lazim — Temps d'accomplissement",
-    content: `Le Lazim est le wird quotidien obligatoire, accompli deux fois par jour — le matin et le soir.
+    heading: "1 — Al-Fâtiha",
+    content: `Débuter par A'ûzu bil-lâhi minach-chaytânir-rajîm, puis réciter la Fâtiha :
 
-Le Lazim du matin
+﷽
 
-Le temps préférable (Ikhtiyari) s'étend après la Salat Soubh jusqu'à la période précédant le zénith (Douha El A'la). Le temps de nécessité dure jusqu'au coucher du soleil (Ghouroub).
+أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ
 
-Le Lazim du soir
+بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ ﴿١﴾
+الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ ﴿٢﴾
+الرَّحْمَٰنِ الرَّحِيمِ ﴿٣﴾
+مَالِكِ يَوْمِ الدِّينِ ﴿٤﴾
+إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ ﴿٥﴾
+اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ ﴿٦﴾
+صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ ﴿٧﴾
 
-Le temps préférable s'étend après la Salat 'Asr jusqu'à la prière du Icha. Le temps de nécessité dure jusqu'au Fajr.
-
-Seïdina Ahmed Tidjani (qu'Allah sanctifie son précieux secret) a dit dans une lettre adressée aux disciples de Guemar : « Le temps d'accomplissement du wird (Lazim) est large. Celui de fin de journée, son temps va de la prière du 'Asr jusqu'à l'heure du 'Icha et toute cette période constitue son temps préférable d'accomplissement. Celui qui l'a dépassé en raison du travail, de la maladie, ou ce qui se rapporte à cela, le rattrape à n'importe quel moment de la nuit qui lui est possible. »
-
-Le wird du début de journée a son temps préférable d'accomplissement qui va de la prière du Soubh jusqu'au moment qui précède le Zénith (Douha El A'la) et celui qui a une excuse valide, il le rattrape à n'importe quel moment de la journée.
-
-Il est rapporté dans Ifadatoul-Ahmediya que Seïdina Ahmed Tidjani a dit : « Celui qui a devancé son wird du Soubh et qu'il a été surpris par l'apparition du Fajr alors qu'il se trouvait dans sa récitation, qu'il le termine. »
-
-Il est aussi rapporté que Seïdina Ahmed Tidjani a dit : « Celui qui désire devancer le wird du 'Asr (c'est-à-dire le Lazim du soir) il ne peut que s'il a un empêchement à ce moment-là, et qu'il le devance alors au cours de la nuit. »
-
-Sidi Taïeb Sefiani rapporte que quelqu'un demanda à Seïdina Ahmed Tidjani sur le cas de celui qui est fiévreux : doit-il faire tout de même son Lazim ? Il a dit : « Le malade a le choix pour l'évocation de son wird sauf s'il en est capable. »`,
+Bismi-llâhir-rahmânir-rahîm.
+Al-hamdu lil-lâhi rabbil-'âlamîn.
+Ar-rahmânir-rahîm.
+Mâliki yawmid-dîn.
+Iyyâka na'budu wa iyyâka nasta'în.
+Ihdinâs-sirâtal-mustaqîm.
+Sirâtal-lazîna an'amta 'alayhim, ghayril-maghdûbi 'alayhim wa lad-dâllîn. Âmîn.`,
   },
   {
     id: "wt-4",
     chapter: "Le Lazim",
-    heading: "Le Lazim — Formules et pratique",
-    content: `Depuis l'époque de Seïdina Ahmed Tîdjâni (qu'Allah sanctifie son précieux secret), ce qu'il reçut du Prophète ﷺ et qu'il autorisa à transmettre à ses compagnons, transmis jusqu'à nos jours, est le suivant :
+    heading: "2 — L'Istighfâr (100 fois)",
+    content: `Réciter la formule de demande de pardon 100 fois :
 
-Aouzou Billahi mina chaytani radjim — La Sourate Al Fatiha (1 fois).
+أَسْتَغْفِرُ اللَّهَ
 
-Astaghfiroullah — 100 fois.
+Astaghfiru-llâh
 
-La Salatoul Fatiha — 100 fois :
-
-Allâhumma çalli alâ Seïdina Muhammadinil-fâtihi lima ughliqa ; wal-khâtimi limâ sabaqa ; nâçiril-haqqi bil-haqqi ; wal-hâdî ilâ çirâtikal-mustaqîmi wa 'alâ âlihî haqqa qadrihî wa miqdârihil-'azîm.
-
-De préférence, il faut utiliser la Salatoul Fatiha en raison de ses multiples mérites. Mais il est permis de la remplacer par une autre formule si on ne la connaît pas, ou qu'on est malade, en voyage, ou au travail. Dans ce cas, la formule que conseille Sidi Arbi ibn Sa-ih (rda) dans son Boughiyat est : « Allâhumma salli wa sallim ala Seïdina Mouhamadin wa ala alihi. »
-
-Formule de transition méritoire (entre la Salatoul Fatiha et La Ilaha Ila Allah) :
-
-Soub-hana rabbika rabbil izzati amma yassifouna wa salamoun anlal moursalina wal hamdoulillahi rabbil alamin.
-
-La Ilaha Ila Allah — 100 fois.
-
-Il est un devoir de clôturer le 100ème grain par la formule : « Seïdina Mouhamadou Rassouloullahi anleyhi sallamoullah. »
-
-Formule de clôture méritoire à la fin du Lazim :
-
-Innal lahâ wal malaa-ikatahu yussalouna alâ nabiyi yaa ayuhal lazina amanou sallou anleyhi wa sallimou tasliman sallal lahou anleyhi wa anla âlihi wa sahbihi wa salama tasliman. Soub-hana rabbika rabbil izzati amma yassifouna wa salamoun anlal moursalina wal hamdoulillahi rabbil alamin.`,
+« Je demande pardon à Allah. »`,
   },
   {
     id: "wt-5",
+    chapter: "Le Lazim",
+    heading: "3 — La Salâtul-Fâtihi (100 fois)",
+    content: `Réciter la prière sur le Prophète ﷺ 100 fois. La meilleure formule est la Salâtul-Fâtihi :
+
+اَللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ الْفَاتِحِ لِمَا أُغْلِقَ وَالْخَاتِمِ لِمَا سَبَقَ نَاصِرِ الْحَقِّ بِالْحَقِّ وَالْهَادِي إِلَى صِرَاطِكَ الْمُسْتَقِيمِ وَعَلَى آلِهِ حَقَّ قَدْرِهِ وَمِقْدَارِهِ الْعَظِيمِ
+
+Allâhumma çalli 'alâ sayyidinâ Muhammadinil-fâtihi limâ ughliqa ; wal-khâtimi limâ sabaqa ; nâçiril-haqqi bil-haqqi ; wal-hâdî ilâ çirâtikal-mustaqîmi wa 'alâ âlihî haqqa qadrihî wa miqdârihil-'azîm.
+
+De préférence, il faut utiliser la Salâtul-Fâtihi en raison de ses multiples mérites. Mais il est permis de la remplacer par une autre formule si on ne la connaît pas, ou qu'on est malade, en voyage, ou au travail.`,
+  },
+  {
+    id: "wt-6",
+    chapter: "Le Lazim",
+    heading: "4 — Lâ ilâha illal-lâh (100 fois)",
+    content: `Réciter la formule de tahlîl 100 fois :
+
+لَا إِلَهَ إِلَّا اللَّهُ
+
+Lâ ilâha illal-lâh
+
+« Il n'y a de divinité qu'Allah. »
+
+À la 100e répétition, ajouter :
+
+سَيِّدُنَا مُحَمَّدٌ رَسُولُ اللَّهِ عَلَيْهِ سَلَامُ اللَّهِ
+
+Sayyidunâ Muhammadu rassûlul-lâhi 'alayhi salâmul-lâh.`,
+  },
+  {
+    id: "wt-7",
+    chapter: "Le Lazim",
+    heading: "Formule de clôture du Lazim",
+    content: `Fermer le Lazim par cette formule :
+
+إِنَّ اللَّهَ وَمَلَائِكَتَهُ يُصَلُّونَ عَلَى النَّبِيِّ يَا أَيُّهَا الَّذِينَ آمَنُوا صَلُّوا عَلَيْهِ وَسَلِّمُوا تَسْلِيمًا
+
+Innal-lâha wa malâ-ikatahû yuçallûna 'alan-nabiyyi. Yâ ayyuhal-lazîna âmanû çallû 'alayhi wa sallimû taslîmâ.
+
+Puis réciter :
+
+صَلَّى اللَّهُ عَلَيْهِ وَعَلَى آلِهِ وَصَحْبِهِ وَسَلَّمَ تَسْلِيمًا
+
+Çallal-lâhu 'alayhi wa 'alâ âlihî wa çahbihî wa sallama taslîmann.
+
+Puis :
+
+سُبْحَانَ رَبِّكَ رَبِّ الْعِزَّةِ عَمَّا يَصِفُونَ وَسَلَامٌ عَلَى الْمُرْسَلِينَ وَالْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ
+
+Çubhâna rabbika rabbil-'izzi 'ammâ yaçifûna ; wa salâmunn 'alâl-murçalîna wal-hamdulil-lâhi rabbil-'âlamîn.`,
+  },
+  {
+    id: "wt-8",
     chapter: "La Wazifa",
     heading: "La Wazifa — Temps d'accomplissement",
     content: `La Wadhifa n'est obligatoire qu'une fois par jour. Le meilleur moment pour l'accomplir est après le Maghreb. Son temps s'étend du 'Asr d'un jour jusqu'au 'Asr de l'autre jour, et son temps de nécessité jusqu'au Maghreb de cet autre jour. C'est ainsi qu'agissait Seïdina Ahmed Tidjani (qu'Allah sanctifie son précieux secret) à la fin de sa vie.`,
   },
   {
-    id: "wt-6",
+    id: "wt-9",
     chapter: "La Wazifa",
-    heading: "La Wazifa — Piliers et pratique",
+    heading: "La Wazifa — Piliers",
     content: `En voici les piliers :
 
-Aouzou Billahi mina chaytani radjim — La Sourate Al Fatiha (1 fois).
+1 A'ûzu bil-lâhi minach-chaytânir-rajîm + 1 Fâtiha
 
-Astaghfiroullah al azimal lazi La Ilaha Ila houwal hayyul qayyum — 30 fois.
+30 fois :
 
-La Salatoul Fatiha — 50 fois :
+أَسْتَغْفِرُ اللَّهَ الْعَظِيمَ الَّذِي لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ
 
-Allâhumma çalli alâ Seïdina Muhammadinil-fâtihi lima ughliqa ; wal-khâtimi limâ sabaqa ; nâçiril-haqqi bil-haqqi ; wal-hâdî ilâ çirâtikal-mustaqîmi wa 'alâ âlihî haqqa qadrihî wa miqdârihil-'azîm.
+Astaghfiru-llâhal-'azîmal-lazî lâ ilâha illâ huwwal-hayyul-qayyûm.
 
-Il est important de le faire avec la Salatoul Fatiha uniquement — c'est une des conditions de validité de la Wazifa. On ne peut remplacer la Salatoul Fatiha par une autre formule de prière dans ce cas.
+50 fois — La Salâtul-Fâtihi (voir Lazim — obligatoirement avec cette formule, sans substitution) :
 
-Formule de transition méritoire (entre la Salatoul Fatiha et La Ilaha Ila Allah) :
+اَللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ الْفَاتِحِ لِمَا أُغْلِقَ وَالْخَاتِمِ لِمَا سَبَقَ نَاصِرِ الْحَقِّ بِالْحَقِّ وَالْهَادِي إِلَى صِرَاطِكَ الْمُسْتَقِيمِ وَعَلَى آلِهِ حَقَّ قَدْرِهِ وَمِقْدَارِهِ الْعَظِيمِ
 
-Soub-hana rabbika rabbil izzati amma yassifouna wa salamoun anlal moursalina wal hamdoulillahi rabbil alamin. (Sourate 37 Saffat, versets 180-181-182)
+100 fois :
 
-La Ilaha Ila Allah — 100 fois.
+لَا إِلَهَ إِلَّا اللَّهُ
 
-Formule de transition méritoire (entre La Ilaha Ila Allah et la Jawaratoul Kamal) :
-
-Seïdina Mouhamadou Rassouloullahi anleyhi sallamoullah.`,
+Puis 12 fois la Jawharatul-Kamâl.`,
   },
   {
-    id: "wt-7",
+    id: "wt-10",
     chapter: "La Wazifa",
-    heading: "La Jawaratoul Kamal — Conditions et texte",
-    content: `Conditions de récitation de la Jawaratoul Kamal
+    heading: "La Jawharatul-Kamâl (12 fois)",
+    content: `Conditions : pureté rituelle du corps, des vêtements et de l'endroit, avec ablutions à l'eau. S'asseoir lors de la récitation.
 
-La pureté rituelle est requise : du corps, des vêtements et de l'endroit, avec les ablutions à l'eau. Il faut s'asseoir lors de la récitation.
+اَللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى عَيْنِ الرَّحْمَةِ الرَّبَّانِيَّةِ وَالْيَاقُوتَةِ الْمُتَحَقِّقَةِ الْحَائِطَةِ بِمَرْكَزِ الْفُهُومِ وَالْمَعَانِي وَنُورِ الْأَكْوَانِ الْمُتَكَوِّنَةِ الْآدَمِيِّ صَاحِبِ الْحَقِّ الرَّبَّانِيِّ الْبَرْقِ الْأَسْطَعِ بِمُزُونِ الْأَرْبَاحِ الْمَالِئَةِ لِكُلِّ مُتَعَرِّضٍ مِنَ الْبُحُورِ وَالْأَوَانِي وَنُورِكَ اللَّامِعِ الَّذِي مَلَأْتَ بِهِ كَوْنَكَ الْحَائِطَ بِأَمْكِنَةِ الْمَكَانِي
 
-Sidi 'Arbi ibn Sa-ih (qu'Allah l'agrée) dit dans son Boughiyat : « Durant les voyages, lorsqu'on arrive à la Djaouharatou-l-Kamel, on doit descendre et la réciter en marchant, à condition que l'endroit soit pur. Certains compagnons disent que le voyageur peut la faire en marchant et s'asseoir à partir de la 7e perle jusqu'à la fin — c'est le plus préférable sauf en cas de nécessité. »
+Allâhumma çalli wa sallim 'alâ 'aynir-rahmatir-rabbâniyyati wal yâqûtatil-mutahaqqiqatil-hâ'itati bimarkazil-fuhûmi wal-ma'ânî. wa nûril-akwânil-mutakawwinatil-âdamiyyi çâhibil-haqqir-rabbânî. Albarqil-ashta'i bimuzûnil-arbâhil-mâli'ati likulli muta'arridin minal-buhûri wal-awânî. wa nûrikal-lâmi'il-lazî mala'ta bihî kawnakal-hâ'ita bi amkinatil-makânî.
 
-Seïdina Ahmed Tîdjâni a dit : « Celui qui se purifie par le Tayyamoum ne doit pas réciter Djaouharatou-l-Kamel, mais il la remplace par vingt Salat Fatiha lima ughliqa, car elle ne peut se réciter que par la pureté à l'eau et sur un tapis pur qui peut contenir six personnes. »
+اَللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى عَيْنِ الْحَقِّ الَّتِي تَتَجَلَّى مِنْهَا عُرُوشُ الْحَقَائِقِ عَيْنِ الْمَعَارِفِ الْأَقْوَمِ صِرَاطِكَ التَّامِّ الْأَسْقَمِ
 
-Seïdina Ahmed Tîdjâni a dit aussi : « Pour celui qui n'arrive pas à apprendre la prière appelée Djaouharatou-l-Kamel, qu'il la remplace par vingt Salat Fatiha. »
+Allâhumma çalli wa sallim 'alâ 'aynil-haqqil-latî tatajallâ minhâ 'urûchul-haqâ'iqi 'aynil-ma'ârifil-aqwam çirâtikat-tâmil-asqam.
 
-Jawaratoul Kamal
+اَللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى طَلْعَةِ الْحَقِّ بِالْحَقِّ الْكَنْزِ الْأَعْظَمِ إِفَاضَتِكَ مِنْكَ إِلَيْكَ إِحَاطَةَ النُّورِ الْمُطَلْسَمِ صَلَّى اللَّهُ عَلَيْهِ وَعَلَى آلِهِ صَلَاةً تُعَرِّفُنَا بِهَا إِيَّاهُ
 
-Allâhumma salli wa sallim alâ aynir rahmatir rabbâniyyati wal yâqoutatil moutahaqqiqatil hâitati bimarkazil fouhoûmi wal ma'ânî wa noûril akwânil moutakawwinati ââdammiyyi sâhibil haqqir rabbâniyyil al barqil asta'i bimouzoûnil arbâhil mâliati likoulli moutagharridine minal bouhoûri wal awâni wa nôurikal lâmighil lazî malata bihi kawnakal hâita biamkinatil makânî.
+Allâhumma çalli wa sallim 'alâ tal'atil-haqqi bil-haqqil-kanzil-a'zam. Ifâdhatika minka ilayka ihâtatin-nûril-mutalsam. Çallal-lâhu 'alayhi wa 'alâ âlihî çalâtann tu'arrifunâ bihâ iyyâhu.
 
-Allâhumma salli wa sallim anla aynil haqqil latî tatadjallah minha ourouchoul haqâiqi aynil ma'arifil aqwami sirâtika attâmil asqami.
-
-Allâhumma salli wa sallim anla tal'atil haqqi bil haqqil kanezil anzami ifâdatika minka ilayka ihâdatin-noûril moutalsami Sallalahou anleyhi wa 'alâ âlihi salatane tou'anrrifouna bi an iyya'ou.`,
+À partir de la 12e Jawharatul-Kamâl : lever les deux mains, paumes vers le ciel, jusqu'à la fin de la Wazifa.`,
   },
   {
-    id: "wt-8",
+    id: "wt-11",
+    chapter: "La Wazifa",
+    heading: "Clôture de la Wazifa",
+    content: `Après la 12e Jawharatul-Kamâl, réciter :
+
+إِنَّ اللَّهَ وَمَلَائِكَتَهُ يُصَلُّونَ عَلَى النَّبِيِّ يَا أَيُّهَا الَّذِينَ آمَنُوا صَلُّوا عَلَيْهِ وَسَلِّمُوا تَسْلِيمًا
+
+Innal-lâha wa malâ-ikatahû yuçallûna 'alan-nabiyyi. Yâ ayyuhal-lazîna âmanû çallû 'alayhi wa sallimû taslîmâ.
+
+صَلَّى اللَّهُ عَلَيْهِ وَعَلَى آلِهِ وَصَحْبِهِ وَسَلَّمَ تَسْلِيمًا
+
+Çallal-lâhu 'alayhi wa 'alâ âlihî wa çahbihî wa sallama taslîmann.
+
+سُبْحَانَ رَبِّكَ رَبِّ الْعِزَّةِ عَمَّا يَصِفُونَ وَسَلَامٌ عَلَى الْمُرْسَلِينَ وَالْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ
+
+Çubhâna rabbika rabbil-'izzi 'ammâ yaçifûna ; wa salâmunn 'alâl-murçalîna wal-hamdulil-lâhi rabbil-'âlamîn.`,
+  },
+  {
+    id: "wt-12",
     chapter: "Le Dhikr du vendredi",
-    heading: "Le Dhikr (hadara) du vendredi",
+    heading: "Le Zikru Juma (Hadara du vendredi)",
     content: `Le Dhikr du vendredi ne s'accomplit que le vendredi, entre la prière du 'Asr et du Maghreb. Le meilleur moment est de lier sa récitation à la venue du Maghreb.
 
-Aouzou Billahi mina chaytani radjim — La Sourate Al Fatiha (1 fois).
+1 fois — A'ûzu bil-lâhi minach-chaytânir-rajîm
+1 fois — Al-Fâtiha
+3 fois — Astaghfiru-llâhal-'azîmal-lazî lâ ilâha illâ huwwal-hayyul-qayyûm
 
-Astaghfiroullah al azimal lazi La Ilaha Ila houwal hayyul qayyum — 3 fois.
+3 fois — Salâtul-Fâtihi :
 
-La Salatoul Fatiha — 3 fois :
+اَللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ الْفَاتِحِ لِمَا أُغْلِقَ وَالْخَاتِمِ لِمَا سَبَقَ نَاصِرِ الْحَقِّ بِالْحَقِّ وَالْهَادِي إِلَى صِرَاطِكَ الْمُسْتَقِيمِ وَعَلَى آلِهِ حَقَّ قَدْرِهِ وَمِقْدَارِهِ الْعَظِيمِ
 
-Allâhumma çalli alâ Seïdina Muhammadinil-fâtihi lima ughliqa ; wal-khâtimi limâ sabaqa ; nâçiril-haqqi bil-haqqi ; wal-hâdî ilâ çirâtikal-mustaqîmi wa 'alâ âlihî haqqa qadrihî wa miqdârihil-'azîm.
+Formule de transition méritoire :
 
-Formule de transition méritoire (entre la Salatoul Fatiha et La Ilaha Ila Allah) :
+سُبْحَانَ رَبِّكَ رَبِّ الْعِزَّةِ عَمَّا يَصِفُونَ وَسَلَامٌ عَلَى الْمُرْسَلِينَ وَالْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ
 
-Soub-hana rabbika rabbil izzati amma yassifouna wa salamoun anlal moursalina wal hamdoulillahi rabbil alamin. (Sourate 37 Saffat, versets 180-181-182)
+Entre 600 et 1600 fois :
 
-La Ilaha Ila Allah — entre 600 et 1600 fois.
+لَا إِلَهَ إِلَّا اللَّهُ
 
-Formule de transition méritoire (à la fin de La Ilaha Ila Allah) :
+Lâ ilâha illal-lâh
 
-Seïdina Mouhamadou Rassouloullahi anleyhi sallamoullah.
+Puis :
 
-Formule de fermeture méritoire à la fin de la Hadara :
+سَيِّدُنَا مُحَمَّدٌ رَسُولُ اللَّهِ عَلَيْهِ سَلَامُ اللَّهِ
 
-Innal lahâ wal malaa-ikatahu yussalouna alâ nabiyi yaa ayuhal lazina amanou sallou anleyhi wa sallimou tasliman sallal lahou anleyhi wa anla âlihi wa sahbihi wa salama tasliman. Soub-hana rabbika rabbil izzati amma yassifouna wa salamoun anlal moursalina wal hamdoulillahi rabbil alamin.`,
+Sayyidunâ Muhammadu rassûlul-lâhi 'alayhi salâmul-lâh.`,
   },
   {
-    id: "wt-9",
+    id: "wt-13",
+    chapter: "Le Dhikr du vendredi",
+    heading: "Clôture de la Hadara",
+    content: `Fermer par :
+
+1 fois — A'ûzu bil-lâhi minach-chaytânir-rajîm
+1 fois — Al-Fâtiha
+3 fois — Salâtul-Fâtihi
+
+إِنَّ اللَّهَ وَمَلَائِكَتَهُ يُصَلُّونَ عَلَى النَّبِيِّ يَا أَيُّهَا الَّذِينَ آمَنُوا صَلُّوا عَلَيْهِ وَسَلِّمُوا تَسْلِيمًا
+
+Innal-lâha wa malâ-ikatahû yuçallûna 'alan-nabiyyi. Yâ ayyuhal-lazîna âmanû çallû 'alayhi wa sallimû taslîmâ.
+
+صَلَّى اللَّهُ عَلَيْهِ وَعَلَى آلِهِ وَصَحْبِهِ وَسَلَّمَ تَسْلِيمًا
+
+Çallal-lâhu 'alayhi wa 'alâ âlihî wa çahbihî wa sallama taslîmann.
+
+سُبْحَانَ رَبِّكَ رَبِّ الْعِزَّةِ عَمَّا يَصِفُونَ وَسَلَامٌ عَلَى الْمُرْسَلِينَ وَالْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ
+
+Çubhâna rabbika rabbil-'izzi 'ammâ yaçifûna ; wa salâmunn 'alâl-murçalîna wal-hamdulil-lâhi rabbil-'âlamîn.
+
+Fermer par une invocation adressée au Seigneur. Les Orants devront ensuite se saluer, se congratuler en dissipant toute haine entre eux et toute irritation.`,
+  },
+  {
+    id: "wt-14",
     chapter: "Devoirs de la Wazifa et de la Hadara",
     heading: "Devoirs de la Wazifa et de la Hadaratoul Jumha",
     content: `Le non-accomplissement des devoirs qui suivent n'entraîne pas la nullité des oraisons. Mais ce sont des devoirs exigés et leur délaissement est une faute grave — signe que les préceptes de la Tarîqa sont pris à la légère. Il en est comme de quelqu'un voguant en mer qui négligerait les fuites de la coque de son bateau.
@@ -222,23 +298,23 @@ Se mettre en rang en veillant à bien aligner les rangs et à les compléter, co
 Faire concorder les voix et les sons avec celui du groupe de façon à ne pas les perturber. Si cela n'est pas possible, il faut baisser sa voix en dessous des autres — mais attention à ne pas se taire, sinon on perd la récompense du Dhikr.`,
   },
   {
-    id: "wt-10",
+    id: "wt-15",
     chapter: "Réparation",
     heading: "Réparation (Niya Jabr)",
-    content: `Si on doute du nombre, on doit se baser sur la certitude (le nombre inférieur) et, une fois le Dhikr terminé, mettre l'intention de réparer (Niya Jabr) en récitant 100 fois « Astaghfiroullah ».
+    content: `Si on doute du nombre, on doit se baser sur la certitude (le nombre inférieur) et, une fois le Dhikr terminé, mettre l'intention de réparer (Niya Jabr) en récitant 100 fois :
 
-Seïdina Ahmed Tîdjâni a dit : « Celui qui doute dans le rajout ou la diminution, qu'il construise sur la certitude puis rajoute 100 Istighfar avec l'intention de réparer — certes cela réparera. » (Ifadatoul-Ahmediya)
+أَسْتَغْفِرُ اللَّهَ
+
+Astaghfiru-llâh.
+
+Seïdina Ahmed Tîdjâni a dit : « Celui qui doute dans le rajout ou la diminution, qu'il construise sur la certitude puis rajoute 100 Istighfar avec l'intention de réparer — certes cela réparera. »
 
 Celui qui manque un pilier de l'oraison par oubli reprend le pilier de l'Istighfar, puis fait celui de la prière du Prophète. Une fois l'oraison complétée, il répare avec 100 Istighfar avec l'intention de réparer. Si le manque est volontaire, l'oraison est nulle.
 
-Celui qui rajoute au pilier dans le nombre par oubli répare en faisant 100 fois l'Istighfar avec l'intention de réparation (Niya Jabr). Si ce rajout est volontaire, l'oraison est nulle.
+Celui qui constate des perles manquantes dans son chapelet — si le nombre de jours exact est connu, le rattrapage est une nécessité. Si le nombre est inconnu, il doit accomplir 600 fois Astaghfiru-llâh et 3 fois Jawharatul-Kamâl, ce qui réparera tout manque et rajout.
 
-Celui qui constate des perles manquantes dans son chapelet — si le nombre de jours exact est connu, le rattrapage est une nécessité. Si le nombre est inconnu, il doit accomplir 600 fois « Astaghfiroullah » et 3 fois Jawaratoul Kamal, ce qui réparera tout manque et rajout.
+Celui qui n'était pas en état de Présence (Houdour) lors d'un acte obligatoire ou méritoire peut réparer en récitant 3 fois Jawharatul-Kamâl avec l'intention de réparer (Niya Jabr).
 
-Celui qui n'était pas en état de Présence (Houdour) lors d'un acte obligatoire ou méritoire peut réparer en récitant 3 fois Jawaratoul Kamal avec l'intention de réparer (Niya Jabr).
-
-La Présence est l'âme des œuvres. Cette réparation par Jawaratoul est particulière aux gens de cette voie — celui qui répare ainsi se voit compter son adoration avec la Présence, récompensé comme l'est le Connaissant plongé dans la Présence Divine.
-
-Si c'est l'heure de la prière, la personne poursuit son Dhikr jusqu'à ce que l'Imam se lève. Elle repère le grain où elle s'arrête et, après la salutation finale de la prière, reprend directement son Dhikr d'où elle l'a arrêté, en prenant soin de ne pas parler entre temps.`,
+La Présence est l'âme des œuvres. Cette réparation par Jawharatul est particulière aux gens de cette voie — celui qui répare ainsi se voit compter son adoration avec la Présence, récompensé comme l'est le Connaissant plongé dans la Présence Divine.`,
   },
 ];
