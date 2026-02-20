@@ -6,6 +6,7 @@ interface FormattedContentProps {
   fontSize: number;
   activeSentenceIndex?: number;
   sentences?: string[];
+  textColor?: string;
 }
 
 /**
@@ -17,7 +18,7 @@ interface FormattedContentProps {
  * - Proper paragraph spacing with justified text
  * - Read-along sentence highlighting when activeSentenceIndex is provided
  */
-const FormattedContent = ({ content, fontSize, activeSentenceIndex, sentences }: FormattedContentProps) => {
+const FormattedContent = ({ content, fontSize, activeSentenceIndex, sentences, textColor }: FormattedContentProps) => {
   const readAlongActive = activeSentenceIndex !== undefined && activeSentenceIndex >= 0 && sentences && sentences.length > 0;
   const paragraphs = content.split("\n\n").filter((p) => p.trim().length > 0);
 
@@ -94,7 +95,7 @@ const FormattedContent = ({ content, fontSize, activeSentenceIndex, sentences }:
           return (
             <blockquote key={idx} className="border-l-2 border-primary/60 pl-4 my-6 space-y-1">
               {lines.map((line, li) => (
-                <p key={li} className="font-semibold" style={{ fontSize: fontSize * 0.95, color: 'inherit' }}>
+                <p key={li} className="font-semibold" style={{ fontSize: fontSize * 0.95, color: textColor || 'inherit' }}>
                   {line.trim()}
                 </p>
               ))}

@@ -355,6 +355,7 @@ const Reader = () => {
           fontSize={fontSize}
           activeSentenceIndex={readAlongActive ? readAlong.activeSentenceIndex : undefined}
           sentences={currentSectionSentences}
+          textColor={theme.text.replace('text-[', '').replace(']', '')}
         />
       </div>
     );
