@@ -94,7 +94,7 @@ const FormattedContent = ({ content, fontSize, activeSentenceIndex, sentences }:
           return (
             <blockquote key={idx} className="border-l-2 border-primary/60 pl-4 my-6 space-y-1">
               {lines.map((line, li) => (
-                <p key={li} className="text-foreground" style={{ fontSize: fontSize * 0.95 }}>
+                <p key={li} className="text-foreground font-medium" style={{ fontSize: fontSize * 0.95 }}>
                   {line.trim()}
                 </p>
               ))}
