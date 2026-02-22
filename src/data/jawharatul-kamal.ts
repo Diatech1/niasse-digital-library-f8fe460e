@@ -79,6 +79,138 @@ Que Dieu répande ses grâces sur lui et sur sa famille, grâces par lesquelles,
   },
   {
     id: "jawh-4",
+    chapter: "Phonétique",
+    heading: "Texte en phonétique",
+    content: `ALLAHOUMMA SALLI WA SALLIM 'ALA 'AÏNI RAHMATI RABBANIYYATI WAL YAQOUTATI-L-MOUTAHAQQIQATI-L-HAÏTATI BI MARKEZI-L-FOUHOUMI WAL MA'ANI
+
+WA NOURI-L-AKWANI-L-MOUTAKAWWINATI-L-ADAMIYYI SAHIBI-L-HAQQI RABBANI
+
+EL BARQI-L-ASTA'I BI MOUZOUNI-L-ARBAHI-L-MALIATI LI KOULLI MOUTA'ARRIDIN MINA-L-BOUHOURI WAL AWANI
+
+WA NOURIKA-L-LAMI'I ALLADHI MALA-TA BIHI KAOUNAKA-L-HAÏTA BI AMKINATI-L-MAKANI
+
+ALLAHOUMMA SALLI WA SALLIM 'ALA 'AÏNI-L-HAQQI ALLATI TATAJALLA MINHA 'OUROUCHOU-L-HAQA-IQI 'AÏNI-L-MA'ARIFI-L-AQWAMI SIRATIKA TAMMI-L-ASQAMI
+
+ALLAHOUMMA SALLI WA SALLIM 'ALA TAL'ATI-L-HAQQI BI-L-HAQQI EL KANZI-L-A'DHAMI IFADATIKA MINKA ILAÏKA IHATATI NOURI-L-MOUTALSAMI SALLA LLAHOU 'ALAÏHI WA 'ALA ALIHI SALATAN TOU'ARIFOUNA BIHA IYYAHOU`
+  },
+  {
+    id: "jawh-5",
+    chapter: "Correspondances",
+    heading: "Correspondances phonétique / traduction",
+    content: `ALLAHOUMMA SALLI WA SALLIM 'ALA — « Ô mon Dieu, répands tes grâces et accorde le salut à »
+
+'AÏNI RAHMATI RABBANIYYATI — « la source de la Miséricorde Divine »
+
+WAL YAQOUTATI — « et au diamant étincelant »
+
+MOUTAHAQQIQATI — « versé indéfiniment dans la vérité »
+
+HAÏTATI BI MARKEZI — « Celui qui est au centre »
+
+FOUHOUMI — « de toutes formes de compréhensions »
+
+WAL MA'ANI — « et de significations »
+
+WA NOURI — « Il est la lumière »
+
+AKWANI — « des êtres »
+
+MOUTAKAWWINATI — « en cours de formation »
+
+ADAMIYYI — « humaine »
+
+SAHIBI — « il possède »
+
+LHAQQI — « la Vérité »
+
+RABBANI — « Divine »
+
+EL BARQI-L-ASTA'I — « tel l'éclair immense traversant les nuages précurseurs »
+
+BI MOUZOUNI-L-ARBAHI — « de la pluie bienfaisante des Miséricordes Divines »
+
+MALIATI — « qui emplissent »
+
+LI KOULLI MOUTA'ARRIDIN — « sur leur chemin »
+
+MINA-L-BOUHOURI WAL AWANI — « aussi bien les grandes étendues d'eau que les petites »
+
+WA NOURIKA — « Il est Ta lumière »
+
+LAMI'I — « brillante »
+
+ALLADHI MALA-TA BIHI — « qui s'étend sur toute »
+
+KAOUNAKA-L — « l'existence »
+
+HAÏTA — « l'englobe »
+
+BI AMKINATI-L-MAKANI — « dans tous ses lieux »
+
+'AÏNI — « la source »
+
+L-HAQQI — « de la Vérité »
+
+ALLATI — « qui »
+
+TATAJALLA MINHA — « est à l'origine »
+
+'OUROUCHOU-L — « des connaissances »
+
+HAQA-IQI — « les plus justes »
+
+'AÏNI — « par lequel se manifestent »
+
+L-MA'ARIFI — « Réalités »
+
+L-AQWAMI — « les majestueuses »
+
+SIRATIKA — « tel ton sentier »
+
+TAMMI-L — « parfaitement »
+
+ASQAMI — « droit »
+
+TAL'ATI — « la manifestation »
+
+L-HAQQI — « de la Vérité »
+
+BI-L — « par la »
+
+HAQQI — « Vérité »
+
+EL KANZI — « au trésor »
+
+L-A'DHAMI — « le plus sublime »
+
+IFADATIKA — « au flux venant »
+
+MINKA — « de toi »
+
+ILAÏKA — « et retournant vers toi »
+
+IHATATI — « et à la quintessence »
+
+NOURI-L — « des lumières »
+
+MOUTALSAMI — « dissimulées à toute connaissance »
+
+SALLA LLAHOU — « Que Dieu répande ses grâces »
+
+'ALAÏHI — « sur lui »
+
+WA 'ALA — « et sur »
+
+ALIHI — « sa famille »
+
+SALATAN — « grâces »
+
+TOU'ARIFOUNA BIHA — « par lesquelles »
+
+IYYAHOU — « Ô mon Dieu, Tu nous le feras connaître »`
+  },
+  {
+    id: "jawh-6",
     chapter: "Points à éclaircir",
     heading: "Djaouharatou-l-Kamel et le Coran",
     content: `Question : Est-il vrai que les disciples Tidjani affirment que le statut de la Djaouharatou-l-Kamel est plus important que celui du Saint Coran ?
