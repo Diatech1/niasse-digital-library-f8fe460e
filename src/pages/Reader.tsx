@@ -173,6 +173,24 @@ const Reader = () => {
         content: s.content,
       }));
     }
+    if (book?.contentModule === "adeb-dhikr") {
+      return adebDhikrSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
+    }
+    if (book?.contentModule === "origine-soubha") {
+      return origineSoubhaSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
+    }
+    if (book?.contentModule === "salat-fatihi") {
+      return salatFatihiSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
+    }
+    if (book?.contentModule === "jawharatul-kamal") {
+      return jawharatulKamalSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
+    }
+    if (book?.contentModule === "dhikr-groupe") {
+      return dhikrGroupeSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
+    }
+    if (book?.contentModule === "fadail-dhikr") {
+      return fadailDhikrSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
+    }
     return [{ id: "sample", heading: "Sample", content: "__sample__" }];
   }, [book?.contentModule, kashifEnData, kachifulAlbasData]);
 
@@ -307,6 +325,54 @@ const Reader = () => {
         <>
           <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{stationsIslamMeta.title}</h2>
           <p className="text-center text-xs text-muted-foreground mb-6">par {stationsIslamMeta.author}</p>
+        </>
+      );
+    }
+    if (book.contentModule === "adeb-dhikr") {
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{adebDhikrMeta.title}</h2>
+          <p className="text-center text-xs text-muted-foreground mb-6">Source : {adebDhikrMeta.source}</p>
+        </>
+      );
+    }
+    if (book.contentModule === "origine-soubha") {
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{origineSoubhaMeta.title}</h2>
+          <p className="text-center text-xs text-muted-foreground mb-6">Source : {origineSoubhaMeta.source}</p>
+        </>
+      );
+    }
+    if (book.contentModule === "salat-fatihi") {
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{salatFatihiMeta.title}</h2>
+          <p className="text-center text-xs text-muted-foreground mb-6">Source : {salatFatihiMeta.source}</p>
+        </>
+      );
+    }
+    if (book.contentModule === "jawharatul-kamal") {
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{jawharatulKamalMeta.title}</h2>
+          <p className="text-center text-xs text-muted-foreground mb-6">Source : {jawharatulKamalMeta.source}</p>
+        </>
+      );
+    }
+    if (book.contentModule === "dhikr-groupe") {
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{dhikrGroupeMeta.title}</h2>
+          <p className="text-center text-xs text-muted-foreground mb-6">Source : {dhikrGroupeMeta.source}</p>
+        </>
+      );
+    }
+    if (book.contentModule === "fadail-dhikr") {
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{fadailDhikrMeta.title}</h2>
+          <p className="text-center text-xs text-muted-foreground mb-6">Source : {fadailDhikrMeta.source}</p>
         </>
       );
     }
