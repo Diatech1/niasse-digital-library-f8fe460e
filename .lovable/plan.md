@@ -1,34 +1,35 @@
 
 
-## Mise a jour des metadonnees du Wird Tidjane dans books.ts
+## Fix: Arabic text misdetected as poetry in FormattedContent
 
-### Contexte
+### Problem
 
-La table des matieres du lecteur est generee automatiquement a partir des champs `chapter` et `heading` dans `wirdTidjaneSections` (wird-tidjane.ts). Elle affiche deja correctement les 15 sections regroupees en 5 chapitres : Conditions, Le Lazim, La Wazifa, Le Dhikr du vendredi, Devoirs, et Reparation.
+In `FormattedContent.tsx`, the detection order is:
+1. Page markers
+2. Numbered lists
+3. Footnotes
+4. **Poetry** (fires here for multi-line Arabic)
+5. Drop cap
+6. **Arabic** (never reached)
 
-La seule mise a jour necessaire concerne les metadonnees du livre dans `books.ts`.
+The Quranic verses of Al-Fatiha (7 short lines) match the poetry heuristic (`lines >= 3`, `avgLineLen < 80`, no `. `), so they render as a blockquote with a green left border instead of right-to-left Arabic with the proper font.
 
-### Modifications
+### Solution
 
-**Fichier : `src/data/books.ts`** (entree id "11")
+Move the Arabic detection **before** the poetry detection. This way, any paragraph containing predominantly Arabic characters will be rendered with `dir="rtl"`, the Scheherazade New font, and proper line height -- regardless of how many lines it has.
 
-1. **Nombre de pages** : passer de `pages: 10` a `pages: 15` pour correspondre aux 15 sections actuelles du contenu.
+### Technical Details
 
-2. **Description enrichie** : mettre a jour la description pour mieux refleter les sous-sections cles ajoutees (Al-Fatiha, Istighfar, Salatul-Fatihi, Jawharatul-Kamal, Zikru Juma) :
+**File: `src/components/reader/FormattedContent.tsx`**
 
-```
-"Le Wird Tidjane -- Les 23 conditions de la voie, le Lazim (Al-Fatiha, Istighfar, Salatul-Fatihi, Tahlil), la Wazifa (Jawharatul-Kamal), le Dhikr du vendredi (Zikru Juma), les devoirs collectifs et les regles de reparation (Niya Jabr). Un guide complet pour la pratique quotidienne de la Tariqa Tijaniyya."
-```
+Reorder the detection blocks so the Arabic check comes before the poetry check. No logic changes needed -- just move the existing Arabic detection block (currently around line 108-122) to run immediately after the footnote detection and before the poetry detection (currently around line 85).
 
-3. **Tags** : ajouter "Jawharatul-Kamal" et "Salatul-Fatihi" pour ameliorer la recherche :
-
-```
-tags: ["Wird", "Dhikr", "Pratique", "Tarbiyya", "Jawharatul-Kamal", "Salatul-Fatihi"]
-```
-
-### Impact
-
-- La fiche du livre dans la bibliotheque affichera une description plus precise
-- Le nombre de pages refletera le contenu reel
-- Les tags supplementaires amelioreront la decouverte du livre via la recherche
+The detection order becomes:
+1. Page markers
+2. Numbered lists
+3. Footnotes
+4. **Arabic** (moved up)
+5. Poetry
+6. Drop cap
+7. Regular paragraph
 
