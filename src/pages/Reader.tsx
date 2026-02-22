@@ -7,6 +7,12 @@ import { loadKachifulAlbasSections, kachifulAlbasMeta, type KachifulSection } fr
 import { loadKashifEnSections, kashifEnMeta, type KashifEnSection } from "@/data/kashif-en";
 import { wirdTidjaneSections, wirdTidjaneMeta } from "@/data/wird-tidjane";
 import { stationsIslamSections, stationsIslamMeta } from "@/data/stations-islam";
+import { adebDhikrSections, adebDhikrMeta } from "@/data/adeb-dhikr";
+import { origineSoubhaSections, origineSoubhaMeta } from "@/data/origine-soubha";
+import { salatFatihiSections, salatFatihiMeta } from "@/data/salat-fatihi";
+import { jawharatulKamalSections, jawharatulKamalMeta } from "@/data/jawharatul-kamal";
+import { dhikrGroupeSections, dhikrGroupeMeta } from "@/data/dhikr-groupe";
+import { fadailDhikrSections, fadailDhikrMeta } from "@/data/fadail-dhikr";
 import { ArrowLeft, Loader2, Search, Maximize, Minimize, Headphones, Play, Pause, Square, ChevronLeft, ChevronRight, Bookmark, BookmarkCheck } from "lucide-react";
 import { useReadAlong, splitIntoSentences, stripForSpeech } from "@/hooks/use-read-along";
 import { useSaveProgress, getSavedProgress } from "@/hooks/use-reading-progress";
