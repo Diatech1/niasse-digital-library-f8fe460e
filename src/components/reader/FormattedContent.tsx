@@ -86,6 +86,27 @@ const FormattedContent = ({ content, fontSize, activeSentenceIndex, sentences, t
           );
         }
 
+        // Detect Arabic text (Unicode Arabic block)
+        const isArabic = /[\u0600-\u06FF]/.test(trimmed) && trimmed.replace(/[^\u0600-\u06FF\s]/g, '').length / trimmed.length > 0.3;
+        if (isArabic) {
+          return (
+            <p
+              key={idx}
+              dir="rtl"
+              lang="ar"
+              className="leading-loose text-right my-4"
+              style={{
+                fontSize: fontSize * 1.35,
+                fontFamily: "'Scheherazade New', 'Amiri', 'Noto Naskh Arabic', serif",
+                color: textColor || 'inherit',
+                lineHeight: 2.2,
+              }}
+            >
+              {trimmed}
+            </p>
+          );
+        }
+
         // Detect poetry/verse lines (short lines with consistent pattern, NOT regular prose)
         const lines = trimmed.split("\n");
         const avgLineLen = lines.reduce((s, l) => s + l.trim().length, 0) / lines.length;
@@ -116,27 +137,6 @@ const FormattedContent = ({ content, fontSize, activeSentenceIndex, sentences, t
                 {firstChar}
               </span>
               {formatInlineText(rest)}
-            </p>
-          );
-        }
-
-        // Detect Arabic text (Unicode Arabic block)
-        const isArabic = /[\u0600-\u06FF]/.test(trimmed) && trimmed.replace(/[^\u0600-\u06FF\s]/g, '').length / trimmed.length > 0.3;
-        if (isArabic) {
-          return (
-            <p
-              key={idx}
-              dir="rtl"
-              lang="ar"
-              className="leading-loose text-right my-4"
-              style={{
-                fontSize: fontSize * 1.35,
-                fontFamily: "'Scheherazade New', 'Amiri', 'Noto Naskh Arabic', serif",
-                color: textColor || 'inherit',
-                lineHeight: 2.2,
-              }}
-            >
-              {trimmed}
             </p>
           );
         }
