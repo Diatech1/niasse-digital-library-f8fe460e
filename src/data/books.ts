@@ -4,6 +4,12 @@ import cover9 from "@/assets/book-cover-9.jpg";
 import cover9b from "@/assets/book-cover-9b.jpg";
 import cover11 from "@/assets/book-cover-11.jpg";
 import cover12 from "@/assets/book-cover-12.jpg";
+import coverAdeb from "@/assets/cover-adeb.jpg";
+import coverSoubha from "@/assets/cover-soubha.jpg";
+import coverSalatFatihi from "@/assets/cover-salat-fatihi.jpg";
+import coverJawharatul from "@/assets/cover-jawharatul.jpg";
+import coverDhikrGroupe from "@/assets/cover-dhikr-groupe.jpg";
+import coverFadailDhikr from "@/assets/cover-fadail-dhikr.jpg";
 
 
 export interface Book {
@@ -103,5 +109,83 @@ export const books: Book[] = [
     description: "Synthèse de deux lettres de Cheikh Ibrahim Niass sur la classification des étapes de la religion — Islam, Imân, Ihsân — et des neuf stations mystiques du cheminement spirituel.",
     hasAudio: false,
     contentModule: "stations-islam",
+  },
+  {
+    id: "13",
+    title: "Les Bienséances du Dhikr",
+    titleAr: "آداب الذكر",
+    author: "Cheikh Mohamed ibn Abdelwahid Nadhifi",
+    cover: coverAdeb,
+    language: "French",
+    pages: 5,
+    tags: ["Adab", "Dhikr", "Pratique", "Tarbiyya"],
+    description: "Les 22 bienséances pour la perfection dans l'accomplissement des Oraisons : 5 avant le Dhikr, 12 pendant et 5 après l'évocation.",
+    hasAudio: false,
+    contentModule: "adeb-dhikr",
+  },
+  {
+    id: "14",
+    title: "L'origine du Chapelet",
+    titleAr: "أصل السبحة",
+    author: "Tradition Tidjaniyya",
+    cover: coverSoubha,
+    language: "French",
+    pages: 8,
+    tags: ["Soubha", "Dhikr", "Sunna", "Pratique"],
+    description: "Les preuves coraniques et prophétiques de l'usage du chapelet (Soubha) dans le Dhikr, avec réponse aux critiques sur la délimitation du nombre.",
+    hasAudio: false,
+    contentModule: "origine-soubha",
+  },
+  {
+    id: "15",
+    title: "La Salatoul Fatihi",
+    titleAr: "صلاة الفاتح",
+    author: "Tradition Tidjaniyya",
+    cover: coverSalatFatihi,
+    language: "French",
+    pages: 20,
+    tags: ["Salat-Fatihi", "Prière", "Mérites", "Tijâniyya"],
+    description: "Mérites, commentaire et éclaircissements sur la Salat Fatihi — prière ordonnée par le Prophète à Seïdina Ahmed Tijani à l'état d'éveil.",
+    hasAudio: false,
+    contentModule: "salat-fatihi",
+  },
+  {
+    id: "16",
+    title: "La Djaouharatou-l-Kamel",
+    titleAr: "جوهرة الكمال",
+    author: "Tradition Tidjaniyya",
+    cover: coverJawharatul,
+    language: "French",
+    pages: 15,
+    tags: ["Jawharatul-Kamal", "Prière", "Mérites", "Tijâniyya"],
+    description: "La Perle de la Perfection — texte, explication et mérites de cette prière dictée par le Prophète à Seïdina Ahmed Tijani.",
+    hasAudio: false,
+    contentModule: "jawharatul-kamal",
+  },
+  {
+    id: "17",
+    title: "L'Évocation en Groupe",
+    titleAr: "الذكر الجماعي",
+    author: "Tradition Tidjaniyya",
+    cover: coverDhikrGroupe,
+    language: "French",
+    pages: 18,
+    tags: ["Dhikr", "Groupe", "Sunna", "Pratique"],
+    description: "Les preuves de la recommandation du Dhikr en groupe et à voix haute, avec réponse aux objections.",
+    hasAudio: false,
+    contentModule: "dhikr-groupe",
+  },
+  {
+    id: "18",
+    title: "Les Mérites du Dhikr",
+    titleAr: "فضائل الذكر",
+    author: "Tradition Tidjaniyya",
+    cover: coverFadailDhikr,
+    language: "French",
+    pages: 15,
+    tags: ["Dhikr", "Fadaïl", "Mérites", "Tarbiyya"],
+    description: "Les mérites de l'évocation d'Allah — preuves coraniques, prophétiques et paroles des saints sur l'importance du Dhikr.",
+    hasAudio: false,
+    contentModule: "fadail-dhikr",
   },
 ];
