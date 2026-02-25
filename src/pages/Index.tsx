@@ -62,36 +62,35 @@ const Index = () => {
             <BookOpen className="w-4 h-4 text-primary" />
             Continue Reading
           </h2>
-          <div className="flex gap-4 overflow-x-auto px-5 pb-2 scrollbar-hide">
+          <div className="grid grid-cols-4 gap-3 gap-y-5 px-5">
             {continueReading.map(({ book, idx }) => {
               const progress = book.pages > 0 ? Math.round((idx / book.pages) * 100) : 0;
               return (
                 <motion.div
                   key={book.id}
-                  className="min-w-[150px] max-w-[150px] flex-shrink-0 cursor-pointer"
+                  className="cursor-pointer"
                   whileTap={{ scale: 0.97 }}
                   onClick={() => navigate(`/read/${book.id}`)}
                 >
-                  <div className="relative rounded-xl overflow-hidden shadow-md">
+                  <div className="relative rounded-md overflow-hidden shadow-md">
                     <img
                       src={book.cover}
                       alt={book.title}
                       className="w-full aspect-[2/3] object-cover"
                     />
-                    {/* Progress overlay */}
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-2 pt-4 pb-2">
-                      <div className="h-1 bg-white/30 rounded-full">
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-1.5 pt-3 pb-1.5">
+                      <div className="h-0.5 bg-white/30 rounded-full">
                         <div
                           className="h-full bg-primary rounded-full transition-all"
                           style={{ width: `${Math.min(progress, 100)}%` }}
                         />
                       </div>
-                      <p className="text-white text-[10px] mt-1 opacity-80">
-                        Page {idx + 1} · {Math.min(progress, 100)}%
+                      <p className="text-white text-[8px] mt-0.5 opacity-80">
+                        {Math.min(progress, 100)}%
                       </p>
                     </div>
                   </div>
-                  <p className="text-xs font-medium mt-2 line-clamp-2 leading-tight">{book.title}</p>
+                  <p className="text-xs font-medium mt-1.5 line-clamp-2 leading-tight">{book.title}</p>
                 </motion.div>
               );
             })}
@@ -105,11 +104,9 @@ const Index = () => {
           <h2 className="text-gold font-serif text-lg font-semibold px-5 mb-3">
             Favorites
           </h2>
-          <div className="flex gap-4 overflow-x-auto px-5 pb-2 scrollbar-hide">
-            {favorites.map((book) => (
-              <div key={book.id} className="min-w-[140px] max-w-[140px]">
-                <BookCard book={book} index={0} />
-              </div>
+          <div className="grid grid-cols-4 gap-3 gap-y-5 px-5">
+            {favorites.map((book, i) => (
+              <BookCard key={book.id} book={book} index={i} />
             ))}
           </div>
         </section>
