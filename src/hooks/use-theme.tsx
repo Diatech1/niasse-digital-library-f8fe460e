@@ -11,7 +11,7 @@ const ThemeContext = createContext<ThemeContextType>({ theme: "dark", setTheme: 
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState<Theme>(() => {
-    return (localStorage.getItem("faydabook-theme") as Theme) || "dark";
+    return (localStorage.getItem("faydabook-theme") as Theme) || "light";
   });
 
   useEffect(() => {
