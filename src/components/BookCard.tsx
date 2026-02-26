@@ -27,11 +27,13 @@ const BookCard = ({ book, index }: BookCardProps) => {
             boxShadow: 'inset -2px 0 3px rgba(0,0,0,0.1)',
           }}
         />
-        <img
-          src={book.cover}
-          alt={book.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-        />
+        <div className="w-full h-full bg-muted/30 flex items-center justify-center">
+          <img
+            src={book.cover}
+            alt={book.title}
+            className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+          />
+        </div>
         {book.progress !== undefined && (
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-muted">
             <div
