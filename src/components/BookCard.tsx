@@ -20,6 +20,13 @@ const BookCard = ({ book, index }: BookCardProps) => {
       onClick={() => navigate(`/book/${book.id}`)}
     >
       <div className="relative overflow-hidden rounded-[2px] aspect-[2/3] mb-3 shadow-[4px_4px_10px_rgba(0,0,0,0.3),_1px_1px_3px_rgba(0,0,0,0.2)] border-l-[3px] border-l-black/10">
+        {/* Page edge effect on right side */}
+        <div className="absolute top-0 right-0 bottom-0 w-[6px] z-10 pointer-events-none"
+          style={{
+            background: 'linear-gradient(to left, rgba(0,0,0,0.08) 0%, rgba(255,255,255,0.15) 30%, rgba(0,0,0,0.05) 60%, transparent 100%)',
+            boxShadow: 'inset -2px 0 3px rgba(0,0,0,0.1)',
+          }}
+        />
         <img
           src={book.cover}
           alt={book.title}
