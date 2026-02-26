@@ -584,8 +584,8 @@ const Reader = () => {
           const dy = e.changedTouches[0].clientY - touchStartY.current;
           touchStartX.current = null;
           touchStartY.current = null;
-          // Horizontal swipe → navigate sections (not in fullscreen)
-          if (!isFullscreen && Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+          // Horizontal swipe → navigate sections (available in both normal and fullscreen)
+          if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
             if (dx < 0 && currentSectionIdx < allSections.length - 1) goToSection(currentSectionIdx + 1);
             else if (dx > 0 && currentSectionIdx > 0) goToSection(currentSectionIdx - 1);
           }
@@ -619,7 +619,7 @@ const Reader = () => {
           <button
             onClick={() => goToSection(currentSectionIdx - 1)}
             disabled={currentSectionIdx === 0}
-            className="fixed left-2 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-background/60 backdrop-blur-sm border border-border/30 shadow-md disabled:opacity-20 transition-opacity hover:bg-background/80"
+            className="absolute left-2 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-background/60 backdrop-blur-sm border border-border/30 shadow-md disabled:opacity-20 transition-opacity hover:bg-background/80"
             aria-label="Previous page"
           >
             <ChevronLeft className="w-5 h-5 text-foreground" />
@@ -627,7 +627,7 @@ const Reader = () => {
           <button
             onClick={() => goToSection(currentSectionIdx + 1)}
             disabled={currentSectionIdx === allSections.length - 1}
-            className="fixed right-2 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-background/60 backdrop-blur-sm border border-border/30 shadow-md disabled:opacity-20 transition-opacity hover:bg-background/80"
+            className="absolute right-2 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-background/60 backdrop-blur-sm border border-border/30 shadow-md disabled:opacity-20 transition-opacity hover:bg-background/80"
             aria-label="Next page"
           >
             <ChevronRight className="w-5 h-5 text-foreground" />
