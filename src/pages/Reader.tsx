@@ -58,7 +58,15 @@ const Reader = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { book, isLoading: bookLoading } = useBook(id);
-  const [themeIdx, setThemeIdx] = useState(2);
+
+  // Default reader theme matches the app's appearance
+  const [themeIdx, setThemeIdx] = useState(() => {
+    const isDark =
+      document.documentElement.classList.contains("dark") ||
+      (localStorage.getItem("faydabook-theme") === "system" &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches);
+    return isDark ? 2 : 0; // Dark or Light
+  });
   const [fontIdx, setFontIdx] = useState(1);
   const [fontSize, setFontSize] = useState(16);
   const [tocOpen, setTocOpen] = useState(false);
@@ -497,7 +505,7 @@ const Reader = () => {
             key={f}
             onClick={() => setFontIdx(i)}
             className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all ${
-              i === fontIdx ? "bg-primary text-primary-foreground" : "bg-muted/30 text-muted-foreground"
+              i === fontIdx ? "bg-primary text-primary-foreground" : "bg-muted text-foreground/70"
             }`}
           >
             {f}
