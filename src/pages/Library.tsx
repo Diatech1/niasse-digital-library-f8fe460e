@@ -1,13 +1,15 @@
 import { useState } from "react";
-import { books } from "@/data/books";
+import { useBooks } from "@/hooks/use-books";
 import BookCard from "@/components/BookCard";
 import SearchBar from "@/components/SearchBar";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const languages = ["All", "English", "Arabic", "French"];
 
 const Library = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLang, setSelectedLang] = useState("All");
+  const { books, isLoading } = useBooks();
 
   const filtered = books.filter((b) => {
     const matchSearch =
@@ -28,7 +30,6 @@ const Library = () => {
         <SearchBar onSearch={setSearchQuery} />
       </div>
 
-      {/* Language filter */}
       <div className="flex gap-2 px-5 mb-6 overflow-x-auto scrollbar-hide">
         {languages.map((lang) => (
           <button
@@ -45,11 +46,19 @@ const Library = () => {
         ))}
       </div>
 
-      <div className="px-5 grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6">
-        {filtered.map((book, i) => (
-          <BookCard key={book.id} book={book} index={i} />
-        ))}
-      </div>
+      {isLoading ? (
+        <div className="px-5 grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="aspect-[2/3] rounded-lg" />
+          ))}
+        </div>
+      ) : (
+        <div className="px-5 grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6">
+          {filtered.map((book, i) => (
+            <BookCard key={book.id} book={book} index={i} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
