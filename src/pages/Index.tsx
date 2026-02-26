@@ -62,7 +62,7 @@ const Index = () => {
             
             Continue Reading
           </h2>
-          <div className="grid grid-cols-4 gap-3 gap-y-5 px-5">
+          <div className="grid grid-cols-3 gap-4 gap-y-5 px-5">
             {continueReading.map(({ book, idx }) => {
             const progress = book.pages > 0 ? Math.round(idx / book.pages * 100) : 0;
             return (
@@ -104,7 +104,7 @@ const Index = () => {
           <h2 className="text-gold font-serif text-lg font-semibold px-5 mb-3">
             Favorites
           </h2>
-          <div className="grid grid-cols-4 gap-3 gap-y-5 px-5">
+          <div className="grid grid-cols-3 gap-4 gap-y-5 px-5">
             {favorites.map((book, i) =>
           <BookCard key={book.id} book={book} index={i} />
           )}
@@ -117,7 +117,7 @@ const Index = () => {
         <h2 className="text-gold font-serif text-lg font-semibold mb-4">
           {searchQuery ? "Search Results" : "Library"}
         </h2>
-        <div className="grid grid-cols-4 gap-3 gap-y-5">
+        <div className="grid grid-cols-3 gap-4 gap-y-5">
           {(searchQuery ? filteredBooks : filteredBooks.slice(0, 8)).map((book, i) =>
           <BookCard key={book.id} book={book} index={i} />
           )}
