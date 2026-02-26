@@ -114,11 +114,21 @@ const Index = () => {
 
       {/* Library Grid */}
       <section className="px-5">
-        <h2 className="text-gold font-serif text-lg font-semibold mb-4">
-          {searchQuery ? "Search Results" : "Library"}
-        </h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-gold font-serif text-lg font-semibold">
+            {searchQuery ? "Search Results" : "Library"}
+          </h2>
+          {!searchQuery && (
+            <button
+              onClick={() => navigate("/library")}
+              className="text-sm text-primary font-medium hover:underline"
+            >
+              See All
+            </button>
+          )}
+        </div>
         <div className="grid grid-cols-3 gap-4 gap-y-5">
-          {(searchQuery ? filteredBooks : filteredBooks.slice(0, 8)).map((book, i) =>
+          {(searchQuery ? filteredBooks : filteredBooks.slice(0, 6)).map((book, i) =>
           <BookCard key={book.id} book={book} index={i} />
           )}
         </div>
