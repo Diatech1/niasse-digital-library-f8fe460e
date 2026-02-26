@@ -561,11 +561,9 @@ const Reader = () => {
           // Only act if touch didn't move (i.e. it was a real tap, not a scroll)
           if (touchHasMoved.current) return;
           if (readAlongActive) return;
-          if (isFullscreen) {
-            document.exitFullscreen().then(() => setIsFullscreen(false)).catch(() => {});
-          } else {
-            setChromeVisible((v) => !v);
-          }
+          // In fullscreen, tapping content does nothing — use the floating exit button instead
+          if (isFullscreen) return;
+          setChromeVisible((v) => !v);
         }}
         onTouchStart={(e) => {
           touchStartX.current = e.touches[0].clientX;
