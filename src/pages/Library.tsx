@@ -50,33 +50,6 @@ const Library = () => {
           <BookCard key={book.id} book={book} index={i} />
         ))}
       </div>
-
-      {/* Stats Card */}
-      <div className="px-5 mt-8">
-        <div className="rounded-2xl border border-border bg-card p-6">
-          <h3 className="text-center font-serif font-bold text-lg text-foreground">
-            Literary Heritage Collection
-          </h3>
-          <p className="text-center text-sm text-muted-foreground mt-1">
-            Preserved works and teachings
-          </p>
-          <div className="grid grid-cols-3 gap-4 mt-5">
-            {[
-              { icon: "📚", count: books.length, label: "Works" },
-              { icon: "📖", count: books.filter(b => b.progress && b.progress > 0).length, label: "Reading" },
-              { icon: "🌐", count: new Set(books.map(b => b.language)).size, label: "Languages" },
-            ].map((stat) => (
-              <div key={stat.label} className="flex flex-col items-center gap-2">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-xl">
-                  {stat.icon}
-                </div>
-                <span className="text-2xl font-bold text-foreground">{stat.count}</span>
-                <span className="text-xs text-muted-foreground">{stat.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
