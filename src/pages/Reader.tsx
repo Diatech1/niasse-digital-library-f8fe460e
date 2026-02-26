@@ -13,8 +13,7 @@ import { salatFatihiSections, salatFatihiMeta } from "@/data/salat-fatihi";
 import { jawharatulKamalSections, jawharatulKamalMeta } from "@/data/jawharatul-kamal";
 import { dhikrGroupeSections, dhikrGroupeMeta } from "@/data/dhikr-groupe";
 import { fadailDhikrSections, fadailDhikrMeta } from "@/data/fadail-dhikr";
-import { ArrowLeft, Loader2, Search, Maximize, Minimize, Headphones, Play, Pause, Square, ChevronLeft, ChevronRight, Bookmark, BookmarkCheck } from "lucide-react";
-import { useReadAlong, splitIntoSentences, stripForSpeech } from "@/hooks/use-read-along";
+import { ArrowLeft, Loader2, Search, Maximize, Minimize, ChevronLeft, ChevronRight, Bookmark, BookmarkCheck } from "lucide-react";
 import { useSaveProgress, getSavedProgress } from "@/hooks/use-reading-progress";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -44,7 +43,7 @@ Let the words of the righteous ones guide your steps, for they have walked the p
 
 const sampleTextAr = `بسم الله الرحمن الرحيم. الحمد لله رب العالمين، والصلاة والسلام على سيدنا محمد وعلى آله وصحبه أجمعين. إن المعرفة نور يهدي إلى الحق، وبها ترتقي الأمم وتسمو الأرواح.`;
 
-const SPEED_OPTIONS = [0.75, 1, 1.25, 1.5, 2];
+
 
 interface Section {
   id: string;
@@ -83,9 +82,6 @@ const Reader = () => {
   const [chromeVisible, setChromeVisible] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Read along state
-  const readAlong = useReadAlong();
-  const [readAlongActive, setReadAlongActive] = useState(false);
   const saveProgress = useSaveProgress(id);
   const { bookmarks, addBookmark, removeBookmark, isBookmarked } = useBookmarks(id);
   const [bookmarkDialogOpen, setBookmarkDialogOpen] = useState(false);
@@ -233,35 +229,6 @@ const Reader = () => {
 
   const currentSection = allSections[currentSectionIdx] || allSections[0];
 
-  // Read-along: sentences derived from current section content
-  const currentSectionSentences = useMemo(() => {
-    if (!readAlongActive || !currentSection) return undefined;
-    const content = currentSection.content;
-    if (content === "__ruh__" || content === "__sample__") return undefined;
-    return splitIntoSentences(stripForSpeech(content));
-  }, [readAlongActive, currentSection]);
-
-  // Stop read-along when section changes
-  useEffect(() => {
-    readAlong.stop();
-    setReadAlongActive(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentSectionIdx]);
-
-  const handleStartReadAlong = useCallback(() => {
-    if (!currentSection) return;
-    const content = currentSection.content;
-    if (content === "__ruh__" || content === "__sample__") return;
-    const plain = stripForSpeech(content);
-    setReadAlongActive(true);
-    setChromeVisible(true);
-    readAlong.start(plain);
-  }, [currentSection, readAlong]);
-
-  const handleStopReadAlong = useCallback(() => {
-    readAlong.stop();
-    setReadAlongActive(false);
-  }, [readAlong]);
 
   const goToSection = useCallback((idx: number) => {
     const clamped = Math.max(0, Math.min(idx, allSections.length - 1));
@@ -279,14 +246,6 @@ const Reader = () => {
 
   if (!book) return null;
 
-  const isReadAlongSupported =
-    typeof window !== "undefined" && "speechSynthesis" in window;
-
-  const canReadAlong =
-    isReadAlongSupported &&
-    currentSection &&
-    currentSection.content !== "__ruh__" &&
-    currentSection.content !== "__sample__";
 
   const renderMeta = () => {
     if (book.contentModule === "ruh-al-adab") {
@@ -433,8 +392,6 @@ const Reader = () => {
         <FormattedContent
           content={currentSection.content}
           fontSize={fontSize}
-          activeSentenceIndex={readAlongActive ? readAlong.activeSentenceIndex : undefined}
-          sentences={currentSectionSentences}
           textColor={theme.text.replace('text-[', '').replace(']', '')}
         />
       </div>
@@ -473,16 +430,6 @@ const Reader = () => {
               {isBookmarked(currentSectionIdx)
                 ? <BookmarkCheck className="w-4 h-4 text-primary" />
                 : <Bookmark className="w-4 h-4" />}
-            </button>
-          )}
-          {/* Read Along trigger */}
-          {canReadAlong && !readAlongActive && (
-            <button
-              onClick={handleStartReadAlong}
-              className="p-2 rounded-full hover:bg-primary/10 transition-colors"
-              title="Read Along"
-            >
-              <Headphones className="w-4 h-4" />
             </button>
           )}
           <button onClick={() => setFontSize(Math.max(12, fontSize - 2))} className="px-2 py-1 text-sm font-medium">A-</button>
@@ -555,12 +502,12 @@ const Reader = () => {
         className={`flex-1 overflow-y-auto px-6 py-8 max-w-2xl mx-auto w-full ${fontClass} leading-relaxed cursor-pointer`}
         style={{
           fontSize,
-          paddingBottom: chromeVisible ? (readAlongActive ? '12rem' : '11rem') : '5rem',
+          paddingBottom: chromeVisible ? '11rem' : '5rem',
         }}
         onClick={() => {
           // Only act if touch didn't move (i.e. it was a real tap, not a scroll)
           if (touchHasMoved.current) return;
-          if (readAlongActive) return;
+          
           // In fullscreen, tapping content does nothing — use the floating exit button instead
           if (isFullscreen) return;
           setChromeVisible((v) => !v);
@@ -616,7 +563,7 @@ const Reader = () => {
       </div>
 
       {/* Side navigation arrows — always visible in fullscreen, otherwise follow chrome visibility */}
-      {!readAlongActive && (chromeVisible || isFullscreen) && allSections.length > 1 && (
+      {(chromeVisible || isFullscreen) && allSections.length > 1 && (
         <>
           <button
             onClick={() => goToSection(currentSectionIdx - 1)}
@@ -648,60 +595,8 @@ const Reader = () => {
         </button>
       )}
 
-      {/* Read Along control bar — always visible when active */}
-      {readAlongActive && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-primary/20 bg-inherit shadow-lg">
-          <div className="flex items-center justify-between px-4 py-3 max-w-2xl mx-auto">
-            {/* Play / Pause */}
-            <div className="flex items-center gap-2">
-              {readAlong.isPlaying ? (
-                <button
-                  onClick={readAlong.pause}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors text-sm font-medium"
-                >
-                  <Pause className="w-4 h-4" />
-                  Pause
-                </button>
-              ) : (
-                <button
-                  onClick={readAlong.resume}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors text-sm font-medium"
-                >
-                  <Play className="w-4 h-4" />
-                  Resume
-                </button>
-              )}
-              <button
-                onClick={handleStopReadAlong}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-destructive/10 hover:bg-destructive/20 transition-colors text-sm font-medium text-destructive"
-              >
-                <Square className="w-4 h-4" />
-                Stop
-              </button>
-            </div>
-
-            {/* Speed selector */}
-            <div className="flex items-center gap-1">
-              {SPEED_OPTIONS.map((s) => (
-                <button
-                  key={s}
-                  onClick={() => readAlong.setRate(s)}
-                  className={`px-2 py-1 text-xs rounded-full transition-all font-medium ${
-                    readAlong.rate === s
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted/30 text-muted-foreground hover:bg-muted/50"
-                  }`}
-                >
-                  {s}×
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Bottom bar with navigation — hidden when read-along is active */}
-      {!readAlongActive && (
+      {/* Bottom bar with navigation */}
+      {(
         <div className={`transition-all duration-300 ${chromeVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-full pointer-events-none'}`}>
           <ReaderBottomBar
             currentPage={currentSectionIdx + 1}
