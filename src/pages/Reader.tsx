@@ -576,7 +576,11 @@ const Reader = () => {
           if (touchStartX.current === null || touchStartY.current === null) return;
           const dx = Math.abs(e.touches[0].clientX - touchStartX.current);
           const dy = Math.abs(e.touches[0].clientY - touchStartY.current);
-          if (dx > 8 || dy > 8) touchHasMoved.current = true;
+          if (dx > 5 || dy > 5) touchHasMoved.current = true;
+        }}
+        onScroll={() => {
+          // Any scroll means user is reading, not tapping — prevent fullscreen exit
+          touchHasMoved.current = true;
         }}
         onTouchEnd={(e) => {
           if (touchStartX.current === null || touchStartY.current === null) return;
