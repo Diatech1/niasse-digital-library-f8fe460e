@@ -1,35 +1,71 @@
 
 
-## Fix: Arabic text misdetected as poetry in FormattedContent
+# Migrate Book Library to Lovable Cloud (Supabase)
 
-### Problem
+## Overview
+Move the hardcoded book data from `src/data/books.ts` into a Supabase database table, then update all pages to fetch books from the database instead.
 
-In `FormattedContent.tsx`, the detection order is:
-1. Page markers
-2. Numbered lists
-3. Footnotes
-4. **Poetry** (fires here for multi-line Arabic)
-5. Drop cap
-6. **Arabic** (never reached)
+## Steps
 
-The Quranic verses of Al-Fatiha (7 short lines) match the poetry heuristic (`lines >= 3`, `avgLineLen < 80`, no `. `), so they render as a blockquote with a green left border instead of right-to-left Arabic with the proper font.
+### 1. Enable Lovable Cloud
+Activate the Lovable Cloud backend to get a Supabase database.
 
-### Solution
+### 2. Create the `books` table
+Create a migration with the following schema:
 
-Move the Arabic detection **before** the poetry detection. This way, any paragraph containing predominantly Arabic characters will be rendered with `dir="rtl"`, the Scheherazade New font, and proper line height -- regardless of how many lines it has.
+| Column | Type | Notes |
+|---|---|---|
+| id | text (PK) | Keep existing IDs ("7", "8", etc.) |
+| title | text | Required |
+| title_ar | text | Nullable (Arabic title) |
+| author | text | Required |
+| cover | text | URL to cover image |
+| language | text | "English", "French", "Arabic" |
+| pages | integer | Page count |
+| tags | text[] | Array of tag strings |
+| description | text | Book description |
+| has_audio | boolean | Default false |
+| audio_duration | text | Nullable |
+| content_module | text | Nullable, maps to local data module |
+| is_favorite | boolean | Default false |
+| created_at | timestamptz | Auto-set |
 
-### Technical Details
+RLS policy: Allow public read access (no auth needed for a library).
 
-**File: `src/components/reader/FormattedContent.tsx`**
+### 3. Upload cover images to Supabase Storage
+- Create a public `book-covers` storage bucket
+- Upload the 12 existing cover images from `src/assets/`
+- Use the resulting public URLs in the database `cover` column
 
-Reorder the detection blocks so the Arabic check comes before the poetry check. No logic changes needed -- just move the existing Arabic detection block (currently around line 108-122) to run immediately after the footnote detection and before the poetry detection (currently around line 85).
+### 4. Seed the database
+Insert all 12 books with their data and the new cover URLs.
 
-The detection order becomes:
-1. Page markers
-2. Numbered lists
-3. Footnotes
-4. **Arabic** (moved up)
-5. Poetry
-6. Drop cap
-7. Regular paragraph
+### 5. Create a React hook `useBooks`
+- New file: `src/hooks/use-books.ts`
+- Uses `@tanstack/react-query` to fetch from the `books` table
+- Returns `{ books, isLoading, error }`
+- Converts snake_case DB columns to camelCase for the existing `Book` interface
+
+### 6. Update all consuming pages
+Replace `import { books } from "@/data/books"` with the new `useBooks()` hook in:
+- `src/pages/Index.tsx`
+- `src/pages/Library.tsx`
+- `src/pages/BookDetail.tsx`
+- `src/pages/AudioPlayer.tsx`
+- `src/pages/AudioLibrary.tsx`
+- `src/pages/Reader.tsx`
+
+Add loading skeletons where appropriate.
+
+### 7. Keep the `Book` interface
+Move the `Book` TypeScript interface to a shared types file or keep it in `src/data/books.ts` for backward compatibility. Remove the hardcoded array.
+
+---
+
+## Technical Details
+
+- **No authentication required** -- this is a public library, so RLS will use a simple `SELECT` policy for anonymous access
+- **Cover images**: Stored in Supabase Storage with public URLs, replacing the local imports
+- **Existing features preserved**: Reading progress (localStorage), content modules (local data files), bookmarks all continue to work since they reference `book.id` and `book.contentModule`
+- **Tanstack Query** is already installed, so caching and refetching come for free
 
