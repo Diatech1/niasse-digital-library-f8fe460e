@@ -639,6 +639,17 @@ const Reader = () => {
         </>
       )}
 
+      {/* Floating exit-fullscreen button */}
+      {isFullscreen && (
+        <button
+          onClick={() => document.exitFullscreen().then(() => setIsFullscreen(false)).catch(() => {})}
+          className="absolute top-4 right-4 z-40 p-2 rounded-full bg-background/60 backdrop-blur-sm border border-border/30 shadow-md transition-opacity hover:bg-background/80"
+          aria-label="Exit fullscreen"
+        >
+          <Minimize className="w-4 h-4 text-foreground" />
+        </button>
+      )}
+
       {/* Read Along control bar — always visible when active */}
       {readAlongActive && (
         <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-primary/20 bg-inherit shadow-lg">
