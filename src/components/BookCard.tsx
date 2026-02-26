@@ -40,7 +40,7 @@ const BookCard = ({ book, index }: BookCardProps) => {
             />
           </div>
         )}
-        <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] font-semibold uppercase tracking-wider glass text-primary">
+        <div className="absolute top-1.5 right-[-8px] px-2.5 py-1 rounded-sm text-[8px] sm:text-[9px] font-semibold uppercase tracking-wider bg-primary text-primary-foreground shadow-md">
           {book.language}
         </div>
       </div>
