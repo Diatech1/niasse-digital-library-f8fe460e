@@ -1,6 +1,6 @@
 import { useState, useRef, useMemo, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { books } from "@/data/books";
+import { useBook } from "@/hooks/use-books";
 import { ruhAlAdabVerses, ruhAlAdabMeta } from "@/data/ruh-al-adab";
 import { comprendreFaydhahSections, comprendreFaydhahMeta } from "@/data/comprendre-faydhah";
 import { loadKachifulAlbasSections, kachifulAlbasMeta, type KachifulSection } from "@/data/kachiful-albas";
@@ -57,7 +57,7 @@ interface Section {
 const Reader = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const book = books.find((b) => b.id === id);
+  const { book, isLoading: bookLoading } = useBook(id);
   const [themeIdx, setThemeIdx] = useState(2);
   const [fontIdx, setFontIdx] = useState(1);
   const [fontSize, setFontSize] = useState(16);
