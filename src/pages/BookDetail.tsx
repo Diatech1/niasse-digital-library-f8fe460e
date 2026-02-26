@@ -52,7 +52,7 @@ const BookDetail = () => {
         transition={{ duration: 0.5 }}
         className="relative z-10 flex justify-center px-5 mb-6"
       >
-        <div className="w-48 aspect-[2/3] rounded-lg overflow-hidden shadow-glow">
+        <div className="w-48 aspect-[2/3] rounded-[6px] overflow-hidden shadow-glow">
           <img src={book.cover} alt={book.title} className="w-full h-full object-cover" />
         </div>
       </motion.div>
@@ -85,14 +85,14 @@ const BookDetail = () => {
         <div className="flex flex-col gap-3 max-w-xs mx-auto">
           <button
             onClick={() => navigate(`/read/${book.id}`)}
-            className="flex items-center justify-center gap-2 bg-primary text-primary-foreground rounded-2xl py-3.5 font-semibold text-sm transition-all hover:opacity-90"
+            className="flex items-center justify-center gap-2 bg-primary text-primary-foreground rounded-xl py-3.5 font-semibold text-sm transition-all hover:opacity-90"
           >
             <BookOpen className="w-4 h-4" />Read Book
           </button>
           {book.hasAudio && (
             <button
               onClick={() => navigate(`/listen/${book.id}`)}
-              className="flex items-center justify-center gap-2 border border-primary text-primary rounded-2xl py-3.5 font-semibold text-sm transition-all hover:bg-primary/10"
+              className="flex items-center justify-center gap-2 border border-primary text-primary rounded-xl py-3.5 font-semibold text-sm transition-all hover:bg-primary/10"
             >
               <Headphones className="w-4 h-4" />Listen to Audio
             </button>
