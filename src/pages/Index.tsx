@@ -62,13 +62,13 @@ const Index = () => {
             
             Continue Reading
           </h2>
-          <div className="grid grid-cols-3 gap-4 gap-y-5 px-5">
+          <div className="flex gap-4 px-5 overflow-x-auto scrollbar-hide">
             {continueReading.map(({ book, idx }) => {
             const progress = book.pages > 0 ? Math.round(idx / book.pages * 100) : 0;
             return (
               <motion.div
                 key={book.id}
-                className="cursor-pointer"
+                className="cursor-pointer min-w-[28%] max-w-[28%]"
                 whileTap={{ scale: 0.97 }}
                 onClick={() => navigate(`/read/${book.id}`)}>
 
@@ -104,9 +104,11 @@ const Index = () => {
           <h2 className="text-gold font-serif text-lg font-semibold px-5 mb-3">
             Favorites
           </h2>
-          <div className="grid grid-cols-3 gap-4 gap-y-5 px-5">
+          <div className="flex gap-4 px-5 overflow-x-auto scrollbar-hide">
             {favorites.map((book, i) =>
-          <BookCard key={book.id} book={book} index={i} />
+          <div key={book.id} className="min-w-[28%] max-w-[28%]">
+            <BookCard book={book} index={i} />
+          </div>
           )}
           </div>
         </section>
