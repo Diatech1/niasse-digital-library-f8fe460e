@@ -72,7 +72,7 @@ const Index = () => {
                 whileTap={{ scale: 0.97 }}
                 onClick={() => navigate(`/read/${book.id}`)}>
 
-                  <div className="relative rounded-md overflow-hidden shadow-md">
+                  <div className="relative rounded-[6px] overflow-hidden shadow-[4px_4px_10px_rgba(0,0,0,0.3),_1px_1px_3px_rgba(0,0,0,0.2)] border-l-[3px] border-l-black/10">
                     <img
                     src={book.cover}
                     alt={book.title}
