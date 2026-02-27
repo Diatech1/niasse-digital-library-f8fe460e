@@ -16,6 +16,7 @@ interface BookRow {
   audio_duration: string | null;
   content_module: string | null;
   is_favorite: boolean;
+  translator: string | null;
 }
 
 function rowToBook(row: BookRow): Book {
@@ -33,6 +34,7 @@ function rowToBook(row: BookRow): Book {
     audioDuration: row.audio_duration ?? undefined,
     contentModule: row.content_module ?? undefined,
     isFavorite: row.is_favorite,
+    translator: row.translator ?? undefined,
   };
 }
 

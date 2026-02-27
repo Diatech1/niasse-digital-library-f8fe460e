@@ -13,4 +13,5 @@ export interface Book {
   audioDuration?: string;
   contentModule?: string;
   isFavorite?: boolean;
+  translator?: string;
 }
