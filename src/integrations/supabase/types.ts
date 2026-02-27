@@ -30,6 +30,7 @@ export type Database = {
           tags: string[]
           title: string
           title_ar: string | null
+          translator: string | null
         }
         Insert: {
           audio_duration?: string | null
@@ -46,6 +47,7 @@ export type Database = {
           tags?: string[]
           title: string
           title_ar?: string | null
+          translator?: string | null
         }
         Update: {
           audio_duration?: string | null
@@ -62,6 +64,7 @@ export type Database = {
           tags?: string[]
           title?: string
           title_ar?: string | null
+          translator?: string | null
         }
         Relationships: []
       }

@@ -65,7 +65,11 @@ const BookDetail = () => {
       >
         <h1 className="text-xl font-serif font-bold text-foreground mb-1">{book.title}</h1>
         {book.titleAr && <p className="font-arabic text-lg text-gold mb-2">{book.titleAr}</p>}
-        <p className="text-sm text-primary mb-4">{book.author}</p>
+        <p className="text-sm text-primary mb-1">{book.author}</p>
+        {book.translator && (
+          <p className="text-xs text-muted-foreground mb-4">Traduction : {book.translator}</p>
+        )}
+        {!book.translator && <div className="mb-3" />}
 
         <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground mb-4">
           <span className="flex items-center gap-1"><Globe className="w-3.5 h-3.5" />{book.language}</span>

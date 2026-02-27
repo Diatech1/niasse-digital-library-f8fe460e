@@ -1,0 +1,1 @@
+ALTER TABLE public.books ADD COLUMN translator text DEFAULT NULL;
