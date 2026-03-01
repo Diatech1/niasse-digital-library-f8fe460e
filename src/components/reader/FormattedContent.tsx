@@ -74,7 +74,7 @@ const FormattedContent = ({ content, fontSize, textColor }: FormattedContentProp
               key={idx}
               dir="rtl"
               lang="ar"
-              className="leading-loose text-right my-4"
+              className="leading-loose text-center my-4"
               style={{
                 fontSize: fontSize * 1.35,
                 fontFamily: "'Scheherazade New', 'Amiri', 'Noto Naskh Arabic', serif",
