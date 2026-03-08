@@ -2,20 +2,10 @@ import { useState, useRef, useMemo, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useBook } from "@/hooks/use-books";
 import { ruhAlAdabVerses, ruhAlAdabMeta } from "@/data/ruh-al-adab";
-import { comprendreFaydhahSections, comprendreFaydhahMeta } from "@/data/comprendre-faydhah";
-import { loadKachifulAlbasSections, kachifulAlbasMeta, type KachifulSection } from "@/data/kachiful-albas";
-import { loadKashifEnSections, kashifEnMeta, type KashifEnSection } from "@/data/kashif-en";
-import { wirdTidjaneSections, wirdTidjaneMeta } from "@/data/wird-tidjane";
-import { stationsIslamSections, stationsIslamMeta } from "@/data/stations-islam";
-import { adebDhikrSections, adebDhikrMeta } from "@/data/adeb-dhikr";
-import { origineSoubhaSections, origineSoubhaMeta } from "@/data/origine-soubha";
-import { salatFatihiSections, salatFatihiMeta } from "@/data/salat-fatihi";
-import { jawharatulKamalSections, jawharatulKamalMeta } from "@/data/jawharatul-kamal";
-import { dhikrGroupeSections, dhikrGroupeMeta } from "@/data/dhikr-groupe";
-import { fadailDhikrSections, fadailDhikrMeta } from "@/data/fadail-dhikr";
-import { priereShaykhIbrahimSections, priereShaykhIbrahimMeta } from "@/data/priere-shaykh-ibrahim";
-import { stationsDeenEnSections, stationsDeenEnMeta } from "@/data/stations-deen-en";
-import { cheminementTariqa2Sections, cheminementTariqa2Meta } from "@/data/cheminement-tariqa-2";
+import {
+  getSyncModule, getAsyncModuleLoader, isAsyncModule, hasModule,
+  type ContentSection, type ContentModuleEntry,
+} from "@/data/content-registry";
 import { ArrowLeft, Loader2, Search, Maximize, Minimize, ChevronLeft, ChevronRight, Bookmark, BookmarkCheck } from "lucide-react";
 import { useSaveProgress, getSavedProgress } from "@/hooks/use-reading-progress";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
