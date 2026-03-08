@@ -221,7 +221,7 @@ const Reader = () => {
       return tidjaniyaData;
     }
     return [{ id: "sample", heading: "Sample", content: "__sample__" }];
-  }, [book?.contentModule, kashifEnData, kachifulAlbasData]);
+  }, [book?.contentModule, kashifEnData, kachifulAlbasData, tidjaniyaData]);
 
   const tocItems = useMemo(() => {
     // For page-by-page books (kashif-en, kachiful-albas), build a deduplicated TOC:
