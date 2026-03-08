@@ -187,7 +187,6 @@ const Reader = () => {
 
   if (!book) return null;
 
-
   const renderMeta = () => {
     if (book.contentModule === "ruh-al-adab") {
       return (
@@ -199,120 +198,43 @@ const Reader = () => {
         </>
       );
     }
-    if (book.contentModule === "comprendre-faydhah") {
+
+    // Generic meta rendering from registry
+    const mod = book.contentModule;
+    if (!mod) return null;
+
+    const entry = getSyncModule(mod);
+    const asyncLoader = getAsyncModuleLoader(mod);
+    const meta = entry?.meta;
+
+    // For async modules that have loaded, get meta from the loader cache
+    if (!meta && asyncLoader && asyncData.length > 0) {
+      // Re-fetch meta synchronously — async modules store meta in registry
+      // We'll use a workaround: just show book title from the book object
       return (
         <>
-          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{comprendreFaydhahMeta.title}</h2>
-          <p className="text-center text-sm text-muted-foreground mb-1">par {comprendreFaydhahMeta.author}</p>
-          <p className="text-center text-xs text-muted-foreground mb-6">Traduit par : {comprendreFaydhahMeta.translator}</p>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{book.title}</h2>
+          {book.author && <p className="text-center text-sm text-muted-foreground mb-1">par {book.author}</p>}
+          {book.translator && <p className="text-center text-xs text-muted-foreground mb-6">Traduit par : {book.translator}</p>}
         </>
       );
     }
-    if (book.contentModule === "kachiful-albas") {
-      return (
-        <>
-          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{kachifulAlbasMeta.title}</h2>
-          <p className="text-center text-sm text-muted-foreground mb-1">{kachifulAlbasMeta.subtitle}</p>
-          <p className="text-center text-xs text-muted-foreground mb-1">par {kachifulAlbasMeta.author}</p>
-          <p className="text-center text-xs text-muted-foreground mb-6">Traduit par : {kachifulAlbasMeta.translators}</p>
-        </>
-      );
-    }
-    if (book.contentModule === "kashif-en") {
-      return (
-        <>
-          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{kashifEnMeta.title}</h2>
-          <p className="text-center text-sm text-muted-foreground mb-1">{kashifEnMeta.subtitle}</p>
-          <p className="text-center text-xs text-muted-foreground mb-1">by {kashifEnMeta.author}</p>
-          <p className="text-center text-xs text-muted-foreground mb-6">Translated by: {kashifEnMeta.translators}</p>
-        </>
-      );
-    }
-    if (book.contentModule === "stations-islam") {
-      return (
-        <>
-          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{stationsIslamMeta.title}</h2>
-          <p className="text-center text-xs text-muted-foreground mb-6">par {stationsIslamMeta.author}</p>
-        </>
-      );
-    }
-    if (book.contentModule === "adeb-dhikr") {
-      return (
-        <>
-          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{adebDhikrMeta.title}</h2>
-          <p className="text-center text-xs text-muted-foreground mb-6">Source : {adebDhikrMeta.source}</p>
-        </>
-      );
-    }
-    if (book.contentModule === "origine-soubha") {
-      return (
-        <>
-          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{origineSoubhaMeta.title}</h2>
-          <p className="text-center text-xs text-muted-foreground mb-6">Source : {origineSoubhaMeta.source}</p>
-        </>
-      );
-    }
-    if (book.contentModule === "salat-fatihi") {
-      return (
-        <>
-          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{salatFatihiMeta.title}</h2>
-          <p className="text-center text-xs text-muted-foreground mb-6">Source : {salatFatihiMeta.source}</p>
-        </>
-      );
-    }
-    if (book.contentModule === "jawharatul-kamal") {
-      return (
-        <>
-          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{jawharatulKamalMeta.title}</h2>
-          <p className="text-center text-xs text-muted-foreground mb-6">Source : {jawharatulKamalMeta.source}</p>
-        </>
-      );
-    }
-    if (book.contentModule === "dhikr-groupe") {
-      return (
-        <>
-          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{dhikrGroupeMeta.title}</h2>
-          <p className="text-center text-xs text-muted-foreground mb-6">Source : {dhikrGroupeMeta.source}</p>
-        </>
-      );
-    }
-    if (book.contentModule === "fadail-dhikr") {
-      return (
-        <>
-          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{fadailDhikrMeta.title}</h2>
-          <p className="text-center text-xs text-muted-foreground mb-6">Source : {fadailDhikrMeta.source}</p>
-        </>
-      );
-    }
-    if (book.contentModule === "priere-shaykh-ibrahim") {
-      return (
-        <>
-          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{priereShaykhIbrahimMeta.title}</h2>
-          <p className="text-center text-sm text-muted-foreground mb-1">par {priereShaykhIbrahimMeta.author}</p>
-          <p className="text-center text-xs text-muted-foreground mb-6">Traduit par : {priereShaykhIbrahimMeta.translator}</p>
-        </>
-      );
-    }
-    if (book.contentModule === "stations-deen-en") {
-      return (
-        <>
-          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{stationsDeenEnMeta.title}</h2>
-          <p className="text-center text-sm text-muted-foreground mb-1">{stationsDeenEnMeta.subtitle}</p>
-          <p className="text-center text-xs text-muted-foreground mb-1">by {stationsDeenEnMeta.author}</p>
-          <p className="text-center text-xs text-muted-foreground mb-6">Interpreted by: {stationsDeenEnMeta.translator}</p>
-        </>
-      );
-    }
-    if (book.contentModule === "cheminement-tariqa-2") {
-      return (
-        <>
-          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{cheminementTariqa2Meta.title}</h2>
-          <p className="text-center text-sm text-muted-foreground mb-1">par {cheminementTariqa2Meta.author}</p>
-          <p className="text-center text-xs text-muted-foreground mb-6">Source : {cheminementTariqa2Meta.source}</p>
-        </>
-      );
-    }
-    return null;
+
+    if (!meta) return null;
+
+    const isEnglish = book.language === "EN";
+    return (
+      <>
+        <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{meta.title}</h2>
+        {meta.subtitle && <p className="text-center text-sm text-muted-foreground mb-1">{meta.subtitle}</p>}
+        {meta.author && <p className="text-center text-sm text-muted-foreground mb-1">{isEnglish ? "by" : "par"} {meta.author}</p>}
+        {meta.translator && <p className="text-center text-xs text-muted-foreground mb-1">{isEnglish ? "Translated by" : "Traduit par"} : {meta.translator}</p>}
+        {meta.translators && <p className="text-center text-xs text-muted-foreground mb-1">{isEnglish ? "Translated by" : "Traduit par"} : {meta.translators}</p>}
+        {meta.transliteratedBy && <p className="text-center text-xs text-muted-foreground mb-1">Transliterated by: {meta.transliteratedBy}</p>}
+        {meta.source && <p className="text-center text-xs text-muted-foreground mb-6">Source : {meta.source}</p>}
+        {!meta.source && <div className="mb-6" />}
+      </>
+    );
   };
 
   const renderCurrentSection = () => {
