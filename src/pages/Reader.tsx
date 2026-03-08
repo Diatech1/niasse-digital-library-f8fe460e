@@ -204,6 +204,9 @@ const Reader = () => {
     if (book?.contentModule === "stations-deen-en") {
       return stationsDeenEnSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
     }
+    if (book?.contentModule === "cheminement-tariqa-2") {
+      return cheminementTariqa2Sections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
+    }
     return [{ id: "sample", heading: "Sample", content: "__sample__" }];
   }, [book?.contentModule, kashifEnData, kachifulAlbasData]);
 
