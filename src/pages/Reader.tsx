@@ -15,7 +15,6 @@ import { dhikrGroupeSections, dhikrGroupeMeta } from "@/data/dhikr-groupe";
 import { fadailDhikrSections, fadailDhikrMeta } from "@/data/fadail-dhikr";
 import { priereShaykhIbrahimSections, priereShaykhIbrahimMeta } from "@/data/priere-shaykh-ibrahim";
 import { stationsDeenEnSections, stationsDeenEnMeta } from "@/data/stations-deen-en";
-import { loadArticlesForTheme, themeGroups } from "@/data/tidjaniya-articles";
 import { ArrowLeft, Loader2, Search, Maximize, Minimize, ChevronLeft, ChevronRight, Bookmark, BookmarkCheck } from "lucide-react";
 import { useSaveProgress, getSavedProgress } from "@/hooks/use-reading-progress";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -77,8 +76,6 @@ const Reader = () => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [kashifEnData, setKashifEnData] = useState<KashifEnSection[]>([]);
   const [kachifulAlbasData, setKachifulAlbasData] = useState<KachifulSection[]>([]);
-  const [tidjaniyaData, setTidjaniyaData] = useState<Section[]>([]);
-  const [tidjaniyaMeta, setTidjaniyaMeta] = useState<{ title: string; source: string } | null>(null);
   const [loading, setLoading] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
@@ -111,14 +108,13 @@ const Reader = () => {
     return () => document.body.classList.remove("reader-chrome-hidden");
   }, [chromeVisible]);
 
-  const tidjaniyaThemeIds = themeGroups.map((g) => g.id);
-
   useEffect(() => {
     if (book?.contentModule === "kashif-en") {
       setLoading(true);
       loadKashifEnSections().then((sections) => {
         setKashifEnData(sections);
         setLoading(false);
+        // Restore saved position after async load (clamp to valid range)
         const saved = getSavedProgress(id);
         if (saved > 0) setCurrentSectionIdx(Math.min(saved, sections.length - 1));
       });
@@ -130,16 +126,6 @@ const Reader = () => {
         setLoading(false);
         const saved = getSavedProgress(id);
         if (saved > 0) setCurrentSectionIdx(Math.min(saved, sections.length - 1));
-      });
-    }
-    if (book?.contentModule && tidjaniyaThemeIds.includes(book.contentModule)) {
-      setLoading(true);
-      loadArticlesForTheme(book.contentModule).then((result) => {
-        setTidjaniyaMeta(result.meta);
-        setTidjaniyaData(result.sections);
-        setLoading(false);
-        const saved = getSavedProgress(id);
-        if (saved > 0) setCurrentSectionIdx(Math.min(saved, result.sections.length - 1));
       });
     }
   }, [book?.contentModule, id]);
@@ -217,11 +203,8 @@ const Reader = () => {
     if (book?.contentModule === "stations-deen-en") {
       return stationsDeenEnSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
     }
-    if (book?.contentModule && tidjaniyaThemeIds.includes(book.contentModule)) {
-      return tidjaniyaData;
-    }
     return [{ id: "sample", heading: "Sample", content: "__sample__" }];
-  }, [book?.contentModule, kashifEnData, kachifulAlbasData, tidjaniyaData]);
+  }, [book?.contentModule, kashifEnData, kachifulAlbasData]);
 
   const tocItems = useMemo(() => {
     // For page-by-page books (kashif-en, kachiful-albas), build a deduplicated TOC:
@@ -384,14 +367,6 @@ const Reader = () => {
           <p className="text-center text-sm text-muted-foreground mb-1">{stationsDeenEnMeta.subtitle}</p>
           <p className="text-center text-xs text-muted-foreground mb-1">by {stationsDeenEnMeta.author}</p>
           <p className="text-center text-xs text-muted-foreground mb-6">Interpreted by: {stationsDeenEnMeta.translator}</p>
-        </>
-      );
-    }
-    if (book.contentModule && tidjaniyaThemeIds.includes(book.contentModule) && tidjaniyaMeta) {
-      return (
-        <>
-          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{tidjaniyaMeta.title}</h2>
-          <p className="text-center text-xs text-muted-foreground mb-6">Source : {tidjaniyaMeta.source}</p>
         </>
       );
     }
