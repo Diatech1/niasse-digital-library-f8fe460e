@@ -111,13 +111,14 @@ const Reader = () => {
     return () => document.body.classList.remove("reader-chrome-hidden");
   }, [chromeVisible]);
 
+  const tidjaniyaThemeIds = themeGroups.map((g) => g.id);
+
   useEffect(() => {
     if (book?.contentModule === "kashif-en") {
       setLoading(true);
       loadKashifEnSections().then((sections) => {
         setKashifEnData(sections);
         setLoading(false);
-        // Restore saved position after async load (clamp to valid range)
         const saved = getSavedProgress(id);
         if (saved > 0) setCurrentSectionIdx(Math.min(saved, sections.length - 1));
       });
@@ -129,6 +130,16 @@ const Reader = () => {
         setLoading(false);
         const saved = getSavedProgress(id);
         if (saved > 0) setCurrentSectionIdx(Math.min(saved, sections.length - 1));
+      });
+    }
+    if (book?.contentModule && tidjaniyaThemeIds.includes(book.contentModule)) {
+      setLoading(true);
+      loadArticlesForTheme(book.contentModule).then((result) => {
+        setTidjaniyaMeta(result.meta);
+        setTidjaniyaData(result.sections);
+        setLoading(false);
+        const saved = getSavedProgress(id);
+        if (saved > 0) setCurrentSectionIdx(Math.min(saved, result.sections.length - 1));
       });
     }
   }, [book?.contentModule, id]);
