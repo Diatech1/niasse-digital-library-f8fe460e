@@ -15,6 +15,7 @@ import { dhikrGroupeSections, dhikrGroupeMeta } from "@/data/dhikr-groupe";
 import { fadailDhikrSections, fadailDhikrMeta } from "@/data/fadail-dhikr";
 import { priereShaykhIbrahimSections, priereShaykhIbrahimMeta } from "@/data/priere-shaykh-ibrahim";
 import { stationsDeenEnSections, stationsDeenEnMeta } from "@/data/stations-deen-en";
+import { cheminementTariqa2Sections, cheminementTariqa2Meta } from "@/data/cheminement-tariqa-2";
 import { ArrowLeft, Loader2, Search, Maximize, Minimize, ChevronLeft, ChevronRight, Bookmark, BookmarkCheck } from "lucide-react";
 import { useSaveProgress, getSavedProgress } from "@/hooks/use-reading-progress";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -203,6 +204,9 @@ const Reader = () => {
     if (book?.contentModule === "stations-deen-en") {
       return stationsDeenEnSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
     }
+    if (book?.contentModule === "cheminement-tariqa-2") {
+      return cheminementTariqa2Sections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
+    }
     return [{ id: "sample", heading: "Sample", content: "__sample__" }];
   }, [book?.contentModule, kashifEnData, kachifulAlbasData]);
 
@@ -367,6 +371,15 @@ const Reader = () => {
           <p className="text-center text-sm text-muted-foreground mb-1">{stationsDeenEnMeta.subtitle}</p>
           <p className="text-center text-xs text-muted-foreground mb-1">by {stationsDeenEnMeta.author}</p>
           <p className="text-center text-xs text-muted-foreground mb-6">Interpreted by: {stationsDeenEnMeta.translator}</p>
+        </>
+      );
+    }
+    if (book.contentModule === "cheminement-tariqa-2") {
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{cheminementTariqa2Meta.title}</h2>
+          <p className="text-center text-sm text-muted-foreground mb-1">par {cheminementTariqa2Meta.author}</p>
+          <p className="text-center text-xs text-muted-foreground mb-6">Source : {cheminementTariqa2Meta.source}</p>
         </>
       );
     }
