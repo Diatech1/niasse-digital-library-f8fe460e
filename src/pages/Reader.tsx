@@ -65,8 +65,7 @@ const Reader = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [currentSectionIdx, setCurrentSectionIdx] = useState(() => getSavedProgress(id));
   const contentRef = useRef<HTMLDivElement>(null);
-  const [kashifEnData, setKashifEnData] = useState<KashifEnSection[]>([]);
-  const [kachifulAlbasData, setKachifulAlbasData] = useState<KachifulSection[]>([]);
+  const [asyncData, setAsyncData] = useState<ContentSection[]>([]);
   const [loading, setLoading] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
