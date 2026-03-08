@@ -99,24 +99,18 @@ const Reader = () => {
   }, [chromeVisible]);
 
   useEffect(() => {
-    if (book?.contentModule === "kashif-en") {
-      setLoading(true);
-      loadKashifEnSections().then((sections) => {
-        setKashifEnData(sections);
-        setLoading(false);
-        // Restore saved position after async load (clamp to valid range)
-        const saved = getSavedProgress(id);
-        if (saved > 0) setCurrentSectionIdx(Math.min(saved, sections.length - 1));
-      });
-    }
-    if (book?.contentModule === "kachiful-albas") {
-      setLoading(true);
-      loadKachifulAlbasSections().then((sections) => {
-        setKachifulAlbasData(sections);
-        setLoading(false);
-        const saved = getSavedProgress(id);
-        if (saved > 0) setCurrentSectionIdx(Math.min(saved, sections.length - 1));
-      });
+    const mod = book?.contentModule;
+    if (mod && isAsyncModule(mod)) {
+      const loader = getAsyncModuleLoader(mod);
+      if (loader) {
+        setLoading(true);
+        loader().then((entry) => {
+          setAsyncData(entry.sections);
+          setLoading(false);
+          const saved = getSavedProgress(id);
+          if (saved > 0) setCurrentSectionIdx(Math.min(saved, entry.sections.length - 1));
+        });
+      }
     }
   }, [book?.contentModule, id]);
 
@@ -124,80 +118,26 @@ const Reader = () => {
 
   // Flatten all sections into a unified array
   const allSections: Section[] = useMemo(() => {
-    if (book?.contentModule === "ruh-al-adab") {
+    const mod = book?.contentModule;
+    if (!mod) return [{ id: "sample", heading: "Sample", content: "__sample__" }];
+
+    if (mod === "ruh-al-adab") {
       return [{ id: "ruh-al-adab-all", heading: ruhAlAdabMeta.title, content: "__ruh__" }];
     }
-    if (book?.contentModule === "comprendre-faydhah") {
-      return comprendreFaydhahSections.map((s) => ({
-        id: s.id,
-        chapter: s.chapter,
-        heading: s.heading,
-        content: s.content,
-      }));
+
+    // Async modules use asyncData state
+    if (isAsyncModule(mod)) {
+      return asyncData.map((s) => ({ id: s.id, part: s.part, chapter: s.chapter, heading: s.heading, content: s.content }));
     }
-    if (book?.contentModule === "wird-tidjane") {
-      return wirdTidjaneSections.map((s) => ({
-        id: s.id,
-        chapter: s.chapter,
-        heading: s.heading,
-        content: s.content,
-      }));
+
+    // Sync modules from registry
+    const entry = getSyncModule(mod);
+    if (entry) {
+      return entry.sections.map((s) => ({ id: s.id, part: s.part, chapter: s.chapter, heading: s.heading, content: s.content }));
     }
-    if (book?.contentModule === "stations-islam") {
-      return stationsIslamSections.map((s) => ({
-        id: s.id,
-        chapter: s.chapter,
-        heading: s.heading,
-        content: s.content,
-      }));
-    }
-    if (book?.contentModule === "kachiful-albas") {
-      return kachifulAlbasData.map((s) => ({
-        id: s.id,
-        part: s.part,
-        chapter: s.chapter,
-        heading: s.heading,
-        content: s.content,
-      }));
-    }
-    if (book?.contentModule === "kashif-en") {
-      return kashifEnData.map((s) => ({
-        id: s.id,
-        part: s.part,
-        chapter: s.chapter,
-        heading: s.heading,
-        content: s.content,
-      }));
-    }
-    if (book?.contentModule === "adeb-dhikr") {
-      return adebDhikrSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
-    }
-    if (book?.contentModule === "origine-soubha") {
-      return origineSoubhaSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
-    }
-    if (book?.contentModule === "salat-fatihi") {
-      return salatFatihiSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
-    }
-    if (book?.contentModule === "jawharatul-kamal") {
-      return jawharatulKamalSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
-    }
-    if (book?.contentModule === "dhikr-groupe") {
-      return dhikrGroupeSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
-    }
-    if (book?.contentModule === "fadail-dhikr") {
-      return fadailDhikrSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
-    }
-    if (book?.contentModule === "priere-shaykh-ibrahim") {
-      return priereShaykhIbrahimSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
-    }
-    if (book?.contentModule === "stations-deen-en") {
-      return stationsDeenEnSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
-    }
-    if (book?.contentModule === "cheminement-tariqa-2") {
-      return cheminementTariqa2Sections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
-    }
+
     return [{ id: "sample", heading: "Sample", content: "__sample__" }];
-  }, [book?.contentModule, kashifEnData, kachifulAlbasData]);
+  }, [book?.contentModule, asyncData]);
 
   const tocItems = useMemo(() => {
     // For page-by-page books (kashif-en, kachiful-albas), build a deduplicated TOC:
