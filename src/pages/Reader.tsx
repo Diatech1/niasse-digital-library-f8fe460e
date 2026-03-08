@@ -387,6 +387,14 @@ const Reader = () => {
         </>
       );
     }
+    if (book.contentModule && tidjaniyaThemeIds.includes(book.contentModule) && tidjaniyaMeta) {
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{tidjaniyaMeta.title}</h2>
+          <p className="text-center text-xs text-muted-foreground mb-6">Source : {tidjaniyaMeta.source}</p>
+        </>
+      );
+    }
     return null;
   };
 
