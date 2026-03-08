@@ -217,6 +217,9 @@ const Reader = () => {
     if (book?.contentModule === "stations-deen-en") {
       return stationsDeenEnSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
     }
+    if (book?.contentModule && tidjaniyaThemeIds.includes(book.contentModule)) {
+      return tidjaniyaData;
+    }
     return [{ id: "sample", heading: "Sample", content: "__sample__" }];
   }, [book?.contentModule, kashifEnData, kachifulAlbasData]);
 
