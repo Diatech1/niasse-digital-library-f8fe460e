@@ -15,6 +15,7 @@ import { dhikrGroupeSections, dhikrGroupeMeta } from "@/data/dhikr-groupe";
 import { fadailDhikrSections, fadailDhikrMeta } from "@/data/fadail-dhikr";
 import { priereShaykhIbrahimSections, priereShaykhIbrahimMeta } from "@/data/priere-shaykh-ibrahim";
 import { stationsDeenEnSections, stationsDeenEnMeta } from "@/data/stations-deen-en";
+import { loadArticlesForTheme, themeGroups } from "@/data/tidjaniya-articles";
 import { ArrowLeft, Loader2, Search, Maximize, Minimize, ChevronLeft, ChevronRight, Bookmark, BookmarkCheck } from "lucide-react";
 import { useSaveProgress, getSavedProgress } from "@/hooks/use-reading-progress";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
