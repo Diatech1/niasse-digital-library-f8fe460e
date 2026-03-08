@@ -374,6 +374,15 @@ const Reader = () => {
         </>
       );
     }
+    if (book.contentModule === "cheminement-tariqa-2") {
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{cheminementTariqa2Meta.title}</h2>
+          <p className="text-center text-sm text-muted-foreground mb-1">par {cheminementTariqa2Meta.author}</p>
+          <p className="text-center text-xs text-muted-foreground mb-6">Source : {cheminementTariqa2Meta.source}</p>
+        </>
+      );
+    }
     return null;
   };
 
