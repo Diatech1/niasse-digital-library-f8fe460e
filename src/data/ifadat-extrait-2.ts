@@ -1,6 +1,6 @@
 export const ifadatExtrait2Meta = {
   title: "Ifadatou-l-Ahmediyya – Extrait 2",
-  author: "Seïdina Ahmed Tidjani",
+  author: "d'après Seïdina Ahmed Tidjani",
   source: "tidjaniya.com",
 };
 

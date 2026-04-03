@@ -1,6 +1,6 @@
 export const chirkAghradMeta = {
   title: "L'idolâtrie par dessein intéressé (Chirk el aghrad) – Partie 1",
-  author: "Seïdina Ahmed Tidjani",
+  author: "d'après Seïdina Ahmed Tidjani",
   source: "tidjaniya.com",
 };
 
