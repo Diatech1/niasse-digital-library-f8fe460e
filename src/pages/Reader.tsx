@@ -385,6 +385,16 @@ const Reader = () => {
         </>
       );
     }
+    if (isVolumeModule && book.contentModule) {
+      const meta = getVolumeMeta(book.contentModule);
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{meta.title}</h2>
+          <p className="text-center text-sm text-muted-foreground mb-1">{meta.subtitle}</p>
+          <p className="text-center text-xs text-muted-foreground mb-6">{meta.author}</p>
+        </>
+      );
+    }
     return null;
   };
 
