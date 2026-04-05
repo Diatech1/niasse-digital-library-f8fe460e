@@ -77,6 +77,7 @@ const Reader = () => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [kashifEnData, setKashifEnData] = useState<KashifEnSection[]>([]);
   const [kachifulAlbasData, setKachifulAlbasData] = useState<KachifulSection[]>([]);
+  const [volumeData, setVolumeData] = useState<VolumeSection[]>([]);
   const [loading, setLoading] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
