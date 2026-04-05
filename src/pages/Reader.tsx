@@ -215,8 +215,11 @@ const Reader = () => {
     if (book?.contentModule === "stations-deen-en") {
       return stationsDeenEnSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
     }
+    if (isVolumeModule) {
+      return volumeData.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
+    }
     return [{ id: "sample", heading: "Sample", content: "__sample__" }];
-  }, [book?.contentModule, kashifEnData, kachifulAlbasData]);
+  }, [book?.contentModule, kashifEnData, kachifulAlbasData, volumeData, isVolumeModule]);
 
   const tocItems = useMemo(() => {
     // For page-by-page books (kashif-en, kachiful-albas), build a deduplicated TOC:
