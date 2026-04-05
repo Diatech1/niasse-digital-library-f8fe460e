@@ -110,13 +110,14 @@ const Reader = () => {
     return () => document.body.classList.remove("reader-chrome-hidden");
   }, [chromeVisible]);
 
+  const isVolumeModule = book?.contentModule?.startsWith("volume-") ?? false;
+
   useEffect(() => {
     if (book?.contentModule === "kashif-en") {
       setLoading(true);
       loadKashifEnSections().then((sections) => {
         setKashifEnData(sections);
         setLoading(false);
-        // Restore saved position after async load (clamp to valid range)
         const saved = getSavedProgress(id);
         if (saved > 0) setCurrentSectionIdx(Math.min(saved, sections.length - 1));
       });
@@ -130,7 +131,16 @@ const Reader = () => {
         if (saved > 0) setCurrentSectionIdx(Math.min(saved, sections.length - 1));
       });
     }
-  }, [book?.contentModule, id]);
+    if (isVolumeModule && book?.contentModule) {
+      setLoading(true);
+      loadVolumeSections(book.contentModule).then((sections) => {
+        setVolumeData(sections);
+        setLoading(false);
+        const saved = getSavedProgress(id);
+        if (saved > 0) setCurrentSectionIdx(Math.min(saved, sections.length - 1));
+      });
+    }
+  }, [book?.contentModule, id, isVolumeModule]);
 
   const theme = themes[themeIdx];
 
