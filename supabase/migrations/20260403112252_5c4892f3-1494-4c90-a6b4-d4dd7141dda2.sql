@@ -1,1 +1,0 @@
-DELETE FROM books WHERE id IN ('ifadat-ahmediyya', 'perles-sagesse', 'meditations-recits', 'tawhid-connaissance');

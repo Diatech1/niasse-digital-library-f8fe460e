@@ -1,1 +1,0 @@
-UPDATE books SET author = 'd''après Seïdina Ahmed Tidjani' WHERE id IN ('ifadat-extrait-11', 'ifadat-extrait-2', 'chirk-aghrad');

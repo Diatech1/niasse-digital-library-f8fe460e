@@ -2,10 +2,19 @@ import { useState, useRef, useMemo, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useBook } from "@/hooks/use-books";
 import { ruhAlAdabVerses, ruhAlAdabMeta } from "@/data/ruh-al-adab";
-import {
-  getSyncModule, getAsyncModuleLoader, isAsyncModule, hasModule,
-  type ContentSection, type ContentModuleEntry,
-} from "@/data/content-registry";
+import { comprendreFaydhahSections, comprendreFaydhahMeta } from "@/data/comprendre-faydhah";
+import { loadKachifulAlbasSections, kachifulAlbasMeta, type KachifulSection } from "@/data/kachiful-albas";
+import { loadKashifEnSections, kashifEnMeta, type KashifEnSection } from "@/data/kashif-en";
+import { wirdTidjaneSections, wirdTidjaneMeta } from "@/data/wird-tidjane";
+import { stationsIslamSections, stationsIslamMeta } from "@/data/stations-islam";
+import { adebDhikrSections, adebDhikrMeta } from "@/data/adeb-dhikr";
+import { origineSoubhaSections, origineSoubhaMeta } from "@/data/origine-soubha";
+import { salatFatihiSections, salatFatihiMeta } from "@/data/salat-fatihi";
+import { jawharatulKamalSections, jawharatulKamalMeta } from "@/data/jawharatul-kamal";
+import { dhikrGroupeSections, dhikrGroupeMeta } from "@/data/dhikr-groupe";
+import { fadailDhikrSections, fadailDhikrMeta } from "@/data/fadail-dhikr";
+import { priereShaykhIbrahimSections, priereShaykhIbrahimMeta } from "@/data/priere-shaykh-ibrahim";
+import { stationsDeenEnSections, stationsDeenEnMeta } from "@/data/stations-deen-en";
 import { ArrowLeft, Loader2, Search, Maximize, Minimize, ChevronLeft, ChevronRight, Bookmark, BookmarkCheck } from "lucide-react";
 import { useSaveProgress, getSavedProgress } from "@/hooks/use-reading-progress";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -65,7 +74,8 @@ const Reader = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [currentSectionIdx, setCurrentSectionIdx] = useState(() => getSavedProgress(id));
   const contentRef = useRef<HTMLDivElement>(null);
-  const [asyncData, setAsyncData] = useState<ContentSection[]>([]);
+  const [kashifEnData, setKashifEnData] = useState<KashifEnSection[]>([]);
+  const [kachifulAlbasData, setKachifulAlbasData] = useState<KachifulSection[]>([]);
   const [loading, setLoading] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
@@ -99,18 +109,24 @@ const Reader = () => {
   }, [chromeVisible]);
 
   useEffect(() => {
-    const mod = book?.contentModule;
-    if (mod && isAsyncModule(mod)) {
-      const loader = getAsyncModuleLoader(mod);
-      if (loader) {
-        setLoading(true);
-        loader().then((entry) => {
-          setAsyncData(entry.sections);
-          setLoading(false);
-          const saved = getSavedProgress(id);
-          if (saved > 0) setCurrentSectionIdx(Math.min(saved, entry.sections.length - 1));
-        });
-      }
+    if (book?.contentModule === "kashif-en") {
+      setLoading(true);
+      loadKashifEnSections().then((sections) => {
+        setKashifEnData(sections);
+        setLoading(false);
+        // Restore saved position after async load (clamp to valid range)
+        const saved = getSavedProgress(id);
+        if (saved > 0) setCurrentSectionIdx(Math.min(saved, sections.length - 1));
+      });
+    }
+    if (book?.contentModule === "kachiful-albas") {
+      setLoading(true);
+      loadKachifulAlbasSections().then((sections) => {
+        setKachifulAlbasData(sections);
+        setLoading(false);
+        const saved = getSavedProgress(id);
+        if (saved > 0) setCurrentSectionIdx(Math.min(saved, sections.length - 1));
+      });
     }
   }, [book?.contentModule, id]);
 
@@ -118,26 +134,77 @@ const Reader = () => {
 
   // Flatten all sections into a unified array
   const allSections: Section[] = useMemo(() => {
-    const mod = book?.contentModule;
-    if (!mod) return [{ id: "sample", heading: "Sample", content: "__sample__" }];
-
-    if (mod === "ruh-al-adab") {
+    if (book?.contentModule === "ruh-al-adab") {
       return [{ id: "ruh-al-adab-all", heading: ruhAlAdabMeta.title, content: "__ruh__" }];
     }
-
-    // Async modules use asyncData state
-    if (isAsyncModule(mod)) {
-      return asyncData.map((s) => ({ id: s.id, part: s.part, chapter: s.chapter, heading: s.heading, content: s.content }));
+    if (book?.contentModule === "comprendre-faydhah") {
+      return comprendreFaydhahSections.map((s) => ({
+        id: s.id,
+        chapter: s.chapter,
+        heading: s.heading,
+        content: s.content,
+      }));
     }
-
-    // Sync modules from registry
-    const entry = getSyncModule(mod);
-    if (entry) {
-      return entry.sections.map((s) => ({ id: s.id, part: s.part, chapter: s.chapter, heading: s.heading, content: s.content }));
+    if (book?.contentModule === "wird-tidjane") {
+      return wirdTidjaneSections.map((s) => ({
+        id: s.id,
+        chapter: s.chapter,
+        heading: s.heading,
+        content: s.content,
+      }));
     }
-
+    if (book?.contentModule === "stations-islam") {
+      return stationsIslamSections.map((s) => ({
+        id: s.id,
+        chapter: s.chapter,
+        heading: s.heading,
+        content: s.content,
+      }));
+    }
+    if (book?.contentModule === "kachiful-albas") {
+      return kachifulAlbasData.map((s) => ({
+        id: s.id,
+        part: s.part,
+        chapter: s.chapter,
+        heading: s.heading,
+        content: s.content,
+      }));
+    }
+    if (book?.contentModule === "kashif-en") {
+      return kashifEnData.map((s) => ({
+        id: s.id,
+        part: s.part,
+        chapter: s.chapter,
+        heading: s.heading,
+        content: s.content,
+      }));
+    }
+    if (book?.contentModule === "adeb-dhikr") {
+      return adebDhikrSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
+    }
+    if (book?.contentModule === "origine-soubha") {
+      return origineSoubhaSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
+    }
+    if (book?.contentModule === "salat-fatihi") {
+      return salatFatihiSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
+    }
+    if (book?.contentModule === "jawharatul-kamal") {
+      return jawharatulKamalSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
+    }
+    if (book?.contentModule === "dhikr-groupe") {
+      return dhikrGroupeSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
+    }
+    if (book?.contentModule === "fadail-dhikr") {
+      return fadailDhikrSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
+    }
+    if (book?.contentModule === "priere-shaykh-ibrahim") {
+      return priereShaykhIbrahimSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
+    }
+    if (book?.contentModule === "stations-deen-en") {
+      return stationsDeenEnSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
+    }
     return [{ id: "sample", heading: "Sample", content: "__sample__" }];
-  }, [book?.contentModule, asyncData]);
+  }, [book?.contentModule, kashifEnData, kachifulAlbasData]);
 
   const tocItems = useMemo(() => {
     // For page-by-page books (kashif-en, kachiful-albas), build a deduplicated TOC:
@@ -187,6 +254,7 @@ const Reader = () => {
 
   if (!book) return null;
 
+
   const renderMeta = () => {
     if (book.contentModule === "ruh-al-adab") {
       return (
@@ -198,43 +266,111 @@ const Reader = () => {
         </>
       );
     }
-
-    // Generic meta rendering from registry
-    const mod = book.contentModule;
-    if (!mod) return null;
-
-    const entry = getSyncModule(mod);
-    const asyncLoader = getAsyncModuleLoader(mod);
-    const meta = entry?.meta;
-
-    // For async modules that have loaded, get meta from the loader cache
-    if (!meta && asyncLoader && asyncData.length > 0) {
-      // Re-fetch meta synchronously — async modules store meta in registry
-      // We'll use a workaround: just show book title from the book object
+    if (book.contentModule === "comprendre-faydhah") {
       return (
         <>
-          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{book.title}</h2>
-          {book.author && <p className="text-center text-sm text-muted-foreground mb-1">par {book.author}</p>}
-          {book.translator && <p className="text-center text-xs text-muted-foreground mb-6">Traduit par : {book.translator}</p>}
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{comprendreFaydhahMeta.title}</h2>
+          <p className="text-center text-sm text-muted-foreground mb-1">par {comprendreFaydhahMeta.author}</p>
+          <p className="text-center text-xs text-muted-foreground mb-6">Traduit par : {comprendreFaydhahMeta.translator}</p>
         </>
       );
     }
-
-    if (!meta) return null;
-
-    const isEnglish = book.language === "EN";
-    return (
-      <>
-        <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{meta.title}</h2>
-        {meta.subtitle && <p className="text-center text-sm text-muted-foreground mb-1">{meta.subtitle}</p>}
-        {meta.author && <p className="text-center text-sm text-muted-foreground mb-1">{isEnglish ? "by" : "par"} {meta.author}</p>}
-        {meta.translator && <p className="text-center text-xs text-muted-foreground mb-1">{isEnglish ? "Translated by" : "Traduit par"} : {meta.translator}</p>}
-        {meta.translators && <p className="text-center text-xs text-muted-foreground mb-1">{isEnglish ? "Translated by" : "Traduit par"} : {meta.translators}</p>}
-        {meta.transliteratedBy && <p className="text-center text-xs text-muted-foreground mb-1">Transliterated by: {meta.transliteratedBy}</p>}
-        {meta.source && <p className="text-center text-xs text-muted-foreground mb-6">Source : {meta.source}</p>}
-        {!meta.source && <div className="mb-6" />}
-      </>
-    );
+    if (book.contentModule === "kachiful-albas") {
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{kachifulAlbasMeta.title}</h2>
+          <p className="text-center text-sm text-muted-foreground mb-1">{kachifulAlbasMeta.subtitle}</p>
+          <p className="text-center text-xs text-muted-foreground mb-1">par {kachifulAlbasMeta.author}</p>
+          <p className="text-center text-xs text-muted-foreground mb-6">Traduit par : {kachifulAlbasMeta.translators}</p>
+        </>
+      );
+    }
+    if (book.contentModule === "kashif-en") {
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{kashifEnMeta.title}</h2>
+          <p className="text-center text-sm text-muted-foreground mb-1">{kashifEnMeta.subtitle}</p>
+          <p className="text-center text-xs text-muted-foreground mb-1">by {kashifEnMeta.author}</p>
+          <p className="text-center text-xs text-muted-foreground mb-6">Translated by: {kashifEnMeta.translators}</p>
+        </>
+      );
+    }
+    if (book.contentModule === "stations-islam") {
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{stationsIslamMeta.title}</h2>
+          <p className="text-center text-xs text-muted-foreground mb-6">par {stationsIslamMeta.author}</p>
+        </>
+      );
+    }
+    if (book.contentModule === "adeb-dhikr") {
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{adebDhikrMeta.title}</h2>
+          <p className="text-center text-xs text-muted-foreground mb-6">Source : {adebDhikrMeta.source}</p>
+        </>
+      );
+    }
+    if (book.contentModule === "origine-soubha") {
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{origineSoubhaMeta.title}</h2>
+          <p className="text-center text-xs text-muted-foreground mb-6">Source : {origineSoubhaMeta.source}</p>
+        </>
+      );
+    }
+    if (book.contentModule === "salat-fatihi") {
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{salatFatihiMeta.title}</h2>
+          <p className="text-center text-xs text-muted-foreground mb-6">Source : {salatFatihiMeta.source}</p>
+        </>
+      );
+    }
+    if (book.contentModule === "jawharatul-kamal") {
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{jawharatulKamalMeta.title}</h2>
+          <p className="text-center text-xs text-muted-foreground mb-6">Source : {jawharatulKamalMeta.source}</p>
+        </>
+      );
+    }
+    if (book.contentModule === "dhikr-groupe") {
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{dhikrGroupeMeta.title}</h2>
+          <p className="text-center text-xs text-muted-foreground mb-6">Source : {dhikrGroupeMeta.source}</p>
+        </>
+      );
+    }
+    if (book.contentModule === "fadail-dhikr") {
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{fadailDhikrMeta.title}</h2>
+          <p className="text-center text-xs text-muted-foreground mb-6">Source : {fadailDhikrMeta.source}</p>
+        </>
+      );
+    }
+    if (book.contentModule === "priere-shaykh-ibrahim") {
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{priereShaykhIbrahimMeta.title}</h2>
+          <p className="text-center text-sm text-muted-foreground mb-1">par {priereShaykhIbrahimMeta.author}</p>
+          <p className="text-center text-xs text-muted-foreground mb-6">Traduit par : {priereShaykhIbrahimMeta.translator}</p>
+        </>
+      );
+    }
+    if (book.contentModule === "stations-deen-en") {
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{stationsDeenEnMeta.title}</h2>
+          <p className="text-center text-sm text-muted-foreground mb-1">{stationsDeenEnMeta.subtitle}</p>
+          <p className="text-center text-xs text-muted-foreground mb-1">by {stationsDeenEnMeta.author}</p>
+          <p className="text-center text-xs text-muted-foreground mb-6">Interpreted by: {stationsDeenEnMeta.translator}</p>
+        </>
+      );
+    }
+    return null;
   };
 
   const renderCurrentSection = () => {
