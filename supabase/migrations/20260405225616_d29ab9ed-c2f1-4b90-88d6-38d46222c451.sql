@@ -1,0 +1,1 @@
+DELETE FROM books WHERE id IN ('cheminement-tariqa-2', 'chirk-aghrad', 'connaissance-fath', 'epreuves-amour', 'ifadat-extrait-11', 'ifadat-extrait-2', 'recit-isa', 'sagesse-mariage', 'secret-donne-vie', 'soucis-priere', 'temps-wadhifa');
