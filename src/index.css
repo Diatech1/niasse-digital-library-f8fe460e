@@ -148,6 +148,11 @@ body.reader-chrome-hidden .bottom-nav {
 
 /* Sections can span columns, but headings stick to their content */
 
+.paged-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
+}
+
 .paged-section h5 {
   break-after: avoid-column;
 }
