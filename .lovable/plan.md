@@ -1,71 +1,47 @@
 
 
-# Migrate Book Library to Lovable Cloud (Supabase)
+## Plan: Real Book Reading Experience with Two-Page Spread
 
-## Overview
-Move the hardcoded book data from `src/data/books.ts` into a Supabase database table, then update all pages to fetch books from the database instead.
+### Problem
+The CSS column-based pagination isn't working because the container lacks a fixed pixel height — `min-h-screen` allows the flex container to grow, preventing CSS columns from creating horizontal pages. Content just flows vertically with no visible page breaks.
 
-## Steps
+### Solution
 
-### 1. Enable Lovable Cloud
-Activate the Lovable Cloud backend to get a Supabase database.
+#### 1. Fix PagedView height constraint (`PagedView.tsx`)
+- The outer container must have a concrete pixel height for CSS columns to paginate horizontally
+- Use `ResizeObserver` to capture the outer container's **height** (already capturing width) and set it explicitly on the inner column container
+- This is the root cause: without a fixed height, `columnFill: auto` has nothing to fill against
 
-### 2. Create the `books` table
-Create a migration with the following schema:
+#### 2. Two-page spread on desktop (`PagedView.tsx`)
+- Detect container width: if >= 700px, use 2-column spread; otherwise single page
+- Calculate `columnWidth` as `(containerWidth - gap) / 2` for spread mode, `containerWidth` for single
+- Each "page turn" advances by the full spread width (2 columns worth)
+- Total pages = `ceil(scrollWidth / spreadWidth)`
 
-| Column | Type | Notes |
-|---|---|---|
-| id | text (PK) | Keep existing IDs ("7", "8", etc.) |
-| title | text | Required |
-| title_ar | text | Nullable (Arabic title) |
-| author | text | Required |
-| cover | text | URL to cover image |
-| language | text | "English", "French", "Arabic" |
-| pages | integer | Page count |
-| tags | text[] | Array of tag strings |
-| description | text | Book description |
-| has_audio | boolean | Default false |
-| audio_duration | text | Nullable |
-| content_module | text | Nullable, maps to local data module |
-| is_favorite | boolean | Default false |
-| created_at | timestamptz | Auto-set |
+#### 3. Page numbers inside each page (`PagedView.tsx`)
+- Overlay page numbers at the bottom of the visible area using absolute positioning
+- In spread mode: show left page number (bottom-left) and right page number (bottom-right)
+- In single mode: show centered page number at the bottom
+- Style: small, muted text like a printed book footer
 
-RLS policy: Allow public read access (no auth needed for a library).
+#### 4. Keep bottom bar navigation in sync (`Reader.tsx`)
+- Remove the separate `{currentSectionIdx + 1} / {pagedTotal}` text below PagedView (redundant since page numbers are now inside the page)
+- Bottom bar still shows progress % and prev/next controls
 
-### 3. Upload cover images to Supabase Storage
-- Create a public `book-covers` storage bucket
-- Upload the 12 existing cover images from `src/assets/`
-- Use the resulting public URLs in the database `cover` column
+### Files to modify
+- `src/components/reader/PagedView.tsx` — Fix height, add spread logic, add page number overlays
+- `src/pages/Reader.tsx` — Remove redundant page indicator, ensure height chain is correct (use `h-screen` instead of `min-h-screen` on reader container, or calculate available height)
+- `src/index.css` — Minor tweaks for page number styling if needed
 
-### 4. Seed the database
-Insert all 12 books with their data and the new cover URLs.
-
-### 5. Create a React hook `useBooks`
-- New file: `src/hooks/use-books.ts`
-- Uses `@tanstack/react-query` to fetch from the `books` table
-- Returns `{ books, isLoading, error }`
-- Converts snake_case DB columns to camelCase for the existing `Book` interface
-
-### 6. Update all consuming pages
-Replace `import { books } from "@/data/books"` with the new `useBooks()` hook in:
-- `src/pages/Index.tsx`
-- `src/pages/Library.tsx`
-- `src/pages/BookDetail.tsx`
-- `src/pages/AudioPlayer.tsx`
-- `src/pages/AudioLibrary.tsx`
-- `src/pages/Reader.tsx`
-
-Add loading skeletons where appropriate.
-
-### 7. Keep the `Book` interface
-Move the `Book` TypeScript interface to a shared types file or keep it in `src/data/books.ts` for backward compatibility. Remove the hardcoded array.
-
----
-
-## Technical Details
-
-- **No authentication required** -- this is a public library, so RLS will use a simple `SELECT` policy for anonymous access
-- **Cover images**: Stored in Supabase Storage with public URLs, replacing the local imports
-- **Existing features preserved**: Reading progress (localStorage), content modules (local data files), bookmarks all continue to work since they reference `book.id` and `book.contentModule`
-- **Tanstack Query** is already installed, so caching and refetching come for free
+### Technical detail: height chain
+```text
+Container (h-screen, flex col)
+  ├── Top bar (shrink-0)
+  ├── Font bar (shrink-0)  
+  ├── Content area (flex-1, overflow-hidden)
+  │   └── PagedView (h-full)
+  │       └── Column container (height: measuredHeight px)
+  │           └── Content flows into columns →→→
+  └── Bottom bar (shrink-0, fixed)
+```
 
