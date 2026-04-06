@@ -86,6 +86,8 @@ const Reader = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [chromeVisible, setChromeVisible] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
+  const pagedViewRef = useRef<PagedViewHandle>(null);
+  const [pagedTotal, setPagedTotal] = useState(1);
 
   const saveProgress = useSaveProgress(id);
   const { bookmarks, addBookmark, removeBookmark, isBookmarked } = useBookmarks(id);
