@@ -146,10 +146,7 @@ body.reader-chrome-hidden .bottom-nav {
   display: none;
 }
 
-/* CSS columns pagination for paged reader */
-.paged-section {
-  break-inside: avoid-column;
-}
+/* Sections can span columns, but headings stick to their content */
 
 .paged-section h5 {
   break-after: avoid-column;
