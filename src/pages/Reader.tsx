@@ -608,7 +608,7 @@ const Reader = () => {
             <Loader2 className="w-6 h-6 animate-spin text-primary" />
             <span className="ml-2 text-muted-foreground">Loading book...</span>
           </div>
-        ) : isPagedMode ? (
+        ) : (
           <>
             <PagedView
               ref={pagedViewRef}
