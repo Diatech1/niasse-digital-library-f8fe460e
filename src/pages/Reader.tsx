@@ -692,13 +692,13 @@ const Reader = () => {
         <div className={`transition-all duration-300 ${chromeVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-full pointer-events-none'}`}>
           <ReaderBottomBar
             currentPage={currentSectionIdx + 1}
-            totalPages={allSections.length}
+            totalPages={effectiveTotalPages}
             onPrevPage={() => goToSection(currentSectionIdx - 1)}
             onNextPage={() => goToSection(currentSectionIdx + 1)}
             onOpenToc={() => setTocOpen(true)}
             onJumpToPage={(page) => goToSection(page - 1)}
             hasPrev={currentSectionIdx > 0}
-            hasNext={currentSectionIdx < allSections.length - 1}
+            hasNext={currentSectionIdx < effectiveTotalPages - 1}
           />
         </div>
       )}
