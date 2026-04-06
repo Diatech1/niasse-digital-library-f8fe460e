@@ -516,7 +516,7 @@ const Reader = () => {
   };
 
   return (
-    <div ref={containerRef} className={`min-h-screen ${theme.bg} ${theme.text} transition-colors duration-300 flex flex-col`}>
+    <div ref={containerRef} className={`h-screen ${theme.bg} ${theme.text} transition-colors duration-300 flex flex-col`}>
       {/* Top bar */}
       <div className={`flex items-center gap-2 px-3 py-3 border-b border-border/20 transition-all duration-300 ${chromeVisible ? '' : 'opacity-0 max-h-0 overflow-hidden !py-0 !border-b-0'}`}>
         <button onClick={() => navigate(-1)} className="p-2 flex-shrink-0">
