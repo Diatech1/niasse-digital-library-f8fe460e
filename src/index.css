@@ -152,6 +152,12 @@ body.reader-chrome-hidden .bottom-nav {
   break-after: avoid-column;
 }
 
+.formatted-content {
+  text-align: justify;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+
 .formatted-content p,
 .formatted-content blockquote,
 .formatted-content .flex {

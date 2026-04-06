@@ -18,18 +18,18 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
     const [containerWidth, setContainerWidth] = useState(0);
     const [containerHeight, setContainerHeight] = useState(0);
     const gap = 48;
+    const padding = 40; // horizontal padding inside the reading area
     const lastTotal = useRef(0);
     const measureRaf = useRef(0);
 
     // Two-page spread when container is wide enough
     const isSpread = containerWidth >= 700;
+    const availableWidth = containerWidth - padding * 2;
     const pageWidth = isSpread
-      ? Math.floor((containerWidth - gap) / 2)
-      : containerWidth;
+      ? Math.floor((availableWidth - gap) / 2)
+      : availableWidth;
     // Full width of one "spread" (what one page-turn advances)
-    const spreadWidth = isSpread
-      ? pageWidth * 2 + gap
-      : containerWidth;
+    const spreadWidth = containerWidth;
 
     useEffect(() => {
       if (!outerRef.current) return;
@@ -72,8 +72,8 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
 
     const translateX = page * spreadWidth;
 
-    // Page numbers: in spread mode show left + right, in single mode show centered
-    const pageNumberPadding = 28; // space reserved at bottom for page number
+    // Page numbers
+    const pageNumberPadding = 28;
     const leftPageNum = isSpread ? page * 2 + 1 : page + 1;
     const rightPageNum = isSpread ? page * 2 + 2 : 0;
     const totalLogicalPages = isSpread ? lastTotal.current * 2 : lastTotal.current;
@@ -90,15 +90,31 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
             transform: `translateX(-${translateX}px)`,
             transition: 'transform 0.3s ease-out',
             willChange: 'transform',
+            paddingLeft: `${padding}px`,
+            paddingRight: `${padding}px`,
           }}
         >
           {children}
         </div>
-        {/* In-page page numbers */}
+
+        {/* Center divider for spread mode */}
+        {isSpread && containerHeight > 0 && (
+          <div
+            className="absolute top-4 pointer-events-none"
+            style={{
+              left: '50%',
+              bottom: pageNumberPadding + 4,
+              width: '1px',
+              background: 'hsl(var(--border) / 0.4)',
+            }}
+          />
+        )}
+
+        {/* Page numbers */}
         {containerHeight > 0 && (
           <div
             className="absolute left-0 right-0 flex pointer-events-none select-none"
-            style={{ bottom: 4 }}
+            style={{ bottom: 4, paddingLeft: padding, paddingRight: padding }}
           >
             {isSpread ? (
               <>
