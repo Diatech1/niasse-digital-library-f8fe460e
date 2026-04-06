@@ -281,10 +281,8 @@ const Reader = () => {
 
   const fontClass = fontIdx === 0 ? "font-sans" : fontIdx === 1 ? "font-serif" : "font-arabic";
 
-  if (!book) return null;
-
-
   const renderMeta = () => {
+    if (!book) return null;
     if (book.contentModule === "ruh-al-adab") {
       return (
         <>
