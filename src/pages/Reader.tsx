@@ -655,7 +655,7 @@ const Reader = () => {
       </div>
 
       {/* Side navigation arrows — always visible in fullscreen, otherwise follow chrome visibility */}
-      {(chromeVisible || isFullscreen) && allSections.length > 1 && (
+      {(chromeVisible || isFullscreen) && effectiveTotalPages > 1 && (
         <>
           <button
             onClick={() => goToSection(currentSectionIdx - 1)}
