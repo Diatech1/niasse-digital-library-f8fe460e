@@ -667,6 +667,7 @@ const Reader = () => {
             <p className="text-center text-xs text-muted-foreground/50 mt-1 tracking-widest select-none shrink-0">
               {currentSectionIdx + 1} / {pagedTotal}
             </p>
+          </>
         )}
       </div>
 
