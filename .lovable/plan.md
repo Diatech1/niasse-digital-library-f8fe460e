@@ -1,47 +1,34 @@
 
 
-## Plan: Real Book Reading Experience with Two-Page Spread
+## Plan: Professional Ebook Reader Experience
 
-### Problem
-The CSS column-based pagination isn't working because the container lacks a fixed pixel height — `min-h-screen` allows the flex container to grow, preventing CSS columns from creating horizontal pages. Content just flows vertically with no visible page breaks.
+### Problems identified
+From the screenshot: text is clipping mid-word at column edges, content overflows the right side, and the overall layout feels rough and unpolished. The root causes:
+1. **No inner padding** in the column container — text runs edge-to-edge and gets clipped by `overflow-hidden`
+2. **Column width calculation ignores padding** — `pageWidth` equals the full container width, so columns extend beyond the visible area
+3. **The `max-w-4xl` constraint** on the content wrapper conflicts with the PagedView width calculations
 
 ### Solution
 
-#### 1. Fix PagedView height constraint (`PagedView.tsx`)
-- The outer container must have a concrete pixel height for CSS columns to paginate horizontally
-- Use `ResizeObserver` to capture the outer container's **height** (already capturing width) and set it explicitly on the inner column container
-- This is the root cause: without a fixed height, `columnFill: auto` has nothing to fill against
+#### 1. Fix column width math in `PagedView.tsx`
+- Subtract horizontal padding (e.g. 32px per side = 64px total) from the container width before computing column dimensions
+- In single-page mode: `columnWidth = containerWidth - padding*2`
+- In spread mode: `columnWidth = (containerWidth - padding*2 - gap) / 2`
+- `spreadWidth = containerWidth` (the full outer width, since translateX moves the whole inner div)
+- Add `paddingLeft` and `paddingRight` on the inner column container so text never touches edges
 
-#### 2. Two-page spread on desktop (`PagedView.tsx`)
-- Detect container width: if >= 700px, use 2-column spread; otherwise single page
-- Calculate `columnWidth` as `(containerWidth - gap) / 2` for spread mode, `containerWidth` for single
-- Each "page turn" advances by the full spread width (2 columns worth)
-- Total pages = `ceil(scrollWidth / spreadWidth)`
+#### 2. Remove conflicting constraints in `Reader.tsx`
+- Remove `max-w-4xl` from the content area — PagedView should fill the available width and handle its own margins internally
+- Remove `px-6` from the content wrapper (padding is now handled inside PagedView)
+- Keep the `flex-1 min-h-0 overflow-hidden` chain which correctly constrains height
 
-#### 3. Page numbers inside each page (`PagedView.tsx`)
-- Overlay page numbers at the bottom of the visible area using absolute positioning
-- In spread mode: show left page number (bottom-left) and right page number (bottom-right)
-- In single mode: show centered page number at the bottom
-- Style: small, muted text like a printed book footer
-
-#### 4. Keep bottom bar navigation in sync (`Reader.tsx`)
-- Remove the separate `{currentSectionIdx + 1} / {pagedTotal}` text below PagedView (redundant since page numbers are now inside the page)
-- Bottom bar still shows progress % and prev/next controls
+#### 3. Polish the reading area
+- Add a subtle vertical divider line between spread pages (a centered `border-right` on the left column area, via a CSS pseudo-element or an absolute-positioned div)
+- Ensure page numbers are properly centered under each column, not at the container edges
+- Add `text-align: justify` and `hyphens: auto` via CSS on `.formatted-content` for cleaner word wrapping
 
 ### Files to modify
-- `src/components/reader/PagedView.tsx` — Fix height, add spread logic, add page number overlays
-- `src/pages/Reader.tsx` — Remove redundant page indicator, ensure height chain is correct (use `h-screen` instead of `min-h-screen` on reader container, or calculate available height)
-- `src/index.css` — Minor tweaks for page number styling if needed
-
-### Technical detail: height chain
-```text
-Container (h-screen, flex col)
-  ├── Top bar (shrink-0)
-  ├── Font bar (shrink-0)  
-  ├── Content area (flex-1, overflow-hidden)
-  │   └── PagedView (h-full)
-  │       └── Column container (height: measuredHeight px)
-  │           └── Content flows into columns →→→
-  └── Bottom bar (shrink-0, fixed)
-```
+- `src/components/reader/PagedView.tsx` — Fix width math, add inner padding, add center divider
+- `src/pages/Reader.tsx` — Remove `max-w-4xl` and `px-6` from content wrapper
+- `src/index.css` — Add `hyphens: auto` to formatted content for better text flow
 
