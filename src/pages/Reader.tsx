@@ -252,10 +252,10 @@ const Reader = () => {
     return chapters;
   }, [allSections]);
 
-  const isPagedMode = book?.contentModule === 'conditions-regles';
-  const effectiveTotalPages = isPagedMode ? pagedTotal : allSections.length;
+  const isPagedMode = true;
+  const effectiveTotalPages = pagedTotal;
 
-  const currentSection = isPagedMode ? allSections[0] : (allSections[currentSectionIdx] || allSections[0]);
+  const currentSection = allSections[currentSectionIdx] || allSections[0];
 
 
   const goToSection = useCallback((idx: number) => {
@@ -608,7 +608,7 @@ const Reader = () => {
             <Loader2 className="w-6 h-6 animate-spin text-primary" />
             <span className="ml-2 text-muted-foreground">Loading book...</span>
           </div>
-        ) : isPagedMode ? (
+        ) : (
           <>
             <PagedView
               ref={pagedViewRef}
@@ -620,19 +620,46 @@ const Reader = () => {
                 {renderMeta()}
                 {allSections.map((section, idx) => (
                   <div key={section.id} data-section-index={idx} className="paged-section mb-6">
-                    {section.heading && (
+                    {section.part && (
+                      <h3 className="text-center font-serif font-bold text-primary mb-3 mt-4 uppercase tracking-[0.2em]" style={{ fontSize: fontSize * 0.85, breakAfter: 'avoid' as const }}>
+                        {section.part}
+                      </h3>
+                    )}
+                    {section.chapter && section.chapter !== section.part && (
+                      <h4 className="text-center font-serif font-semibold text-primary/80 mb-4" style={{ fontSize: fontSize * 1.1, breakAfter: 'avoid' as const }}>
+                        {section.chapter}
+                      </h4>
+                    )}
+                    {section.heading && section.heading !== section.chapter && section.heading !== section.part && (
                       <h5
                         className="font-serif font-bold mb-4 text-center"
-                        style={{ fontSize: fontSize * 1.05, breakAfter: 'avoid' }}
+                        style={{ fontSize: fontSize * 1.05, breakAfter: 'avoid' as const }}
                       >
                         {section.heading}
                       </h5>
                     )}
-                    <FormattedContent
-                      content={section.content}
-                      fontSize={fontSize}
-                      textColor={theme.text.replace('text-[', '').replace(']', '')}
-                    />
+                    {section.content === "__ruh__" ? (
+                      <div className="space-y-3">
+                        {ruhAlAdabVerses.map((v) => (
+                          <p key={v.number}>
+                            <span className="text-primary font-semibold mr-2">{v.number}</span>
+                            {v.text}
+                          </p>
+                        ))}
+                        <p className="text-center font-semibold mt-8">{ruhAlAdabMeta.closing}</p>
+                      </div>
+                    ) : section.content === "__sample__" ? (
+                      <>
+                        <p className="mb-6">{sampleTextEn}</p>
+                        <p className="font-arabic text-right mb-6" dir="rtl">{sampleTextAr}</p>
+                      </>
+                    ) : (
+                      <FormattedContent
+                        content={section.content}
+                        fontSize={fontSize}
+                        textColor={theme.text.replace('text-[', '').replace(']', '')}
+                      />
+                    )}
                   </div>
                 ))}
               </div>
@@ -640,16 +667,6 @@ const Reader = () => {
             <p className="text-center text-xs text-muted-foreground/50 mt-1 tracking-widest select-none shrink-0">
               {currentSectionIdx + 1} / {pagedTotal}
             </p>
-          </>
-        ) : (
-          <>
-            {currentSectionIdx === 0 && renderMeta()}
-            {renderCurrentSection()}
-            {effectiveTotalPages > 1 && (
-              <p className="text-center text-xs text-muted-foreground/50 mt-10 tracking-widest select-none">
-                {currentSectionIdx + 1} / {effectiveTotalPages}
-              </p>
-            )}
           </>
         )}
       </div>
