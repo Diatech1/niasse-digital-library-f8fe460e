@@ -15,6 +15,7 @@ import { dhikrGroupeSections, dhikrGroupeMeta } from "@/data/dhikr-groupe";
 import { fadailDhikrSections, fadailDhikrMeta } from "@/data/fadail-dhikr";
 import { priereShaykhIbrahimSections, priereShaykhIbrahimMeta } from "@/data/priere-shaykh-ibrahim";
 import { stationsDeenEnSections, stationsDeenEnMeta } from "@/data/stations-deen-en";
+import { loadConditionsReglesSections, conditionsReglesMeta, type ConditionsSection } from "@/data/conditions-regles";
 import { ArrowLeft, Loader2, Search, Maximize, Minimize, ChevronLeft, ChevronRight, Bookmark, BookmarkCheck } from "lucide-react";
 import { useSaveProgress, getSavedProgress } from "@/hooks/use-reading-progress";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -76,6 +77,7 @@ const Reader = () => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [kashifEnData, setKashifEnData] = useState<KashifEnSection[]>([]);
   const [kachifulAlbasData, setKachifulAlbasData] = useState<KachifulSection[]>([]);
+  const [conditionsReglesData, setConditionsReglesData] = useState<ConditionsSection[]>([]);
   const [loading, setLoading] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
@@ -123,6 +125,15 @@ const Reader = () => {
       setLoading(true);
       loadKachifulAlbasSections().then((sections) => {
         setKachifulAlbasData(sections);
+        setLoading(false);
+        const saved = getSavedProgress(id);
+        if (saved > 0) setCurrentSectionIdx(Math.min(saved, sections.length - 1));
+      });
+    }
+    if (book?.contentModule === "conditions-regles") {
+      setLoading(true);
+      loadConditionsReglesSections().then((sections) => {
+        setConditionsReglesData(sections);
         setLoading(false);
         const saved = getSavedProgress(id);
         if (saved > 0) setCurrentSectionIdx(Math.min(saved, sections.length - 1));
@@ -203,8 +214,11 @@ const Reader = () => {
     if (book?.contentModule === "stations-deen-en") {
       return stationsDeenEnSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
     }
+    if (book?.contentModule === "conditions-regles") {
+      return conditionsReglesData.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
+    }
     return [{ id: "sample", heading: "Sample", content: "__sample__" }];
-  }, [book?.contentModule, kashifEnData, kachifulAlbasData]);
+  }, [book?.contentModule, kashifEnData, kachifulAlbasData, conditionsReglesData]);
 
   const tocItems = useMemo(() => {
     // For page-by-page books (kashif-en, kachiful-albas), build a deduplicated TOC:
@@ -367,6 +381,14 @@ const Reader = () => {
           <p className="text-center text-sm text-muted-foreground mb-1">{stationsDeenEnMeta.subtitle}</p>
           <p className="text-center text-xs text-muted-foreground mb-1">by {stationsDeenEnMeta.author}</p>
           <p className="text-center text-xs text-muted-foreground mb-6">Interpreted by: {stationsDeenEnMeta.translator}</p>
+        </>
+      );
+    }
+    if (book.contentModule === "conditions-regles") {
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{conditionsReglesMeta.title}</h2>
+          <p className="text-center text-xs text-muted-foreground mb-6">Source : {conditionsReglesMeta.source}</p>
         </>
       );
     }
