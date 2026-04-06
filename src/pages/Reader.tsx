@@ -25,6 +25,7 @@ import ReaderBottomBar from "@/components/reader/ReaderBottomBar";
 import FormattedContent from "@/components/reader/FormattedContent";
 import ReaderSearch from "@/components/reader/ReaderSearch";
 import BookmarkDialog from "@/components/reader/BookmarkDialog";
+import PagedView, { type PagedViewHandle } from "@/components/reader/PagedView";
 import { useBookmarks } from "@/hooks/use-bookmarks";
 
 const themes = [
