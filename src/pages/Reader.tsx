@@ -616,7 +616,7 @@ const Reader = () => {
       {/* Reading content */}
       <div
         ref={contentRef}
-        className={`flex-1 min-h-0 ${isPagedMode ? 'overflow-hidden flex flex-col' : 'overflow-y-auto'} px-6 ${isPagedMode ? 'pt-4 pb-0' : 'py-8'} max-w-4xl mx-auto w-full ${fontClass} leading-relaxed ${isPagedMode ? '' : 'cursor-pointer'}`}
+        className={`flex-1 min-h-0 ${isPagedMode ? 'overflow-hidden flex flex-col' : 'overflow-y-auto'} ${isPagedMode ? 'pt-4 pb-0' : 'py-8 px-6 max-w-4xl mx-auto'} w-full ${fontClass} leading-relaxed ${isPagedMode ? '' : 'cursor-pointer'}`}
         style={{
           fontSize,
           ...(!isPagedMode ? { paddingBottom: chromeVisible ? '11rem' : '5rem' } : {}),
