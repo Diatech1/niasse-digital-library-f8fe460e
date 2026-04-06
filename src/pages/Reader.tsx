@@ -130,6 +130,15 @@ const Reader = () => {
         if (saved > 0) setCurrentSectionIdx(Math.min(saved, sections.length - 1));
       });
     }
+    if (book?.contentModule === "conditions-regles") {
+      setLoading(true);
+      loadConditionsReglesSections().then((sections) => {
+        setConditionsReglesData(sections);
+        setLoading(false);
+        const saved = getSavedProgress(id);
+        if (saved > 0) setCurrentSectionIdx(Math.min(saved, sections.length - 1));
+      });
+    }
   }, [book?.contentModule, id]);
 
   const theme = themes[themeIdx];
