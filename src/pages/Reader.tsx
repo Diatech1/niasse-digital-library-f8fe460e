@@ -252,10 +252,10 @@ const Reader = () => {
     return chapters;
   }, [allSections]);
 
-  const isPagedMode = book?.contentModule === 'conditions-regles';
-  const effectiveTotalPages = isPagedMode ? pagedTotal : allSections.length;
+  const isPagedMode = true;
+  const effectiveTotalPages = pagedTotal;
 
-  const currentSection = isPagedMode ? allSections[0] : (allSections[currentSectionIdx] || allSections[0]);
+  const currentSection = allSections[currentSectionIdx] || allSections[0];
 
 
   const goToSection = useCallback((idx: number) => {
