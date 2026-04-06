@@ -384,6 +384,14 @@ const Reader = () => {
         </>
       );
     }
+    if (book.contentModule === "conditions-regles") {
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{conditionsReglesMeta.title}</h2>
+          <p className="text-center text-xs text-muted-foreground mb-6">Source : {conditionsReglesMeta.source}</p>
+        </>
+      );
+    }
     return null;
   };
 
