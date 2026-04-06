@@ -18,6 +18,7 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
     const [containerWidth, setContainerWidth] = useState(0);
     const gap = 48;
     const lastTotal = useRef(0);
+    const measureRaf = useRef(0);
 
     useEffect(() => {
       if (!outerRef.current) return;
@@ -39,11 +40,13 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
       }
     }, [containerWidth, gap, onTotalPagesChange]);
 
+    // Debounced measurement to avoid layout thrashing
     useEffect(() => {
-      const raf1 = requestAnimationFrame(() => {
+      cancelAnimationFrame(measureRaf.current);
+      measureRaf.current = requestAnimationFrame(() => {
         requestAnimationFrame(measure);
       });
-      return () => cancelAnimationFrame(raf1);
+      return () => cancelAnimationFrame(measureRaf.current);
     }, [children, containerWidth, measure]);
 
     useImperativeHandle(ref, () => ({
@@ -55,6 +58,8 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
       },
     }), [containerWidth, gap]);
 
+    const translateX = page * (containerWidth + gap);
+
     return (
       <div ref={outerRef} className={`overflow-hidden ${className || ''}`} style={{ height: '100%' }}>
         <div
@@ -64,8 +69,9 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
             columnWidth: `${containerWidth}px`,
             columnGap: `${gap}px`,
             columnFill: 'auto',
-            transform: `translateX(-${page * (containerWidth + gap)}px)`,
+            transform: `translateX(-${translateX}px)`,
             transition: 'transform 0.3s ease-out',
+            willChange: 'transform',
           }}
         >
           {children}
