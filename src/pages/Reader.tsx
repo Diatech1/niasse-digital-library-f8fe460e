@@ -563,17 +563,15 @@ const Reader = () => {
       {/* Reading content */}
       <div
         ref={contentRef}
-        className={`flex-1 overflow-y-auto px-6 py-8 max-w-2xl mx-auto w-full ${fontClass} leading-relaxed cursor-pointer`}
+        className={`flex-1 ${isPagedMode ? 'overflow-hidden flex flex-col' : 'overflow-y-auto'} px-6 ${isPagedMode ? 'pt-4 pb-2' : 'py-8'} max-w-2xl mx-auto w-full ${fontClass} leading-relaxed ${isPagedMode ? '' : 'cursor-pointer'}`}
         style={{
           fontSize,
-          paddingBottom: chromeVisible ? '11rem' : '5rem',
+          ...(!isPagedMode ? { paddingBottom: chromeVisible ? '11rem' : '5rem' } : {}),
         }}
         onClick={() => {
-          // Only act if touch didn't move (i.e. it was a real tap, not a scroll)
           if (touchHasMoved.current) return;
-          
-          // In fullscreen, tapping content does nothing — use the floating exit button instead
           if (isFullscreen) return;
+          if (isPagedMode) return;
           setChromeVisible((v) => !v);
         }}
         onTouchStart={(e) => {
@@ -588,7 +586,6 @@ const Reader = () => {
           if (dx > 5 || dy > 5) touchHasMoved.current = true;
         }}
         onScroll={() => {
-          // Any scroll means user is reading, not tapping — prevent fullscreen exit
           touchHasMoved.current = true;
         }}
         onTouchEnd={(e) => {
@@ -597,12 +594,10 @@ const Reader = () => {
           const dy = e.changedTouches[0].clientY - touchStartY.current;
           touchStartX.current = null;
           touchStartY.current = null;
-          // Horizontal swipe → navigate sections (available in both normal and fullscreen)
           if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
-            if (dx < 0 && currentSectionIdx < allSections.length - 1) goToSection(currentSectionIdx + 1);
+            if (dx < 0 && currentSectionIdx < effectiveTotalPages - 1) goToSection(currentSectionIdx + 1);
             else if (dx > 0 && currentSectionIdx > 0) goToSection(currentSectionIdx - 1);
           }
-          // Swipe-up → reveal chrome when hidden — only outside fullscreen
           if (!isFullscreen && !chromeVisible && dy < -60 && Math.abs(dy) > Math.abs(dx) * 1.5) {
             setChromeVisible(true);
           }
@@ -613,13 +608,46 @@ const Reader = () => {
             <Loader2 className="w-6 h-6 animate-spin text-primary" />
             <span className="ml-2 text-muted-foreground">Loading book...</span>
           </div>
+        ) : isPagedMode ? (
+          <>
+            <PagedView
+              ref={pagedViewRef}
+              page={currentSectionIdx}
+              onTotalPagesChange={setPagedTotal}
+              className="flex-1"
+            >
+              <div style={{ fontSize }}>
+                {renderMeta()}
+                {allSections.map((section, idx) => (
+                  <div key={section.id} data-section-index={idx} className="paged-section mb-6">
+                    {section.heading && (
+                      <h5
+                        className="font-serif font-bold mb-4 text-center"
+                        style={{ fontSize: fontSize * 1.05, breakAfter: 'avoid' }}
+                      >
+                        {section.heading}
+                      </h5>
+                    )}
+                    <FormattedContent
+                      content={section.content}
+                      fontSize={fontSize}
+                      textColor={theme.text.replace('text-[', '').replace(']', '')}
+                    />
+                  </div>
+                ))}
+              </div>
+            </PagedView>
+            <p className="text-center text-xs text-muted-foreground/50 mt-1 tracking-widest select-none shrink-0">
+              {currentSectionIdx + 1} / {pagedTotal}
+            </p>
+          </>
         ) : (
           <>
             {currentSectionIdx === 0 && renderMeta()}
             {renderCurrentSection()}
-            {allSections.length > 1 && (
+            {effectiveTotalPages > 1 && (
               <p className="text-center text-xs text-muted-foreground/50 mt-10 tracking-widest select-none">
-                {currentSectionIdx + 1} / {allSections.length}
+                {currentSectionIdx + 1} / {effectiveTotalPages}
               </p>
             )}
           </>
