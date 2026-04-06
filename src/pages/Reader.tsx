@@ -252,20 +252,32 @@ const Reader = () => {
     return chapters;
   }, [allSections]);
 
-  const currentSection = allSections[currentSectionIdx] || allSections[0];
+  const isPagedMode = book?.contentModule === 'conditions-regles';
+  const effectiveTotalPages = isPagedMode ? pagedTotal : allSections.length;
+
+  const currentSection = isPagedMode ? allSections[0] : (allSections[currentSectionIdx] || allSections[0]);
 
 
   const goToSection = useCallback((idx: number) => {
-    const clamped = Math.max(0, Math.min(idx, allSections.length - 1));
+    const clamped = Math.max(0, Math.min(idx, effectiveTotalPages - 1));
     setCurrentSectionIdx(clamped);
     saveProgress(clamped);
-    contentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
-  }, [allSections.length, saveProgress]);
+    if (!isPagedMode) {
+      contentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [effectiveTotalPages, saveProgress, isPagedMode]);
 
   const goToSectionById = useCallback((id: string) => {
     const idx = allSections.findIndex((s) => s.id === id);
-    if (idx >= 0) goToSection(idx);
-  }, [allSections, goToSection]);
+    if (idx >= 0) {
+      if (isPagedMode && pagedViewRef.current) {
+        const page = pagedViewRef.current.getPageForSection(idx);
+        goToSection(page);
+      } else {
+        goToSection(idx);
+      }
+    }
+  }, [allSections, goToSection, isPagedMode]);
 
   const fontClass = fontIdx === 0 ? "font-sans" : fontIdx === 1 ? "font-serif" : "font-arabic";
 
