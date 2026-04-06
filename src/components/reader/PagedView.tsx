@@ -33,7 +33,7 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
     const measure = useCallback(() => {
       if (!innerRef.current || containerWidth === 0) return;
       const sw = innerRef.current.scrollWidth;
-      const total = Math.max(1, Math.round((sw + gap) / (containerWidth + gap)));
+      const total = Math.max(1, Math.ceil((sw + gap) / (containerWidth + gap)));
       if (total !== lastTotal.current) {
         lastTotal.current = total;
         onTotalPagesChange(total);
