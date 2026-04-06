@@ -667,7 +667,7 @@ const Reader = () => {
           </button>
           <button
             onClick={() => goToSection(currentSectionIdx + 1)}
-            disabled={currentSectionIdx === allSections.length - 1}
+            disabled={currentSectionIdx === effectiveTotalPages - 1}
             className="absolute right-2 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-background/60 backdrop-blur-sm border border-border/30 shadow-md disabled:opacity-20 transition-opacity hover:bg-background/80"
             aria-label="Next page"
           >
