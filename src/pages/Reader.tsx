@@ -25,6 +25,7 @@ import ReaderBottomBar from "@/components/reader/ReaderBottomBar";
 import FormattedContent from "@/components/reader/FormattedContent";
 import ReaderSearch from "@/components/reader/ReaderSearch";
 import BookmarkDialog from "@/components/reader/BookmarkDialog";
+import PagedView, { type PagedViewHandle } from "@/components/reader/PagedView";
 import { useBookmarks } from "@/hooks/use-bookmarks";
 
 const themes = [
@@ -85,6 +86,8 @@ const Reader = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [chromeVisible, setChromeVisible] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
+  const pagedViewRef = useRef<PagedViewHandle>(null);
+  const [pagedTotal, setPagedTotal] = useState(1);
 
   const saveProgress = useSaveProgress(id);
   const { bookmarks, addBookmark, removeBookmark, isBookmarked } = useBookmarks(id);
@@ -249,20 +252,32 @@ const Reader = () => {
     return chapters;
   }, [allSections]);
 
-  const currentSection = allSections[currentSectionIdx] || allSections[0];
+  const isPagedMode = book?.contentModule === 'conditions-regles';
+  const effectiveTotalPages = isPagedMode ? pagedTotal : allSections.length;
+
+  const currentSection = isPagedMode ? allSections[0] : (allSections[currentSectionIdx] || allSections[0]);
 
 
   const goToSection = useCallback((idx: number) => {
-    const clamped = Math.max(0, Math.min(idx, allSections.length - 1));
+    const clamped = Math.max(0, Math.min(idx, effectiveTotalPages - 1));
     setCurrentSectionIdx(clamped);
     saveProgress(clamped);
-    contentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
-  }, [allSections.length, saveProgress]);
+    if (!isPagedMode) {
+      contentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [effectiveTotalPages, saveProgress, isPagedMode]);
 
   const goToSectionById = useCallback((id: string) => {
     const idx = allSections.findIndex((s) => s.id === id);
-    if (idx >= 0) goToSection(idx);
-  }, [allSections, goToSection]);
+    if (idx >= 0) {
+      if (isPagedMode && pagedViewRef.current) {
+        const page = pagedViewRef.current.getPageForSection(idx);
+        goToSection(page);
+      } else {
+        goToSection(idx);
+      }
+    }
+  }, [allSections, goToSection, isPagedMode]);
 
   const fontClass = fontIdx === 0 ? "font-sans" : fontIdx === 1 ? "font-serif" : "font-arabic";
 
@@ -548,17 +563,15 @@ const Reader = () => {
       {/* Reading content */}
       <div
         ref={contentRef}
-        className={`flex-1 overflow-y-auto px-6 py-8 max-w-2xl mx-auto w-full ${fontClass} leading-relaxed cursor-pointer`}
+        className={`flex-1 ${isPagedMode ? 'overflow-hidden flex flex-col' : 'overflow-y-auto'} px-6 ${isPagedMode ? 'pt-4 pb-2' : 'py-8'} max-w-2xl mx-auto w-full ${fontClass} leading-relaxed ${isPagedMode ? '' : 'cursor-pointer'}`}
         style={{
           fontSize,
-          paddingBottom: chromeVisible ? '11rem' : '5rem',
+          ...(!isPagedMode ? { paddingBottom: chromeVisible ? '11rem' : '5rem' } : {}),
         }}
         onClick={() => {
-          // Only act if touch didn't move (i.e. it was a real tap, not a scroll)
           if (touchHasMoved.current) return;
-          
-          // In fullscreen, tapping content does nothing — use the floating exit button instead
           if (isFullscreen) return;
+          if (isPagedMode) return;
           setChromeVisible((v) => !v);
         }}
         onTouchStart={(e) => {
@@ -573,7 +586,6 @@ const Reader = () => {
           if (dx > 5 || dy > 5) touchHasMoved.current = true;
         }}
         onScroll={() => {
-          // Any scroll means user is reading, not tapping — prevent fullscreen exit
           touchHasMoved.current = true;
         }}
         onTouchEnd={(e) => {
@@ -582,12 +594,10 @@ const Reader = () => {
           const dy = e.changedTouches[0].clientY - touchStartY.current;
           touchStartX.current = null;
           touchStartY.current = null;
-          // Horizontal swipe → navigate sections (available in both normal and fullscreen)
           if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
-            if (dx < 0 && currentSectionIdx < allSections.length - 1) goToSection(currentSectionIdx + 1);
+            if (dx < 0 && currentSectionIdx < effectiveTotalPages - 1) goToSection(currentSectionIdx + 1);
             else if (dx > 0 && currentSectionIdx > 0) goToSection(currentSectionIdx - 1);
           }
-          // Swipe-up → reveal chrome when hidden — only outside fullscreen
           if (!isFullscreen && !chromeVisible && dy < -60 && Math.abs(dy) > Math.abs(dx) * 1.5) {
             setChromeVisible(true);
           }
@@ -598,13 +608,46 @@ const Reader = () => {
             <Loader2 className="w-6 h-6 animate-spin text-primary" />
             <span className="ml-2 text-muted-foreground">Loading book...</span>
           </div>
+        ) : isPagedMode ? (
+          <>
+            <PagedView
+              ref={pagedViewRef}
+              page={currentSectionIdx}
+              onTotalPagesChange={setPagedTotal}
+              className="flex-1"
+            >
+              <div style={{ fontSize }}>
+                {renderMeta()}
+                {allSections.map((section, idx) => (
+                  <div key={section.id} data-section-index={idx} className="paged-section mb-6">
+                    {section.heading && (
+                      <h5
+                        className="font-serif font-bold mb-4 text-center"
+                        style={{ fontSize: fontSize * 1.05, breakAfter: 'avoid' }}
+                      >
+                        {section.heading}
+                      </h5>
+                    )}
+                    <FormattedContent
+                      content={section.content}
+                      fontSize={fontSize}
+                      textColor={theme.text.replace('text-[', '').replace(']', '')}
+                    />
+                  </div>
+                ))}
+              </div>
+            </PagedView>
+            <p className="text-center text-xs text-muted-foreground/50 mt-1 tracking-widest select-none shrink-0">
+              {currentSectionIdx + 1} / {pagedTotal}
+            </p>
+          </>
         ) : (
           <>
             {currentSectionIdx === 0 && renderMeta()}
             {renderCurrentSection()}
-            {allSections.length > 1 && (
+            {effectiveTotalPages > 1 && (
               <p className="text-center text-xs text-muted-foreground/50 mt-10 tracking-widest select-none">
-                {currentSectionIdx + 1} / {allSections.length}
+                {currentSectionIdx + 1} / {effectiveTotalPages}
               </p>
             )}
           </>
@@ -612,7 +655,7 @@ const Reader = () => {
       </div>
 
       {/* Side navigation arrows — always visible in fullscreen, otherwise follow chrome visibility */}
-      {(chromeVisible || isFullscreen) && allSections.length > 1 && (
+      {(chromeVisible || isFullscreen) && effectiveTotalPages > 1 && (
         <>
           <button
             onClick={() => goToSection(currentSectionIdx - 1)}
@@ -624,7 +667,7 @@ const Reader = () => {
           </button>
           <button
             onClick={() => goToSection(currentSectionIdx + 1)}
-            disabled={currentSectionIdx === allSections.length - 1}
+            disabled={currentSectionIdx === effectiveTotalPages - 1}
             className="absolute right-2 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-background/60 backdrop-blur-sm border border-border/30 shadow-md disabled:opacity-20 transition-opacity hover:bg-background/80"
             aria-label="Next page"
           >
@@ -649,13 +692,13 @@ const Reader = () => {
         <div className={`transition-all duration-300 ${chromeVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-full pointer-events-none'}`}>
           <ReaderBottomBar
             currentPage={currentSectionIdx + 1}
-            totalPages={allSections.length}
+            totalPages={effectiveTotalPages}
             onPrevPage={() => goToSection(currentSectionIdx - 1)}
             onNextPage={() => goToSection(currentSectionIdx + 1)}
             onOpenToc={() => setTocOpen(true)}
             onJumpToPage={(page) => goToSection(page - 1)}
             hasPrev={currentSectionIdx > 0}
-            hasNext={currentSectionIdx < allSections.length - 1}
+            hasNext={currentSectionIdx < effectiveTotalPages - 1}
           />
         </div>
       )}

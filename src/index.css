@@ -145,3 +145,15 @@
 body.reader-chrome-hidden .bottom-nav {
   display: none;
 }
+
+/* Sections can span columns, but headings stick to their content */
+
+.paged-section h5 {
+  break-after: avoid-column;
+}
+
+.formatted-content p,
+.formatted-content blockquote,
+.formatted-content .flex {
+  break-inside: avoid-column;
+}
