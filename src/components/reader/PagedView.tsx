@@ -18,16 +18,15 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
     const [containerWidth, setContainerWidth] = useState(0);
     const [containerHeight, setContainerHeight] = useState(0);
     const gap = 48;
-    const padding = 40; // horizontal padding inside the reading area
     const lastTotal = useRef(0);
     const measureRaf = useRef(0);
 
     // Two-page spread when container is wide enough
-    const isSpread = containerWidth >= 700;
-    const availableWidth = containerWidth - padding * 2;
+    // Padding is on the outer div, so containerWidth = content area after padding
+    const isSpread = containerWidth >= 600;
     const pageWidth = isSpread
-      ? Math.floor((availableWidth - gap) / 2)
-      : availableWidth;
+      ? Math.floor((containerWidth - gap) / 2)
+      : containerWidth;
     // Full width of one "spread" (what one page-turn advances)
     const spreadWidth = containerWidth;
 
