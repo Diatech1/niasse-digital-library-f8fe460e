@@ -23,19 +23,24 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <div className="max-w-lg mx-auto relative">
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/library" element={<Library />} />
-              <Route path="/book/:id" element={<BookDetail />} />
-              <Route path="/read/:id" element={<Reader />} />
-              <Route path="/listen/:id" element={<AudioPlayer />} />
-              <Route path="/audio" element={<AudioLibrary />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            <BottomNav />
-          </div>
+          <Routes>
+            {/* Reader breaks out of max-w-lg to use full screen */}
+            <Route path="/read/:id" element={<Reader />} />
+            <Route path="*" element={
+              <div className="max-w-lg mx-auto relative">
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/library" element={<Library />} />
+                  <Route path="/book/:id" element={<BookDetail />} />
+                  <Route path="/listen/:id" element={<AudioPlayer />} />
+                  <Route path="/audio" element={<AudioLibrary />} />
+                  <Route path="/settings" element={<Settings />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+                <BottomNav />
+              </div>
+            } />
+          </Routes>
         </BrowserRouter>
       </TooltipProvider>
     </ThemeProvider>
