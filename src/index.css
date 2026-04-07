@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Amiri:ital,wght@0,400;0,700;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -162,4 +162,31 @@ body.reader-chrome-hidden .bottom-nav {
 .formatted-content blockquote,
 .formatted-content .flex {
   break-inside: avoid-column;
+}
+
+/* Pocket book paragraph indentation — no gap, first-line indent */
+.pocket-paragraphs .formatted-content {
+  line-height: 1.45;
+}
+
+.pocket-paragraphs .formatted-content > p {
+  margin-top: 0;
+  margin-bottom: 0;
+  text-indent: 1.5em;
+}
+
+.pocket-paragraphs .formatted-content > p:first-of-type {
+  text-indent: 0;
+}
+
+.pocket-paragraphs .formatted-content > .flex + p,
+.pocket-paragraphs .formatted-content > blockquote + p,
+.pocket-paragraphs .formatted-content > h3 + p,
+.pocket-paragraphs .formatted-content > h4 + p,
+.pocket-paragraphs .formatted-content > h5 + p {
+  text-indent: 0;
+}
+
+.font-reader {
+  font-family: 'Crimson Pro', 'Lora', serif;
 }
