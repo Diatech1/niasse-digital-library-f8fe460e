@@ -35,7 +35,7 @@ const themes = [
   { name: "Midnight", bg: "bg-[hsl(240,20%,8%)]", text: "text-[hsl(40,10%,80%)]" },
 ];
 
-const fonts = ["Sans", "Serif", "Amiri"];
+const fonts = ["Sans", "Crimson Pro", "Amiri"];
 
 const sampleTextEn = `In the name of Allah, the Most Merciful, the Most Compassionate.
 
@@ -279,7 +279,7 @@ const Reader = () => {
     }
   }, [allSections, goToSection, isPagedMode]);
 
-  const fontClass = fontIdx === 0 ? "font-sans" : fontIdx === 1 ? "font-serif" : "font-arabic";
+  const fontClass = fontIdx === 0 ? "font-sans" : fontIdx === 1 ? "font-reader" : "font-arabic";
 
   const renderMeta = () => {
     if (!book) return null;
@@ -616,7 +616,7 @@ const Reader = () => {
       {/* Reading content */}
       <div
         ref={contentRef}
-        className={`flex-1 min-h-0 ${isPagedMode ? 'overflow-hidden flex flex-col' : 'overflow-y-auto'} ${isPagedMode ? 'pt-4 pb-0' : 'py-8 px-6 max-w-4xl mx-auto'} w-full ${fontClass} leading-relaxed ${isPagedMode ? '' : 'cursor-pointer'}`}
+        className={`flex-1 min-h-0 ${isPagedMode ? 'overflow-hidden flex flex-col' : 'overflow-y-auto'} ${isPagedMode ? '' : 'py-8 px-6 max-w-4xl mx-auto'} w-full ${fontClass} ${isPagedMode ? '' : 'leading-relaxed'} ${isPagedMode ? '' : 'cursor-pointer'}`}
         style={{
           fontSize,
           ...(!isPagedMode ? { paddingBottom: chromeVisible ? '11rem' : '5rem' } : {}),

@@ -13,7 +13,7 @@ const FormattedContent = ({ content, fontSize, textColor }: FormattedContentProp
   const paragraphs = content.split("\n\n").filter((p) => p.trim().length > 0);
 
   return (
-    <div className="formatted-content space-y-4">
+    <div className="formatted-content">
       {paragraphs.map((para, idx) => {
         const trimmed = para.trim();
 

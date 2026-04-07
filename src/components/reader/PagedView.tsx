@@ -15,35 +15,50 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
   ({ children, page, onTotalPagesChange, className }, ref) => {
     const outerRef = useRef<HTMLDivElement>(null);
     const innerRef = useRef<HTMLDivElement>(null);
-    const [containerWidth, setContainerWidth] = useState(0);
-    const [containerHeight, setContainerHeight] = useState(0);
-    const gap = 48;
+    const [availWidth, setAvailWidth] = useState(0);
+    const [availHeight, setAvailHeight] = useState(0);
     const lastTotal = useRef(0);
     const measureRaf = useRef(0);
 
-    const pageWidth = containerWidth;
-    const strideWidth = pageWidth + gap;
-
+    // Observe available space
     useEffect(() => {
       if (!outerRef.current) return;
       const ro = new ResizeObserver(entries => {
         const rect = entries[0].contentRect;
-        if (rect.width > 0) setContainerWidth(rect.width);
-        if (rect.height > 0) setContainerHeight(rect.height);
+        if (rect.width > 0) setAvailWidth(rect.width);
+        if (rect.height > 0) setAvailHeight(rect.height);
       });
       ro.observe(outerRef.current);
       return () => ro.disconnect();
     }, []);
 
+    // 4:7 aspect ratio book dimensions
+    const bookWidth = Math.min(availWidth, availHeight * (4 / 7));
+    const bookHeight = bookWidth * (7 / 4);
+
+    // Asymmetric padding inside the book frame
+    const padTop = bookHeight * 0.08;
+    const padBottom = bookHeight * 0.08;
+    const padLeft = bookWidth * 0.10; // gutter (spine side)
+    const padRight = bookWidth * 0.08;
+
+    // Content area dimensions
+    const contentWidth = bookWidth - padLeft - padRight;
+    const contentHeight = bookHeight - padTop - padBottom;
+    const folioHeight = 20;
+
+    const gap = 48;
+    const strideWidth = contentWidth + gap;
+
     const measure = useCallback(() => {
-      if (!innerRef.current || containerWidth === 0 || containerHeight === 0) return;
+      if (!innerRef.current || contentWidth <= 0) return;
       const sw = innerRef.current.scrollWidth;
       const total = Math.max(1, Math.ceil(sw / strideWidth));
       if (total !== lastTotal.current) {
         lastTotal.current = total;
         onTotalPagesChange(total);
       }
-    }, [containerWidth, containerHeight, strideWidth, onTotalPagesChange]);
+    }, [contentWidth, strideWidth, onTotalPagesChange]);
 
     useEffect(() => {
       cancelAnimationFrame(measureRaf.current);
@@ -51,7 +66,7 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
         requestAnimationFrame(measure);
       });
       return () => cancelAnimationFrame(measureRaf.current);
-    }, [children, containerWidth, containerHeight, measure]);
+    }, [children, availWidth, availHeight, measure]);
 
     useImperativeHandle(ref, () => ({
       getPageForSection: (sectionIndex: number) => {
@@ -63,34 +78,63 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
     }), [strideWidth]);
 
     const translateX = page * strideWidth;
-    const pageNumberPadding = 28;
 
     return (
-      <div ref={outerRef} className={`overflow-hidden relative ${className || ''}`} style={{ height: '100%', paddingLeft: 40, paddingRight: 40 }}>
-        <div
-          ref={innerRef}
-          style={{
-            height: containerHeight > 0 ? `${containerHeight - pageNumberPadding}px` : '100%',
-            columnWidth: `${pageWidth}px`,
-            columnGap: `${gap}px`,
-            columnFill: 'auto',
-            transform: `translateX(-${translateX}px)`,
-            transition: 'transform 0.3s ease-out',
-            willChange: 'transform',
-          }}
-        >
-          {children}
-        </div>
-
-        {/* Page number */}
-        {containerHeight > 0 && (
+      <div ref={outerRef} className={`overflow-hidden relative flex items-center justify-center ${className || ''}`} style={{ height: '100%' }}>
+        {/* Book frame */}
+        {bookWidth > 0 && (
           <div
-            className="absolute left-0 right-0 flex justify-center pointer-events-none select-none"
-            style={{ bottom: 4 }}
+            className="relative flex-shrink-0"
+            style={{
+              width: bookWidth,
+              height: bookHeight,
+              boxShadow: '0 2px 24px rgba(0,0,0,0.12), 0 0 0 1px rgba(128,128,128,0.08)',
+              borderRadius: 3,
+              overflow: 'hidden',
+            }}
           >
-            <span className="text-muted-foreground/40 font-serif italic text-xs">
-              {page + 1}
-            </span>
+            {/* Inner content with asymmetric padding */}
+            <div
+              style={{
+                position: 'absolute',
+                top: padTop,
+                left: padLeft,
+                width: contentWidth,
+                height: contentHeight - folioHeight,
+                overflow: 'hidden',
+              }}
+            >
+              <div
+                ref={innerRef}
+                className="pocket-paragraphs"
+                style={{
+                  height: '100%',
+                  columnWidth: `${contentWidth}px`,
+                  columnGap: `${gap}px`,
+                  columnFill: 'auto',
+                  transform: `translateX(-${translateX}px)`,
+                  transition: 'transform 0.35s cubic-bezier(0.25, 0.1, 0.25, 1.0)',
+                  willChange: 'transform',
+                }}
+              >
+                {children}
+              </div>
+            </div>
+
+            {/* Folio — printed page number */}
+            <div
+              className="absolute left-0 right-0 flex justify-center pointer-events-none select-none"
+              style={{
+                bottom: padBottom * 0.3,
+              }}
+            >
+              <span
+                className="text-muted-foreground/40 font-serif italic tracking-widest"
+                style={{ fontSize: 9, fontVariant: 'small-caps' }}
+              >
+                — {page + 1} —
+              </span>
+            </div>
           </div>
         )}
       </div>
