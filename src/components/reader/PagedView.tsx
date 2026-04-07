@@ -18,18 +18,17 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
     const [containerWidth, setContainerWidth] = useState(0);
     const [containerHeight, setContainerHeight] = useState(0);
     const gap = 48;
-    const padding = 40; // horizontal padding inside the reading area
     const lastTotal = useRef(0);
     const measureRaf = useRef(0);
 
     // Two-page spread when container is wide enough
-    const isSpread = containerWidth >= 700;
-    const availableWidth = containerWidth - padding * 2;
+    // Padding is on the outer div, so containerWidth = content area after padding
+    const isSpread = containerWidth >= 600;
     const pageWidth = isSpread
-      ? Math.floor((availableWidth - gap) / 2)
-      : availableWidth;
-    // Full width of one "spread" (what one page-turn advances)
-    const spreadWidth = containerWidth;
+      ? Math.floor((containerWidth - gap) / 2)
+      : containerWidth;
+    // Stride between spreads includes the trailing gap to the next spread's first column
+    const spreadWidth = isSpread ? 2 * (pageWidth + gap) : (pageWidth + gap);
 
     useEffect(() => {
       if (!outerRef.current) return;
@@ -79,7 +78,7 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
     const totalLogicalPages = isSpread ? lastTotal.current * 2 : lastTotal.current;
 
     return (
-      <div ref={outerRef} className={`overflow-hidden relative ${className || ''}`} style={{ height: '100%' }}>
+      <div ref={outerRef} className={`overflow-hidden relative ${className || ''}`} style={{ height: '100%', paddingLeft: 40, paddingRight: 40 }}>
         <div
           ref={innerRef}
           style={{
@@ -90,8 +89,6 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
             transform: `translateX(-${translateX}px)`,
             transition: 'transform 0.3s ease-out',
             willChange: 'transform',
-            paddingLeft: `${padding}px`,
-            paddingRight: `${padding}px`,
           }}
         >
           {children}
@@ -114,7 +111,7 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
         {containerHeight > 0 && (
           <div
             className="absolute left-0 right-0 flex pointer-events-none select-none"
-            style={{ bottom: 4, paddingLeft: padding, paddingRight: padding }}
+            style={{ bottom: 4, paddingLeft: 0, paddingRight: 0 }}
           >
             {isSpread ? (
               <>
