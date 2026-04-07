@@ -27,8 +27,8 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
     const pageWidth = isSpread
       ? Math.floor((containerWidth - gap) / 2)
       : containerWidth;
-    // Full width of one "spread" (what one page-turn advances)
-    const spreadWidth = containerWidth;
+    // Stride between spreads includes the trailing gap to the next spread's first column
+    const spreadWidth = isSpread ? 2 * (pageWidth + gap) : (pageWidth + gap);
 
     useEffect(() => {
       if (!outerRef.current) return;
