@@ -78,7 +78,7 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
     const totalLogicalPages = isSpread ? lastTotal.current * 2 : lastTotal.current;
 
     return (
-      <div ref={outerRef} className={`overflow-hidden relative ${className || ''}`} style={{ height: '100%' }}>
+      <div ref={outerRef} className={`overflow-hidden relative ${className || ''}`} style={{ height: '100%', paddingLeft: 40, paddingRight: 40 }}>
         <div
           ref={innerRef}
           style={{
@@ -89,8 +89,6 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
             transform: `translateX(-${translateX}px)`,
             transition: 'transform 0.3s ease-out',
             willChange: 'transform',
-            paddingLeft: `${padding}px`,
-            paddingRight: `${padding}px`,
           }}
         >
           {children}
@@ -113,7 +111,7 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
         {containerHeight > 0 && (
           <div
             className="absolute left-0 right-0 flex pointer-events-none select-none"
-            style={{ bottom: 4, paddingLeft: padding, paddingRight: padding }}
+            style={{ bottom: 4, paddingLeft: 0, paddingRight: 0 }}
           >
             {isSpread ? (
               <>
