@@ -21,14 +21,8 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
     const lastTotal = useRef(0);
     const measureRaf = useRef(0);
 
-    // Two-page spread when container is wide enough
-    // Padding is on the outer div, so containerWidth = content area after padding
-    const isSpread = containerWidth >= 600;
-    const pageWidth = isSpread
-      ? Math.floor((containerWidth - gap) / 2)
-      : containerWidth;
-    // Stride between spreads includes the trailing gap to the next spread's first column
-    const spreadWidth = isSpread ? 2 * (pageWidth + gap) : (pageWidth + gap);
+    const pageWidth = containerWidth;
+    const strideWidth = pageWidth + gap;
 
     useEffect(() => {
       if (!outerRef.current) return;
@@ -44,14 +38,13 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
     const measure = useCallback(() => {
       if (!innerRef.current || containerWidth === 0 || containerHeight === 0) return;
       const sw = innerRef.current.scrollWidth;
-      const total = Math.max(1, Math.ceil(sw / spreadWidth));
+      const total = Math.max(1, Math.ceil(sw / strideWidth));
       if (total !== lastTotal.current) {
         lastTotal.current = total;
         onTotalPagesChange(total);
       }
-    }, [containerWidth, containerHeight, spreadWidth, onTotalPagesChange]);
+    }, [containerWidth, containerHeight, strideWidth, onTotalPagesChange]);
 
-    // Debounced measurement
     useEffect(() => {
       cancelAnimationFrame(measureRaf.current);
       measureRaf.current = requestAnimationFrame(() => {
@@ -62,20 +55,15 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
 
     useImperativeHandle(ref, () => ({
       getPageForSection: (sectionIndex: number) => {
-        if (!innerRef.current || spreadWidth === 0) return 0;
+        if (!innerRef.current || strideWidth === 0) return 0;
         const el = innerRef.current.querySelector(`[data-section-index="${sectionIndex}"]`);
         if (!el) return 0;
-        return Math.floor((el as HTMLElement).offsetLeft / spreadWidth);
+        return Math.floor((el as HTMLElement).offsetLeft / strideWidth);
       },
-    }), [spreadWidth]);
+    }), [strideWidth]);
 
-    const translateX = page * spreadWidth;
-
-    // Page numbers
+    const translateX = page * strideWidth;
     const pageNumberPadding = 28;
-    const leftPageNum = isSpread ? page * 2 + 1 : page + 1;
-    const rightPageNum = isSpread ? page * 2 + 2 : 0;
-    const totalLogicalPages = isSpread ? lastTotal.current * 2 : lastTotal.current;
 
     return (
       <div ref={outerRef} className={`overflow-hidden relative ${className || ''}`} style={{ height: '100%', paddingLeft: 40, paddingRight: 40 }}>
@@ -94,48 +82,15 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
           {children}
         </div>
 
-        {/* Center divider for spread mode */}
-        {isSpread && containerHeight > 0 && (
-          <div
-            className="absolute top-4 pointer-events-none"
-            style={{
-              left: '50%',
-              bottom: pageNumberPadding + 4,
-              width: '1px',
-              background: 'hsl(var(--border) / 0.4)',
-            }}
-          />
-        )}
-
-        {/* Page numbers */}
+        {/* Page number */}
         {containerHeight > 0 && (
           <div
-            className="absolute left-0 right-0 flex pointer-events-none select-none"
-            style={{ bottom: 4, paddingLeft: 0, paddingRight: 0 }}
+            className="absolute left-0 right-0 flex justify-center pointer-events-none select-none"
+            style={{ bottom: 4 }}
           >
-            {isSpread ? (
-              <>
-                <span
-                  className="text-muted-foreground/40 font-serif italic text-xs"
-                  style={{ width: pageWidth, textAlign: 'center' }}
-                >
-                  {leftPageNum <= totalLogicalPages ? leftPageNum : ''}
-                </span>
-                <span style={{ width: gap }} />
-                <span
-                  className="text-muted-foreground/40 font-serif italic text-xs"
-                  style={{ width: pageWidth, textAlign: 'center' }}
-                >
-                  {rightPageNum <= totalLogicalPages ? rightPageNum : ''}
-                </span>
-              </>
-            ) : (
-              <span
-                className="text-muted-foreground/40 font-serif italic text-xs w-full text-center"
-              >
-                {leftPageNum}
-              </span>
-            )}
+            <span className="text-muted-foreground/40 font-serif italic text-xs">
+              {page + 1}
+            </span>
           </div>
         )}
       </div>
