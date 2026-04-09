@@ -732,7 +732,17 @@ const Reader = () => {
         </button>
       )}
 
-      {/* Bottom bar with navigation */}
+      {/* Floating toggle chrome button */}
+      {!chromeVisible && !isFullscreen && (
+        <button
+          onClick={() => setChromeVisible(true)}
+          className="absolute bottom-5 right-4 z-40 p-2.5 rounded-full bg-foreground/10 backdrop-blur-sm border border-border/20 shadow-md transition-opacity hover:bg-foreground/20 opacity-40 hover:opacity-80"
+          aria-label="Show toolbar"
+        >
+          <Menu className="w-4 h-4 text-foreground" />
+        </button>
+      )}
+
       {(
         <div className={`transition-all duration-300 ${chromeVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-full pointer-events-none'}`}>
           <ReaderBottomBar
