@@ -85,7 +85,7 @@ const Reader = () => {
   const touchStartY = useRef<number | null>(null);
   const touchHasMoved = useRef(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [chromeVisible, setChromeVisible] = useState(true);
+  const [chromeVisible, setChromeVisible] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const pagedViewRef = useRef<PagedViewHandle>(null);
   const [pagedTotal, setPagedTotal] = useState(1);
