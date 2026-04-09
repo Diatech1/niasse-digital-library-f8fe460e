@@ -35,7 +35,7 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
 
     // On mobile: fill the viewport; on desktop: 4:7 aspect ratio book
     const bookWidth = isMobile ? availWidth : Math.min(availWidth, availHeight * (4 / 7));
-    const bookHeight = isMobile ? availHeight : bookWidth * (7 / 4);
+    const bookHeight = isMobile ? availHeight * 2 : bookWidth * (7 / 4);
 
     const padTop = isMobile ? 16 : bookHeight * 0.08;
     const padBottom = isMobile ? 16 : bookHeight * 0.08;
