@@ -641,8 +641,18 @@ const Reader = () => {
           const dy = Math.abs(e.touches[0].clientY - touchStartY.current);
           if (dx > 5 || dy > 5) touchHasMoved.current = true;
         }}
-        onScroll={() => {
+        onScroll={(e) => {
           touchHasMoved.current = true;
+          if (isMobile) {
+            const el = e.currentTarget;
+            const scrollY = el.scrollTop;
+            if (scrollY > lastScrollY.current + 10 && chromeVisible) {
+              setChromeVisible(false);
+            } else if (scrollY < lastScrollY.current - 10 && !chromeVisible) {
+              setChromeVisible(true);
+            }
+            lastScrollY.current = scrollY;
+          }
         }}
         onTouchEnd={(e) => {
           if (touchStartX.current === null || touchStartY.current === null) return;
