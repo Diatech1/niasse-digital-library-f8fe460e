@@ -89,6 +89,8 @@ const Reader = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const pagedViewRef = useRef<PagedViewHandle>(null);
   const [pagedTotal, setPagedTotal] = useState(1);
+  const lastScrollY = useRef(0);
+  const isMobile = useIsMobile();
 
   const saveProgress = useSaveProgress(id);
   const { bookmarks, addBookmark, removeBookmark, isBookmarked } = useBookmarks(id);
