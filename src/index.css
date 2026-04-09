@@ -148,8 +148,20 @@ body.reader-chrome-hidden .bottom-nav {
 
 /* Sections can span columns, but headings stick to their content */
 
+.paged-section h3,
+.paged-section h4,
 .paged-section h5 {
   break-after: avoid-column;
+  break-inside: avoid-column;
+}
+
+/* If a heading would be orphaned at the bottom of a column, push it to the next */
+.pocket-paragraphs .paged-section h3,
+.pocket-paragraphs .paged-section h4,
+.pocket-paragraphs .paged-section h5 {
+  break-before: auto;
+  break-after: avoid-column;
+  break-inside: avoid-column;
 }
 
 .formatted-content {
