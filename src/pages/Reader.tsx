@@ -27,6 +27,7 @@ import ReaderSearch from "@/components/reader/ReaderSearch";
 import BookmarkDialog from "@/components/reader/BookmarkDialog";
 import PagedView, { type PagedViewHandle } from "@/components/reader/PagedView";
 import { useBookmarks } from "@/hooks/use-bookmarks";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const themes = [
   { name: "Light", bg: "bg-[hsl(40,20%,95%)]", text: "text-[hsl(0,0%,15%)]" },
