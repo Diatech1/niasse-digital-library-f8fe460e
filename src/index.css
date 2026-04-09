@@ -164,6 +164,11 @@ body.reader-chrome-hidden .bottom-nav {
   break-inside: avoid-column;
 }
 
+/* Each new section starts on a fresh page/column (except the first) */
+.pocket-paragraphs .paged-section + .paged-section {
+  break-before: column;
+}
+
 .formatted-content {
   text-align: justify;
   -webkit-hyphens: auto;
