@@ -617,7 +617,7 @@ const Reader = () => {
       )}
 
       {/* Top spacer when chrome is hidden */}
-      {!chromeVisible && <div className="flex-shrink-0 h-3" />}
+      {!chromeVisible && <div className="flex-shrink-0 h-6" />}
 
       {/* Reading content */}
       <div
