@@ -79,7 +79,7 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
     const translateX = page * strideWidth;
 
     return (
-      <div ref={outerRef} className={`overflow-hidden relative flex items-center justify-center ${className || ''}`} style={{ height: '100%' }}>
+      <div ref={outerRef} className={`overflow-hidden relative flex items-center justify-center ${className || ''}`} style={{ height: '100%', overflowY: isMobile ? 'auto' : 'hidden' }}>
         {bookWidth > 0 && (
           <div
             className="relative flex-shrink-0"
