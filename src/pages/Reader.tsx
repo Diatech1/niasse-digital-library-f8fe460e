@@ -625,10 +625,7 @@ const Reader = () => {
           ...(!isPagedMode ? { paddingBottom: chromeVisible ? '11rem' : '5rem' } : {}),
         }}
         onClick={() => {
-          if (touchHasMoved.current) return;
-          if (isFullscreen) return;
-          if (isPagedMode) return;
-          setChromeVisible((v) => !v);
+          touchHasMoved.current = false;
         }}
         onTouchStart={(e) => {
           touchStartX.current = e.touches[0].clientX;
@@ -641,18 +638,8 @@ const Reader = () => {
           const dy = Math.abs(e.touches[0].clientY - touchStartY.current);
           if (dx > 5 || dy > 5) touchHasMoved.current = true;
         }}
-        onScroll={(e) => {
+        onScroll={() => {
           touchHasMoved.current = true;
-          if (isMobile) {
-            const el = e.currentTarget;
-            const scrollY = el.scrollTop;
-            if (scrollY > lastScrollY.current + 10 && chromeVisible) {
-              setChromeVisible(false);
-            } else if (scrollY < lastScrollY.current - 10 && !chromeVisible) {
-              setChromeVisible(true);
-            }
-            lastScrollY.current = scrollY;
-          }
         }}
         onTouchEnd={(e) => {
           if (touchStartX.current === null || touchStartY.current === null) return;
@@ -663,9 +650,6 @@ const Reader = () => {
           if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
             if (dx < 0 && currentSectionIdx < effectiveTotalPages - 1) goToSection(currentSectionIdx + 1);
             else if (dx > 0 && currentSectionIdx > 0) goToSection(currentSectionIdx - 1);
-          }
-          if (!isFullscreen && !chromeVisible && dy < -60 && Math.abs(dy) > Math.abs(dx) * 1.5) {
-            setChromeVisible(true);
           }
         }}
       >
@@ -681,17 +665,6 @@ const Reader = () => {
               page={currentSectionIdx}
               onTotalPagesChange={setPagedTotal}
               className="flex-1"
-              onScroll={(e) => {
-                if (isMobile) {
-                  const scrollY = e.currentTarget.scrollTop;
-                  if (scrollY > lastScrollY.current + 10 && chromeVisible) {
-                    setChromeVisible(false);
-                  } else if (scrollY < lastScrollY.current - 10 && !chromeVisible) {
-                    setChromeVisible(true);
-                  }
-                  lastScrollY.current = scrollY;
-                }
-              }}
             >
               {pagedContent}
             </PagedView>
@@ -733,9 +706,9 @@ const Reader = () => {
       )}
 
       {/* Floating toggle chrome button */}
-      {!chromeVisible && !isFullscreen && (
+      {!isFullscreen && (
         <button
-          onClick={() => setChromeVisible(true)}
+          onClick={() => setChromeVisible((v) => !v)}
           className="absolute bottom-5 right-4 z-40 p-2.5 rounded-full bg-foreground/10 backdrop-blur-sm border border-border/20 shadow-md transition-opacity hover:bg-foreground/20 opacity-40 hover:opacity-80"
           aria-label="Show toolbar"
         >
