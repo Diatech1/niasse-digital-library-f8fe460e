@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect, forwardRef, useImperativeHandle, useCallback } from 'react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export interface PagedViewHandle {
   getPageForSection: (sectionIndex: number) => number;
@@ -19,8 +20,8 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
     const [availHeight, setAvailHeight] = useState(0);
     const lastTotal = useRef(0);
     const measureRaf = useRef(0);
+    const isMobile = useIsMobile();
 
-    // Observe available space
     useEffect(() => {
       if (!outerRef.current) return;
       const ro = new ResizeObserver(entries => {
@@ -32,17 +33,15 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
       return () => ro.disconnect();
     }, []);
 
-    // 4:7 aspect ratio book dimensions
-    const bookWidth = Math.min(availWidth, availHeight * (4 / 7));
-    const bookHeight = bookWidth * (7 / 4);
+    // On mobile: fill the viewport; on desktop: 4:7 aspect ratio book
+    const bookWidth = isMobile ? availWidth : Math.min(availWidth, availHeight * (4 / 7));
+    const bookHeight = isMobile ? availHeight : bookWidth * (7 / 4);
 
-    // Asymmetric padding inside the book frame
-    const padTop = bookHeight * 0.08;
-    const padBottom = bookHeight * 0.08;
-    const padLeft = bookWidth * 0.10; // gutter (spine side)
-    const padRight = bookWidth * 0.08;
+    const padTop = isMobile ? 16 : bookHeight * 0.08;
+    const padBottom = isMobile ? 16 : bookHeight * 0.08;
+    const padLeft = isMobile ? 20 : bookWidth * 0.10;
+    const padRight = isMobile ? 20 : bookWidth * 0.08;
 
-    // Content area dimensions
     const contentWidth = bookWidth - padLeft - padRight;
     const contentHeight = bookHeight - padTop - padBottom;
     const folioHeight = 20;
@@ -81,19 +80,17 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
 
     return (
       <div ref={outerRef} className={`overflow-hidden relative flex items-center justify-center ${className || ''}`} style={{ height: '100%' }}>
-        {/* Book frame */}
         {bookWidth > 0 && (
           <div
             className="relative flex-shrink-0"
             style={{
               width: bookWidth,
               height: bookHeight,
-              boxShadow: '0 2px 24px rgba(0,0,0,0.12), 0 0 0 1px rgba(128,128,128,0.08)',
-              borderRadius: 3,
+              boxShadow: isMobile ? 'none' : '0 2px 24px rgba(0,0,0,0.12), 0 0 0 1px rgba(128,128,128,0.08)',
+              borderRadius: isMobile ? 0 : 3,
               overflow: 'hidden',
             }}
           >
-            {/* Inner content with asymmetric padding */}
             <div
               style={{
                 position: 'absolute',
@@ -121,12 +118,9 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
               </div>
             </div>
 
-            {/* Folio — printed page number */}
             <div
               className="absolute left-0 right-0 flex justify-center pointer-events-none select-none"
-              style={{
-                bottom: padBottom * 0.3,
-              }}
+              style={{ bottom: isMobile ? 4 : padBottom * 0.3 }}
             >
               <span
                 className="text-muted-foreground/40 font-serif italic tracking-widest"
