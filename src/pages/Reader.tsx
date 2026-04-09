@@ -616,6 +616,9 @@ const Reader = () => {
         </div>
       )}
 
+      {/* Top spacer when chrome is hidden */}
+      {!chromeVisible && <div className="flex-shrink-0 h-3" />}
+
       {/* Reading content */}
       <div
         ref={contentRef}
