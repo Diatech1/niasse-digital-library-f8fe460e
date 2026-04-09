@@ -78,6 +78,13 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
 
     const translateX = page * strideWidth;
 
+    // Reset scroll to top when page changes on mobile
+    useEffect(() => {
+      if (isMobile && outerRef.current) {
+        outerRef.current.scrollTop = 0;
+      }
+    }, [page, isMobile]);
+
     return (
       <div ref={outerRef} className={`overflow-hidden relative flex items-center justify-center ${className || ''}`} style={{ height: '100%', overflowY: isMobile ? 'auto' : 'hidden' }}>
         {bookWidth > 0 && (
