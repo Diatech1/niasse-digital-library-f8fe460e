@@ -10,10 +10,11 @@ interface PagedViewProps {
   page: number;
   onTotalPagesChange: (total: number) => void;
   className?: string;
+  onScroll?: (e: React.UIEvent<HTMLDivElement>) => void;
 }
 
 const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
-  ({ children, page, onTotalPagesChange, className }, ref) => {
+  ({ children, page, onTotalPagesChange, className, onScroll }, ref) => {
     const outerRef = useRef<HTMLDivElement>(null);
     const innerRef = useRef<HTMLDivElement>(null);
     const [availWidth, setAvailWidth] = useState(0);
@@ -86,7 +87,7 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
     }, [page, isMobile]);
 
     return (
-      <div ref={outerRef} className={`overflow-hidden relative flex items-center justify-center ${className || ''}`} style={{ height: '100%', overflowY: isMobile ? 'auto' : 'hidden' }}>
+      <div ref={outerRef} className={`overflow-hidden relative flex items-center justify-center ${className || ''}`} style={{ height: '100%', overflowY: isMobile ? 'auto' : 'hidden' }} onScroll={onScroll}>
         {bookWidth > 0 && (
           <div
             className="relative flex-shrink-0"

@@ -681,6 +681,17 @@ const Reader = () => {
               page={currentSectionIdx}
               onTotalPagesChange={setPagedTotal}
               className="flex-1"
+              onScroll={(e) => {
+                if (isMobile) {
+                  const scrollY = e.currentTarget.scrollTop;
+                  if (scrollY > lastScrollY.current + 10 && chromeVisible) {
+                    setChromeVisible(false);
+                  } else if (scrollY < lastScrollY.current - 10 && !chromeVisible) {
+                    setChromeVisible(true);
+                  }
+                  lastScrollY.current = scrollY;
+                }
+              }}
             >
               {pagedContent}
             </PagedView>
