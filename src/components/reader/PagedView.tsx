@@ -35,7 +35,7 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
 
     // On mobile: fill the viewport; on desktop: 4:7 aspect ratio book
     const bookWidth = isMobile ? availWidth : Math.min(availWidth, availHeight * (4 / 7));
-    const bookHeight = isMobile ? availHeight : bookWidth * (7 / 4);
+    const bookHeight = isMobile ? availHeight * 2 : bookWidth * (7 / 4);
 
     const padTop = isMobile ? 16 : bookHeight * 0.08;
     const padBottom = isMobile ? 16 : bookHeight * 0.08;
@@ -79,7 +79,7 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
     const translateX = page * strideWidth;
 
     return (
-      <div ref={outerRef} className={`overflow-hidden relative flex items-center justify-center ${className || ''}`} style={{ height: '100%' }}>
+      <div ref={outerRef} className={`overflow-hidden relative flex items-center justify-center ${className || ''}`} style={{ height: '100%', overflowY: isMobile ? 'auto' : 'hidden' }}>
         {bookWidth > 0 && (
           <div
             className="relative flex-shrink-0"
