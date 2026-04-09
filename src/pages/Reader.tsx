@@ -27,6 +27,7 @@ import ReaderSearch from "@/components/reader/ReaderSearch";
 import BookmarkDialog from "@/components/reader/BookmarkDialog";
 import PagedView, { type PagedViewHandle } from "@/components/reader/PagedView";
 import { useBookmarks } from "@/hooks/use-bookmarks";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const themes = [
   { name: "Light", bg: "bg-[hsl(40,20%,95%)]", text: "text-[hsl(0,0%,15%)]" },
@@ -88,6 +89,8 @@ const Reader = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const pagedViewRef = useRef<PagedViewHandle>(null);
   const [pagedTotal, setPagedTotal] = useState(1);
+  const lastScrollY = useRef(0);
+  const isMobile = useIsMobile();
 
   const saveProgress = useSaveProgress(id);
   const { bookmarks, addBookmark, removeBookmark, isBookmarked } = useBookmarks(id);
@@ -638,8 +641,18 @@ const Reader = () => {
           const dy = Math.abs(e.touches[0].clientY - touchStartY.current);
           if (dx > 5 || dy > 5) touchHasMoved.current = true;
         }}
-        onScroll={() => {
+        onScroll={(e) => {
           touchHasMoved.current = true;
+          if (isMobile) {
+            const el = e.currentTarget;
+            const scrollY = el.scrollTop;
+            if (scrollY > lastScrollY.current + 10 && chromeVisible) {
+              setChromeVisible(false);
+            } else if (scrollY < lastScrollY.current - 10 && !chromeVisible) {
+              setChromeVisible(true);
+            }
+            lastScrollY.current = scrollY;
+          }
         }}
         onTouchEnd={(e) => {
           if (touchStartX.current === null || touchStartY.current === null) return;
