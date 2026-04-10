@@ -6,17 +6,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const languages = ["All", "English", "Arabic", "French"];
 
-const TIDJANIYA_IDS = [
-  "volume-1-conditions",
-  "volume-2-liturgies",
-  "volume-3-ethics",
-  "volume-4-letters",
-  "volume-5-commentaries",
-  "ifadatou-ahmediyya",
-  "volume-7-biography",
-  "volume-8-teachings",
-];
-
 const Library = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLang, setSelectedLang] = useState("All");
@@ -29,9 +18,6 @@ const Library = () => {
     const matchLang = selectedLang === "All" || b.language === selectedLang;
     return matchSearch && matchLang;
   });
-
-  const tidjaniyaBooks = filtered.filter((b) => TIDJANIYA_IDS.includes(b.id));
-  const otherBooks = filtered.filter((b) => !TIDJANIYA_IDS.includes(b.id));
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -67,40 +53,11 @@ const Library = () => {
           ))}
         </div>
       ) : (
-        <>
-          {tidjaniyaBooks.length > 0 && (
-            <section className="mb-8">
-              <h2 className="text-primary font-serif text-lg font-semibold px-5 mb-3">
-                Tidjaniya.com
-              </h2>
-              <p className="text-xs text-muted-foreground px-5 mb-4">
-                Les enseignements de Seïdina Ahmed Tidjani (Volumes 1-8)
-              </p>
-              <div className="px-5 grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6">
-                {tidjaniyaBooks.map((book, i) => (
-                  <BookCard key={book.id} book={book} index={i} />
-                ))}
-              </div>
-            </section>
-          )}
-
-          {otherBooks.length > 0 && (
-            <section>
-              <h2 className="text-primary font-serif text-lg font-semibold px-5 mb-3">
-                Other Works
-              </h2>
-              <div className="px-5 grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6">
-                {otherBooks.map((book, i) => (
-                  <BookCard key={book.id} book={book} index={i} />
-                ))}
-              </div>
-            </section>
-          )}
-
-          {filtered.length === 0 && (
-            <p className="text-center text-muted-foreground py-12">No books found</p>
-          )}
-        </>
+        <div className="px-5 grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6">
+          {filtered.map((book, i) => (
+            <BookCard key={book.id} book={book} index={i} />
+          ))}
+        </div>
       )}
     </div>
   );
