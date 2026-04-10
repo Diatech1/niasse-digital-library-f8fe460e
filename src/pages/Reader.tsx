@@ -17,6 +17,7 @@ import { priereShaykhIbrahimSections, priereShaykhIbrahimMeta } from "@/data/pri
 import { stationsDeenEnSections, stationsDeenEnMeta } from "@/data/stations-deen-en";
 import { loadConditionsReglesSections, conditionsReglesMeta, type ConditionsSection } from "@/data/conditions-regles";
 import { loadIfadatouSections, ifadatouAhmediyyaMeta, type IfadatouSection } from "@/data/ifadatou-ahmediyya";
+import { loadVolumeSections, type VolumeSection } from "@/data/volume-loader";
 import { ArrowLeft, Loader2, Search, Maximize, Minimize, ChevronLeft, ChevronRight, Bookmark, BookmarkCheck, Menu } from "lucide-react";
 import { useSaveProgress, getSavedProgress } from "@/hooks/use-reading-progress";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -82,6 +83,7 @@ const Reader = () => {
   const [kachifulAlbasData, setKachifulAlbasData] = useState<KachifulSection[]>([]);
   const [conditionsReglesData, setConditionsReglesData] = useState<ConditionsSection[]>([]);
   const [ifadatouData, setIfadatouData] = useState<IfadatouSection[]>([]);
+  const [volumeData, setVolumeData] = useState<VolumeSection[]>([]);
   const [loading, setLoading] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
@@ -151,6 +153,26 @@ const Reader = () => {
       setLoading(true);
       loadIfadatouSections().then((sections) => {
         setIfadatouData(sections);
+        setLoading(false);
+        const saved = getSavedProgress(id);
+        if (saved > 0) setCurrentSectionIdx(Math.min(saved, sections.length - 1));
+      });
+    }
+    // Generic volume loader for volumes 1-5, 7-8
+    const volumeMap: Record<string, string> = {
+      "volume-1-conditions": "/books/volume-1-conditions-rules.txt",
+      "volume-2-liturgies": "/books/volume-2-liturgies-prayers.txt",
+      "volume-3-ethics": "/books/volume-3-ethics-advice.txt",
+      "volume-4-letters": "/books/volume-4-letters.txt",
+      "volume-5-commentaries": "/books/volume-5-commentaries.txt",
+      "volume-7-biography": "/books/volume-7-biography.txt",
+      "volume-8-teachings": "/books/volume-8-other-teachings.txt",
+    };
+    const volumePath = book?.contentModule ? volumeMap[book.contentModule] : undefined;
+    if (volumePath && book?.contentModule) {
+      setLoading(true);
+      loadVolumeSections(volumePath, book.contentModule).then((sections) => {
+        setVolumeData(sections);
         setLoading(false);
         const saved = getSavedProgress(id);
         if (saved > 0) setCurrentSectionIdx(Math.min(saved, sections.length - 1));
@@ -237,8 +259,13 @@ const Reader = () => {
     if (book?.contentModule === "ifadatou-ahmediyya") {
       return ifadatouData.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
     }
+    // Generic volume modules
+    const volumeModules = ["volume-1-conditions", "volume-2-liturgies", "volume-3-ethics", "volume-4-letters", "volume-5-commentaries", "volume-7-biography", "volume-8-teachings"];
+    if (book?.contentModule && volumeModules.includes(book.contentModule)) {
+      return volumeData.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
+    }
     return [{ id: "sample", heading: "Sample", content: "__sample__" }];
-  }, [book?.contentModule, kashifEnData, kachifulAlbasData, conditionsReglesData, ifadatouData]);
+  }, [book?.contentModule, kashifEnData, kachifulAlbasData, conditionsReglesData, ifadatouData, volumeData]);
 
   const tocItems = useMemo(() => {
     // For page-by-page books (kashif-en, kachiful-albas), build a deduplicated TOC:
