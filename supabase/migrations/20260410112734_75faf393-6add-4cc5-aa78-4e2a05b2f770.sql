@@ -1,0 +1,1 @@
+DELETE FROM books WHERE id = 'volume-1-conditions';
