@@ -147,6 +147,15 @@ const Reader = () => {
         if (saved > 0) setCurrentSectionIdx(Math.min(saved, sections.length - 1));
       });
     }
+    if (book?.contentModule === "ifadatou-ahmediyya") {
+      setLoading(true);
+      loadIfadatouSections().then((sections) => {
+        setIfadatouData(sections);
+        setLoading(false);
+        const saved = getSavedProgress(id);
+        if (saved > 0) setCurrentSectionIdx(Math.min(saved, sections.length - 1));
+      });
+    }
   }, [book?.contentModule, id]);
 
   const theme = themes[themeIdx];
