@@ -1,0 +1,1 @@
+DELETE FROM books WHERE id IN ('volume-2-liturgies', 'volume-3-ethics', 'volume-4-letters', 'volume-5-commentaries', 'volume-6-ifadat', 'volume-7-biography', 'volume-8-teachings');
