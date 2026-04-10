@@ -1,0 +1,1 @@
+UPDATE books SET cover = 'https://vkjujymsntwacjelyqgv.supabase.co/storage/v1/object/public/book-covers/fadail-dhikr.jpg' WHERE id = 'fadail-dhikr';
