@@ -234,8 +234,11 @@ const Reader = () => {
     if (book?.contentModule === "conditions-regles") {
       return conditionsReglesData.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
     }
+    if (book?.contentModule === "ifadatou-ahmediyya") {
+      return ifadatouData.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
+    }
     return [{ id: "sample", heading: "Sample", content: "__sample__" }];
-  }, [book?.contentModule, kashifEnData, kachifulAlbasData, conditionsReglesData]);
+  }, [book?.contentModule, kashifEnData, kachifulAlbasData, conditionsReglesData, ifadatouData]);
 
   const tocItems = useMemo(() => {
     // For page-by-page books (kashif-en, kachiful-albas), build a deduplicated TOC:
