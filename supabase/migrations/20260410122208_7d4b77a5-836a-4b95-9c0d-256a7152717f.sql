@@ -1,0 +1,1 @@
+UPDATE books SET cover = 'https://vkjujymsntwacjelyqgv.supabase.co/storage/v1/object/public/book-covers/ifadatou-ahmediyya.jpg' WHERE id = 'ifadatou-ahmediyya';
