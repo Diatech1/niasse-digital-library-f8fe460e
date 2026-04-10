@@ -81,6 +81,7 @@ const Reader = () => {
   const [kashifEnData, setKashifEnData] = useState<KashifEnSection[]>([]);
   const [kachifulAlbasData, setKachifulAlbasData] = useState<KachifulSection[]>([]);
   const [conditionsReglesData, setConditionsReglesData] = useState<ConditionsSection[]>([]);
+  const [ifadatouData, setIfadatouData] = useState<IfadatouSection[]>([]);
   const [loading, setLoading] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
