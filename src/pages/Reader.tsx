@@ -158,6 +158,26 @@ const Reader = () => {
         if (saved > 0) setCurrentSectionIdx(Math.min(saved, sections.length - 1));
       });
     }
+    // Generic volume loader for volumes 1-5, 7-8
+    const volumeMap: Record<string, string> = {
+      "volume-1-conditions": "/books/volume-1-conditions-rules.txt",
+      "volume-2-liturgies": "/books/volume-2-liturgies-prayers.txt",
+      "volume-3-ethics": "/books/volume-3-ethics-advice.txt",
+      "volume-4-letters": "/books/volume-4-letters.txt",
+      "volume-5-commentaries": "/books/volume-5-commentaries.txt",
+      "volume-7-biography": "/books/volume-7-biography.txt",
+      "volume-8-teachings": "/books/volume-8-other-teachings.txt",
+    };
+    const volumePath = book?.contentModule ? volumeMap[book.contentModule] : undefined;
+    if (volumePath && book?.contentModule) {
+      setLoading(true);
+      loadVolumeSections(volumePath, book.contentModule).then((sections) => {
+        setVolumeData(sections);
+        setLoading(false);
+        const saved = getSavedProgress(id);
+        if (saved > 0) setCurrentSectionIdx(Math.min(saved, sections.length - 1));
+      });
+    }
   }, [book?.contentModule, id]);
 
   const theme = themes[themeIdx];
