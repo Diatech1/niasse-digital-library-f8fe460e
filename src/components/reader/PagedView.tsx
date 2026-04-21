@@ -11,6 +11,7 @@ interface PagedViewProps {
   onTotalPagesChange: (total: number) => void;
   className?: string;
   onScroll?: (e: React.UIEvent<HTMLDivElement>) => void;
+  fitToPage?: boolean;
 }
 
 const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
