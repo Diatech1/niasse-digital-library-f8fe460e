@@ -599,16 +599,51 @@ const Reader = () => {
                 : <Bookmark className="w-4 h-4" />}
             </button>
           )}
-          <button onClick={() => setFontSize(Math.max(12, fontSize - 2))} className="px-2 py-1 text-sm font-medium">A-</button>
+          <button
+            onClick={() => {
+              const next = !fitToPage;
+              setFitToPage(next);
+              localStorage.setItem("faydabook-reader-fit", String(next));
+            }}
+            className={`p-2 rounded-full transition-colors ${fitToPage ? "text-primary bg-primary/10" : "hover:bg-primary/10"}`}
+            title={fitToPage ? "Scroll mode (longer page)" : "Fit to page"}
+            aria-label="Toggle fit to page"
+          >
+            {fitToPage ? <BookOpen className="w-4 h-4" /> : <ScrollText className="w-4 h-4" />}
+          </button>
+          <button
+            onClick={() => {
+              const next = Math.max(12, fontSize - 2);
+              setFontSize(next);
+              localStorage.setItem("faydabook-reader-fontsize", String(next));
+            }}
+            className="px-2 py-1 text-sm font-medium"
+          >
+            A-
+          </button>
           <input
             type="range"
             min={12}
-            max={28}
+            max={36}
+            step={2}
             value={fontSize}
-            onChange={(e) => setFontSize(Number(e.target.value))}
+            onChange={(e) => {
+              const next = Number(e.target.value);
+              setFontSize(next);
+              localStorage.setItem("faydabook-reader-fontsize", String(next));
+            }}
             className="w-16 accent-primary"
           />
-          <button onClick={() => setFontSize(Math.min(28, fontSize + 2))} className="px-2 py-1 text-sm font-bold">A+</button>
+          <button
+            onClick={() => {
+              const next = Math.min(36, fontSize + 2);
+              setFontSize(next);
+              localStorage.setItem("faydabook-reader-fontsize", String(next));
+            }}
+            className="px-2 py-1 text-sm font-bold"
+          >
+            A+
+          </button>
         </div>
       </div>
 
