@@ -709,8 +709,13 @@ const Reader = () => {
           fontSize,
           ...(!isPagedMode ? { paddingBottom: chromeVisible ? '11rem' : '5rem' } : {}),
         }}
-        onClick={() => {
+        onClick={(e) => {
           touchHasMoved.current = false;
+          // Desktop tap-to-toggle (mobile uses onTouchEnd)
+          if (isMobile) return;
+          const target = e.target as HTMLElement;
+          if (target.closest('button, a, input, textarea, select, [role="button"]')) return;
+          setChromeVisible((v) => !v);
         }}
         onTouchStart={(e) => {
           touchStartX.current = e.touches[0].clientX;
