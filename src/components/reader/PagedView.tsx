@@ -35,9 +35,12 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
       return () => ro.disconnect();
     }, []);
 
-    // On mobile: fill the viewport; on desktop: 4:7 aspect ratio book
+    // On mobile: fit to viewport when fitToPage, else allow longer scrollable page
+    // On desktop: 4:7 aspect ratio book (single page if fitToPage, double-height otherwise)
     const bookWidth = isMobile ? availWidth : Math.min(availWidth, availHeight * (4 / 7));
-    const bookHeight = isMobile ? availHeight * 4 : bookWidth * (7 / 4) * 2;
+    const bookHeight = isMobile
+      ? (fitToPage ? availHeight : availHeight * 4)
+      : (fitToPage ? bookWidth * (7 / 4) : bookWidth * (7 / 4) * 2);
 
     const padTop = isMobile ? 16 : bookHeight * 0.08;
     const padBottom = isMobile ? 16 : bookHeight * 0.08;
