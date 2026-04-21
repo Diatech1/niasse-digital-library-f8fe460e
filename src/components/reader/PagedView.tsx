@@ -91,7 +91,7 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
     }, [page, isMobile]);
 
     return (
-      <div ref={outerRef} className={`overflow-hidden relative flex items-center justify-center ${className || ''}`} style={{ height: '100%', overflowY: isMobile ? 'auto' : 'hidden' }} onScroll={onScroll}>
+      <div ref={outerRef} className={`overflow-hidden relative flex items-center justify-center ${className || ''}`} style={{ height: '100%', overflowY: isMobile && !fitToPage ? 'auto' : 'hidden' }} onScroll={onScroll}>
         {bookWidth > 0 && (
           <div
             className="relative flex-shrink-0"
