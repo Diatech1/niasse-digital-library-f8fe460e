@@ -15,7 +15,7 @@ interface PagedViewProps {
 }
 
 const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
-  ({ children, page, onTotalPagesChange, className, onScroll }, ref) => {
+  ({ children, page, onTotalPagesChange, className, onScroll, fitToPage = false }, ref) => {
     const outerRef = useRef<HTMLDivElement>(null);
     const innerRef = useRef<HTMLDivElement>(null);
     const [availWidth, setAvailWidth] = useState(0);
