@@ -709,8 +709,13 @@ const Reader = () => {
           fontSize,
           ...(!isPagedMode ? { paddingBottom: chromeVisible ? '11rem' : '5rem' } : {}),
         }}
-        onClick={() => {
+        onClick={(e) => {
           touchHasMoved.current = false;
+          // Desktop tap-to-toggle (mobile uses onTouchEnd)
+          if (isMobile) return;
+          const target = e.target as HTMLElement;
+          if (target.closest('button, a, input, textarea, select, [role="button"]')) return;
+          setChromeVisible((v) => !v);
         }}
         onTouchStart={(e) => {
           touchStartX.current = e.touches[0].clientX;
@@ -730,11 +735,20 @@ const Reader = () => {
           if (touchStartX.current === null || touchStartY.current === null) return;
           const dx = e.changedTouches[0].clientX - touchStartX.current;
           const dy = e.changedTouches[0].clientY - touchStartY.current;
+          const moved = touchHasMoved.current;
           touchStartX.current = null;
           touchStartY.current = null;
           if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
             if (dx < 0 && currentSectionIdx < effectiveTotalPages - 1) goToSection(currentSectionIdx + 1);
             else if (dx > 0 && currentSectionIdx > 0) goToSection(currentSectionIdx - 1);
+            return;
+          }
+          // Tap (no significant movement) toggles the menu chrome
+          if (!moved && Math.abs(dx) < 10 && Math.abs(dy) < 10) {
+            const target = e.target as HTMLElement;
+            // Ignore taps on interactive elements (buttons, links, inputs)
+            if (target.closest('button, a, input, textarea, select, [role="button"]')) return;
+            setChromeVisible((v) => !v);
           }
         }}
       >
