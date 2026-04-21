@@ -750,6 +750,7 @@ const Reader = () => {
               page={currentSectionIdx}
               onTotalPagesChange={setPagedTotal}
               className="flex-1"
+              fitToPage={fitToPage}
             >
               {pagedContent}
             </PagedView>
