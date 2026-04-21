@@ -11,10 +11,11 @@ interface PagedViewProps {
   onTotalPagesChange: (total: number) => void;
   className?: string;
   onScroll?: (e: React.UIEvent<HTMLDivElement>) => void;
+  fitToPage?: boolean;
 }
 
 const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
-  ({ children, page, onTotalPagesChange, className, onScroll }, ref) => {
+  ({ children, page, onTotalPagesChange, className, onScroll, fitToPage = false }, ref) => {
     const outerRef = useRef<HTMLDivElement>(null);
     const innerRef = useRef<HTMLDivElement>(null);
     const [availWidth, setAvailWidth] = useState(0);
@@ -34,9 +35,12 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
       return () => ro.disconnect();
     }, []);
 
-    // On mobile: fill the viewport; on desktop: 4:7 aspect ratio book
+    // On mobile: fit to viewport when fitToPage, else allow longer scrollable page
+    // On desktop: 4:7 aspect ratio book (single page if fitToPage, double-height otherwise)
     const bookWidth = isMobile ? availWidth : Math.min(availWidth, availHeight * (4 / 7));
-    const bookHeight = isMobile ? availHeight * 4 : bookWidth * (7 / 4) * 2;
+    const bookHeight = isMobile
+      ? (fitToPage ? availHeight : availHeight * 4)
+      : (fitToPage ? bookWidth * (7 / 4) : bookWidth * (7 / 4) * 2);
 
     const padTop = isMobile ? 16 : bookHeight * 0.08;
     const padBottom = isMobile ? 16 : bookHeight * 0.08;
@@ -87,7 +91,7 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
     }, [page, isMobile]);
 
     return (
-      <div ref={outerRef} className={`overflow-hidden relative flex items-center justify-center ${className || ''}`} style={{ height: '100%', overflowY: isMobile ? 'auto' : 'hidden' }} onScroll={onScroll}>
+      <div ref={outerRef} className={`overflow-hidden relative flex items-center justify-center ${className || ''}`} style={{ height: '100%', overflowY: isMobile && !fitToPage ? 'auto' : 'hidden' }} onScroll={onScroll}>
         {bookWidth > 0 && (
           <div
             className="relative flex-shrink-0"

@@ -18,7 +18,7 @@ import { stationsDeenEnSections, stationsDeenEnMeta } from "@/data/stations-deen
 import { loadConditionsReglesSections, conditionsReglesMeta, type ConditionsSection } from "@/data/conditions-regles";
 import { loadIfadatouSections, ifadatouAhmediyyaMeta, type IfadatouSection } from "@/data/ifadatou-ahmediyya";
 import { loadVolumeSections, type VolumeSection } from "@/data/volume-loader";
-import { ArrowLeft, Loader2, Search, Maximize, Minimize, ChevronLeft, ChevronRight, Bookmark, BookmarkCheck, Menu } from "lucide-react";
+import { ArrowLeft, Loader2, Search, Maximize, Minimize, ChevronLeft, ChevronRight, Bookmark, BookmarkCheck, Menu, BookOpen, ScrollText } from "lucide-react";
 import { useSaveProgress, getSavedProgress } from "@/hooks/use-reading-progress";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -74,7 +74,13 @@ const Reader = () => {
     return isDark ? 2 : 0; // Dark or Light
   });
   const [fontIdx, setFontIdx] = useState(1);
-  const [fontSize, setFontSize] = useState(16);
+  const [fontSize, setFontSize] = useState(() => {
+    const saved = localStorage.getItem("faydabook-reader-fontsize");
+    return saved ? Number(saved) : 16;
+  });
+  const [fitToPage, setFitToPage] = useState(() => {
+    return localStorage.getItem("faydabook-reader-fit") === "true";
+  });
   const [tocOpen, setTocOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [currentSectionIdx, setCurrentSectionIdx] = useState(() => getSavedProgress(id));
@@ -593,16 +599,51 @@ const Reader = () => {
                 : <Bookmark className="w-4 h-4" />}
             </button>
           )}
-          <button onClick={() => setFontSize(Math.max(12, fontSize - 2))} className="px-2 py-1 text-sm font-medium">A-</button>
+          <button
+            onClick={() => {
+              const next = !fitToPage;
+              setFitToPage(next);
+              localStorage.setItem("faydabook-reader-fit", String(next));
+            }}
+            className={`p-2 rounded-full transition-colors ${fitToPage ? "text-primary bg-primary/10" : "hover:bg-primary/10"}`}
+            title={fitToPage ? "Scroll mode (longer page)" : "Fit to page"}
+            aria-label="Toggle fit to page"
+          >
+            {fitToPage ? <BookOpen className="w-4 h-4" /> : <ScrollText className="w-4 h-4" />}
+          </button>
+          <button
+            onClick={() => {
+              const next = Math.max(12, fontSize - 2);
+              setFontSize(next);
+              localStorage.setItem("faydabook-reader-fontsize", String(next));
+            }}
+            className="px-2 py-1 text-sm font-medium"
+          >
+            A-
+          </button>
           <input
             type="range"
             min={12}
-            max={28}
+            max={36}
+            step={2}
             value={fontSize}
-            onChange={(e) => setFontSize(Number(e.target.value))}
+            onChange={(e) => {
+              const next = Number(e.target.value);
+              setFontSize(next);
+              localStorage.setItem("faydabook-reader-fontsize", String(next));
+            }}
             className="w-16 accent-primary"
           />
-          <button onClick={() => setFontSize(Math.min(28, fontSize + 2))} className="px-2 py-1 text-sm font-bold">A+</button>
+          <button
+            onClick={() => {
+              const next = Math.min(36, fontSize + 2);
+              setFontSize(next);
+              localStorage.setItem("faydabook-reader-fontsize", String(next));
+            }}
+            className="px-2 py-1 text-sm font-bold"
+          >
+            A+
+          </button>
         </div>
       </div>
 
@@ -709,6 +750,7 @@ const Reader = () => {
               page={currentSectionIdx}
               onTotalPagesChange={setPagedTotal}
               className="flex-1"
+              fitToPage={fitToPage}
             >
               {pagedContent}
             </PagedView>
