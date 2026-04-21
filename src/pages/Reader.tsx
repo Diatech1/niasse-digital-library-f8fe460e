@@ -74,7 +74,13 @@ const Reader = () => {
     return isDark ? 2 : 0; // Dark or Light
   });
   const [fontIdx, setFontIdx] = useState(1);
-  const [fontSize, setFontSize] = useState(16);
+  const [fontSize, setFontSize] = useState(() => {
+    const saved = localStorage.getItem("faydabook-reader-fontsize");
+    return saved ? Number(saved) : 16;
+  });
+  const [fitToPage, setFitToPage] = useState(() => {
+    return localStorage.getItem("faydabook-reader-fit") === "true";
+  });
   const [tocOpen, setTocOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [currentSectionIdx, setCurrentSectionIdx] = useState(() => getSavedProgress(id));
