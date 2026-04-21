@@ -42,7 +42,7 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
       ? (fitToPage ? availHeight : availHeight * 4)
       : (fitToPage ? bookWidth * (7 / 4) : bookWidth * (7 / 4) * 2);
 
-    const padTop = isMobile ? 28 : bookHeight * 0.10;
+    const padTop = isMobile ? 44 : bookHeight * 0.10;
     const padBottom = isMobile ? 24 : bookHeight * 0.08;
     const padLeft = isMobile ? 24 : bookWidth * 0.10;
     const padRight = isMobile ? 24 : bookWidth * 0.08;
