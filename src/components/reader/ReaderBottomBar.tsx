@@ -9,6 +9,7 @@ interface ReaderBottomBarProps {
   onJumpToPage: (page: number) => void;
   hasPrev: boolean;
   hasNext: boolean;
+  expanded?: boolean;
 }
 
 const ReaderBottomBar = ({
@@ -19,6 +20,7 @@ const ReaderBottomBar = ({
   onJumpToPage,
   hasPrev,
   hasNext,
+  expanded = false,
 }: ReaderBottomBarProps) => {
   const progress = totalPages > 0 ? Math.round((currentPage / totalPages) * 100) : 0;
   const [editing, setEditing] = useState(false);
@@ -48,24 +50,26 @@ const ReaderBottomBar = ({
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-border/20 bg-background/95 backdrop-blur-sm">
-      <div className="mx-5 mt-2 h-0.5 rounded-full bg-muted/30">
+    <div
+      className={`fixed bottom-0 left-0 right-0 z-40 transition-all duration-300 ${expanded ? 'border-t border-border/20 bg-background/95 backdrop-blur-sm' : 'pointer-events-none bg-transparent'}`}
+    >
+      <div className={`mx-5 mt-2 h-0.5 rounded-full bg-muted/30 transition-opacity duration-300 ${expanded ? 'opacity-100' : 'opacity-0'}`}>
         <div
-          className="h-full bg-primary rounded-full transition-all duration-300"
+          className="h-full rounded-full bg-primary transition-all duration-300"
           style={{ width: `${progress}%` }}
         />
       </div>
-      <div className="grid grid-cols-[48px_minmax(0,1fr)_48px] items-center px-3 py-2 pb-safe">
+      <div className={`grid items-center px-3 pb-safe transition-all duration-300 ${expanded ? 'grid-cols-[48px_minmax(0,1fr)_48px] py-2' : 'grid-cols-1 py-3'}`}>
         {hasPrev ? (
           <button
-            className="flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+            className={`flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground ${expanded ? '' : 'hidden'}`}
             onClick={onPrevPage}
             aria-label="Previous page"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
         ) : (
-          <div className="h-10 w-10" aria-hidden="true" />
+          <div className={`${expanded ? 'h-10 w-10' : 'hidden'}`} aria-hidden="true" />
         )}
 
         {editing ? (
@@ -87,7 +91,7 @@ const ReaderBottomBar = ({
         ) : (
           <button
             onClick={startEditing}
-            className="justify-self-center rounded-full px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+            className={`justify-self-center rounded-full text-sm font-medium text-muted-foreground transition-all hover:bg-accent hover:text-accent-foreground ${expanded ? 'px-3 py-1.5' : 'pointer-events-auto border border-border/60 bg-background/90 px-4 py-2 shadow-sm backdrop-blur-sm'}`}
             title="Jump to page"
             aria-label="Jump to page"
           >
@@ -97,14 +101,14 @@ const ReaderBottomBar = ({
 
         {hasNext ? (
           <button
-            className="ml-auto flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+            className={`ml-auto flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground ${expanded ? '' : 'hidden'}`}
             onClick={onNextPage}
             aria-label="Next page"
           >
             <ChevronRight className="h-5 w-5" />
           </button>
         ) : (
-          <div className="ml-auto h-10 w-10" aria-hidden="true" />
+          <div className={`${expanded ? 'ml-auto h-10 w-10' : 'hidden'}`} aria-hidden="true" />
         )}
       </div>
     </div>
