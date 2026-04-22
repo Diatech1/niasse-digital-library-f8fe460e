@@ -42,7 +42,7 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
       ? (fitToPage ? availHeight : availHeight * 4)
       : (fitToPage ? bookWidth * (7 / 4) : bookWidth * (7 / 4) * 2);
 
-    const padTop = isMobile ? 44 : bookHeight * 0.10;
+    const padTop = isMobile ? 56 : bookHeight * 0.10;
     const padBottom = isMobile ? 24 : bookHeight * 0.08;
     const padLeft = isMobile ? 24 : bookWidth * 0.10;
     const padRight = isMobile ? 24 : bookWidth * 0.08;
@@ -91,7 +91,17 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
     }, [page, isMobile]);
 
     return (
-      <div ref={outerRef} className={`overflow-hidden relative flex items-center justify-center ${className || ''}`} style={{ height: '100%', overflowY: isMobile && !fitToPage ? 'auto' : 'hidden' }} onScroll={onScroll}>
+      <div
+        ref={outerRef}
+        className={`overflow-hidden relative flex justify-center ${isMobile && !fitToPage ? 'items-start' : 'items-center'} ${className || ''}`}
+        style={{
+          height: '100%',
+          overflowY: isMobile && !fitToPage ? 'auto' : 'hidden',
+          paddingTop: isMobile && !fitToPage ? 8 : 0,
+          paddingBottom: isMobile && !fitToPage ? 16 : 0,
+        }}
+        onScroll={onScroll}
+      >
         {bookWidth > 0 && (
           <div
             className="relative flex-shrink-0"
