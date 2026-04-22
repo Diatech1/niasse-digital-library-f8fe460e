@@ -722,6 +722,7 @@ const Reader = () => {
             onJumpToPage={(page) => goToSection(page - 1)}
             hasPrev={currentSectionIdx > 0}
             hasNext={currentSectionIdx < effectiveTotalPages - 1}
+            expanded={chromeVisible}
           />
         </div>
       )}
