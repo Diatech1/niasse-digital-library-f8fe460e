@@ -19,6 +19,7 @@ import { loadConditionsReglesSections, conditionsReglesMeta, type ConditionsSect
 import { loadIfadatouSections, ifadatouAhmediyyaMeta, type IfadatouSection } from "@/data/ifadatou-ahmediyya";
 import { loadVolumeSections, type VolumeSection } from "@/data/volume-loader";
 import { ArrowLeft, Loader2, Search, Maximize, Minimize, Bookmark, BookmarkCheck, Menu, BookOpen, ScrollText, Home, Headphones, Settings } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
 import { useSaveProgress, getSavedProgress } from "@/hooks/use-reading-progress";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -576,111 +577,28 @@ const Reader = () => {
   return (
     <div ref={containerRef} className={`h-screen ${theme.bg} ${theme.text} transition-colors duration-300 flex flex-col`}>
       {/* Top bar */}
-      <div className={`flex items-center gap-1.5 px-2 py-2 border-b border-border/20 transition-all duration-300 ${chromeVisible ? '' : 'opacity-0 max-h-0 overflow-hidden !py-0 !border-b-0'}`}>
-        <button onClick={() => navigate(-1)} className="p-1.5 flex-shrink-0">
-          <ArrowLeft className="w-4.5 h-4.5" />
+      <div className={`flex items-center gap-1 px-2 py-2 border-b border-border/20 transition-all duration-300 ${chromeVisible ? '' : 'opacity-0 max-h-0 overflow-hidden !py-0 !border-b-0'}`}>
+        <button onClick={() => navigate(-1)} className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full transition-colors hover:bg-accent" aria-label="Go back">
+          <ArrowLeft className="h-4 w-4" />
         </button>
-        <button onClick={() => setMainMenuOpen(true)} className="p-1.5 flex-shrink-0" aria-label="Open main menu">
-          <Menu className="w-4 h-4" />
-        </button>
-        {tocItems.length > 1 && (
-          <ChapterDropdown
-            tocItems={tocItems}
-            currentSectionId={currentSection?.id || ""}
-            onSelectSection={goToSectionById}
-            themeClasses={{ bg: theme.bg, text: theme.text }}
-          />
-        )}
-        <div className="flex items-center gap-0.5 flex-shrink-0">
-          <button onClick={() => setSearchOpen(true)} className="p-1.5">
-            <Search className="w-4 h-4" />
-          </button>
-          <button onClick={toggleFullscreen} className="p-1.5">
-            {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
-          </button>
-          {/* Bookmark trigger */}
-          {currentSection && currentSection.content !== "__sample__" && currentSection.content !== "__ruh__" && (
-            <button
-              onClick={() => setBookmarkDialogOpen(true)}
-                className="p-1.5 rounded-full hover:bg-primary/10 transition-colors"
-              title={isBookmarked(currentSectionIdx) ? "Edit bookmark" : "Add bookmark"}
-            >
-              {isBookmarked(currentSectionIdx)
-                ? <BookmarkCheck className="w-4 h-4 text-primary" />
-                : <Bookmark className="w-4 h-4" />}
-            </button>
+        <div className="min-w-0 flex-1">
+          {tocItems.length > 1 ? (
+            <ChapterDropdown
+              tocItems={tocItems}
+              currentSectionId={currentSection?.id || ""}
+              onSelectSection={goToSectionById}
+              themeClasses={{ bg: theme.bg, text: theme.text }}
+            />
+          ) : (
+            <div className="truncate px-2 text-sm font-medium text-foreground/80">{book?.title || "Reader"}</div>
           )}
-          <button
-            onClick={() => {
-              const next = !fitToPage;
-              setFitToPage(next);
-              localStorage.setItem("faydabook-reader-fit", String(next));
-            }}
-            className={`p-1.5 rounded-full transition-colors ${fitToPage ? "text-primary bg-primary/10" : "hover:bg-primary/10"}`}
-            title={fitToPage ? "Scroll mode (longer page)" : "Fit to page"}
-            aria-label="Toggle fit to page"
-          >
-            {fitToPage ? <BookOpen className="w-4 h-4" /> : <ScrollText className="w-4 h-4" />}
-          </button>
-          <button
-            onClick={() => {
-              const next = Math.max(12, fontSize - 2);
-              setFontSize(next);
-              localStorage.setItem("faydabook-reader-fontsize", String(next));
-            }}
-            className="px-1.5 py-1 text-xs font-medium"
-          >
-            A-
-          </button>
-          <input
-            type="range"
-            min={12}
-            max={36}
-            step={2}
-            value={fontSize}
-            onChange={(e) => {
-              const next = Number(e.target.value);
-              setFontSize(next);
-              localStorage.setItem("faydabook-reader-fontsize", String(next));
-            }}
-            className="w-14 accent-primary"
-          />
-          <button
-            onClick={() => {
-              const next = Math.min(36, fontSize + 2);
-              setFontSize(next);
-              localStorage.setItem("faydabook-reader-fontsize", String(next));
-            }}
-            className="px-1.5 py-1 text-xs font-bold"
-          >
-            A+
-          </button>
         </div>
-      </div>
-
-      {/* Font selector */}
-      <div className={`flex items-center justify-center gap-1.5 px-2 py-1.5 border-b border-border/20 overflow-x-auto transition-all duration-300 ${chromeVisible && !isFullscreen ? '' : 'opacity-0 max-h-0 overflow-hidden !py-0 !border-b-0'}`}>
-        {fonts.map((f, i) => (
-          <button
-            key={f}
-            onClick={() => setFontIdx(i)}
-            className={`px-3 py-1 rounded-full text-[11px] font-medium whitespace-nowrap transition-all ${
-              i === fontIdx ? "bg-primary text-primary-foreground" : "bg-muted text-foreground/70"
-            }`}
-          >
-            {f}
-          </button>
-        ))}
-        <span className="mx-1 text-border">|</span>
-        {themes.map((t, i) => (
-          <button
-            key={t.name}
-            onClick={() => setThemeIdx(i)}
-            className={`w-5 h-5 rounded-full border-2 flex-shrink-0 transition-all ${t.bg} ${
-              i === themeIdx ? "border-primary scale-110" : "border-transparent"
-            }`}
-          />
-        ))}
+        <button onClick={() => setSearchOpen(true)} className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full transition-colors hover:bg-accent" aria-label="Search in book">
+          <Search className="h-4 w-4" />
+        </button>
+        <button onClick={() => setMainMenuOpen(true)} className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full transition-colors hover:bg-accent" aria-label="Open reader menu">
+          <Menu className="h-4 w-4" />
+        </button>
       </div>
 
       {/* Resume banner */}
@@ -814,7 +732,98 @@ const Reader = () => {
           <SheetHeader className="px-4 pt-4 pb-3 border-b border-border/20">
             <SheetTitle className={theme.text}>Main Menu</SheetTitle>
           </SheetHeader>
-          <div className="px-3 py-3 space-y-1.5">
+          <div className="px-3 py-3 space-y-4">
+            <div className="space-y-3 rounded-md border border-border/20 px-3 py-3">
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-sm font-medium">Layout</span>
+                <button
+                  onClick={() => {
+                    const next = !fitToPage;
+                    setFitToPage(next);
+                    localStorage.setItem("faydabook-reader-fit", String(next));
+                  }}
+                  className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${fitToPage ? "bg-primary text-primary-foreground" : "bg-muted text-foreground/80 hover:bg-accent"}`}
+                >
+                  {fitToPage ? <BookOpen className="h-3.5 w-3.5" /> : <ScrollText className="h-3.5 w-3.5" />}
+                  {fitToPage ? "Fit page" : "Scroll page"}
+                </button>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-medium">Text size</span>
+                  <span className="text-muted-foreground">{fontSize}px</span>
+                </div>
+                <Slider
+                  min={12}
+                  max={36}
+                  step={2}
+                  value={[fontSize]}
+                  onValueChange={([next]) => {
+                    setFontSize(next);
+                    localStorage.setItem("faydabook-reader-fontsize", String(next));
+                  }}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <span className="text-sm font-medium">Font</span>
+                <div className="flex flex-wrap gap-2">
+                  {fonts.map((f, i) => (
+                    <button
+                      key={f}
+                      onClick={() => setFontIdx(i)}
+                      className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${i === fontIdx ? "bg-primary text-primary-foreground" : "bg-muted text-foreground/70 hover:bg-accent"}`}
+                    >
+                      {f}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <span className="text-sm font-medium">Theme</span>
+                <div className="flex flex-wrap gap-2">
+                  {themes.map((t, i) => (
+                    <button
+                      key={t.name}
+                      onClick={() => setThemeIdx(i)}
+                      className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${i === themeIdx ? "border-primary bg-primary/10 text-foreground" : "border-border/30 bg-muted text-foreground/70 hover:bg-accent"}`}
+                    >
+                      <span className={`h-3 w-3 rounded-full border border-border/30 ${t.bg}`} />
+                      {t.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-sm font-medium">Fullscreen</span>
+                <button
+                  onClick={toggleFullscreen}
+                  className="inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1.5 text-xs font-medium text-foreground/80 transition-colors hover:bg-accent"
+                >
+                  {isFullscreen ? <Minimize className="h-3.5 w-3.5" /> : <Maximize className="h-3.5 w-3.5" />}
+                  {isFullscreen ? "Exit" : "Enter"}
+                </button>
+              </div>
+
+              {currentSection && currentSection.content !== "__sample__" && currentSection.content !== "__ruh__" && (
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-sm font-medium">Bookmark</span>
+                  <button
+                    onClick={() => setBookmarkDialogOpen(true)}
+                    className="inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1.5 text-xs font-medium text-foreground/80 transition-colors hover:bg-accent"
+                  >
+                    {isBookmarked(currentSectionIdx)
+                      ? <BookmarkCheck className="h-3.5 w-3.5 text-primary" />
+                      : <Bookmark className="h-3.5 w-3.5" />}
+                    {isBookmarked(currentSectionIdx) ? "Edit" : "Add"}
+                  </button>
+                </div>
+              )}
+            </div>
+
             {readerMenuItems.map(({ icon: Icon, label, path }) => (
               <button
                 key={path}
