@@ -568,9 +568,9 @@ const Reader = () => {
   return (
     <div ref={containerRef} className={`h-screen ${theme.bg} ${theme.text} transition-colors duration-300 flex flex-col`}>
       {/* Top bar */}
-      <div className={`flex items-center gap-2 px-3 py-3 border-b border-border/20 transition-all duration-300 ${chromeVisible ? '' : 'opacity-0 max-h-0 overflow-hidden !py-0 !border-b-0'}`}>
-        <button onClick={() => navigate(-1)} className="p-2 flex-shrink-0">
-          <ArrowLeft className="w-5 h-5" />
+      <div className={`flex items-center gap-1.5 px-2 py-2 border-b border-border/20 transition-all duration-300 ${chromeVisible ? '' : 'opacity-0 max-h-0 overflow-hidden !py-0 !border-b-0'}`}>
+        <button onClick={() => navigate(-1)} className="p-1.5 flex-shrink-0">
+          <ArrowLeft className="w-4.5 h-4.5" />
         </button>
         {tocItems.length > 1 && (
           <ChapterDropdown
@@ -580,18 +580,18 @@ const Reader = () => {
             themeClasses={{ bg: theme.bg, text: theme.text }}
           />
         )}
-        <div className="flex items-center gap-1 flex-shrink-0">
-          <button onClick={() => setSearchOpen(true)} className="p-2">
+        <div className="flex items-center gap-0.5 flex-shrink-0">
+          <button onClick={() => setSearchOpen(true)} className="p-1.5">
             <Search className="w-4 h-4" />
           </button>
-          <button onClick={toggleFullscreen} className="p-2">
+          <button onClick={toggleFullscreen} className="p-1.5">
             {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
           </button>
           {/* Bookmark trigger */}
           {currentSection && currentSection.content !== "__sample__" && currentSection.content !== "__ruh__" && (
             <button
               onClick={() => setBookmarkDialogOpen(true)}
-              className="p-2 rounded-full hover:bg-primary/10 transition-colors"
+                className="p-1.5 rounded-full hover:bg-primary/10 transition-colors"
               title={isBookmarked(currentSectionIdx) ? "Edit bookmark" : "Add bookmark"}
             >
               {isBookmarked(currentSectionIdx)
@@ -605,7 +605,7 @@ const Reader = () => {
               setFitToPage(next);
               localStorage.setItem("faydabook-reader-fit", String(next));
             }}
-            className={`p-2 rounded-full transition-colors ${fitToPage ? "text-primary bg-primary/10" : "hover:bg-primary/10"}`}
+            className={`p-1.5 rounded-full transition-colors ${fitToPage ? "text-primary bg-primary/10" : "hover:bg-primary/10"}`}
             title={fitToPage ? "Scroll mode (longer page)" : "Fit to page"}
             aria-label="Toggle fit to page"
           >
@@ -617,7 +617,7 @@ const Reader = () => {
               setFontSize(next);
               localStorage.setItem("faydabook-reader-fontsize", String(next));
             }}
-            className="px-2 py-1 text-sm font-medium"
+            className="px-1.5 py-1 text-xs font-medium"
           >
             A-
           </button>
@@ -632,7 +632,7 @@ const Reader = () => {
               setFontSize(next);
               localStorage.setItem("faydabook-reader-fontsize", String(next));
             }}
-            className="w-16 accent-primary"
+            className="w-14 accent-primary"
           />
           <button
             onClick={() => {
@@ -640,7 +640,7 @@ const Reader = () => {
               setFontSize(next);
               localStorage.setItem("faydabook-reader-fontsize", String(next));
             }}
-            className="px-2 py-1 text-sm font-bold"
+            className="px-1.5 py-1 text-xs font-bold"
           >
             A+
           </button>
@@ -648,24 +648,24 @@ const Reader = () => {
       </div>
 
       {/* Font selector */}
-      <div className={`flex items-center justify-center gap-2 py-2 border-b border-border/20 transition-all duration-300 ${chromeVisible && !isFullscreen ? '' : 'opacity-0 max-h-0 overflow-hidden !py-0 !border-b-0'}`}>
+      <div className={`flex items-center justify-center gap-1.5 px-2 py-1.5 border-b border-border/20 overflow-x-auto transition-all duration-300 ${chromeVisible && !isFullscreen ? '' : 'opacity-0 max-h-0 overflow-hidden !py-0 !border-b-0'}`}>
         {fonts.map((f, i) => (
           <button
             key={f}
             onClick={() => setFontIdx(i)}
-            className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all ${
+            className={`px-3 py-1 rounded-full text-[11px] font-medium whitespace-nowrap transition-all ${
               i === fontIdx ? "bg-primary text-primary-foreground" : "bg-muted text-foreground/70"
             }`}
           >
             {f}
           </button>
         ))}
-        <span className="mx-2 text-border">|</span>
+        <span className="mx-1 text-border">|</span>
         {themes.map((t, i) => (
           <button
             key={t.name}
             onClick={() => setThemeIdx(i)}
-            className={`w-6 h-6 rounded-full border-2 transition-all ${t.bg} ${
+            className={`w-5 h-5 rounded-full border-2 flex-shrink-0 transition-all ${t.bg} ${
               i === themeIdx ? "border-primary scale-110" : "border-transparent"
             }`}
           />
@@ -699,7 +699,7 @@ const Reader = () => {
       )}
 
       {/* Top spacer when chrome is hidden */}
-      {!chromeVisible && <div className="flex-shrink-0 h-6" />}
+      {!chromeVisible && <div className="flex-shrink-0 h-2" />}
 
       {/* Reading content */}
       <div
