@@ -475,7 +475,7 @@ const Reader = () => {
     <div style={{ fontSize }}>
       {renderMeta()}
       {allSections.map((section, idx) => (
-        <div key={section.id} data-section-index={idx} className="paged-section mb-6">
+        <div key={section.id} data-section-index={idx} className="paged-section">
           {section.part && (
             <h3 className="text-center font-serif font-bold text-primary mb-3 mt-4 uppercase tracking-[0.2em]" style={{ fontSize: fontSize * 0.85, breakAfter: 'avoid' as const }}>
               {section.part}
