@@ -18,7 +18,7 @@ import { stationsDeenEnSections, stationsDeenEnMeta } from "@/data/stations-deen
 import { loadConditionsReglesSections, conditionsReglesMeta, type ConditionsSection } from "@/data/conditions-regles";
 import { loadIfadatouSections, ifadatouAhmediyyaMeta, type IfadatouSection } from "@/data/ifadatou-ahmediyya";
 import { loadVolumeSections, type VolumeSection } from "@/data/volume-loader";
-import { ArrowLeft, Loader2, Search, Maximize, Minimize, ChevronLeft, ChevronRight, Bookmark, BookmarkCheck, Menu, BookOpen, ScrollText } from "lucide-react";
+import { ArrowLeft, Loader2, Search, Maximize, Minimize, ChevronLeft, ChevronRight, Bookmark, BookmarkCheck, Menu, BookOpen, ScrollText, Home, Headphones, Settings } from "lucide-react";
 import { useSaveProgress, getSavedProgress } from "@/hooks/use-reading-progress";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -39,6 +39,13 @@ const themes = [
 ];
 
 const fonts = ["Sans", "Crimson Pro", "Amiri"];
+
+const readerMenuItems = [
+  { icon: Home, label: "Home", path: "/" },
+  { icon: BookOpen, label: "Library", path: "/library" },
+  { icon: Headphones, label: "Audio", path: "/audio" },
+  { icon: Settings, label: "Settings", path: "/settings" },
+];
 
 const sampleTextEn = `In the name of Allah, the Most Merciful, the Most Compassionate.
 
@@ -81,6 +88,7 @@ const Reader = () => {
   const [fitToPage, setFitToPage] = useState(() => {
     return localStorage.getItem("faydabook-reader-fit") === "true";
   });
+  const [mainMenuOpen, setMainMenuOpen] = useState(false);
   const [tocOpen, setTocOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [currentSectionIdx, setCurrentSectionIdx] = useState(() => getSavedProgress(id));
@@ -572,6 +580,9 @@ const Reader = () => {
         <button onClick={() => navigate(-1)} className="p-1.5 flex-shrink-0">
           <ArrowLeft className="w-4.5 h-4.5" />
         </button>
+        <button onClick={() => setMainMenuOpen(true)} className="p-1.5 flex-shrink-0" aria-label="Open main menu">
+          <Menu className="w-4 h-4" />
+        </button>
         {tocItems.length > 1 && (
           <ChapterDropdown
             tocItems={tocItems}
@@ -832,6 +843,29 @@ const Reader = () => {
       )}
 
       {/* TOC Sheet */}
+      <Sheet open={mainMenuOpen} onOpenChange={setMainMenuOpen}>
+        <SheetContent side="right" className={`${theme.bg} ${theme.text} w-[78%] sm:max-w-xs p-0`}>
+          <SheetHeader className="px-4 pt-4 pb-3 border-b border-border/20">
+            <SheetTitle className={theme.text}>Main Menu</SheetTitle>
+          </SheetHeader>
+          <div className="px-3 py-3 space-y-1.5">
+            {readerMenuItems.map(({ icon: Icon, label, path }) => (
+              <button
+                key={path}
+                onClick={() => {
+                  setMainMenuOpen(false);
+                  navigate(path);
+                }}
+                className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-primary/10"
+              >
+                <Icon className="h-4 w-4 text-muted-foreground" />
+                <span>{label}</span>
+              </button>
+            ))}
+          </div>
+        </SheetContent>
+      </Sheet>
+
       <Sheet open={tocOpen} onOpenChange={setTocOpen}>
         <SheetContent side="left" className={`${theme.bg} ${theme.text} w-[85%] sm:max-w-sm p-0`}>
           <SheetHeader className="px-4 pt-4 pb-2 border-b border-border/20">
