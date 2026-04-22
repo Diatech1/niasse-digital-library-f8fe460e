@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, List } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useRef } from "react";
 
 interface ReaderBottomBarProps {
@@ -48,24 +48,28 @@ const ReaderBottomBar = ({
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 border-t border-border/20 bg-inherit z-40">
-      <div className="h-0.5 bg-muted/30 mx-6 mt-2 rounded-full">
+    <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-border/20 bg-background/95 backdrop-blur-sm">
+      <div className="mx-5 mt-2 h-0.5 rounded-full bg-muted/30">
         <div
           className="h-full bg-primary rounded-full transition-all duration-300"
           style={{ width: `${progress}%` }}
         />
       </div>
-      <div className="flex items-center justify-around py-2 pb-safe">
-        <button
-          className="p-2 disabled:opacity-30"
-          onClick={onPrevPage}
-          disabled={!hasPrev}
-        >
-          <ChevronLeft className="w-5 h-5 text-muted-foreground" />
-        </button>
+      <div className="grid grid-cols-[48px_minmax(0,1fr)_48px] items-center px-3 py-2 pb-safe">
+        {hasPrev ? (
+          <button
+            className="flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+            onClick={onPrevPage}
+            aria-label="Previous page"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+        ) : (
+          <div className="h-10 w-10" aria-hidden="true" />
+        )}
 
         {editing ? (
-          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+          <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
             <input
               ref={inputRef}
               type="number"
@@ -75,24 +79,33 @@ const ReaderBottomBar = ({
               onChange={(e) => setInputVal(e.target.value)}
               onKeyDown={handleKeyDown}
               onBlur={commitJump}
-              className="w-14 text-center rounded border border-primary/40 bg-transparent px-1 py-0.5 text-xs focus:outline-none focus:border-primary"
+              className="w-14 rounded border border-primary/40 bg-transparent px-1 py-0.5 text-center text-xs focus:border-primary focus:outline-none"
               style={{ appearance: "textfield" }}
             />
             <span>/ {totalPages}</span>
           </div>
         ) : (
-          <button onClick={startEditing} className="p-2 text-xs text-muted-foreground hover:text-primary transition-colors" title="Jump to page">
-            <List className="w-5 h-5" />
+          <button
+            onClick={startEditing}
+            className="justify-self-center rounded-full px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+            title="Jump to page"
+            aria-label="Jump to page"
+          >
+            {currentPage} <span className="text-muted-foreground/70">/ {totalPages}</span>
           </button>
         )}
 
-        <button
-          className="p-2 disabled:opacity-30"
-          onClick={onNextPage}
-          disabled={!hasNext}
-        >
-          <ChevronRight className="w-5 h-5 text-muted-foreground" />
-        </button>
+        {hasNext ? (
+          <button
+            className="ml-auto flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+            onClick={onNextPage}
+            aria-label="Next page"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        ) : (
+          <div className="ml-auto h-10 w-10" aria-hidden="true" />
+        )}
       </div>
     </div>
   );
