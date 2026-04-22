@@ -18,7 +18,7 @@ import { stationsDeenEnSections, stationsDeenEnMeta } from "@/data/stations-deen
 import { loadConditionsReglesSections, conditionsReglesMeta, type ConditionsSection } from "@/data/conditions-regles";
 import { loadIfadatouSections, ifadatouAhmediyyaMeta, type IfadatouSection } from "@/data/ifadatou-ahmediyya";
 import { loadVolumeSections, type VolumeSection } from "@/data/volume-loader";
-import { ArrowLeft, Loader2, Search, Maximize, Minimize, ChevronLeft, ChevronRight, Bookmark, BookmarkCheck, Menu, BookOpen, ScrollText, Home, Headphones, Settings } from "lucide-react";
+import { ArrowLeft, Loader2, Search, Maximize, Minimize, Bookmark, BookmarkCheck, Menu, BookOpen, ScrollText, Home, Headphones, Settings } from "lucide-react";
 import { useSaveProgress, getSavedProgress } from "@/hooks/use-reading-progress";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -783,28 +783,6 @@ const Reader = () => {
         )}
       </div>
 
-      {/* Side navigation arrows — always visible in fullscreen, otherwise follow chrome visibility */}
-      {(chromeVisible || isFullscreen) && effectiveTotalPages > 1 && (
-        <>
-          <button
-            onClick={() => goToSection(currentSectionIdx - 1)}
-            disabled={currentSectionIdx === 0}
-            className="absolute left-2 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-background/60 backdrop-blur-sm border border-border/30 shadow-md disabled:opacity-20 transition-opacity hover:bg-background/80"
-            aria-label="Previous page"
-          >
-            <ChevronLeft className="w-5 h-5 text-foreground" />
-          </button>
-          <button
-            onClick={() => goToSection(currentSectionIdx + 1)}
-            disabled={currentSectionIdx === effectiveTotalPages - 1}
-            className="absolute right-2 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-background/60 backdrop-blur-sm border border-border/30 shadow-md disabled:opacity-20 transition-opacity hover:bg-background/80"
-            aria-label="Next page"
-          >
-            <ChevronRight className="w-5 h-5 text-foreground" />
-          </button>
-        </>
-      )}
-
       {/* Floating exit-fullscreen button */}
       {isFullscreen && (
         <button
@@ -816,17 +794,6 @@ const Reader = () => {
         </button>
       )}
 
-      {/* Floating toggle chrome button */}
-      {!isFullscreen && (
-        <button
-          onClick={() => setChromeVisible((v) => !v)}
-          className="absolute bottom-5 right-4 z-40 p-2.5 rounded-full bg-foreground/10 backdrop-blur-sm border border-border/20 shadow-md transition-opacity hover:bg-foreground/20 opacity-40 hover:opacity-80"
-          aria-label="Show toolbar"
-        >
-          <Menu className="w-4 h-4 text-foreground" />
-        </button>
-      )}
-
       {(
         <div className={`transition-all duration-300 ${chromeVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-full pointer-events-none'}`}>
           <ReaderBottomBar
@@ -834,7 +801,6 @@ const Reader = () => {
             totalPages={effectiveTotalPages}
             onPrevPage={() => goToSection(currentSectionIdx - 1)}
             onNextPage={() => goToSection(currentSectionIdx + 1)}
-            onOpenToc={() => setTocOpen(true)}
             onJumpToPage={(page) => goToSection(page - 1)}
             hasPrev={currentSectionIdx > 0}
             hasNext={currentSectionIdx < effectiveTotalPages - 1}
