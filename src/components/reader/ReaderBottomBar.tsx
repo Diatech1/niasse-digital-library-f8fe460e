@@ -6,7 +6,6 @@ interface ReaderBottomBarProps {
   totalPages: number;
   onPrevPage: () => void;
   onNextPage: () => void;
-  onOpenToc: () => void;
   onJumpToPage: (page: number) => void;
   hasPrev: boolean;
   hasNext: boolean;
@@ -17,7 +16,6 @@ const ReaderBottomBar = ({
   totalPages,
   onPrevPage,
   onNextPage,
-  onOpenToc,
   onJumpToPage,
   hasPrev,
   hasNext,
