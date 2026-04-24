@@ -86,17 +86,48 @@ export function useReadAlong(options?: UseReadAlongOptions): ReadAlongControls {
   const [isPaused, setIsPaused] = useState(false);
   const [activeSentenceIndex, setActiveSentenceIndex] = useState(-1);
   const [rate, setRate] = useState(1);
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [selectedVoiceURI, setSelectedVoiceURIState] = useState<string | null>(null);
 
   // Sentence boundaries: cumulative char offsets into the joined text
   const sentenceBoundaries = useRef<number[]>([]);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const rateRef = useRef(rate);
+  const selectedVoiceURIRef = useRef<string | null>(null);
+  const lastLangRef = useRef<string>("en-US");
 
   useEffect(() => {
     rateRef.current = rate;
-    // If currently playing, update rate live by restarting from current index
-    // (Web Speech API doesn't support live rate change; we just store for next start)
   }, [rate]);
+
+  useEffect(() => {
+    selectedVoiceURIRef.current = selectedVoiceURI;
+  }, [selectedVoiceURI]);
+
+  // Load voices (sync + async via voiceschanged event)
+  useEffect(() => {
+    if (!isSupported) return;
+    const load = () => {
+      const v = window.speechSynthesis.getVoices();
+      if (v.length) setVoices(v);
+    };
+    load();
+    window.speechSynthesis.addEventListener?.("voiceschanged", load);
+    return () => {
+      window.speechSynthesis.removeEventListener?.("voiceschanged", load);
+    };
+  }, [isSupported]);
+
+  const setSelectedVoiceURI = useCallback((uri: string | null) => {
+    setSelectedVoiceURIState(uri);
+    const locale = lastLangRef.current;
+    try {
+      if (uri) localStorage.setItem(voicePrefKey(locale), uri);
+      else localStorage.removeItem(voicePrefKey(locale));
+    } catch {
+      // ignore storage errors
+    }
+  }, []);
 
   const stop = useCallback(() => {
     if (!isSupported) return;
@@ -124,30 +155,22 @@ export function useReadAlong(options?: UseReadAlongOptions): ReadAlongControls {
       const sentences = splitIntoSentences(text);
       if (sentences.length === 0) return;
 
-      // Map short codes AND full names (en/fr/ar/english/french/arabic) to BCP-47 voice locales
-      const localeMap: Record<string, string> = {
-        en: "en-US",
-        eng: "en-US",
-        english: "en-US",
-        "en-us": "en-US",
-        "en-gb": "en-GB",
-        fr: "fr-FR",
-        fra: "fr-FR",
-        fre: "fr-FR",
-        french: "fr-FR",
-        français: "fr-FR",
-        francais: "fr-FR",
-        "fr-fr": "fr-FR",
-        ar: "ar-SA",
-        ara: "ar-SA",
-        arabic: "ar-SA",
-        arabe: "ar-SA",
-        "العربية": "ar-SA",
-        "ar-sa": "ar-SA",
-      };
-      const resolvedLang = lang
-        ? (localeMap[lang.toLowerCase().trim()] ?? lang)
-        : "en-US";
+      const resolvedLang = resolveLocale(lang);
+      lastLangRef.current = resolvedLang;
+
+      // Restore stored preference for this locale if nothing currently selected
+      let voiceURI = selectedVoiceURIRef.current;
+      if (!voiceURI) {
+        try {
+          voiceURI = localStorage.getItem(voicePrefKey(resolvedLang));
+        } catch {
+          voiceURI = null;
+        }
+        if (voiceURI) {
+          selectedVoiceURIRef.current = voiceURI;
+          setSelectedVoiceURIState(voiceURI);
+        }
+      }
 
       // Build cumulative char offset boundaries so we can map charIndex → sentence
       const boundaries: number[] = [];
@@ -163,10 +186,16 @@ export function useReadAlong(options?: UseReadAlongOptions): ReadAlongControls {
       utterance.rate = rateRef.current;
       utterance.lang = resolvedLang;
 
+      // Apply selected voice if it matches/exists
+      const available = window.speechSynthesis.getVoices();
+      const chosen = voiceURI
+        ? available.find((v) => v.voiceURI === voiceURI)
+        : undefined;
+      if (chosen) utterance.voice = chosen;
+
       utterance.onboundary = (e) => {
         if (e.name !== "word" && e.name !== "sentence") return;
         const charIdx = e.charIndex;
-        // Find which sentence this charIndex belongs to
         let sentIdx = 0;
         for (let i = boundaries.length - 1; i >= 0; i--) {
           if (charIdx >= boundaries[i]) {
@@ -222,6 +251,10 @@ export function useReadAlong(options?: UseReadAlongOptions): ReadAlongControls {
     activeSentenceIndex,
     rate,
     setRate,
+    voices,
+    selectedVoiceURI,
+    setSelectedVoiceURI,
+    resolveLang: resolveLocale,
     start,
     pause,
     resume,
