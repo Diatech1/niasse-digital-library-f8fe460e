@@ -460,7 +460,7 @@ const VoiceButton = ({
           <Mic2 className="w-5 h-5" />
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-64 p-2" align="center">
+      <PopoverContent className="w-64 p-2" align="center" side="top" sideOffset={8}>
         <p className="text-sm font-medium px-2 py-1.5 text-foreground">{label}</p>
         <ScrollArea className="max-h-64">
           <div className="flex flex-col">
