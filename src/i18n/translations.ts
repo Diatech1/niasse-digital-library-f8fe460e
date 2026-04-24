@@ -50,7 +50,7 @@ export type TranslationKey =
 type Dict = Record<TranslationKey, string>;
 
 const en: Dict = {
-  "app.tagline": "The Digital Library of Medina Baye",
+  "app.tagline": "The Digital Library of the Fayda",
   "nav.home": "Home",
   "nav.library": "Library",
   "nav.audio": "Audio",
@@ -98,7 +98,7 @@ const en: Dict = {
 };
 
 const fr: Dict = {
-  "app.tagline": "La bibliothèque numérique de Médina Baye",
+  "app.tagline": "La bibliothèque numérique de la Fayda",
   "nav.home": "Accueil",
   "nav.library": "Bibliothèque",
   "nav.audio": "Audio",
@@ -146,7 +146,7 @@ const fr: Dict = {
 };
 
 const ar: Dict = {
-  "app.tagline": "المكتبة الرقمية لمدينة باي",
+  "app.tagline": "المكتبة الرقمية للفيضة",
   "nav.home": "الرئيسية",
   "nav.library": "المكتبة",
   "nav.audio": "الصوتيات",
