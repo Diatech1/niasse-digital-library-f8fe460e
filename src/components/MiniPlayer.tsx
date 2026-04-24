@@ -1,4 +1,4 @@
-import { Play, Pause, X, ChevronUp, Moon } from "lucide-react";
+import { Play, Pause, X, ChevronUp, Moon, Loader2 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAudioPlayer } from "@/hooks/use-audio-player";
 import { useLanguage } from "@/hooks/use-language";
@@ -99,14 +99,16 @@ const MiniPlayer = () => {
 
           <button
             onClick={togglePlayPause}
-            disabled={!tts.isSupported}
+            disabled={!tts.isSupported || tts.isLoading}
             className={cn(
               "w-9 h-9 rounded-full bg-secondary flex items-center justify-center shrink-0",
               "transition-transform active:scale-95 disabled:opacity-50"
             )}
             aria-label={tts.isPlaying ? "Pause" : "Play"}
           >
-            {tts.isPlaying ? (
+            {tts.isLoading ? (
+              <Loader2 className="w-4 h-4 text-secondary-foreground animate-spin" />
+            ) : tts.isPlaying ? (
               <Pause className="w-4 h-4 text-secondary-foreground" />
             ) : (
               <Play className="w-4 h-4 text-secondary-foreground ml-0.5" />
