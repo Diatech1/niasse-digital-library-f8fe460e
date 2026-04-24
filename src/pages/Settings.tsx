@@ -127,7 +127,7 @@ const Settings = () => {
                   <button
                     key={f}
                     onClick={() => setFontIdx(i)}
-                    className={`px-2 py-2 rounded-lg text-xs font-medium transition-all ${
+                    className={`px-2 py-2 rounded-xl text-xs font-medium transition-all ${
                       fontIdx === i
                         ? "bg-primary text-primary-foreground"
                         : "bg-muted/60 text-muted-foreground hover:bg-muted"
@@ -173,7 +173,7 @@ const Settings = () => {
                 <button
                   key={value}
                   onClick={() => setLanguage(value)}
-                  className={`px-2 py-2 rounded-lg text-xs font-medium transition-all ${
+                  className={`px-2 py-2 rounded-xl text-xs font-medium transition-all ${
                     language === value
                       ? "bg-primary text-primary-foreground"
                       : "bg-muted/60 text-muted-foreground hover:bg-muted"
