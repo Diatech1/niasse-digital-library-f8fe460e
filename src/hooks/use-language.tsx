@@ -1,4 +1,5 @@
-import { createContext, useCallback, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, ReactNode } from "react";
+import { translate, type TranslationKey } from "@/i18n/translations";
 
 export type Language = "en" | "fr" | "ar";
 
@@ -8,12 +9,14 @@ interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   dir: "ltr" | "rtl";
+  t: (key: TranslationKey, vars?: Record<string, string>) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType>({
   language: "en",
   setLanguage: () => {},
   dir: "ltr",
+  t: (key) => key,
 });
 
 const isRtl = (lang: Language) => lang === "ar";
