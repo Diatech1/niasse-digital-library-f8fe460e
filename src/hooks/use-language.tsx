@@ -53,8 +53,18 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
     setLanguageState(lang);
   }, []);
 
+  const t = useCallback(
+    (key: TranslationKey, vars?: Record<string, string>) => translate(language, key, vars),
+    [language]
+  );
+
+  const value = useMemo(
+    () => ({ language, setLanguage, dir: isRtl(language) ? "rtl" as const : "ltr" as const, t }),
+    [language, setLanguage, t]
+  );
+
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, dir: isRtl(language) ? "rtl" : "ltr" }}>
+    <LanguageContext.Provider value={value}>
       {children}
     </LanguageContext.Provider>
   );
