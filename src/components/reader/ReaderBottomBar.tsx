@@ -91,11 +91,11 @@ const ReaderBottomBar = ({
         ) : (
           <button
             onClick={startEditing}
-            className={`justify-self-center rounded-full text-sm font-medium text-muted-foreground transition-all hover:bg-accent hover:text-accent-foreground ${expanded ? 'px-3 py-1.5' : 'pointer-events-auto border border-border/60 bg-background/90 px-4 py-2 shadow-sm backdrop-blur-sm'}`}
+            className={`justify-self-center rounded-full font-medium text-foreground transition-all hover:bg-accent hover:text-accent-foreground ${expanded ? 'px-4 py-2 text-base' : 'pointer-events-auto border border-border/60 bg-background/90 px-5 py-2.5 text-base shadow-sm backdrop-blur-sm'}`}
             title="Jump to page"
             aria-label="Jump to page"
           >
-            {currentPage} <span className="text-muted-foreground/70">/ {totalPages}</span>
+            {currentPage} <span className="text-muted-foreground">/ {totalPages}</span>
           </button>
         )}
 
