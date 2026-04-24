@@ -91,14 +91,29 @@ export function useReadAlong(options?: UseReadAlongOptions): ReadAlongControls {
       const sentences = splitIntoSentences(text);
       if (sentences.length === 0) return;
 
-      // Map short codes (en/fr/ar) to BCP-47 voice locales
+      // Map short codes AND full names (en/fr/ar/english/french/arabic) to BCP-47 voice locales
       const localeMap: Record<string, string> = {
         en: "en-US",
+        eng: "en-US",
+        english: "en-US",
+        "en-us": "en-US",
+        "en-gb": "en-GB",
         fr: "fr-FR",
+        fra: "fr-FR",
+        fre: "fr-FR",
+        french: "fr-FR",
+        français: "fr-FR",
+        francais: "fr-FR",
+        "fr-fr": "fr-FR",
         ar: "ar-SA",
+        ara: "ar-SA",
+        arabic: "ar-SA",
+        arabe: "ar-SA",
+        "العربية": "ar-SA",
+        "ar-sa": "ar-SA",
       };
       const resolvedLang = lang
-        ? (localeMap[lang.toLowerCase()] ?? lang)
+        ? (localeMap[lang.toLowerCase().trim()] ?? lang)
         : "en-US";
 
       // Build cumulative char offset boundaries so we can map charIndex → sentence
