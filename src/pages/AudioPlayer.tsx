@@ -258,7 +258,7 @@ const AudioPlayer = () => {
           </button>
         </div>
 
-        <div className="flex items-center justify-around px-8 pb-12 text-muted-foreground">
+        <div className="flex items-center justify-around px-8 pb-28 text-muted-foreground">
           <button
             onClick={() => setRepeat((r) => !r)}
             className={cn("p-2 transition-colors", repeat && "text-primary")}
