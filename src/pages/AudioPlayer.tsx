@@ -191,14 +191,10 @@ const AudioPlayer = () => {
 
           <VoiceButton
             voices={tts.voices}
-            bookLang={tts.resolveLang(book?.language)}
             selectedVoiceURI={tts.selectedVoiceURI}
             setSelectedVoiceURI={tts.setSelectedVoiceURI}
             label={t("audioPlayer.voice")}
             defaultLabel={t("audioPlayer.voiceDefault")}
-            noneLabel={t("audioPlayer.voiceNone")}
-            localLabel={t("audioPlayer.voiceLocal")}
-            onlineLabel={t("audioPlayer.voiceOnline")}
           />
 
           <SpeedButton
