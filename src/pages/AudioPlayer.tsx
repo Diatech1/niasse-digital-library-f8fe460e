@@ -141,11 +141,11 @@ const AudioPlayer = () => {
           </button>
           <button
             onClick={togglePlayPause}
-            disabled={!tts.isSupported || isLoading || totalChapters === 0}
+            disabled={!tts.isSupported || isLoading || tts.isLoading || totalChapters === 0}
             className="w-14 h-14 rounded-full bg-secondary flex items-center justify-center transition-transform active:scale-95 disabled:opacity-50"
             aria-label={tts.isPlaying ? "Pause" : "Play"}
           >
-            {isLoading ? (
+            {isLoading || tts.isLoading ? (
               <Loader2 className="w-6 h-6 text-secondary-foreground animate-spin" />
             ) : tts.isPlaying ? (
               <Pause className="w-6 h-6 text-secondary-foreground" />
