@@ -14,6 +14,8 @@ import AudioLibrary from "./pages/AudioLibrary";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import BottomNav from "./components/BottomNav";
+import MiniPlayer from "./components/MiniPlayer";
+import { AudioPlayerProvider } from "@/hooks/use-audio-player";
 
 const queryClient = new QueryClient();
 
@@ -25,24 +27,27 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            {/* Reader breaks out of max-w-lg to use full screen */}
-            <Route path="/read/:id" element={<Reader />} />
-            <Route path="*" element={
-              <div className="max-w-lg mx-auto relative">
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/library" element={<Library />} />
-                  <Route path="/book/:id" element={<BookDetail />} />
-                  <Route path="/listen/:id" element={<AudioPlayer />} />
-                  <Route path="/audio" element={<AudioLibrary />} />
-                  <Route path="/settings" element={<Settings />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-                <BottomNav />
-              </div>
-            } />
-          </Routes>
+          <AudioPlayerProvider>
+            <Routes>
+              {/* Reader breaks out of max-w-lg to use full screen */}
+              <Route path="/read/:id" element={<Reader />} />
+              <Route path="*" element={
+                <div className="max-w-lg mx-auto relative">
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/library" element={<Library />} />
+                    <Route path="/book/:id" element={<BookDetail />} />
+                    <Route path="/listen/:id" element={<AudioPlayer />} />
+                    <Route path="/audio" element={<AudioLibrary />} />
+                    <Route path="/settings" element={<Settings />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                  <MiniPlayer />
+                  <BottomNav />
+                </div>
+              } />
+            </Routes>
+          </AudioPlayerProvider>
         </BrowserRouter>
       </TooltipProvider>
       </LanguageProvider>
