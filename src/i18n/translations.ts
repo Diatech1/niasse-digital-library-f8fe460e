@@ -40,6 +40,7 @@ export type TranslationKey =
   | "audioPlayer.voiceNone"
   | "audioPlayer.voiceLocal"
   | "audioPlayer.voiceOnline"
+  | "audioPlayer.preparing"
   | "book.translation"
   | "book.pages"
   | "book.read"
@@ -105,10 +106,11 @@ const en: Dict = {
   "audioPlayer.repeat": "Repeat chapter",
   "audioPlayer.chapter": "Chapter",
   "audioPlayer.voice": "Voice",
-  "audioPlayer.voiceDefault": "System default",
-  "audioPlayer.voiceNone": "No voices for this language",
+  "audioPlayer.voiceDefault": "Default voice",
+  "audioPlayer.voiceNone": "No voices available",
   "audioPlayer.voiceLocal": "Local",
   "audioPlayer.voiceOnline": "Online",
+  "audioPlayer.preparing": "Preparing audio…",
   "book.translation": "Translation",
   "book.pages": "Pages",
   "book.read": "Read Book",
@@ -173,10 +175,11 @@ const fr: Dict = {
   "audioPlayer.repeat": "Répéter le chapitre",
   "audioPlayer.chapter": "Chapitre",
   "audioPlayer.voice": "Voix",
-  "audioPlayer.voiceDefault": "Voix système",
-  "audioPlayer.voiceNone": "Aucune voix pour cette langue",
+  "audioPlayer.voiceDefault": "Voix par défaut",
+  "audioPlayer.voiceNone": "Aucune voix disponible",
   "audioPlayer.voiceLocal": "Locale",
   "audioPlayer.voiceOnline": "En ligne",
+  "audioPlayer.preparing": "Préparation de l'audio…",
   "book.translation": "Traduction",
   "book.pages": "Pages",
   "book.read": "Lire le livre",
@@ -241,10 +244,11 @@ const ar: Dict = {
   "audioPlayer.repeat": "تكرار الفصل",
   "audioPlayer.chapter": "الفصل",
   "audioPlayer.voice": "الصوت",
-  "audioPlayer.voiceDefault": "الافتراضي للنظام",
-  "audioPlayer.voiceNone": "لا توجد أصوات لهذه اللغة",
+  "audioPlayer.voiceDefault": "الصوت الافتراضي",
+  "audioPlayer.voiceNone": "لا توجد أصوات متاحة",
   "audioPlayer.voiceLocal": "محلي",
   "audioPlayer.voiceOnline": "عبر الإنترنت",
+  "audioPlayer.preparing": "جارٍ تحضير الصوت…",
   "book.translation": "ترجمة",
   "book.pages": "صفحات",
   "book.read": "قراءة الكتاب",

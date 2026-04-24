@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useBook } from "@/hooks/use-books";
 import { useBookContent } from "@/hooks/use-book-content";
-import { stripForSpeech } from "@/hooks/use-read-along";
 import { useAudioPlayer } from "@/hooks/use-audio-player";
 import { useLanguage } from "@/hooks/use-language";
+import type { GeminiVoice } from "@/hooks/use-gemini-tts";
 import {
   ChevronDown, Share2, SkipBack, Play, Pause, SkipForward,
   Repeat, Moon, ListMusic, Gauge, Loader2, Mic2,
@@ -28,7 +28,7 @@ const formatTime = (totalSeconds: number) => {
   return `${m}:${s.toString().padStart(2, "0")}`;
 };
 
-const wordCount = (text: string) => text.trim().split(/\s+/).filter(Boolean).length;
+
 
 const AudioPlayer = () => {
   const { id } = useParams();
@@ -40,7 +40,7 @@ const AudioPlayer = () => {
   const player = useAudioPlayer();
   const {
     tts, chapterIdx, repeat, setRepeat, sleepMinutes, setSleepMinutes,
-    sleepCountdown, elapsed, setActiveBook, goToChapter, togglePlayPause,
+    sleepCountdown, elapsed, totalDuration, setActiveBook, goToChapter, togglePlayPause,
   } = player;
 
   // Sync this book + sections into the global player when they load
@@ -51,22 +51,15 @@ const AudioPlayer = () => {
   }, [book, sections, setActiveBook]);
 
   const currentSection = sections[chapterIdx];
-  const speakable = useMemo(
-    () => (currentSection ? stripForSpeech(currentSection.content) : ""),
-    [currentSection]
-  );
-
-  const estimatedSeconds = useMemo(() => {
-    if (!speakable) return 0;
-    const words = wordCount(speakable);
-    return (words / 165) * 60 / tts.rate;
-  }, [speakable, tts.rate]);
 
   if (!book) return null;
 
   const totalChapters = sections.length;
   const sliderMax = Math.max(0, totalChapters - 1);
   const chapterLabel = currentSection?.heading || `${t("audioPlayer.chapter")} ${chapterIdx + 1}`;
+
+  const seekMax = totalDuration > 0 ? Math.floor(totalDuration) : 0;
+  const seekValue = totalDuration > 0 ? Math.min(Math.floor(elapsed), seekMax) : 0;
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
@@ -110,25 +103,30 @@ const AudioPlayer = () => {
           )}
         </div>
 
-        {!tts.isSupported && (
+        {tts.error && (
           <p className="px-8 text-center text-xs text-destructive mb-1">
-            {t("audioPlayer.notSupported")}
+            {tts.error}
+          </p>
+        )}
+        {tts.isLoading && !tts.error && (
+          <p className="px-8 text-center text-xs text-muted-foreground mb-1">
+            {t("audioPlayer.preparing")}
           </p>
         )}
 
         <div className="px-8 mt-1 mb-2">
           <Slider
-            value={[chapterIdx]}
+            value={[seekValue]}
             min={0}
-            max={sliderMax}
+            max={Math.max(seekMax, 1)}
             step={1}
-            onValueChange={(vals) => goToChapter(vals[0] ?? 0)}
-            disabled={isLoading || totalChapters <= 1}
-            aria-label="Chapter progress"
+            onValueChange={(vals) => tts.seek(vals[0] ?? 0)}
+            disabled={isLoading || totalDuration <= 0}
+            aria-label="Audio progress"
           />
           <div className="flex justify-between text-[11px] text-muted-foreground mt-0.5">
             <span>{formatTime(elapsed)}</span>
-            <span>~ {formatTime(estimatedSeconds)}</span>
+            <span>{totalDuration > 0 ? formatTime(totalDuration) : "--:--"}</span>
           </div>
         </div>
 
@@ -143,11 +141,11 @@ const AudioPlayer = () => {
           </button>
           <button
             onClick={togglePlayPause}
-            disabled={!tts.isSupported || isLoading || totalChapters === 0}
+            disabled={!tts.isSupported || isLoading || tts.isLoading || totalChapters === 0}
             className="w-14 h-14 rounded-full bg-secondary flex items-center justify-center transition-transform active:scale-95 disabled:opacity-50"
             aria-label={tts.isPlaying ? "Pause" : "Play"}
           >
-            {isLoading ? (
+            {isLoading || tts.isLoading ? (
               <Loader2 className="w-6 h-6 text-secondary-foreground animate-spin" />
             ) : tts.isPlaying ? (
               <Pause className="w-6 h-6 text-secondary-foreground" />
@@ -193,14 +191,10 @@ const AudioPlayer = () => {
 
           <VoiceButton
             voices={tts.voices}
-            bookLang={tts.resolveLang(book?.language)}
             selectedVoiceURI={tts.selectedVoiceURI}
             setSelectedVoiceURI={tts.setSelectedVoiceURI}
             label={t("audioPlayer.voice")}
             defaultLabel={t("audioPlayer.voiceDefault")}
-            noneLabel={t("audioPlayer.voiceNone")}
-            localLabel={t("audioPlayer.voiceLocal")}
-            onlineLabel={t("audioPlayer.voiceOnline")}
           />
 
           <SpeedButton
@@ -340,23 +334,16 @@ const SpeedButton = ({ rate, setRate, label, note }: SpeedProps) => (
 );
 
 interface VoiceProps {
-  voices: SpeechSynthesisVoice[];
-  bookLang: string;
+  voices: GeminiVoice[];
   selectedVoiceURI: string | null;
   setSelectedVoiceURI: (uri: string | null) => void;
   label: string;
   defaultLabel: string;
-  noneLabel: string;
-  localLabel: string;
-  onlineLabel: string;
 }
 const VoiceButton = ({
-  voices, bookLang, selectedVoiceURI, setSelectedVoiceURI,
-  label, defaultLabel, noneLabel, localLabel, onlineLabel,
+  voices, selectedVoiceURI, setSelectedVoiceURI,
+  label, defaultLabel,
 }: VoiceProps) => {
-  const prefix = (bookLang || "").split("-")[0].toLowerCase();
-  const matching = voices.filter((v) => v.lang.toLowerCase().startsWith(prefix));
-  const list = matching.length > 0 ? matching : voices;
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -380,10 +367,7 @@ const VoiceButton = ({
             >
               {defaultLabel}
             </button>
-            {list.length === 0 && (
-              <p className="text-xs text-muted-foreground px-2 py-2">{noneLabel}</p>
-            )}
-            {list.map((v) => (
+            {voices.map((v) => (
               <button
                 key={v.voiceURI}
                 onClick={() => setSelectedVoiceURI(v.voiceURI)}
@@ -394,9 +378,11 @@ const VoiceButton = ({
               >
                 <div className="flex items-center justify-between gap-2">
                   <span className="truncate">{v.name}</span>
-                  <span className="text-[10px] text-muted-foreground shrink-0">
-                    {v.lang} · {v.localService ? localLabel : onlineLabel}
-                  </span>
+                  {v.description && (
+                    <span className="text-[10px] text-muted-foreground shrink-0">
+                      {v.description}
+                    </span>
+                  )}
                 </div>
               </button>
             ))}
