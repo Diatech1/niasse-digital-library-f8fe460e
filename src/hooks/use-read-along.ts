@@ -232,7 +232,6 @@ export function useReadAlong(options?: UseReadAlongOptions): ReadAlongControls {
     const textToSpeak = nextText || fullText;
     const lang = lastLangRef.current;
 
-    window.speechSynthesis.cancel();
     const sentences = splitIntoSentences(textToSpeak);
     if (sentences.length === 0) return;
 
@@ -242,18 +241,21 @@ export function useReadAlong(options?: UseReadAlongOptions): ReadAlongControls {
       boundaries.push(cumulative);
       cumulative += s.length + 1;
     }
-    sentenceBoundaries.current = boundaries;
-    currentCharIndexRef.current = 0;
 
     const utterance = new SpeechSynthesisUtterance(sentences.join(" "));
     utterance.rate = rateRef.current;
     utterance.lang = lang;
 
     const available = window.speechSynthesis.getVoices();
-    const chosen = selectedVoiceURIRef.current
-      ? available.find((v) => v.voiceURI === selectedVoiceURIRef.current)
+    const targetURI = selectedVoiceURIRef.current;
+    const chosen = targetURI
+      ? available.find((v) => v.voiceURI === targetURI) ??
+        available.find((v) => v.name === targetURI)
       : undefined;
-    if (chosen) utterance.voice = chosen;
+    if (chosen) {
+      utterance.voice = chosen;
+      utterance.lang = chosen.lang || lang;
+    }
 
     utterance.onboundary = (e) => {
       if (e.name !== "word" && e.name !== "sentence") return;
@@ -286,11 +288,21 @@ export function useReadAlong(options?: UseReadAlongOptions): ReadAlongControls {
       utteranceRef.current = null;
     };
 
+    // Cancel current speech and start the new one. Chrome needs a tick
+    // between cancel() and speak() or the new utterance is dropped silently.
+    window.speechSynthesis.cancel();
+    sentenceBoundaries.current = boundaries;
+    currentCharIndexRef.current = 0;
     utteranceRef.current = utterance;
     setActiveSentenceIndex(0);
     setIsPaused(false);
     setIsPlaying(true);
-    window.speechSynthesis.speak(utterance);
+
+    setTimeout(() => {
+      if (utteranceRef.current === utterance) {
+        window.speechSynthesis.speak(utterance);
+      }
+    }, 60);
   }, [isSupported, options]);
 
   const setRate = useCallback(
