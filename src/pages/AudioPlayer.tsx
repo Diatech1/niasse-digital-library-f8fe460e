@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useBook } from "@/hooks/use-books";
 import { useBookContent } from "@/hooks/use-book-content";
-import { stripForSpeech } from "@/hooks/use-read-along";
 import { useAudioPlayer } from "@/hooks/use-audio-player";
 import { useLanguage } from "@/hooks/use-language";
+import type { GeminiVoice } from "@/hooks/use-gemini-tts";
 import {
   ChevronDown, Share2, SkipBack, Play, Pause, SkipForward,
   Repeat, Moon, ListMusic, Gauge, Loader2, Mic2,
