@@ -178,9 +178,13 @@ export function useReadAlong(options?: UseReadAlongOptions): ReadAlongControls {
 
       const available = window.speechSynthesis.getVoices();
       const chosen = voiceURI
-        ? available.find((v) => v.voiceURI === voiceURI)
+        ? available.find((v) => v.voiceURI === voiceURI) ??
+          available.find((v) => v.name === voiceURI)
         : undefined;
-      if (chosen) utterance.voice = chosen;
+      if (chosen) {
+        utterance.voice = chosen;
+        utterance.lang = chosen.lang || resolvedLang;
+      }
 
       utterance.onboundary = (e) => {
         if (e.name !== "word" && e.name !== "sentence") return;
