@@ -28,7 +28,7 @@ const formatTime = (totalSeconds: number) => {
   return `${m}:${s.toString().padStart(2, "0")}`;
 };
 
-const wordCount = (text: string) => text.trim().split(/\s+/).filter(Boolean).length;
+
 
 const AudioPlayer = () => {
   const { id } = useParams();
