@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useBook } from "@/hooks/use-books";
 import { useBookContent } from "@/hooks/use-book-content";
-import { useReadAlong, stripForSpeech } from "@/hooks/use-read-along";
+import { stripForSpeech } from "@/hooks/use-read-along";
+import { useAudioPlayer } from "@/hooks/use-audio-player";
 import { useLanguage } from "@/hooks/use-language";
 import {
   ChevronDown, Share2, SkipBack, Play, Pause, SkipForward,
@@ -16,7 +17,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 
 const SPEEDS = [0.75, 1, 1.25, 1.5, 2];
-const SLEEP_OPTIONS = [0, 5, 10, 15, 30]; // minutes; 0 = off
+const SLEEP_OPTIONS = [0, 5, 10, 15, 30];
 
 const formatTime = (totalSeconds: number) => {
   if (!isFinite(totalSeconds) || totalSeconds < 0) totalSeconds = 0;
@@ -36,25 +37,18 @@ const AudioPlayer = () => {
   const { sections, isLoading } = useBookContent(book?.contentModule);
   const { t } = useLanguage();
 
-  const [chapterIdx, setChapterIdx] = useState(0);
-  const [repeat, setRepeat] = useState(false);
-  const [sleepMinutes, setSleepMinutes] = useState(0);
-  const sleepTimerRef = useRef<number | null>(null);
-  const [sleepCountdown, setSleepCountdown] = useState(0);
-  const intervalRef = useRef<number | null>(null);
+  const player = useAudioPlayer();
+  const {
+    tts, chapterIdx, repeat, setRepeat, sleepMinutes, setSleepMinutes,
+    sleepCountdown, elapsed, setActiveBook, goToChapter, togglePlayPause,
+  } = player;
 
-  const tts = useReadAlong({
-    onEnd: () => {
-      // Auto-advance or repeat
-      if (repeat) {
-        playChapter(chapterIdx);
-      } else if (chapterIdx < sections.length - 1) {
-        const next = chapterIdx + 1;
-        setChapterIdx(next);
-        playChapter(next);
-      }
-    },
-  });
+  // Sync this book + sections into the global player when they load
+  useEffect(() => {
+    if (book && sections.length > 0) {
+      setActiveBook(book, sections);
+    }
+  }, [book, sections, setActiveBook]);
 
   const currentSection = sections[chapterIdx];
   const speakable = useMemo(
@@ -62,98 +56,11 @@ const AudioPlayer = () => {
     [currentSection]
   );
 
-  // Estimated duration from word count (avg ~165 wpm at 1x rate)
   const estimatedSeconds = useMemo(() => {
     if (!speakable) return 0;
     const words = wordCount(speakable);
     return (words / 165) * 60 / tts.rate;
   }, [speakable, tts.rate]);
-
-  // Tick elapsed seconds while playing for a smooth-ish progress within the chapter
-  const [elapsed, setElapsed] = useState(0);
-  useEffect(() => {
-    if (tts.isPlaying) {
-      intervalRef.current = window.setInterval(() => setElapsed((e) => e + 1), 1000);
-    } else {
-      if (intervalRef.current) window.clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-    return () => {
-      if (intervalRef.current) window.clearInterval(intervalRef.current);
-    };
-  }, [tts.isPlaying]);
-
-  // Reset elapsed on chapter change
-  useEffect(() => {
-    setElapsed(0);
-  }, [chapterIdx]);
-
-  // Sleep timer
-  useEffect(() => {
-    if (sleepTimerRef.current) {
-      window.clearTimeout(sleepTimerRef.current);
-      sleepTimerRef.current = null;
-    }
-    if (sleepMinutes > 0) {
-      setSleepCountdown(sleepMinutes * 60);
-      sleepTimerRef.current = window.setTimeout(() => {
-        tts.stop();
-        setSleepMinutes(0);
-        setSleepCountdown(0);
-      }, sleepMinutes * 60 * 1000);
-    } else {
-      setSleepCountdown(0);
-    }
-    return () => {
-      if (sleepTimerRef.current) window.clearTimeout(sleepTimerRef.current);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sleepMinutes]);
-
-  // Countdown ticker
-  useEffect(() => {
-    if (sleepCountdown <= 0) return;
-    const id = window.setInterval(() => {
-      setSleepCountdown((c) => Math.max(0, c - 1));
-    }, 1000);
-    return () => window.clearInterval(id);
-  }, [sleepCountdown]);
-
-  // Stop TTS when leaving the page or changing book
-  useEffect(() => {
-    return () => tts.stop();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
-
-  const playChapter = (idx: number) => {
-    const target = sections[idx];
-    if (!target) return;
-    const text = stripForSpeech(target.content);
-    if (!text) return;
-    tts.start(text, book?.language);
-  };
-
-  const handlePlayPause = () => {
-    if (tts.isPlaying) {
-      tts.pause();
-    } else if (tts.isPaused) {
-      tts.resume();
-    } else {
-      playChapter(chapterIdx);
-    }
-  };
-
-  const goToChapter = (idx: number) => {
-    const clamped = Math.max(0, Math.min(idx, sections.length - 1));
-    setChapterIdx(clamped);
-    if (tts.isPlaying || tts.isPaused) {
-      playChapter(clamped);
-    }
-  };
-
-  const onSliderChange = (vals: number[]) => {
-    goToChapter(vals[0] ?? 0);
-  };
 
   if (!book) return null;
 
@@ -215,7 +122,7 @@ const AudioPlayer = () => {
             min={0}
             max={sliderMax}
             step={1}
-            onValueChange={onSliderChange}
+            onValueChange={(vals) => goToChapter(vals[0] ?? 0)}
             disabled={isLoading || totalChapters <= 1}
             aria-label="Chapter progress"
           />
@@ -235,7 +142,7 @@ const AudioPlayer = () => {
             <SkipBack className="w-6 h-6" />
           </button>
           <button
-            onClick={handlePlayPause}
+            onClick={togglePlayPause}
             disabled={!tts.isSupported || isLoading || totalChapters === 0}
             className="w-14 h-14 rounded-full bg-secondary flex items-center justify-center transition-transform active:scale-95 disabled:opacity-50"
             aria-label={tts.isPlaying ? "Pause" : "Play"}
