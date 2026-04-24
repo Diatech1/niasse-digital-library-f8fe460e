@@ -39,11 +39,44 @@ export interface ReadAlongControls {
   activeSentenceIndex: number;
   rate: number;
   setRate: (r: number) => void;
+  voices: SpeechSynthesisVoice[];
+  selectedVoiceURI: string | null;
+  setSelectedVoiceURI: (uri: string | null) => void;
+  resolveLang: (lang?: string) => string;
   start: (text: string, lang?: string) => void;
   pause: () => void;
   resume: () => void;
   stop: () => void;
 }
+
+const LOCALE_MAP: Record<string, string> = {
+  en: "en-US",
+  eng: "en-US",
+  english: "en-US",
+  "en-us": "en-US",
+  "en-gb": "en-GB",
+  fr: "fr-FR",
+  fra: "fr-FR",
+  fre: "fr-FR",
+  french: "fr-FR",
+  français: "fr-FR",
+  francais: "fr-FR",
+  "fr-fr": "fr-FR",
+  ar: "ar-SA",
+  ara: "ar-SA",
+  arabic: "ar-SA",
+  arabe: "ar-SA",
+  "العربية": "ar-SA",
+  "ar-sa": "ar-SA",
+};
+
+export function resolveLocale(lang?: string): string {
+  if (!lang) return "en-US";
+  const key = lang.toLowerCase().trim();
+  return LOCALE_MAP[key] ?? lang;
+}
+
+const voicePrefKey = (locale: string) => `tts-voice-${locale}`;
 
 export function useReadAlong(options?: UseReadAlongOptions): ReadAlongControls {
   const isSupported =
