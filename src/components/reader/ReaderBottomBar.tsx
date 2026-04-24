@@ -73,7 +73,7 @@ const ReaderBottomBar = ({
         )}
 
         {editing ? (
-          <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
+          <div className="flex items-center justify-center gap-1 text-base text-foreground">
             <input
               ref={inputRef}
               type="number"
@@ -83,10 +83,10 @@ const ReaderBottomBar = ({
               onChange={(e) => setInputVal(e.target.value)}
               onKeyDown={handleKeyDown}
               onBlur={commitJump}
-              className="w-14 rounded border border-primary/40 bg-transparent px-1 py-0.5 text-center text-xs focus:border-primary focus:outline-none"
+              className="w-16 rounded border border-primary/40 bg-transparent px-1 py-0.5 text-center text-base focus:border-primary focus:outline-none"
               style={{ appearance: "textfield" }}
             />
-            <span>/ {totalPages}</span>
+            <span className="text-muted-foreground">/ {totalPages}</span>
           </div>
         ) : (
           <button
