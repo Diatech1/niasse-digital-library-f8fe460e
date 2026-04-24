@@ -25,6 +25,22 @@ const applyToDocument = (lang: Language) => {
   const root = document.documentElement;
   root.lang = lang;
   root.dir = isRtl(lang) ? "rtl" : "ltr";
+
+  // Sync <title> and meta description with the active UI language
+  const title = translate(lang, "app.title");
+  const description = translate(lang, "app.metaDescription");
+  document.title = title;
+
+  const setMeta = (selector: string, content: string) => {
+    const el = document.head.querySelector<HTMLMetaElement>(selector);
+    if (el) el.setAttribute("content", content);
+  };
+  setMeta('meta[name="description"]', description);
+  setMeta('meta[property="og:title"]', title);
+  setMeta('meta[name="twitter:title"]', title);
+  setMeta('meta[property="og:description"]', description);
+  setMeta('meta[name="twitter:description"]', description);
+  setMeta('meta[property="og:locale"]', lang === "fr" ? "fr_FR" : lang === "ar" ? "ar_AR" : "en_US");
 };
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
