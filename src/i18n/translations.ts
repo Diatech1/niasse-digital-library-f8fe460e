@@ -47,6 +47,8 @@ export type TranslationKey =
   | "settings.clearReading.toast"
   | "settings.about"
   | "settings.contact"
+  | "settings.disclaimer.title"
+  | "settings.disclaimer.body"
   | "settings.madeWith";
 
 type Dict = Record<TranslationKey, string>;
@@ -98,6 +100,8 @@ const en: Dict = {
   "settings.clearReading.toast": "Reading history & bookmarks cleared",
   "settings.about": "About",
   "settings.contact": "Contact",
+  "settings.disclaimer.title": "Disclaimer",
+  "settings.disclaimer.body": "This app was built with the help of AI and may contain mistakes. For corrections or feedback, please contact {email}.",
   "settings.madeWith": "Made with {heart} for the Tijānī community",
 };
 
@@ -148,6 +152,8 @@ const fr: Dict = {
   "settings.clearReading.toast": "Historique de lecture et signets effacés",
   "settings.about": "À propos",
   "settings.contact": "Contact",
+  "settings.disclaimer.title": "Avertissement",
+  "settings.disclaimer.body": "Cette application a été conçue avec l'aide de l'IA et peut contenir des erreurs. Pour toute correction ou remarque, veuillez contacter {email}.",
   "settings.madeWith": "Fait avec {heart} pour la communauté Tijānī",
 };
 
@@ -198,6 +204,8 @@ const ar: Dict = {
   "settings.clearReading.toast": "تم مسح سجل القراءة والإشارات",
   "settings.about": "حول",
   "settings.contact": "تواصل",
+  "settings.disclaimer.title": "تنويه",
+  "settings.disclaimer.body": "تم تطوير هذا التطبيق بمساعدة الذكاء الاصطناعي وقد يحتوي على بعض الأخطاء. للتصحيحات أو الملاحظات، يُرجى التواصل عبر {email}.",
   "settings.madeWith": "صُنع بـ {heart} لمجتمع التجاني",
 };
 
