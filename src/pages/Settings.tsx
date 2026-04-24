@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Globe, BookOpen, Info, Moon, Sun, Monitor, Type, Maximize2, Trash2, Mail, Heart } from "lucide-react";
+import { Globe, BookOpen, Info, Moon, Sun, Monitor, Type, Maximize2, Trash2, Mail, Heart, AlertTriangle } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { useLanguage, type Language } from "@/hooks/use-language";
 import { Slider } from "@/components/ui/slider";
@@ -208,8 +208,28 @@ const Settings = () => {
           <div className="glass rounded-2xl divide-y divide-border/30 mx-5">
             <AboutRow icon={Info} label="Faydabook" value="v1.0.0" />
             <AboutRow icon={BookOpen} label="Shaykh Ibrahim Niass (ra)" />
-            <AboutRow icon={Mail} label={t("settings.contact")} value="hello@faydabook.com" />
+            <AboutRow icon={Mail} label={t("settings.contact")} value="admin@diatech.consulting" />
           </div>
+
+          {/* Disclaimer */}
+          <div className="glass rounded-2xl mx-5 mt-3 p-4 flex gap-3">
+            <AlertTriangle className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-sm font-medium text-foreground mb-1">
+                {t("settings.disclaimer.title")}
+              </p>
+              <p
+                className="text-xs text-muted-foreground leading-relaxed"
+                dangerouslySetInnerHTML={{
+                  __html: t("settings.disclaimer.body", {
+                    email:
+                      '<a href="mailto:admin@diatech.consulting" class="text-primary underline underline-offset-2">admin@diatech.consulting</a>',
+                  }),
+                }}
+              />
+            </div>
+          </div>
+
           <p className="text-[11px] text-muted-foreground/70 text-center mt-5 px-8 leading-relaxed flex items-center justify-center gap-1.5">
             {t("settings.madeWith", { heart: "♥" }).split("♥")[0]}
             <Heart className="w-3 h-3 text-primary fill-primary" />
