@@ -85,16 +85,17 @@ export function useReadAlong(options?: UseReadAlongOptions): ReadAlongControls {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [activeSentenceIndex, setActiveSentenceIndex] = useState(-1);
-  const [rate, setRate] = useState(1);
+  const [rate, setRateState] = useState(1);
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoiceURI, setSelectedVoiceURIState] = useState<string | null>(null);
 
-  // Sentence boundaries: cumulative char offsets into the joined text
   const sentenceBoundaries = useRef<number[]>([]);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const rateRef = useRef(rate);
   const selectedVoiceURIRef = useRef<string | null>(null);
   const lastLangRef = useRef<string>("en-US");
+  const currentTextRef = useRef<string>("");
+  const currentCharIndexRef = useRef(0);
 
   useEffect(() => {
     rateRef.current = rate;
@@ -104,7 +105,6 @@ export function useReadAlong(options?: UseReadAlongOptions): ReadAlongControls {
     selectedVoiceURIRef.current = selectedVoiceURI;
   }, [selectedVoiceURI]);
 
-  // Load voices (sync + async via voiceschanged event)
   useEffect(() => {
     if (!isSupported) return;
     const load = () => {
@@ -118,29 +118,19 @@ export function useReadAlong(options?: UseReadAlongOptions): ReadAlongControls {
     };
   }, [isSupported]);
 
-  const setSelectedVoiceURI = useCallback((uri: string | null) => {
-    setSelectedVoiceURIState(uri);
-    const locale = lastLangRef.current;
-    try {
-      if (uri) localStorage.setItem(voicePrefKey(locale), uri);
-      else localStorage.removeItem(voicePrefKey(locale));
-    } catch {
-      // ignore storage errors
-    }
-  }, []);
-
   const stop = useCallback(() => {
     if (!isSupported) return;
     window.speechSynthesis.cancel();
     utteranceRef.current = null;
     sentenceBoundaries.current = [];
+    currentTextRef.current = "";
+    currentCharIndexRef.current = 0;
     setIsPlaying(false);
     setIsPaused(false);
     setActiveSentenceIndex(-1);
     options?.onEnd?.();
   }, [isSupported, options]);
 
-  // Clean up on unmount
   useEffect(() => {
     return () => {
       if (isSupported) window.speechSynthesis.cancel();
@@ -157,8 +147,9 @@ export function useReadAlong(options?: UseReadAlongOptions): ReadAlongControls {
 
       const resolvedLang = resolveLocale(lang);
       lastLangRef.current = resolvedLang;
+      currentTextRef.current = text;
+      currentCharIndexRef.current = 0;
 
-      // Restore stored preference for this locale if nothing currently selected
       let voiceURI = selectedVoiceURIRef.current;
       if (!voiceURI) {
         try {
@@ -172,12 +163,11 @@ export function useReadAlong(options?: UseReadAlongOptions): ReadAlongControls {
         }
       }
 
-      // Build cumulative char offset boundaries so we can map charIndex → sentence
       const boundaries: number[] = [];
       let cumulative = 0;
       for (const s of sentences) {
         boundaries.push(cumulative);
-        cumulative += s.length + 1; // +1 for the space we'll join with
+        cumulative += s.length + 1;
       }
       sentenceBoundaries.current = boundaries;
 
@@ -186,7 +176,6 @@ export function useReadAlong(options?: UseReadAlongOptions): ReadAlongControls {
       utterance.rate = rateRef.current;
       utterance.lang = resolvedLang;
 
-      // Apply selected voice if it matches/exists
       const available = window.speechSynthesis.getVoices();
       const chosen = voiceURI
         ? available.find((v) => v.voiceURI === voiceURI)
@@ -196,6 +185,7 @@ export function useReadAlong(options?: UseReadAlongOptions): ReadAlongControls {
       utterance.onboundary = (e) => {
         if (e.name !== "word" && e.name !== "sentence") return;
         const charIdx = e.charIndex;
+        currentCharIndexRef.current = charIdx;
         let sentIdx = 0;
         for (let i = boundaries.length - 1; i >= 0; i--) {
           if (charIdx >= boundaries[i]) {
@@ -211,6 +201,8 @@ export function useReadAlong(options?: UseReadAlongOptions): ReadAlongControls {
         setIsPaused(false);
         setActiveSentenceIndex(-1);
         utteranceRef.current = null;
+        currentCharIndexRef.current = 0;
+        currentTextRef.current = "";
         options?.onEnd?.();
       };
 
@@ -228,6 +220,106 @@ export function useReadAlong(options?: UseReadAlongOptions): ReadAlongControls {
       window.speechSynthesis.speak(utterance);
     },
     [isSupported, options]
+  );
+
+  const restartFromCurrentPosition = useCallback(() => {
+    if (!isSupported || !currentTextRef.current) return;
+
+    const fullText = stripForSpeech(currentTextRef.current);
+    if (!fullText) return;
+
+    const nextText = fullText.slice(currentCharIndexRef.current).trim();
+    const textToSpeak = nextText || fullText;
+    const lang = lastLangRef.current;
+
+    window.speechSynthesis.cancel();
+    const sentences = splitIntoSentences(textToSpeak);
+    if (sentences.length === 0) return;
+
+    const boundaries: number[] = [];
+    let cumulative = 0;
+    for (const s of sentences) {
+      boundaries.push(cumulative);
+      cumulative += s.length + 1;
+    }
+    sentenceBoundaries.current = boundaries;
+    currentCharIndexRef.current = 0;
+
+    const utterance = new SpeechSynthesisUtterance(sentences.join(" "));
+    utterance.rate = rateRef.current;
+    utterance.lang = lang;
+
+    const available = window.speechSynthesis.getVoices();
+    const chosen = selectedVoiceURIRef.current
+      ? available.find((v) => v.voiceURI === selectedVoiceURIRef.current)
+      : undefined;
+    if (chosen) utterance.voice = chosen;
+
+    utterance.onboundary = (e) => {
+      if (e.name !== "word" && e.name !== "sentence") return;
+      const charIdx = e.charIndex;
+      currentCharIndexRef.current = charIdx;
+      let sentIdx = 0;
+      for (let i = boundaries.length - 1; i >= 0; i--) {
+        if (charIdx >= boundaries[i]) {
+          sentIdx = i;
+          break;
+        }
+      }
+      setActiveSentenceIndex(sentIdx);
+    };
+
+    utterance.onend = () => {
+      setIsPlaying(false);
+      setIsPaused(false);
+      setActiveSentenceIndex(-1);
+      utteranceRef.current = null;
+      currentCharIndexRef.current = 0;
+      currentTextRef.current = "";
+      options?.onEnd?.();
+    };
+
+    utterance.onerror = () => {
+      setIsPlaying(false);
+      setIsPaused(false);
+      setActiveSentenceIndex(-1);
+      utteranceRef.current = null;
+    };
+
+    utteranceRef.current = utterance;
+    setActiveSentenceIndex(0);
+    setIsPaused(false);
+    setIsPlaying(true);
+    window.speechSynthesis.speak(utterance);
+  }, [isSupported, options]);
+
+  const setRate = useCallback(
+    (nextRate: number) => {
+      setRateState(nextRate);
+      rateRef.current = nextRate;
+      if (isPlaying || isPaused) {
+        restartFromCurrentPosition();
+      }
+    },
+    [isPaused, isPlaying, restartFromCurrentPosition]
+  );
+
+  const setSelectedVoiceURI = useCallback(
+    (uri: string | null) => {
+      setSelectedVoiceURIState(uri);
+      selectedVoiceURIRef.current = uri;
+      const locale = lastLangRef.current;
+      try {
+        if (uri) localStorage.setItem(voicePrefKey(locale), uri);
+        else localStorage.removeItem(voicePrefKey(locale));
+      } catch {
+        // ignore storage errors
+      }
+      if (isPlaying || isPaused) {
+        restartFromCurrentPosition();
+      }
+    },
+    [isPaused, isPlaying, restartFromCurrentPosition]
   );
 
   const pause = useCallback(() => {
