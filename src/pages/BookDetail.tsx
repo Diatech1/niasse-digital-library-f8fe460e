@@ -4,12 +4,13 @@ import { ArrowLeft, MoreHorizontal, Globe, FileText, BookOpen, Headphones } from
 import { useBook } from "@/hooks/use-books";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { directionForBookLanguage } from "@/hooks/use-language";
+import { directionForBookLanguage, useLanguage } from "@/hooks/use-language";
 
 const BookDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { book, isLoading } = useBook(id);
+  const { t } = useLanguage();
 
   if (isLoading) {
     return (
@@ -24,7 +25,7 @@ const BookDetail = () => {
   if (!book) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <p className="text-muted-foreground">Book not found</p>
+        <p className="text-muted-foreground">{t("common.bookNotFound")}</p>
       </div>
     );
   }
@@ -73,13 +74,13 @@ const BookDetail = () => {
         {book.titleAr && <p className="font-arabic text-lg text-gold mb-2" dir="rtl">{book.titleAr}</p>}
         <p className="text-sm text-primary mb-1">{book.author}</p>
         {book.translator && (
-          <p className="text-xs text-muted-foreground mb-4">Traduction : {book.translator}</p>
+          <p className="text-xs text-muted-foreground mb-4">{t("book.translation")} : {book.translator}</p>
         )}
         {!book.translator && <div className="mb-3" />}
 
         <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground mb-4">
           <span className="flex items-center gap-1"><Globe className="w-3.5 h-3.5" />{book.language}</span>
-          <span className="flex items-center gap-1"><FileText className="w-3.5 h-3.5" />{book.pages} Pages</span>
+          <span className="flex items-center gap-1"><FileText className="w-3.5 h-3.5" />{book.pages} {t("book.pages")}</span>
         </div>
 
         <p
@@ -102,14 +103,14 @@ const BookDetail = () => {
             onClick={() => navigate(`/read/${book.id}`)}
             className="flex items-center justify-center gap-2 bg-primary text-primary-foreground rounded-xl py-3.5 font-semibold text-sm transition-all hover:opacity-90"
           >
-            <BookOpen className="w-4 h-4" />Read Book
+            <BookOpen className="w-4 h-4" />{t("book.read")}
           </button>
           {book.hasAudio && (
             <button
               onClick={() => navigate(`/listen/${book.id}`)}
               className="flex items-center justify-center gap-2 border border-primary text-primary rounded-xl py-3.5 font-semibold text-sm transition-all hover:bg-primary/10"
             >
-              <Headphones className="w-4 h-4" />Listen to Audio
+              <Headphones className="w-4 h-4" />{t("book.listen")}
             </button>
           )}
         </div>
