@@ -47,6 +47,8 @@ export type TranslationKey =
   | "settings.clearReading.toast"
   | "settings.about"
   | "settings.contact"
+  | "settings.disclaimer.title"
+  | "settings.disclaimer.body"
   | "settings.madeWith";
 
 type Dict = Record<TranslationKey, string>;
