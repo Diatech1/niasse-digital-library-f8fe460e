@@ -1,11 +1,23 @@
-import { Play, Pause, X, ChevronUp, Loader2 } from "lucide-react";
+import { Play, Pause, X, ChevronUp, Moon } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAudioPlayer } from "@/hooks/use-audio-player";
 import { useLanguage } from "@/hooks/use-language";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
+const SLEEP_OPTIONS = [0, 5, 10, 15, 30];
+
+const formatCountdown = (totalSeconds: number) => {
+  const m = Math.floor(totalSeconds / 60);
+  const s = Math.floor(totalSeconds % 60);
+  return `${m}:${s.toString().padStart(2, "0")}`;
+};
+
 const MiniPlayer = () => {
-  const { book, sections, chapterIdx, tts, togglePlayPause, closePlayer } = useAudioPlayer();
+  const {
+    book, sections, chapterIdx, tts, togglePlayPause, closePlayer,
+    sleepMinutes, setSleepMinutes, sleepCountdown,
+  } = useAudioPlayer();
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useLanguage();
@@ -42,6 +54,49 @@ const MiniPlayer = () => {
             </div>
             <ChevronUp className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" />
           </button>
+
+          <Popover>
+            <PopoverTrigger asChild>
+              <button
+                className={cn(
+                  "relative w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-colors",
+                  sleepMinutes > 0
+                    ? "text-primary bg-primary/10"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+                aria-label={t("audioPlayer.sleepTimer")}
+              >
+                <Moon className="w-4 h-4" />
+                {sleepCountdown > 0 && (
+                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-[9px] font-medium text-primary leading-none whitespace-nowrap">
+                    {formatCountdown(sleepCountdown)}
+                  </span>
+                )}
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-1.5" align="center" side="top" sideOffset={8}>
+              <p className="text-[11px] font-medium px-2 py-1 text-muted-foreground uppercase tracking-wide">
+                {t("audioPlayer.sleepTimer")}
+              </p>
+              <div className="flex items-center gap-1">
+                {SLEEP_OPTIONS.map((m) => (
+                  <button
+                    key={m}
+                    onClick={() => setSleepMinutes(m)}
+                    className={cn(
+                      "text-xs font-medium px-2.5 py-1.5 rounded-md transition-colors",
+                      sleepMinutes === m
+                        ? "bg-primary text-primary-foreground"
+                        : "hover:bg-accent text-foreground"
+                    )}
+                  >
+                    {m === 0 ? t("audioPlayer.sleepOff") : `${m}m`}
+                  </button>
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
+
           <button
             onClick={togglePlayPause}
             disabled={!tts.isSupported}
