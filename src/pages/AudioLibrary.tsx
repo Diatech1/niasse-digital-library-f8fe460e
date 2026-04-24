@@ -6,7 +6,7 @@ import { useLanguage } from "@/hooks/use-language";
 const AudioLibrary = () => {
   const { books, isLoading } = useBooks();
   const { t } = useLanguage();
-  const audioBooks = books.filter((b) => b.hasAudio);
+  const audioBooks = books;
 
   return (
     <div className="min-h-screen bg-background pb-24">

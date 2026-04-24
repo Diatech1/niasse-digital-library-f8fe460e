@@ -39,7 +39,7 @@ export interface ReadAlongControls {
   activeSentenceIndex: number;
   rate: number;
   setRate: (r: number) => void;
-  start: (text: string) => void;
+  start: (text: string, lang?: string) => void;
   pause: () => void;
   resume: () => void;
   stop: () => void;
@@ -84,12 +84,22 @@ export function useReadAlong(options?: UseReadAlongOptions): ReadAlongControls {
   }, [isSupported]);
 
   const start = useCallback(
-    (text: string) => {
+    (text: string, lang?: string) => {
       if (!isSupported) return;
       window.speechSynthesis.cancel();
 
       const sentences = splitIntoSentences(text);
       if (sentences.length === 0) return;
+
+      // Map short codes (en/fr/ar) to BCP-47 voice locales
+      const localeMap: Record<string, string> = {
+        en: "en-US",
+        fr: "fr-FR",
+        ar: "ar-SA",
+      };
+      const resolvedLang = lang
+        ? (localeMap[lang.toLowerCase()] ?? lang)
+        : "en-US";
 
       // Build cumulative char offset boundaries so we can map charIndex → sentence
       const boundaries: number[] = [];
@@ -103,7 +113,7 @@ export function useReadAlong(options?: UseReadAlongOptions): ReadAlongControls {
       const joined = sentences.join(" ");
       const utterance = new SpeechSynthesisUtterance(joined);
       utterance.rate = rateRef.current;
-      utterance.lang = "en-US";
+      utterance.lang = resolvedLang;
 
       utterance.onboundary = (e) => {
         if (e.name !== "word" && e.name !== "sentence") return;
