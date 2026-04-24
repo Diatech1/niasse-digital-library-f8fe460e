@@ -73,7 +73,7 @@ const ReaderBottomBar = ({
         )}
 
         {editing ? (
-          <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
+          <div className="flex items-center justify-center gap-1 text-base text-foreground">
             <input
               ref={inputRef}
               type="number"
@@ -83,19 +83,19 @@ const ReaderBottomBar = ({
               onChange={(e) => setInputVal(e.target.value)}
               onKeyDown={handleKeyDown}
               onBlur={commitJump}
-              className="w-14 rounded border border-primary/40 bg-transparent px-1 py-0.5 text-center text-xs focus:border-primary focus:outline-none"
+              className="w-16 rounded border border-primary/40 bg-transparent px-1 py-0.5 text-center text-base focus:border-primary focus:outline-none"
               style={{ appearance: "textfield" }}
             />
-            <span>/ {totalPages}</span>
+            <span className="text-muted-foreground">/ {totalPages}</span>
           </div>
         ) : (
           <button
             onClick={startEditing}
-            className={`justify-self-center rounded-full text-sm font-medium text-muted-foreground transition-all hover:bg-accent hover:text-accent-foreground ${expanded ? 'px-3 py-1.5' : 'pointer-events-auto border border-border/60 bg-background/90 px-4 py-2 shadow-sm backdrop-blur-sm'}`}
+            className={`justify-self-center rounded-full font-medium text-foreground transition-all hover:bg-accent hover:text-accent-foreground ${expanded ? 'px-4 py-2 text-base' : 'pointer-events-auto border border-border/60 bg-background/90 px-5 py-2.5 text-base shadow-sm backdrop-blur-sm'}`}
             title="Jump to page"
             aria-label="Jump to page"
           >
-            {currentPage} <span className="text-muted-foreground/70">/ {totalPages}</span>
+            {currentPage} <span className="text-muted-foreground">/ {totalPages}</span>
           </button>
         )}
 
