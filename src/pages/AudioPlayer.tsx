@@ -169,8 +169,8 @@ const AudioPlayer = () => {
         <div className="absolute inset-0 bg-background/80" />
       </div>
 
-      <div className="relative z-10 min-h-screen flex flex-col">
-        <div className="flex items-center justify-between px-5 pt-12 pb-4">
+      <div className="relative z-10 min-h-screen flex flex-col pb-24">
+        <div className="flex items-center justify-between px-5 pt-8 pb-2">
           <button onClick={() => navigate(-1)} className="p-2" aria-label="Close">
             <ChevronDown className="w-6 h-6 text-foreground" />
           </button>
@@ -182,34 +182,34 @@ const AudioPlayer = () => {
           </button>
         </div>
 
-        <div className="flex-1 flex items-center justify-center px-10 py-6">
+        <div className="flex-1 flex items-center justify-center px-10 py-2 min-h-0">
           <motion.div
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6 }}
-            className="w-full max-w-[280px] aspect-square rounded-2xl overflow-hidden shadow-glow"
+            className="w-full max-w-[200px] aspect-square rounded-2xl overflow-hidden shadow-glow"
           >
             <img src={book.cover} alt={book.title} className="w-full h-full object-cover" />
           </motion.div>
         </div>
 
-        <div className="px-8 text-center mb-2">
-          <h2 className="text-lg font-serif font-bold text-foreground">{book.title}</h2>
-          <p className="text-sm text-muted-foreground mt-1">{book.author}</p>
+        <div className="px-8 text-center mb-1">
+          <h2 className="text-base font-serif font-bold text-foreground line-clamp-1">{book.title}</h2>
+          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{book.author}</p>
           {totalChapters > 0 && (
-            <p className="text-xs text-muted-foreground mt-2 line-clamp-1">
+            <p className="text-[11px] text-muted-foreground mt-1 line-clamp-1">
               {chapterIdx + 1} / {totalChapters} · {chapterLabel}
             </p>
           )}
         </div>
 
         {!tts.isSupported && (
-          <p className="px-8 text-center text-xs text-destructive mb-2">
+          <p className="px-8 text-center text-xs text-destructive mb-1">
             {t("audioPlayer.notSupported")}
           </p>
         )}
 
-        <div className="px-8 mt-2 mb-4">
+        <div className="px-8 mt-1 mb-2">
           <Slider
             value={[chapterIdx]}
             min={0}
@@ -219,13 +219,13 @@ const AudioPlayer = () => {
             disabled={isLoading || totalChapters <= 1}
             aria-label="Chapter progress"
           />
-          <div className="flex justify-between text-xs text-muted-foreground mt-1">
+          <div className="flex justify-between text-[11px] text-muted-foreground mt-0.5">
             <span>{formatTime(elapsed)}</span>
             <span>~ {formatTime(estimatedSeconds)}</span>
           </div>
         </div>
 
-        <div className="flex items-center justify-center gap-8 mb-6">
+        <div className="flex items-center justify-center gap-8 mb-3">
           <button
             onClick={() => goToChapter(chapterIdx - 1)}
             disabled={chapterIdx <= 0}
@@ -237,15 +237,15 @@ const AudioPlayer = () => {
           <button
             onClick={handlePlayPause}
             disabled={!tts.isSupported || isLoading || totalChapters === 0}
-            className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center transition-transform active:scale-95 disabled:opacity-50"
+            className="w-14 h-14 rounded-full bg-secondary flex items-center justify-center transition-transform active:scale-95 disabled:opacity-50"
             aria-label={tts.isPlaying ? "Pause" : "Play"}
           >
             {isLoading ? (
-              <Loader2 className="w-7 h-7 text-secondary-foreground animate-spin" />
+              <Loader2 className="w-6 h-6 text-secondary-foreground animate-spin" />
             ) : tts.isPlaying ? (
-              <Pause className="w-7 h-7 text-secondary-foreground" />
+              <Pause className="w-6 h-6 text-secondary-foreground" />
             ) : (
-              <Play className="w-7 h-7 text-secondary-foreground ml-1" />
+              <Play className="w-6 h-6 text-secondary-foreground ml-0.5" />
             )}
           </button>
           <button
@@ -258,7 +258,7 @@ const AudioPlayer = () => {
           </button>
         </div>
 
-        <div className="flex items-center justify-around px-8 pb-28 text-muted-foreground">
+        <div className="flex items-center justify-around px-6 pb-2 text-muted-foreground">
           <button
             onClick={() => setRepeat((r) => !r)}
             className={cn("p-2 transition-colors", repeat && "text-primary")}
