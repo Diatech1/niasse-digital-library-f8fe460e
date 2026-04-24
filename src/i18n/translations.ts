@@ -24,6 +24,17 @@ export type TranslationKey =
   | "library.lang.french"
   | "audio.title"
   | "audio.subtitle"
+  | "audioPlayer.nowPlaying"
+  | "audioPlayer.notSupported"
+  | "audioPlayer.estimated"
+  | "audioPlayer.speed"
+  | "audioPlayer.speedNote"
+  | "audioPlayer.queue"
+  | "audioPlayer.sleepTimer"
+  | "audioPlayer.sleepOff"
+  | "audioPlayer.minutes"
+  | "audioPlayer.repeat"
+  | "audioPlayer.chapter"
   | "book.translation"
   | "book.pages"
   | "book.read"
@@ -75,8 +86,19 @@ const en: Dict = {
   "library.lang.english": "English",
   "library.lang.arabic": "Arabic",
   "library.lang.french": "French",
-  "audio.title": "Audiobooks",
-  "audio.subtitle": "Listen to sacred teachings",
+  "audio.title": "Listen",
+  "audio.subtitle": "Listen to any book with text-to-speech",
+  "audioPlayer.nowPlaying": "Now Playing",
+  "audioPlayer.notSupported": "Text-to-speech is not supported on this browser.",
+  "audioPlayer.estimated": "Estimated",
+  "audioPlayer.speed": "Speed",
+  "audioPlayer.speedNote": "Speed applies from the next play.",
+  "audioPlayer.queue": "Chapters",
+  "audioPlayer.sleepTimer": "Sleep timer",
+  "audioPlayer.sleepOff": "Off",
+  "audioPlayer.minutes": "min",
+  "audioPlayer.repeat": "Repeat chapter",
+  "audioPlayer.chapter": "Chapter",
   "book.translation": "Translation",
   "book.pages": "Pages",
   "book.read": "Read Book",
@@ -127,8 +149,19 @@ const fr: Dict = {
   "library.lang.english": "Anglais",
   "library.lang.arabic": "Arabe",
   "library.lang.french": "Français",
-  "audio.title": "Livres audio",
-  "audio.subtitle": "Écouter les enseignements sacrés",
+  "audio.title": "Écouter",
+  "audio.subtitle": "Écoutez n'importe quel livre par synthèse vocale",
+  "audioPlayer.nowPlaying": "Lecture en cours",
+  "audioPlayer.notSupported": "La synthèse vocale n'est pas prise en charge par ce navigateur.",
+  "audioPlayer.estimated": "Estimé",
+  "audioPlayer.speed": "Vitesse",
+  "audioPlayer.speedNote": "La vitesse s'applique à la prochaine lecture.",
+  "audioPlayer.queue": "Chapitres",
+  "audioPlayer.sleepTimer": "Minuteur de sommeil",
+  "audioPlayer.sleepOff": "Désactivé",
+  "audioPlayer.minutes": "min",
+  "audioPlayer.repeat": "Répéter le chapitre",
+  "audioPlayer.chapter": "Chapitre",
   "book.translation": "Traduction",
   "book.pages": "Pages",
   "book.read": "Lire le livre",
@@ -179,8 +212,19 @@ const ar: Dict = {
   "library.lang.english": "الإنجليزية",
   "library.lang.arabic": "العربية",
   "library.lang.french": "الفرنسية",
-  "audio.title": "الكتب الصوتية",
-  "audio.subtitle": "استمع إلى التعاليم المقدسة",
+  "audio.title": "الاستماع",
+  "audio.subtitle": "استمع إلى أي كتاب عبر تحويل النص إلى كلام",
+  "audioPlayer.nowPlaying": "يُشغَّل الآن",
+  "audioPlayer.notSupported": "ميزة تحويل النص إلى كلام غير مدعومة في هذا المتصفح.",
+  "audioPlayer.estimated": "تقديري",
+  "audioPlayer.speed": "السرعة",
+  "audioPlayer.speedNote": "تُطبَّق السرعة عند التشغيل التالي.",
+  "audioPlayer.queue": "الفصول",
+  "audioPlayer.sleepTimer": "مؤقت النوم",
+  "audioPlayer.sleepOff": "معطّل",
+  "audioPlayer.minutes": "دقيقة",
+  "audioPlayer.repeat": "تكرار الفصل",
+  "audioPlayer.chapter": "الفصل",
   "book.translation": "ترجمة",
   "book.pages": "صفحات",
   "book.read": "قراءة الكتاب",
