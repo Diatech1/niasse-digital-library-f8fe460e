@@ -1,6 +1,8 @@
 import type { Language } from "@/hooks/use-language";
 
 export type TranslationKey =
+  | "app.title"
+  | "app.metaDescription"
   | "app.tagline"
   | "nav.home"
   | "nav.library"
@@ -50,6 +52,8 @@ export type TranslationKey =
 type Dict = Record<TranslationKey, string>;
 
 const en: Dict = {
+  "app.title": "Faydabook — The Digital Library of the Fayda",
+  "app.metaDescription": "Faydabook is the digital library of the Tijānī Fayda — read and listen to the works of Shaykh Ibrāhīm Niass and the Tijaniyya tradition.",
   "app.tagline": "The Digital Library of the Fayda",
   "nav.home": "Home",
   "nav.library": "Library",
@@ -98,6 +102,8 @@ const en: Dict = {
 };
 
 const fr: Dict = {
+  "app.title": "Faydabook — La bibliothèque numérique de la Fayda",
+  "app.metaDescription": "Faydabook est la bibliothèque numérique de la Fayda Tijāniyya — lisez et écoutez les œuvres de Cheikh Ibrāhīm Niass et la tradition Tijaniyya.",
   "app.tagline": "La bibliothèque numérique de la Fayda",
   "nav.home": "Accueil",
   "nav.library": "Bibliothèque",
@@ -146,6 +152,8 @@ const fr: Dict = {
 };
 
 const ar: Dict = {
+  "app.title": "فيضابوك — المكتبة الرقمية للفيضة",
+  "app.metaDescription": "فيضابوك هي المكتبة الرقمية للفيضة التجانية — اقرأ واستمع إلى مؤلفات الشيخ إبراهيم نياس وتراث الطريقة التجانية.",
   "app.tagline": "المكتبة الرقمية للفيضة",
   "nav.home": "الرئيسية",
   "nav.library": "المكتبة",
