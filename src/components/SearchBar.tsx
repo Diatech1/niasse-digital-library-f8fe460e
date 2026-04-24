@@ -1,5 +1,6 @@
 import { Search } from "lucide-react";
 import { useState } from "react";
+import { useLanguage } from "@/hooks/use-language";
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
@@ -7,6 +8,7 @@ interface SearchBarProps {
 
 const SearchBar = ({ onSearch }: SearchBarProps) => {
   const [query, setQuery] = useState("");
+  const { t } = useLanguage();
 
   return (
     <div className="relative">
@@ -14,7 +16,7 @@ const SearchBar = ({ onSearch }: SearchBarProps) => {
         <Search className="w-4 h-4 text-muted-foreground flex-shrink-0" />
         <input
           type="text"
-          placeholder="Search books..."
+          placeholder={t("common.searchBooks")}
           value={query}
           onChange={(e) => {
             setQuery(e.target.value);

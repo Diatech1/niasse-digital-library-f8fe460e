@@ -6,11 +6,13 @@ import BookCard from "@/components/BookCard";
 import SearchBar from "@/components/SearchBar";
 import { getSavedProgress } from "@/hooks/use-reading-progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useLanguage } from "@/hooks/use-language";
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const { books, isLoading } = useBooks();
+  const { t } = useLanguage();
 
   const continueReading = useMemo(() =>
     books
@@ -55,7 +57,7 @@ const Index = () => {
             Fayda<span className="text-primary">book</span>
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            The Digital Library of Medina Baye
+            {t("app.tagline")}
           </p>
         </motion.div>
       </div>
@@ -73,7 +75,7 @@ const Index = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}>
           <h2 className="text-gold font-serif text-lg font-semibold px-5 mb-3 flex items-center gap-2">
-            Continue Reading
+            {t("home.continueReading")}
           </h2>
           <div className="flex gap-4 px-5 overflow-x-auto scrollbar-hide">
             {continueReading.map(({ book, idx }) => {
@@ -104,7 +106,7 @@ const Index = () => {
       {/* Favorites */}
       {favorites.length > 0 && !searchQuery &&
         <section className="mb-8">
-          <h2 className="text-gold font-serif text-lg font-semibold px-5 mb-3">Favorites</h2>
+          <h2 className="text-gold font-serif text-lg font-semibold px-5 mb-3">{t("home.favorites")}</h2>
           <div className="flex gap-4 px-5 overflow-x-auto scrollbar-hide">
             {favorites.map((book, i) =>
               <div key={book.id} className="min-w-[28%] max-w-[28%]">
@@ -119,11 +121,11 @@ const Index = () => {
       <section className="px-5">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-gold font-serif text-lg font-semibold">
-            {searchQuery ? "Search Results" : "Library"}
+            {searchQuery ? t("home.searchResults") : t("home.library")}
           </h2>
           {!searchQuery && (
             <button onClick={() => navigate("/library")} className="text-sm text-primary font-medium hover:underline">
-              See All
+              {t("common.seeAll")}
             </button>
           )}
         </div>
@@ -133,7 +135,7 @@ const Index = () => {
           )}
         </div>
         {filteredBooks.length === 0 &&
-          <p className="text-center text-muted-foreground py-12">No books found</p>
+          <p className="text-center text-muted-foreground py-12">{t("common.noBooksFound")}</p>
         }
       </section>
     </div>

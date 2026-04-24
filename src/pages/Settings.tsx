@@ -16,7 +16,7 @@ const languages: { value: Language; label: string }[] = [
 
 const Settings = () => {
   const { theme, setTheme } = useTheme();
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
 
   const [fontSize, setFontSize] = useState<number>(() => {
     const saved = localStorage.getItem("faydabook-reader-fontsize");
@@ -47,7 +47,7 @@ const Settings = () => {
       (k) => k.startsWith("reading-progress-") || k.startsWith("faydabook-bookmarks-")
     );
     keys.forEach((k) => localStorage.removeItem(k));
-    toast.success("Reading history & bookmarks cleared");
+    toast.success(t("settings.clearReading.toast"));
   };
 
   return (
@@ -59,8 +59,8 @@ const Settings = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <h1 className="text-2xl font-serif font-bold text-foreground">Settings</h1>
-          <p className="text-sm text-muted-foreground mt-1">Customize your reading experience</p>
+          <h1 className="text-2xl font-serif font-bold text-foreground">{t("settings.title")}</h1>
+          <p className="text-sm text-muted-foreground mt-1">{t("settings.subtitle")}</p>
         </motion.div>
       </div>
 
@@ -70,13 +70,13 @@ const Settings = () => {
         transition={{ duration: 0.4, delay: 0.1 }}
       >
         {/* Appearance */}
-        <Section title="Appearance">
+        <Section title={t("settings.appearance")}>
           <div className="glass rounded-2xl p-2 mx-5">
             <div className="grid grid-cols-3 gap-1">
               {[
-                { label: "Light", icon: Sun, value: "light" as const },
-                { label: "Dark", icon: Moon, value: "dark" as const },
-                { label: "System", icon: Monitor, value: "system" as const },
+                { label: t("settings.theme.light"), icon: Sun, value: "light" as const },
+                { label: t("settings.theme.dark"), icon: Moon, value: "dark" as const },
+                { label: t("settings.theme.system"), icon: Monitor, value: "system" as const },
               ].map(({ label, icon: Icon, value }) => (
                 <button
                   key={value}
@@ -96,14 +96,14 @@ const Settings = () => {
         </Section>
 
         {/* Reading Preferences */}
-        <Section title="Reading">
+        <Section title={t("settings.reading")}>
           <div className="glass rounded-2xl divide-y divide-border/30 mx-5">
             {/* Font size */}
             <div className="px-4 py-4">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2.5">
                   <Type className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-medium text-foreground">Font size</span>
+                  <span className="text-sm font-medium text-foreground">{t("settings.fontSize")}</span>
                 </div>
                 <span className="text-xs text-muted-foreground tabular-nums">{fontSize}px</span>
               </div>
@@ -120,7 +120,7 @@ const Settings = () => {
             <div className="px-4 py-4">
               <div className="flex items-center gap-2.5 mb-3">
                 <BookOpen className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium text-foreground">Font family</span>
+                <span className="text-sm font-medium text-foreground">{t("settings.fontFamily")}</span>
               </div>
               <div className="grid grid-cols-3 gap-1.5">
                 {fonts.map((f, i) => (
@@ -152,8 +152,8 @@ const Settings = () => {
               <div className="flex items-center gap-2.5">
                 <Maximize2 className="w-4 h-4 text-primary" />
                 <div>
-                  <p className="text-sm font-medium text-foreground">Fit to page</p>
-                  <p className="text-xs text-muted-foreground">Auto-resize text per page</p>
+                  <p className="text-sm font-medium text-foreground">{t("settings.fitToPage")}</p>
+                  <p className="text-xs text-muted-foreground">{t("settings.fitToPage.desc")}</p>
                 </div>
               </div>
               <Switch checked={fitToPage} onCheckedChange={setFitToPage} />
@@ -162,11 +162,11 @@ const Settings = () => {
         </Section>
 
         {/* Language */}
-        <Section title="Language">
+        <Section title={t("settings.language")}>
           <div className="glass rounded-2xl p-4 mx-5">
             <div className="flex items-center gap-2.5 mb-3">
               <Globe className="w-4 h-4 text-primary" />
-              <span className="text-sm font-medium text-foreground">Interface language</span>
+              <span className="text-sm font-medium text-foreground">{t("settings.interfaceLanguage")}</span>
             </div>
             <div className="grid grid-cols-3 gap-1.5">
               {languages.map(({ value, label }) => (
@@ -188,7 +188,7 @@ const Settings = () => {
         </Section>
 
         {/* Data */}
-        <Section title="Data">
+        <Section title={t("settings.data")}>
           <div className="glass rounded-2xl overflow-hidden mx-5">
             <button
               onClick={handleClearReadingData}
@@ -196,22 +196,24 @@ const Settings = () => {
             >
               <Trash2 className="w-4 h-4 shrink-0" />
               <div className="flex-1">
-                <p className="text-sm font-medium">Clear reading data</p>
-                <p className="text-xs text-destructive/70">Remove progress & bookmarks</p>
+                <p className="text-sm font-medium">{t("settings.clearReading")}</p>
+                <p className="text-xs text-destructive/70">{t("settings.clearReading.desc")}</p>
               </div>
             </button>
           </div>
         </Section>
 
         {/* About */}
-        <Section title="About">
+        <Section title={t("settings.about")}>
           <div className="glass rounded-2xl divide-y divide-border/30 mx-5">
             <AboutRow icon={Info} label="Faydabook" value="v1.0.0" />
             <AboutRow icon={BookOpen} label="Shaykh Ibrahim Niass (ra)" />
-            <AboutRow icon={Mail} label="Contact" value="hello@faydabook.com" />
+            <AboutRow icon={Mail} label={t("settings.contact")} value="hello@faydabook.com" />
           </div>
           <p className="text-[11px] text-muted-foreground/70 text-center mt-5 px-8 leading-relaxed flex items-center justify-center gap-1.5">
-            Made with <Heart className="w-3 h-3 text-primary fill-primary" /> for the Tijānī community
+            {t("settings.madeWith", { heart: "♥" }).split("♥")[0]}
+            <Heart className="w-3 h-3 text-primary fill-primary" />
+            {t("settings.madeWith", { heart: "♥" }).split("♥")[1]}
           </p>
         </Section>
       </motion.div>

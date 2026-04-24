@@ -1,16 +1,18 @@
 import { useBooks } from "@/hooks/use-books";
 import BookCard from "@/components/BookCard";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useLanguage } from "@/hooks/use-language";
 
 const AudioLibrary = () => {
   const { books, isLoading } = useBooks();
+  const { t } = useLanguage();
   const audioBooks = books.filter((b) => b.hasAudio);
 
   return (
     <div className="min-h-screen bg-background pb-24">
       <div className="px-5 pt-12 pb-6">
-        <h1 className="text-2xl font-serif font-bold text-foreground">Audiobooks</h1>
-        <p className="text-sm text-muted-foreground mt-1">Listen to sacred teachings</p>
+        <h1 className="text-2xl font-serif font-bold text-foreground">{t("audio.title")}</h1>
+        <p className="text-sm text-muted-foreground mt-1">{t("audio.subtitle")}</p>
       </div>
 
       {isLoading ? (
