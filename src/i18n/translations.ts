@@ -40,6 +40,7 @@ export type TranslationKey =
   | "audioPlayer.voiceNone"
   | "audioPlayer.voiceLocal"
   | "audioPlayer.voiceOnline"
+  | "audioPlayer.preparing"
   | "book.translation"
   | "book.pages"
   | "book.read"
@@ -105,10 +106,11 @@ const en: Dict = {
   "audioPlayer.repeat": "Repeat chapter",
   "audioPlayer.chapter": "Chapter",
   "audioPlayer.voice": "Voice",
-  "audioPlayer.voiceDefault": "System default",
-  "audioPlayer.voiceNone": "No voices for this language",
+  "audioPlayer.voiceDefault": "Default voice",
+  "audioPlayer.voiceNone": "No voices available",
   "audioPlayer.voiceLocal": "Local",
   "audioPlayer.voiceOnline": "Online",
+  "audioPlayer.preparing": "Preparing audio…",
   "book.translation": "Translation",
   "book.pages": "Pages",
   "book.read": "Read Book",
