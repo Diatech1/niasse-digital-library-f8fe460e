@@ -522,7 +522,7 @@ const Reader = () => {
         </div>
       ))}
     </div>
-  ), [allSections, fontSize, pagedTextColor, book?.contentModule]);
+  ), [allSections, fontSize, pagedTextColor, book?.contentModule, book?.language]);
 
   const renderCurrentSection = () => {
     if (!currentSection) return null;
