@@ -338,23 +338,16 @@ const SpeedButton = ({ rate, setRate, label, note }: SpeedProps) => (
 );
 
 interface VoiceProps {
-  voices: SpeechSynthesisVoice[];
-  bookLang: string;
+  voices: GeminiVoice[];
   selectedVoiceURI: string | null;
   setSelectedVoiceURI: (uri: string | null) => void;
   label: string;
   defaultLabel: string;
-  noneLabel: string;
-  localLabel: string;
-  onlineLabel: string;
 }
 const VoiceButton = ({
-  voices, bookLang, selectedVoiceURI, setSelectedVoiceURI,
-  label, defaultLabel, noneLabel, localLabel, onlineLabel,
+  voices, selectedVoiceURI, setSelectedVoiceURI,
+  label, defaultLabel,
 }: VoiceProps) => {
-  const prefix = (bookLang || "").split("-")[0].toLowerCase();
-  const matching = voices.filter((v) => v.lang.toLowerCase().startsWith(prefix));
-  const list = matching.length > 0 ? matching : voices;
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -378,10 +371,7 @@ const VoiceButton = ({
             >
               {defaultLabel}
             </button>
-            {list.length === 0 && (
-              <p className="text-xs text-muted-foreground px-2 py-2">{noneLabel}</p>
-            )}
-            {list.map((v) => (
+            {voices.map((v) => (
               <button
                 key={v.voiceURI}
                 onClick={() => setSelectedVoiceURI(v.voiceURI)}
@@ -392,9 +382,11 @@ const VoiceButton = ({
               >
                 <div className="flex items-center justify-between gap-2">
                   <span className="truncate">{v.name}</span>
-                  <span className="text-[10px] text-muted-foreground shrink-0">
-                    {v.lang} · {v.localService ? localLabel : onlineLabel}
-                  </span>
+                  {v.description && (
+                    <span className="text-[10px] text-muted-foreground shrink-0">
+                      {v.description}
+                    </span>
+                  )}
                 </div>
               </button>
             ))}
