@@ -1,16 +1,18 @@
 import { Home, BookOpen, Headphones, Settings } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
-
-const navItems = [
-  { icon: Home, label: "Home", path: "/" },
-  { icon: BookOpen, label: "Library", path: "/library" },
-  { icon: Headphones, label: "Audio", path: "/audio" },
-  { icon: Settings, label: "Settings", path: "/settings" },
-];
+import { useLanguage } from "@/hooks/use-language";
 
 const BottomNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useLanguage();
+
+  const navItems = [
+    { icon: Home, label: t("nav.home"), path: "/" },
+    { icon: BookOpen, label: t("nav.library"), path: "/library" },
+    { icon: Headphones, label: t("nav.audio"), path: "/audio" },
+    { icon: Settings, label: t("nav.settings"), path: "/settings" },
+  ];
 
   return (
     <nav className="bottom-nav fixed bottom-0 left-0 right-0 z-50 glass border-t border-border/50">
