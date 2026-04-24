@@ -40,7 +40,7 @@ const AudioPlayer = () => {
   const player = useAudioPlayer();
   const {
     tts, chapterIdx, repeat, setRepeat, sleepMinutes, setSleepMinutes,
-    sleepCountdown, elapsed, setActiveBook, goToChapter, togglePlayPause,
+    sleepCountdown, elapsed, totalDuration, setActiveBook, goToChapter, togglePlayPause,
   } = player;
 
   // Sync this book + sections into the global player when they load
@@ -51,22 +51,15 @@ const AudioPlayer = () => {
   }, [book, sections, setActiveBook]);
 
   const currentSection = sections[chapterIdx];
-  const speakable = useMemo(
-    () => (currentSection ? stripForSpeech(currentSection.content) : ""),
-    [currentSection]
-  );
-
-  const estimatedSeconds = useMemo(() => {
-    if (!speakable) return 0;
-    const words = wordCount(speakable);
-    return (words / 165) * 60 / tts.rate;
-  }, [speakable, tts.rate]);
 
   if (!book) return null;
 
   const totalChapters = sections.length;
   const sliderMax = Math.max(0, totalChapters - 1);
   const chapterLabel = currentSection?.heading || `${t("audioPlayer.chapter")} ${chapterIdx + 1}`;
+
+  const seekMax = totalDuration > 0 ? Math.floor(totalDuration) : 0;
+  const seekValue = totalDuration > 0 ? Math.min(Math.floor(elapsed), seekMax) : 0;
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
@@ -110,25 +103,30 @@ const AudioPlayer = () => {
           )}
         </div>
 
-        {!tts.isSupported && (
+        {tts.error && (
           <p className="px-8 text-center text-xs text-destructive mb-1">
-            {t("audioPlayer.notSupported")}
+            {tts.error}
+          </p>
+        )}
+        {tts.isLoading && !tts.error && (
+          <p className="px-8 text-center text-xs text-muted-foreground mb-1">
+            {t("audioPlayer.preparing")}
           </p>
         )}
 
         <div className="px-8 mt-1 mb-2">
           <Slider
-            value={[chapterIdx]}
+            value={[seekValue]}
             min={0}
-            max={sliderMax}
+            max={Math.max(seekMax, 1)}
             step={1}
-            onValueChange={(vals) => goToChapter(vals[0] ?? 0)}
-            disabled={isLoading || totalChapters <= 1}
-            aria-label="Chapter progress"
+            onValueChange={(vals) => tts.seek(vals[0] ?? 0)}
+            disabled={isLoading || totalDuration <= 0}
+            aria-label="Audio progress"
           />
           <div className="flex justify-between text-[11px] text-muted-foreground mt-0.5">
             <span>{formatTime(elapsed)}</span>
-            <span>~ {formatTime(estimatedSeconds)}</span>
+            <span>{totalDuration > 0 ? formatTime(totalDuration) : "--:--"}</span>
           </div>
         </div>
 
