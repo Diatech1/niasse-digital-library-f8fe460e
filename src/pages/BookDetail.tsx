@@ -105,14 +105,12 @@ const BookDetail = () => {
           >
             <BookOpen className="w-4 h-4" />{t("book.read")}
           </button>
-          {book.hasAudio && (
-            <button
-              onClick={() => navigate(`/listen/${book.id}`)}
-              className="flex items-center justify-center gap-2 border border-primary text-primary rounded-xl py-3.5 font-semibold text-sm transition-all hover:bg-primary/10"
-            >
-              <Headphones className="w-4 h-4" />{t("book.listen")}
-            </button>
-          )}
+          <button
+            onClick={() => navigate(`/listen/${book.id}`)}
+            className="flex items-center justify-center gap-2 border border-primary text-primary rounded-xl py-3.5 font-semibold text-sm transition-all hover:bg-primary/10"
+          >
+            <Headphones className="w-4 h-4" />{t("book.listen")}
+          </button>
         </div>
       </motion.div>
     </div>
