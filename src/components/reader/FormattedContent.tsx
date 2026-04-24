@@ -4,16 +4,19 @@ interface FormattedContentProps {
   content: string;
   fontSize: number;
   textColor?: string;
+  dir?: "ltr" | "rtl";
 }
 
 /**
  * Renders book content with formatting matching the original PDF.
  */
-const FormattedContent = ({ content, fontSize, textColor }: FormattedContentProps) => {
+const FormattedContent = ({ content, fontSize, textColor, dir = "ltr" }: FormattedContentProps) => {
   const paragraphs = content.split("\n\n").filter((p) => p.trim().length > 0);
+  const isRtl = dir === "rtl";
+  const proseAlign = isRtl ? "text-right" : "text-justify";
 
   return (
-    <div className="formatted-content">
+    <div className="formatted-content" dir={dir}>
       {paragraphs.map((para, idx) => {
         const trimmed = para.trim();
 
@@ -45,7 +48,7 @@ const FormattedContent = ({ content, fontSize, textColor }: FormattedContentProp
               >
                 {num}.
               </span>
-              <p className="leading-relaxed text-justify flex-1" style={{ fontSize }}>
+              <p className={`leading-relaxed ${proseAlign} flex-1`} style={{ fontSize }}>
                 {formatInlineText(text)}
               </p>
             </div>
@@ -109,9 +112,9 @@ const FormattedContent = ({ content, fontSize, textColor }: FormattedContentProp
           const firstChar = trimmed[0];
           const rest = trimmed.slice(1);
           return (
-            <p key={idx} className="text-justify leading-relaxed" style={{ fontSize }}>
+            <p key={idx} className={`${proseAlign} leading-relaxed`} style={{ fontSize }}>
               <span
-                className="float-left font-serif font-bold text-primary mr-2"
+                className={`font-serif font-bold text-primary ${isRtl ? "float-right ml-2" : "float-left mr-2"}`}
                 style={{ fontSize: fontSize * 3.2, lineHeight: 0.8, paddingTop: '0.05em' }}
               >
                 {firstChar}
@@ -123,7 +126,7 @@ const FormattedContent = ({ content, fontSize, textColor }: FormattedContentProp
 
         // Regular paragraphs
         return (
-          <p key={idx} className="text-justify leading-relaxed indent-6" style={{ fontSize }}>
+          <p key={idx} className={`${proseAlign} leading-relaxed indent-6`} style={{ fontSize }}>
             {formatInlineText(trimmed)}
           </p>
         );
