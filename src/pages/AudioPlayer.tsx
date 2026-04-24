@@ -326,7 +326,7 @@ const SleepTimerButton = ({ sleepMinutes, setSleepMinutes, countdown, label, off
         <Moon className="w-5 h-5" />
       </button>
     </PopoverTrigger>
-    <PopoverContent className="w-48 p-2" align="center">
+    <PopoverContent className="w-48 p-2" align="center" side="top" sideOffset={8}>
       <p className="text-sm font-medium px-2 py-1.5 text-foreground">{label}</p>
       {countdown > 0 && (
         <p className="text-xs text-muted-foreground px-2 pb-2">
@@ -411,7 +411,7 @@ const SpeedButton = ({ rate, setRate, label, note }: SpeedProps) => (
         )}
       </button>
     </PopoverTrigger>
-    <PopoverContent className="w-44 p-2" align="center">
+    <PopoverContent className="w-44 p-2" align="center" side="top" sideOffset={8}>
       <p className="text-sm font-medium px-2 py-1.5 text-foreground">{label}</p>
       <div className="flex flex-col">
         {SPEEDS.map((s) => (
@@ -460,7 +460,7 @@ const VoiceButton = ({
           <Mic2 className="w-5 h-5" />
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-64 p-2" align="center">
+      <PopoverContent className="w-64 p-2" align="center" side="top" sideOffset={8}>
         <p className="text-sm font-medium px-2 py-1.5 text-foreground">{label}</p>
         <ScrollArea className="max-h-64">
           <div className="flex flex-col">
