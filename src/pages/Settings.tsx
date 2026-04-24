@@ -43,9 +43,7 @@ const Settings = () => {
     localStorage.setItem("faydabook-reader-fit", String(fitToPage));
   }, [fitToPage]);
 
-  useEffect(() => {
-    localStorage.setItem("faydabook-language", language);
-  }, [language]);
+
 
   const handleClearReadingData = () => {
     const keys = Object.keys(localStorage).filter(
