@@ -7,7 +7,7 @@ import { useReadAlong, stripForSpeech } from "@/hooks/use-read-along";
 import { useLanguage } from "@/hooks/use-language";
 import {
   ChevronDown, Share2, SkipBack, Play, Pause, SkipForward,
-  Repeat, Moon, ListMusic, Gauge, Loader2,
+  Repeat, Moon, ListMusic, Gauge, Loader2, Mic2,
 } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
