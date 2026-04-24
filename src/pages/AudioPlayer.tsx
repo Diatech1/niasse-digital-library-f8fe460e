@@ -7,7 +7,7 @@ import { useReadAlong, stripForSpeech } from "@/hooks/use-read-along";
 import { useLanguage } from "@/hooks/use-language";
 import {
   ChevronDown, Share2, SkipBack, Play, Pause, SkipForward,
-  Repeat, Moon, ListMusic, Gauge, Loader2,
+  Repeat, Moon, ListMusic, Gauge, Loader2, Mic2,
 } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -284,6 +284,18 @@ const AudioPlayer = () => {
             label={t("audioPlayer.queue")}
           />
 
+          <VoiceButton
+            voices={tts.voices}
+            bookLang={tts.resolveLang(book?.language)}
+            selectedVoiceURI={tts.selectedVoiceURI}
+            setSelectedVoiceURI={tts.setSelectedVoiceURI}
+            label={t("audioPlayer.voice")}
+            defaultLabel={t("audioPlayer.voiceDefault")}
+            noneLabel={t("audioPlayer.voiceNone")}
+            localLabel={t("audioPlayer.voiceLocal")}
+            onlineLabel={t("audioPlayer.voiceOnline")}
+          />
+
           <SpeedButton
             rate={tts.rate}
             setRate={tts.setRate}
@@ -419,5 +431,73 @@ const SpeedButton = ({ rate, setRate, label, note }: SpeedProps) => (
     </PopoverContent>
   </Popover>
 );
+
+interface VoiceProps {
+  voices: SpeechSynthesisVoice[];
+  bookLang: string;
+  selectedVoiceURI: string | null;
+  setSelectedVoiceURI: (uri: string | null) => void;
+  label: string;
+  defaultLabel: string;
+  noneLabel: string;
+  localLabel: string;
+  onlineLabel: string;
+}
+const VoiceButton = ({
+  voices, bookLang, selectedVoiceURI, setSelectedVoiceURI,
+  label, defaultLabel, noneLabel, localLabel, onlineLabel,
+}: VoiceProps) => {
+  const prefix = (bookLang || "").split("-")[0].toLowerCase();
+  const matching = voices.filter((v) => v.lang.toLowerCase().startsWith(prefix));
+  const list = matching.length > 0 ? matching : voices;
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button
+          className={cn("p-2 transition-colors", selectedVoiceURI && "text-primary")}
+          aria-label={label}
+        >
+          <Mic2 className="w-5 h-5" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-64 p-2" align="center">
+        <p className="text-sm font-medium px-2 py-1.5 text-foreground">{label}</p>
+        <ScrollArea className="max-h-64">
+          <div className="flex flex-col">
+            <button
+              onClick={() => setSelectedVoiceURI(null)}
+              className={cn(
+                "text-left text-sm px-2 py-1.5 rounded-md hover:bg-accent",
+                !selectedVoiceURI && "bg-accent text-accent-foreground"
+              )}
+            >
+              {defaultLabel}
+            </button>
+            {list.length === 0 && (
+              <p className="text-xs text-muted-foreground px-2 py-2">{noneLabel}</p>
+            )}
+            {list.map((v) => (
+              <button
+                key={v.voiceURI}
+                onClick={() => setSelectedVoiceURI(v.voiceURI)}
+                className={cn(
+                  "text-left text-sm px-2 py-1.5 rounded-md hover:bg-accent",
+                  selectedVoiceURI === v.voiceURI && "bg-accent text-accent-foreground"
+                )}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="truncate">{v.name}</span>
+                  <span className="text-[10px] text-muted-foreground shrink-0">
+                    {v.lang} · {v.localService ? localLabel : onlineLabel}
+                  </span>
+                </div>
+              </button>
+            ))}
+          </div>
+        </ScrollArea>
+      </PopoverContent>
+    </Popover>
+  );
+};
 
 export default AudioPlayer;

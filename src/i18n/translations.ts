@@ -35,6 +35,11 @@ export type TranslationKey =
   | "audioPlayer.minutes"
   | "audioPlayer.repeat"
   | "audioPlayer.chapter"
+  | "audioPlayer.voice"
+  | "audioPlayer.voiceDefault"
+  | "audioPlayer.voiceNone"
+  | "audioPlayer.voiceLocal"
+  | "audioPlayer.voiceOnline"
   | "book.translation"
   | "book.pages"
   | "book.read"
@@ -99,6 +104,11 @@ const en: Dict = {
   "audioPlayer.minutes": "min",
   "audioPlayer.repeat": "Repeat chapter",
   "audioPlayer.chapter": "Chapter",
+  "audioPlayer.voice": "Voice",
+  "audioPlayer.voiceDefault": "System default",
+  "audioPlayer.voiceNone": "No voices for this language",
+  "audioPlayer.voiceLocal": "Local",
+  "audioPlayer.voiceOnline": "Online",
   "book.translation": "Translation",
   "book.pages": "Pages",
   "book.read": "Read Book",
@@ -162,6 +172,11 @@ const fr: Dict = {
   "audioPlayer.minutes": "min",
   "audioPlayer.repeat": "Répéter le chapitre",
   "audioPlayer.chapter": "Chapitre",
+  "audioPlayer.voice": "Voix",
+  "audioPlayer.voiceDefault": "Voix système",
+  "audioPlayer.voiceNone": "Aucune voix pour cette langue",
+  "audioPlayer.voiceLocal": "Locale",
+  "audioPlayer.voiceOnline": "En ligne",
   "book.translation": "Traduction",
   "book.pages": "Pages",
   "book.read": "Lire le livre",
@@ -225,6 +240,11 @@ const ar: Dict = {
   "audioPlayer.minutes": "دقيقة",
   "audioPlayer.repeat": "تكرار الفصل",
   "audioPlayer.chapter": "الفصل",
+  "audioPlayer.voice": "الصوت",
+  "audioPlayer.voiceDefault": "الافتراضي للنظام",
+  "audioPlayer.voiceNone": "لا توجد أصوات لهذه اللغة",
+  "audioPlayer.voiceLocal": "محلي",
+  "audioPlayer.voiceOnline": "عبر الإنترنت",
   "book.translation": "ترجمة",
   "book.pages": "صفحات",
   "book.read": "قراءة الكتاب",
