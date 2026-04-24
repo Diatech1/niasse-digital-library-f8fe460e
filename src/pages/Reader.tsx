@@ -31,6 +31,7 @@ import BookmarkDialog from "@/components/reader/BookmarkDialog";
 import PagedView, { type PagedViewHandle } from "@/components/reader/PagedView";
 import { useBookmarks } from "@/hooks/use-bookmarks";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { directionForBookLanguage } from "@/hooks/use-language";
 
 const themes = [
   { name: "Light", bg: "bg-[hsl(40,20%,95%)]", text: "text-[hsl(0,0%,15%)]" },
@@ -515,12 +516,13 @@ const Reader = () => {
               content={section.content}
               fontSize={fontSize}
               textColor={pagedTextColor}
+              dir={directionForBookLanguage(book?.language)}
             />
           )}
         </div>
       ))}
     </div>
-  ), [allSections, fontSize, pagedTextColor, book?.contentModule]);
+  ), [allSections, fontSize, pagedTextColor, book?.contentModule, book?.language]);
 
   const renderCurrentSection = () => {
     if (!currentSection) return null;
@@ -569,6 +571,7 @@ const Reader = () => {
           content={currentSection.content}
           fontSize={fontSize}
           textColor={theme.text.replace('text-[', '').replace(']', '')}
+          dir={directionForBookLanguage(book?.language)}
         />
       </div>
     );

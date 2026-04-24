@@ -4,6 +4,7 @@ import { ArrowLeft, MoreHorizontal, Globe, FileText, BookOpen, Headphones } from
 import { useBook } from "@/hooks/use-books";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { directionForBookLanguage } from "@/hooks/use-language";
 
 const BookDetail = () => {
   const { id } = useParams();
@@ -63,8 +64,13 @@ const BookDetail = () => {
         transition={{ duration: 0.5, delay: 0.2 }}
         className="relative z-10 px-5 text-center"
       >
-        <h1 className="text-xl font-serif font-bold text-foreground mb-1">{book.title}</h1>
-        {book.titleAr && <p className="font-arabic text-lg text-gold mb-2">{book.titleAr}</p>}
+        <h1
+          className="text-xl font-serif font-bold text-foreground mb-1"
+          dir={directionForBookLanguage(book.language)}
+        >
+          {book.title}
+        </h1>
+        {book.titleAr && <p className="font-arabic text-lg text-gold mb-2" dir="rtl">{book.titleAr}</p>}
         <p className="text-sm text-primary mb-1">{book.author}</p>
         {book.translator && (
           <p className="text-xs text-muted-foreground mb-4">Traduction : {book.translator}</p>
@@ -76,7 +82,12 @@ const BookDetail = () => {
           <span className="flex items-center gap-1"><FileText className="w-3.5 h-3.5" />{book.pages} Pages</span>
         </div>
 
-        <p className="text-sm text-muted-foreground leading-relaxed mb-5 max-w-md mx-auto">{book.description}</p>
+        <p
+          className="text-sm text-muted-foreground leading-relaxed mb-5 max-w-md mx-auto"
+          dir={directionForBookLanguage(book.language)}
+        >
+          {book.description}
+        </p>
 
         <div className="flex flex-wrap justify-center gap-2 mb-8">
           {book.tags.map((tag) => (

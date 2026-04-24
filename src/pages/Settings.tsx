@@ -2,20 +2,22 @@ import { useEffect, useState } from "react";
 import { ArrowLeft, Globe, BookOpen, Info, Moon, Sun, Monitor, Type, Maximize2, Trash2, Github, Mail } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/hooks/use-theme";
+import { useLanguage, type Language } from "@/hooks/use-language";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 
 const fonts = ["Sans", "Crimson Pro", "Amiri"] as const;
-const languages = [
+const languages: { value: Language; label: string }[] = [
   { value: "en", label: "English" },
   { value: "fr", label: "Français" },
   { value: "ar", label: "العربية" },
-] as const;
+];
 
 const Settings = () => {
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
+  const { language, setLanguage } = useLanguage();
 
   const [fontSize, setFontSize] = useState<number>(() => {
     const saved = localStorage.getItem("faydabook-reader-fontsize");
@@ -27,9 +29,6 @@ const Settings = () => {
   });
   const [fitToPage, setFitToPage] = useState<boolean>(
     () => localStorage.getItem("faydabook-reader-fit") === "true"
-  );
-  const [language, setLanguage] = useState<string>(
-    () => localStorage.getItem("faydabook-language") || "en"
   );
 
   useEffect(() => {
@@ -44,9 +43,7 @@ const Settings = () => {
     localStorage.setItem("faydabook-reader-fit", String(fitToPage));
   }, [fitToPage]);
 
-  useEffect(() => {
-    localStorage.setItem("faydabook-language", language);
-  }, [language]);
+
 
   const handleClearReadingData = () => {
     const keys = Object.keys(localStorage).filter(
