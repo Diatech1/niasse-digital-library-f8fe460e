@@ -92,58 +92,62 @@ function chunkText(text: string, maxLen = MAX_CHUNK_CHARS): string[] {
   return chunks;
 }
 
-async function synthesizeChunk(
-  apiKey: string,
-  text: string,
-  voiceName: string,
-): Promise<Uint8Array> {
+async function callGemini(apiKey: string, text: string, voiceName: string) {
   const url =
     `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
-
   const body = {
     contents: [{ parts: [{ text }] }],
     generationConfig: {
       responseModalities: ["AUDIO"],
-      speechConfig: {
-        voiceConfig: {
-          prebuiltVoiceConfig: { voiceName },
-        },
-      },
+      speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName } } },
     },
   };
-
-  const resp = await fetch(url, {
+  return await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
+}
 
-  if (!resp.ok) {
-    const errText = await resp.text();
-    const status = resp.status;
-    if (status === 429) {
-      throw jsonResponse(
-        {
-          pending: true,
-          error: "Audio is still being prepared for this chapter. Please try again in about a minute.",
-        },
-        202,
-        { "Retry-After": "60", "X-TTS-Status": "rate_limited" },
-      );
+async function synthesizeChunk(
+  apiKeys: string[],
+  text: string,
+  voiceName: string,
+): Promise<Uint8Array> {
+  let lastErrText = "";
+  let lastStatus = 0;
+
+  for (let i = 0; i < apiKeys.length; i++) {
+    const resp = await callGemini(apiKeys[i], text, voiceName);
+    if (resp.ok) {
+      const data = await resp.json();
+      const b64 = data?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+      if (!b64) {
+        throw jsonResponse({ error: "Empty audio response from Gemini", details: JSON.stringify(data).slice(0, 500) }, 502);
+      }
+      return base64ToBytes(b64);
     }
-    if (status === 402 || status === 403) {
-      throw jsonResponse({ error: "TTS quota exhausted or unauthorized.", details: errText }, 402);
-    }
-    throw jsonResponse({ error: `Gemini TTS error (${status})`, details: errText }, 502);
+    lastErrText = await resp.text();
+    lastStatus = resp.status;
+    // On 429, try next key (fallback). On other errors, stop.
+    if (resp.status !== 429) break;
+    console.log(`tts: key #${i + 1} hit 429, trying next key…`);
   }
 
-  const data = await resp.json();
-  const b64 =
-    data?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-  if (!b64) {
-    throw jsonResponse({ error: "Empty audio response from Gemini", details: JSON.stringify(data).slice(0, 500) }, 502);
+  if (lastStatus === 429) {
+    throw jsonResponse(
+      {
+        pending: true,
+        error: "Audio is still being prepared for this chapter. Please try again in about a minute.",
+      },
+      202,
+      { "Retry-After": "60", "X-TTS-Status": "rate_limited" },
+    );
   }
-  return base64ToBytes(b64);
+  if (lastStatus === 402 || lastStatus === 403) {
+    throw jsonResponse({ error: "TTS quota exhausted or unauthorized.", details: lastErrText }, 402);
+  }
+  throw jsonResponse({ error: `Gemini TTS error (${lastStatus})`, details: lastErrText }, 502);
 }
 
 Deno.serve(async (req) => {
@@ -153,7 +157,9 @@ Deno.serve(async (req) => {
 
   try {
     const apiKey = Deno.env.get("GEMINI_API_KEY");
-    if (!apiKey) {
+    const apiKey2 = Deno.env.get("GEMINI_API_KEY_2");
+    const apiKeys = [apiKey, apiKey2].filter((k): k is string => !!k && k.length > 0);
+    if (apiKeys.length === 0) {
       return jsonResponse({ error: "GEMINI_API_KEY is not configured" }, 500);
     }
 
@@ -175,7 +181,7 @@ Deno.serve(async (req) => {
     const pcmParts: Uint8Array[] = [];
     for (const c of chunks) {
       try {
-        const pcm = await synthesizeChunk(apiKey, c, voiceName);
+        const pcm = await synthesizeChunk(apiKeys, c, voiceName);
         pcmParts.push(pcm);
       } catch (e) {
         if (e instanceof Response) return e;

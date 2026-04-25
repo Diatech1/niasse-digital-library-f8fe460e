@@ -74,8 +74,7 @@ function chunkText(text: string, maxLen = MAX_CHUNK_CHARS): string[] {
   return chunks;
 }
 
-async function synthesizeChunk(apiKey: string, text: string, voice: string): Promise<Uint8Array> {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+async function synthesizeChunk(apiKeys: string[], text: string, voice: string): Promise<Uint8Array> {
   const body = {
     contents: [{ parts: [{ text }] }],
     generationConfig: {
@@ -83,26 +82,36 @@ async function synthesizeChunk(apiKey: string, text: string, voice: string): Pro
       speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } },
     },
   };
+  // Up to 3 attempts, cycling through available keys on 429 before backing off.
   for (let attempt = 0; attempt < 3; attempt++) {
-    const resp = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    if (resp.status === 429) {
-      await new Promise((r) => setTimeout(r, 30_000 * (attempt + 1)));
-      continue;
+    let lastStatus = 0;
+    let lastErr = "";
+    for (let i = 0; i < apiKeys.length; i++) {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKeys[i]}`;
+      const resp = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (resp.ok) {
+        const data: any = await resp.json();
+        const b64 = data?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+        if (!b64) throw new Error("Empty audio response");
+        return base64ToBytes(b64);
+      }
+      lastStatus = resp.status;
+      lastErr = await resp.text();
+      if (resp.status === 429) {
+        console.log(`generate-audio: key #${i + 1} hit 429, trying next key…`);
+        continue; // try next key
+      }
+      throw new Error(`Gemini ${resp.status}: ${lastErr.slice(0, 300)}`);
     }
-    if (!resp.ok) {
-      const t = await resp.text();
-      throw new Error(`Gemini ${resp.status}: ${t.slice(0, 300)}`);
-    }
-    const data: any = await resp.json();
-    const b64 = data?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-    if (!b64) throw new Error("Empty audio response");
-    return base64ToBytes(b64);
+    // All keys hit 429 — back off and retry
+    console.log(`generate-audio: all ${apiKeys.length} keys rate-limited, waiting…`);
+    await new Promise((r) => setTimeout(r, 30_000 * (attempt + 1)));
   }
-  throw new Error("Rate-limit retries exhausted");
+  throw new Error("Rate-limit retries exhausted on all keys");
 }
 
 Deno.serve(async (req) => {
@@ -110,7 +119,9 @@ Deno.serve(async (req) => {
 
   try {
     const apiKey = Deno.env.get("GEMINI_API_KEY");
-    if (!apiKey) throw new Error("GEMINI_API_KEY not configured");
+    const apiKey2 = Deno.env.get("GEMINI_API_KEY_2");
+    const apiKeys = [apiKey, apiKey2].filter((k): k is string => !!k && k.length > 0);
+    if (apiKeys.length === 0) throw new Error("GEMINI_API_KEY not configured");
 
     const { bookId, sectionIndex, text, voice = "Zephyr", language = "en", skipIfExists = true } =
       await req.json();
@@ -144,7 +155,7 @@ Deno.serve(async (req) => {
 
     const pcmParts: Uint8Array[] = [];
     for (const c of chunks) {
-      const pcm = await synthesizeChunk(apiKey, c, voice);
+      const pcm = await synthesizeChunk(apiKeys, c, voice);
       pcmParts.push(pcm);
     }
     const totalLen = pcmParts.reduce((n, p) => n + p.byteLength, 0);
