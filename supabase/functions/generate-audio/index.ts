@@ -119,7 +119,9 @@ Deno.serve(async (req) => {
 
   try {
     const apiKey = Deno.env.get("GEMINI_API_KEY");
-    if (!apiKey) throw new Error("GEMINI_API_KEY not configured");
+    const apiKey2 = Deno.env.get("GEMINI_API_KEY_2");
+    const apiKeys = [apiKey, apiKey2].filter((k): k is string => !!k && k.length > 0);
+    if (apiKeys.length === 0) throw new Error("GEMINI_API_KEY not configured");
 
     const { bookId, sectionIndex, text, voice = "Zephyr", language = "en", skipIfExists = true } =
       await req.json();
@@ -153,7 +155,7 @@ Deno.serve(async (req) => {
 
     const pcmParts: Uint8Array[] = [];
     for (const c of chunks) {
-      const pcm = await synthesizeChunk(apiKey, c, voice);
+      const pcm = await synthesizeChunk(apiKeys, c, voice);
       pcmParts.push(pcm);
     }
     const totalLen = pcmParts.reduce((n, p) => n + p.byteLength, 0);
