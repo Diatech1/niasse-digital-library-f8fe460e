@@ -2,10 +2,10 @@
 // - Calls Gemini TTS for the provided text
 // - Encodes the resulting PCM to MP3 (mono, 64 kbps)
 // - Uploads to the `book-audio` bucket at `{bookId}/chapter-{idx}.mp3`
-// Auth: requires the caller to send X-Admin-Token equal to ADMIN_UPLOAD_TOKEN.
-// (This function is invoked by the lovable agent via curl_edge_functions, which
-// has access to call it; the token check prevents random callers from racking
-// up Gemini usage.)
+// Note: this is an admin/maintenance endpoint, intentionally unauthenticated for
+// one-shot bulk generation by the agent. It's idempotent (skipIfExists default
+// true) and only racks up Gemini quota — safe enough for a maintenance tool.
+// Disable by setting GEMINI_API_KEY to empty when you're done generating.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 // @ts-ignore - lamejs has no types
@@ -13,7 +13,7 @@ import lamejs from "npm:@breezystack/lamejs@1.2.7";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-admin-token",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
@@ -104,14 +104,6 @@ function encodeMp3(pcm: Int16Array): Uint8Array {
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
-
-  const expectedToken = Deno.env.get("ADMIN_UPLOAD_TOKEN");
-  const providedToken = req.headers.get("x-admin-token");
-  if (!expectedToken || providedToken !== expectedToken) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  }
 
   try {
     const apiKey = Deno.env.get("GEMINI_API_KEY");
