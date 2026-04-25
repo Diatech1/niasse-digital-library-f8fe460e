@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { getCachedAudio, setCachedAudio } from "@/lib/audio-cache";
 
+const RATE_LIMIT_COOLDOWN_MS = 60_000;
+
 // Curated Gemini prebuilt voices (subset). Each works across EN/FR/AR.
 export interface GeminiVoice {
   voiceURI: string; // we reuse this name for compatibility with the existing UI
@@ -76,6 +78,7 @@ export function useGeminiTts(options?: UseGeminiTtsOptions): GeminiTtsControls {
   const objectUrlRef = useRef<string | null>(null);
   const requestIdRef = useRef(0);
   const lastLangRef = useRef<string>("en-US");
+  const cooldownUntilRef = useRef(0);
   const onEndRef = useRef(options?.onEnd);
   useEffect(() => { onEndRef.current = options?.onEnd; }, [options?.onEnd]);
 
@@ -175,9 +178,29 @@ export function useGeminiTts(options?: UseGeminiTtsOptions): GeminiTtsControls {
       body: JSON.stringify({ text, voice, language }),
     });
 
+    if (resp.status === 202) {
+      let retryAfterMs = RATE_LIMIT_COOLDOWN_MS;
+      const retryAfterHeader = resp.headers.get("Retry-After");
+      const retryAfterSeconds = retryAfterHeader ? Number(retryAfterHeader) : NaN;
+      if (Number.isFinite(retryAfterSeconds) && retryAfterSeconds > 0) {
+        retryAfterMs = retryAfterSeconds * 1000;
+      }
+      cooldownUntilRef.current = Date.now() + retryAfterMs;
+
+      let msg = "Audio is still being prepared for this chapter. Please try again in about a minute.";
+      try {
+        const j = await resp.json();
+        if (j?.error) msg = j.error;
+      } catch {
+        // ignore
+      }
+      throw new Error(msg);
+    }
+
     if (!resp.ok) {
       let msg = `TTS request failed (${resp.status})`;
       if (resp.status === 429) {
+        cooldownUntilRef.current = Date.now() + RATE_LIMIT_COOLDOWN_MS;
         msg = "Audio is still being prepared for this chapter. Please try again in about a minute.";
       } else {
         try {
@@ -240,6 +263,11 @@ export function useGeminiTts(options?: UseGeminiTtsOptions): GeminiTtsControls {
     const locale = resolveLocale(lang);
     lastLangRef.current = locale;
     const voice = selectedVoiceURI || DEFAULT_VOICE;
+
+    if (Date.now() < cooldownUntilRef.current) {
+      setError("Audio is still being prepared for this chapter. Please try again in about a minute.");
+      return;
+    }
 
     // 1. Try pre-generated audio in Supabase Storage:
     //    bookId is the part of cacheKey before the first ":" (format "{bookId}:{idx}")
