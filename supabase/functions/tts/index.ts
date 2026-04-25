@@ -157,7 +157,9 @@ Deno.serve(async (req) => {
 
   try {
     const apiKey = Deno.env.get("GEMINI_API_KEY");
-    if (!apiKey) {
+    const apiKey2 = Deno.env.get("GEMINI_API_KEY_2");
+    const apiKeys = [apiKey, apiKey2].filter((k): k is string => !!k && k.length > 0);
+    if (apiKeys.length === 0) {
       return jsonResponse({ error: "GEMINI_API_KEY is not configured" }, 500);
     }
 
@@ -179,7 +181,7 @@ Deno.serve(async (req) => {
     const pcmParts: Uint8Array[] = [];
     for (const c of chunks) {
       try {
-        const pcm = await synthesizeChunk(apiKey, c, voiceName);
+        const pcm = await synthesizeChunk(apiKeys, c, voiceName);
         pcmParts.push(pcm);
       } catch (e) {
         if (e instanceof Response) return e;
