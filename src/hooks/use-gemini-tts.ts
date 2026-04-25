@@ -177,11 +177,15 @@ export function useGeminiTts(options?: UseGeminiTtsOptions): GeminiTtsControls {
 
     if (!resp.ok) {
       let msg = `TTS request failed (${resp.status})`;
-      try {
-        const j = await resp.json();
-        if (j?.error) msg = j.error;
-      } catch {
-        // ignore
+      if (resp.status === 429) {
+        msg = "Audio is still being prepared for this chapter. Please try again in about a minute.";
+      } else {
+        try {
+          const j = await resp.json();
+          if (j?.error) msg = j.error;
+        } catch {
+          // ignore
+        }
       }
       throw new Error(msg);
     }
