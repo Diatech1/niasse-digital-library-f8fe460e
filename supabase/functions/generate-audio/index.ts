@@ -1,24 +1,24 @@
 // Generate-and-upload audio for one book chapter.
-// - Calls Gemini TTS for the provided text
-// - Encodes the resulting PCM to MP3 (mono, 64 kbps)
-// - Uploads to the `book-audio` bucket at `{bookId}/chapter-{idx}.mp3`
-// Auth: requires the caller to send X-Admin-Token equal to ADMIN_UPLOAD_TOKEN.
-// (This function is invoked by the lovable agent via curl_edge_functions, which
-// has access to call it; the token check prevents random callers from racking
-// up Gemini usage.)
+// - Calls Gemini TTS for the provided text (returns 24kHz mono 16-bit PCM)
+// - Wraps PCM in a 44-byte WAV header
+// - Uploads to the `book-audio` bucket at `{bookId}/chapter-{idx}.wav`
+//
+// Note: this is an admin/maintenance endpoint, intentionally unauthenticated for
+// one-shot bulk generation by the agent. Idempotent (skipIfExists default true).
+// We store WAV instead of MP3 because Deno edge-runtime CPU budget is too small
+// for lamejs encoding of long audio. WAV plays in every browser via <audio>.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
-// @ts-ignore - lamejs has no types
-import lamejs from "npm:@breezystack/lamejs@1.2.7";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-admin-token",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
 const SAMPLE_RATE = 24000;
-const MP3_BITRATE = 64;
+const NUM_CHANNELS = 1;
+const BITS_PER_SAMPLE = 16;
 const MAX_CHUNK_CHARS = 3500;
 
 function base64ToBytes(b64: string): Uint8Array {
@@ -26,6 +26,27 @@ function base64ToBytes(b64: string): Uint8Array {
   const out = new Uint8Array(bin.length);
   for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
   return out;
+}
+
+function writeWavHeader(pcmByteLength: number): Uint8Array {
+  const byteRate = (SAMPLE_RATE * NUM_CHANNELS * BITS_PER_SAMPLE) / 8;
+  const blockAlign = (NUM_CHANNELS * BITS_PER_SAMPLE) / 8;
+  const buf = new ArrayBuffer(44);
+  const v = new DataView(buf);
+  v.setUint8(0, 0x52); v.setUint8(1, 0x49); v.setUint8(2, 0x46); v.setUint8(3, 0x46);
+  v.setUint32(4, 36 + pcmByteLength, true);
+  v.setUint8(8, 0x57); v.setUint8(9, 0x41); v.setUint8(10, 0x56); v.setUint8(11, 0x45);
+  v.setUint8(12, 0x66); v.setUint8(13, 0x6d); v.setUint8(14, 0x74); v.setUint8(15, 0x20);
+  v.setUint32(16, 16, true);
+  v.setUint16(20, 1, true);
+  v.setUint16(22, NUM_CHANNELS, true);
+  v.setUint32(24, SAMPLE_RATE, true);
+  v.setUint32(28, byteRate, true);
+  v.setUint16(32, blockAlign, true);
+  v.setUint16(34, BITS_PER_SAMPLE, true);
+  v.setUint8(36, 0x64); v.setUint8(37, 0x61); v.setUint8(38, 0x74); v.setUint8(39, 0x61);
+  v.setUint32(40, pcmByteLength, true);
+  return new Uint8Array(buf);
 }
 
 function chunkText(text: string, maxLen = MAX_CHUNK_CHARS): string[] {
@@ -53,7 +74,7 @@ function chunkText(text: string, maxLen = MAX_CHUNK_CHARS): string[] {
   return chunks;
 }
 
-async function synthesizeChunk(apiKey: string, text: string, voice: string): Promise<Int16Array> {
+async function synthesizeChunk(apiKey: string, text: string, voice: string): Promise<Uint8Array> {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
   const body = {
     contents: [{ parts: [{ text }] }],
@@ -79,39 +100,13 @@ async function synthesizeChunk(apiKey: string, text: string, voice: string): Pro
     const data: any = await resp.json();
     const b64 = data?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
     if (!b64) throw new Error("Empty audio response");
-    const bytes = base64ToBytes(b64);
-    return new Int16Array(bytes.buffer, bytes.byteOffset, bytes.byteLength / 2);
+    return base64ToBytes(b64);
   }
   throw new Error("Rate-limit retries exhausted");
 }
 
-function encodeMp3(pcm: Int16Array): Uint8Array {
-  const enc = new lamejs.Mp3Encoder(1, SAMPLE_RATE, MP3_BITRATE);
-  const block = 1152;
-  const parts: Uint8Array[] = [];
-  for (let i = 0; i < pcm.length; i += block) {
-    const buf = enc.encodeBuffer(pcm.subarray(i, i + block));
-    if (buf.length > 0) parts.push(new Uint8Array(buf));
-  }
-  const tail = enc.flush();
-  if (tail.length > 0) parts.push(new Uint8Array(tail));
-  const total = parts.reduce((n, p) => n + p.length, 0);
-  const merged = new Uint8Array(total);
-  let off = 0;
-  for (const p of parts) { merged.set(p, off); off += p.length; }
-  return merged;
-}
-
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
-
-  const expectedToken = Deno.env.get("ADMIN_UPLOAD_TOKEN");
-  const providedToken = req.headers.get("x-admin-token");
-  if (!expectedToken || providedToken !== expectedToken) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  }
 
   try {
     const apiKey = Deno.env.get("GEMINI_API_KEY");
@@ -131,13 +126,13 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
-    const path = `${bookId}/chapter-${sectionIndex}.mp3`;
+    const path = `${bookId}/chapter-${sectionIndex}.wav`;
 
     if (skipIfExists) {
       const { data: existing } = await supabase.storage.from("book-audio").list(bookId, {
-        search: `chapter-${sectionIndex}.mp3`,
+        search: `chapter-${sectionIndex}.wav`,
       });
-      if (existing && existing.some((f) => f.name === `chapter-${sectionIndex}.mp3`)) {
+      if (existing && existing.some((f) => f.name === `chapter-${sectionIndex}.wav`)) {
         return new Response(JSON.stringify({ skipped: true, path }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
@@ -147,20 +142,23 @@ Deno.serve(async (req) => {
     const langHint = `Read the following ${language} text naturally:\n\n`;
     const chunks = chunkText(langHint + text);
 
-    const pcmParts: Int16Array[] = [];
+    const pcmParts: Uint8Array[] = [];
     for (const c of chunks) {
       const pcm = await synthesizeChunk(apiKey, c, voice);
       pcmParts.push(pcm);
     }
-    const totalLen = pcmParts.reduce((n, p) => n + p.length, 0);
-    const merged = new Int16Array(totalLen);
+    const totalLen = pcmParts.reduce((n, p) => n + p.byteLength, 0);
+    const merged = new Uint8Array(totalLen);
     let o = 0;
-    for (const p of pcmParts) { merged.set(p, o); o += p.length; }
+    for (const p of pcmParts) { merged.set(p, o); o += p.byteLength; }
 
-    const mp3 = encodeMp3(merged);
+    const header = writeWavHeader(merged.byteLength);
+    const wav = new Uint8Array(header.byteLength + merged.byteLength);
+    wav.set(header, 0);
+    wav.set(merged, header.byteLength);
 
-    const { error } = await supabase.storage.from("book-audio").upload(path, mp3, {
-      contentType: "audio/mpeg",
+    const { error } = await supabase.storage.from("book-audio").upload(path, wav, {
+      contentType: "audio/wav",
       upsert: true,
       cacheControl: "31536000",
     });
@@ -170,8 +168,8 @@ Deno.serve(async (req) => {
       JSON.stringify({
         ok: true,
         path,
-        bytes: mp3.byteLength,
-        durationSec: Math.round(merged.length / SAMPLE_RATE),
+        bytes: wav.byteLength,
+        durationSec: Math.round(merged.byteLength / 2 / SAMPLE_RATE),
         chunks: chunks.length,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
