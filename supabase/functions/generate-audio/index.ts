@@ -120,7 +120,8 @@ Deno.serve(async (req) => {
   try {
     const apiKey = Deno.env.get("GEMINI_API_KEY");
     const apiKey2 = Deno.env.get("GEMINI_API_KEY_2");
-    const apiKeys = [apiKey, apiKey2].filter((k): k is string => !!k && k.length > 0);
+    const apiKey3 = Deno.env.get("GEMINI_API_KEY_3");
+    const apiKeys = [apiKey, apiKey2, apiKey3].filter((k): k is string => !!k && k.length > 0);
     if (apiKeys.length === 0) throw new Error("GEMINI_API_KEY not configured");
 
     const { bookId, sectionIndex, text, voice = "Zephyr", language = "en", skipIfExists = true } =

@@ -158,7 +158,8 @@ Deno.serve(async (req) => {
   try {
     const apiKey = Deno.env.get("GEMINI_API_KEY");
     const apiKey2 = Deno.env.get("GEMINI_API_KEY_2");
-    const apiKeys = [apiKey, apiKey2].filter((k): k is string => !!k && k.length > 0);
+    const apiKey3 = Deno.env.get("GEMINI_API_KEY_3");
+    const apiKeys = [apiKey, apiKey2, apiKey3].filter((k): k is string => !!k && k.length > 0);
     if (apiKeys.length === 0) {
       return jsonResponse({ error: "GEMINI_API_KEY is not configured" }, 500);
     }
