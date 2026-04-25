@@ -15,6 +15,17 @@ const NUM_CHANNELS = 1;
 const BITS_PER_SAMPLE = 16;
 const MAX_CHUNK_CHARS = 3500;
 
+function jsonResponse(body: unknown, status = 200, extraHeaders: HeadersInit = {}) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: {
+      ...corsHeaders,
+      "Content-Type": "application/json",
+      ...extraHeaders,
+    },
+  });
+}
+
 function base64ToBytes(b64: string): Uint8Array {
   const bin = atob(b64);
   const out = new Uint8Array(bin.length);
@@ -111,31 +122,26 @@ async function synthesizeChunk(
     const errText = await resp.text();
     const status = resp.status;
     if (status === 429) {
-      throw new Response(
-        JSON.stringify({ error: "Rate limit reached. Please wait a moment and try again." }),
-        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      throw jsonResponse(
+        {
+          pending: true,
+          error: "Audio is still being prepared for this chapter. Please try again in about a minute.",
+        },
+        202,
+        { "Retry-After": "60", "X-TTS-Status": "rate_limited" },
       );
     }
     if (status === 402 || status === 403) {
-      throw new Response(
-        JSON.stringify({ error: "TTS quota exhausted or unauthorized.", details: errText }),
-        { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
+      throw jsonResponse({ error: "TTS quota exhausted or unauthorized.", details: errText }, 402);
     }
-    throw new Response(
-      JSON.stringify({ error: `Gemini TTS error (${status})`, details: errText }),
-      { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-    );
+    throw jsonResponse({ error: `Gemini TTS error (${status})`, details: errText }, 502);
   }
 
   const data = await resp.json();
   const b64 =
     data?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
   if (!b64) {
-    throw new Response(
-      JSON.stringify({ error: "Empty audio response from Gemini", details: JSON.stringify(data).slice(0, 500) }),
-      { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-    );
+    throw jsonResponse({ error: "Empty audio response from Gemini", details: JSON.stringify(data).slice(0, 500) }, 502);
   }
   return base64ToBytes(b64);
 }
@@ -148,18 +154,12 @@ Deno.serve(async (req) => {
   try {
     const apiKey = Deno.env.get("GEMINI_API_KEY");
     if (!apiKey) {
-      return new Response(
-        JSON.stringify({ error: "GEMINI_API_KEY is not configured" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
+      return jsonResponse({ error: "GEMINI_API_KEY is not configured" }, 500);
     }
 
     const { text, voice, language } = await req.json().catch(() => ({}));
     if (!text || typeof text !== "string") {
-      return new Response(
-        JSON.stringify({ error: "Missing or invalid 'text' field" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
+      return jsonResponse({ error: "Missing or invalid 'text' field" }, 400);
     }
 
     const voiceName = (typeof voice === "string" && voice.trim()) || "Kore";
@@ -206,9 +206,6 @@ Deno.serve(async (req) => {
     });
   } catch (err) {
     console.error("tts error:", err);
-    return new Response(
-      JSON.stringify({ error: err instanceof Error ? err.message : "Unknown error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-    );
+    return jsonResponse({ error: err instanceof Error ? err.message : "Unknown error" }, 500);
   }
 });
