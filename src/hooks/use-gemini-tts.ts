@@ -204,6 +204,27 @@ export function useGeminiTts(options?: UseGeminiTtsOptions): GeminiTtsControls {
     }
   }, [ensureAudio, rate, releaseObjectUrl]);
 
+  const tryStreamUrl = useCallback(async (url: string): Promise<boolean> => {
+    // HEAD-check first; if missing, return false so caller falls back.
+    try {
+      const head = await fetch(url, { method: "HEAD" });
+      if (!head.ok) return false;
+    } catch {
+      return false;
+    }
+    const el = ensureAudio();
+    releaseObjectUrl();
+    el.src = url;
+    el.playbackRate = rate;
+    try {
+      await el.play();
+      return true;
+    } catch (e) {
+      console.error("stream play failed:", e);
+      return false;
+    }
+  }, [ensureAudio, rate, releaseObjectUrl]);
+
   const start = useCallback(async (
     text: string,
     lang?: string,
@@ -216,9 +237,21 @@ export function useGeminiTts(options?: UseGeminiTtsOptions): GeminiTtsControls {
     lastLangRef.current = locale;
     const voice = selectedVoiceURI || DEFAULT_VOICE;
 
+    // 1. Try pre-generated audio in Supabase Storage:
+    //    bookId is the part of cacheKey before the first ":" (format "{bookId}:{idx}")
+    if (cacheKey) {
+      const [bookId, sectionIdx] = cacheKey.split(":");
+      if (bookId && sectionIdx != null) {
+        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+        const storedUrl = `${supabaseUrl}/storage/v1/object/public/book-audio/${bookId}/chapter-${sectionIdx}.wav`;
+        const ok = await tryStreamUrl(storedUrl);
+        if (ok) return;
+      }
+    }
+
     const fullKey = cacheKey ? `${cacheKey}:${voice}` : null;
 
-    // 1. Try cache
+    // 2. Try local IndexedDB cache (legacy live-generated audio)
     if (fullKey) {
       const cached = await getCachedAudio(fullKey);
       if (cached && reqId === requestIdRef.current) {
@@ -227,11 +260,11 @@ export function useGeminiTts(options?: UseGeminiTtsOptions): GeminiTtsControls {
       }
     }
 
-    // 2. Fetch from edge function
+    // 3. Fall back to live Gemini generation
     setIsLoading(true);
     try {
       const blob = await fetchAudioBlob(text, voice, lang ?? "en");
-      if (reqId !== requestIdRef.current) return; // superseded
+      if (reqId !== requestIdRef.current) return;
       if (fullKey) void setCachedAudio(fullKey, blob);
       await playBlob(blob);
     } catch (e) {
@@ -242,7 +275,7 @@ export function useGeminiTts(options?: UseGeminiTtsOptions): GeminiTtsControls {
     } finally {
       if (reqId === requestIdRef.current) setIsLoading(false);
     }
-  }, [fetchAudioBlob, playBlob, selectedVoiceURI]);
+  }, [fetchAudioBlob, playBlob, selectedVoiceURI, tryStreamUrl]);
 
   const pause = useCallback(() => {
     audioRef.current?.pause();
