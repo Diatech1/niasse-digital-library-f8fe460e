@@ -1,7 +1,7 @@
-// Gemini 2.5 Flash TTS edge function
-// Returns a single WAV blob for the given text + voice + language.
+// OpenRouter TTS edge function (google/gemini-3.1-flash-tts-preview)
+// Returns a single MP3 blob for the given text + voice.
 // Long text is split into chunks (sentence-aware), each chunk is generated,
-// then concatenated into one continuous WAV before being returned.
+// then concatenated into one MP3 stream before being returned.
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -10,52 +10,15 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
-const SAMPLE_RATE = 24000;
-const NUM_CHANNELS = 1;
-const BITS_PER_SAMPLE = 16;
 const MAX_CHUNK_CHARS = 3500;
+const OPENROUTER_URL = "https://openrouter.ai/api/v1/audio/speech";
+const TTS_MODEL = "google/gemini-3.1-flash-tts-preview";
 
 function jsonResponse(body: unknown, status = 200, extraHeaders: HeadersInit = {}) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: {
-      ...corsHeaders,
-      "Content-Type": "application/json",
-      ...extraHeaders,
-    },
+    headers: { ...corsHeaders, "Content-Type": "application/json", ...extraHeaders },
   });
-}
-
-function base64ToBytes(b64: string): Uint8Array {
-  const bin = atob(b64);
-  const out = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
-  return out;
-}
-
-function writeWavHeader(pcmByteLength: number): Uint8Array {
-  const byteRate = (SAMPLE_RATE * NUM_CHANNELS * BITS_PER_SAMPLE) / 8;
-  const blockAlign = (NUM_CHANNELS * BITS_PER_SAMPLE) / 8;
-  const buf = new ArrayBuffer(44);
-  const v = new DataView(buf);
-  // RIFF
-  v.setUint8(0, 0x52); v.setUint8(1, 0x49); v.setUint8(2, 0x46); v.setUint8(3, 0x46);
-  v.setUint32(4, 36 + pcmByteLength, true);
-  // WAVE
-  v.setUint8(8, 0x57); v.setUint8(9, 0x41); v.setUint8(10, 0x56); v.setUint8(11, 0x45);
-  // fmt 
-  v.setUint8(12, 0x66); v.setUint8(13, 0x6d); v.setUint8(14, 0x74); v.setUint8(15, 0x20);
-  v.setUint32(16, 16, true);
-  v.setUint16(20, 1, true); // PCM
-  v.setUint16(22, NUM_CHANNELS, true);
-  v.setUint32(24, SAMPLE_RATE, true);
-  v.setUint32(28, byteRate, true);
-  v.setUint16(32, blockAlign, true);
-  v.setUint16(34, BITS_PER_SAMPLE, true);
-  // data
-  v.setUint8(36, 0x64); v.setUint8(37, 0x61); v.setUint8(38, 0x74); v.setUint8(39, 0x61);
-  v.setUint32(40, pcmByteLength, true);
-  return new Uint8Array(buf);
 }
 
 function chunkText(text: string, maxLen = MAX_CHUNK_CHARS): string[] {
@@ -68,146 +31,94 @@ function chunkText(text: string, maxLen = MAX_CHUNK_CHARS): string[] {
     if ((current + " " + s).trim().length > maxLen) {
       if (current) chunks.push(current.trim());
       if (s.length > maxLen) {
-        // hard split overly long sentence on whitespace
         const words = s.split(" ");
         let buf = "";
         for (const w of words) {
-          if ((buf + " " + w).trim().length > maxLen) {
-            chunks.push(buf.trim());
-            buf = w;
-          } else {
-            buf = buf ? `${buf} ${w}` : w;
-          }
+          if ((buf + " " + w).trim().length > maxLen) { chunks.push(buf.trim()); buf = w; }
+          else buf = buf ? `${buf} ${w}` : w;
         }
         if (buf) chunks.push(buf.trim());
         current = "";
-      } else {
-        current = s;
-      }
-    } else {
-      current = current ? `${current} ${s}` : s;
-    }
+      } else current = s;
+    } else current = current ? `${current} ${s}` : s;
   }
   if (current.trim()) chunks.push(current.trim());
   return chunks;
 }
 
-async function callGemini(apiKey: string, text: string, voiceName: string) {
-  const url =
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
-  const body = {
-    contents: [{ parts: [{ text }] }],
-    generationConfig: {
-      responseModalities: ["AUDIO"],
-      speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName } } },
-    },
-  };
-  return await fetch(url, {
+async function synthesizeChunk(apiKey: string, text: string, voice: string): Promise<Uint8Array> {
+  const resp = await fetch(OPENROUTER_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ model: TTS_MODEL, input: text, voice }),
   });
-}
 
-async function synthesizeChunk(
-  apiKeys: string[],
-  text: string,
-  voiceName: string,
-): Promise<Uint8Array> {
-  let lastErrText = "";
-  let lastStatus = 0;
-
-  for (let i = 0; i < apiKeys.length; i++) {
-    const resp = await callGemini(apiKeys[i], text, voiceName);
-    if (resp.ok) {
-      const data = await resp.json();
-      const b64 = data?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-      if (!b64) {
-        throw jsonResponse({ error: "Empty audio response from Gemini", details: JSON.stringify(data).slice(0, 500) }, 502);
-      }
-      return base64ToBytes(b64);
-    }
-    lastErrText = await resp.text();
-    lastStatus = resp.status;
-    // On 429, try next key (fallback). On other errors, stop.
-    if (resp.status !== 429) break;
-    console.log(`tts: key #${i + 1} hit 429, trying next key…`);
+  if (resp.ok) {
+    const ab = await resp.arrayBuffer();
+    return new Uint8Array(ab);
   }
 
-  if (lastStatus === 429) {
+  const errText = await resp.text();
+  if (resp.status === 429) {
     throw jsonResponse(
-      {
-        pending: true,
-        error: "Audio is still being prepared for this chapter. Please try again in about a minute.",
-      },
+      { pending: true, error: "Audio is still being prepared. Try again in about a minute." },
       202,
       { "Retry-After": "60", "X-TTS-Status": "rate_limited" },
     );
   }
-  if (lastStatus === 402 || lastStatus === 403) {
-    throw jsonResponse({ error: "TTS quota exhausted or unauthorized.", details: lastErrText }, 402);
+  if (resp.status === 402 || resp.status === 403) {
+    throw jsonResponse({ error: "TTS quota exhausted or unauthorized.", details: errText }, 402);
   }
-  throw jsonResponse({ error: `Gemini TTS error (${lastStatus})`, details: lastErrText }, 502);
+  throw jsonResponse({ error: `OpenRouter TTS error (${resp.status})`, details: errText }, 502);
 }
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
+  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const apiKey = Deno.env.get("GEMINI_API_KEY");
-    const apiKey2 = Deno.env.get("GEMINI_API_KEY_2");
-    const apiKey3 = Deno.env.get("GEMINI_API_KEY_3");
-    const apiKeys = [apiKey, apiKey2, apiKey3].filter((k): k is string => !!k && k.length > 0);
-    if (apiKeys.length === 0) {
-      return jsonResponse({ error: "GEMINI_API_KEY is not configured" }, 500);
-    }
+    const apiKey = Deno.env.get("OPENROUTER_API_KEY");
+    if (!apiKey) return jsonResponse({ error: "OPENROUTER_API_KEY is not configured" }, 500);
 
     const { text, voice, language } = await req.json().catch(() => ({}));
     if (!text || typeof text !== "string") {
       return jsonResponse({ error: "Missing or invalid 'text' field" }, 400);
     }
 
-    const voiceName = (typeof voice === "string" && voice.trim()) || "Kore";
+    const voiceName = (typeof voice === "string" && voice.trim()) || "alloy";
 
-    // Light language hint prepended to guide pronunciation. Gemini uses the text
-    // itself but a tiny instruction helps for short Arabic/French chapters.
     const langHint = language && typeof language === "string"
       ? `Read the following ${language} text naturally:\n\n`
       : "";
 
     const chunks = chunkText(langHint + text);
 
-    const pcmParts: Uint8Array[] = [];
+    const parts: Uint8Array[] = [];
     for (const c of chunks) {
       try {
-        const pcm = await synthesizeChunk(apiKeys, c, voiceName);
-        pcmParts.push(pcm);
+        const mp3 = await synthesizeChunk(apiKey, c, voiceName);
+        parts.push(mp3);
       } catch (e) {
         if (e instanceof Response) return e;
         throw e;
       }
     }
 
-    const totalLen = pcmParts.reduce((n, p) => n + p.byteLength, 0);
+    const totalLen = parts.reduce((n, p) => n + p.byteLength, 0);
     const merged = new Uint8Array(totalLen);
     let offset = 0;
-    for (const p of pcmParts) {
+    for (const p of parts) {
       merged.set(p, offset);
       offset += p.byteLength;
     }
 
-    const header = writeWavHeader(merged.byteLength);
-    const wav = new Uint8Array(header.byteLength + merged.byteLength);
-    wav.set(header, 0);
-    wav.set(merged, header.byteLength);
-
-    return new Response(wav, {
+    return new Response(merged, {
       status: 200,
       headers: {
         ...corsHeaders,
-        "Content-Type": "audio/wav",
+        "Content-Type": "audio/mpeg",
         "Cache-Control": "public, max-age=31536000, immutable",
       },
     });
