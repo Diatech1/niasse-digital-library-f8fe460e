@@ -119,6 +119,14 @@ const Reader = () => {
   const [bookmarkDialogOpen, setBookmarkDialogOpen] = useState(false);
   const [showResumeBanner, setShowResumeBanner] = useState(() => getSavedProgress(id) > 0);
 
+  const {
+    setActiveBook,
+    playChapter,
+    togglePlayPause,
+    tts: audioTts,
+    book: activeAudioBook,
+  } = useAudioPlayer();
+
   const toggleFullscreen = useCallback(() => {
     if (!document.fullscreenElement) {
       containerRef.current?.requestFullscreen().then(() => setIsFullscreen(true)).catch(() => {});
