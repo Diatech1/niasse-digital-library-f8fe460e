@@ -353,13 +353,23 @@ const Reader = () => {
   const handleReadAloud = useCallback(() => {
     if (!book || allSections.length === 0) return;
     const isActiveBook = activeAudioBook?.id === book.id;
-    if (isActiveBook && (audioTts.isPlaying || audioTts.isPaused)) {
-      togglePlayPause();
+    if (isActiveBook) {
+      // If the reader is on a different section than what's playing, jump to it.
+      if (activeChapterIdx !== currentSectionIdx) {
+        playChapter(currentSectionIdx);
+        return;
+      }
+      // Same section: toggle play/pause if there's an active session, else start.
+      if (audioTts.isPlaying || audioTts.isPaused || audioTts.isLoading) {
+        togglePlayPause();
+        return;
+      }
+      playChapter(currentSectionIdx);
       return;
     }
     setActiveBook(book, allSections);
     playChapter(currentSectionIdx);
-  }, [book, allSections, activeAudioBook?.id, audioTts.isPlaying, audioTts.isPaused, togglePlayPause, setActiveBook, playChapter, currentSectionIdx]);
+  }, [book, allSections, activeAudioBook?.id, activeChapterIdx, audioTts.isPlaying, audioTts.isPaused, audioTts.isLoading, togglePlayPause, setActiveBook, playChapter, currentSectionIdx]);
 
   const fontClass = fontIdx === 0 ? "font-sans" : fontIdx === 1 ? "font-reader" : "font-arabic";
 
