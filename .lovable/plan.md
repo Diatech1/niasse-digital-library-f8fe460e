@@ -1,44 +1,85 @@
-# Read Aloud Button in the Reader
+# Adopt Fayda Digital Sanctuary front-end for desktop
 
-Add a small speaker icon next to the Search/Menu icons in the reader's top bar. Tapping it starts text-to-speech for the current page using the existing audio engine, and surfaces the compact MiniPlayer at the bottom of the screen. From there the user can pause, scrub, set a sleep timer, or expand to the full audio player — exactly like in the rest of the app.
+## My honest take first
 
-## What the user sees
+The referenced project (Fayda Digital Sanctuary) is a **marketing-style website**: hero image, stats band, featured carousel, category tiles, quote slider, top navbar + footer. It looks beautiful on desktop and matches the Cheikh Ibrahim Niass theme nicely.
 
-- A new `Volume2` (speaker) icon button in the reader's top bar, between the Search icon and the Menu icon.
-- On tap: the MiniPlayer slides in at the bottom of the reader and starts speaking the current section/page.
-- While the MiniPlayer is visible the icon turns into a `Volume2` highlighted in the primary color (so it acts as an indicator that audio is active for this book).
-- Tapping the speaker again while audio for this book is active toggles play/pause.
-- The MiniPlayer's existing close (X) button stops audio and removes the player.
-- Chrome auto-hide behavior is unchanged — the speaker icon hides/shows with the rest of the top bar.
+But it is **only a shell**. It has 4 pages (Index, Library, BookDetail, NotFound), a dummy `books.ts`, and **none** of Faydabook's real engine: the paged reader, TTS, audio player, bookmarks, reading history, search-in-reader, RTL, i18n, content-registry loader, Supabase integration, etc.
 
-## Implementation
+So we should **not replace** the current app with that codebase. Instead, we **port its visual language and landing/library layout** into Faydabook as a desktop experience, while keeping the mobile-first reader and all existing features untouched.
 
-### 1. `src/pages/Reader.tsx`
-- Import `Volume2` from `lucide-react` and `useAudioPlayer` from `@/hooks/use-audio-player`.
-- Import `MiniPlayer` from `@/components/MiniPlayer`.
-- Inside the component, pull `setActiveBook`, `playChapter`, `togglePlayPause`, `tts`, `book: activeAudioBook` from `useAudioPlayer()`.
-- Add a handler `handleReadAloud()`:
-  - If `activeAudioBook?.id === book.id` and `tts.isPlaying || tts.isPaused`, call `togglePlayPause()`.
-  - Otherwise call `setActiveBook(book, allSections)` then `playChapter(currentSectionIdx)`.
-- In the top bar JSX (around line 599–604, between the Search and Menu buttons), add:
-  ```tsx
-  <button
-    onClick={handleReadAloud}
-    disabled={!book || allSections.length === 0}
-    className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full transition-colors hover:bg-accent"
-    aria-label="Read aloud"
-  >
-    <Volume2 className={`h-4 w-4 ${activeAudioBook?.id === book?.id ? 'text-primary' : ''}`} />
-  </button>
-  ```
-- Render `<MiniPlayer />` once near the bottom of the Reader's returned JSX (just before the closing root `div`), so the player appears even when the user is on `/read/:id` (today it is only mounted under the `max-w-lg` layout in `App.tsx`).
+## Proposed approach: responsive dual layout
 
-### 2. No other files need changes
-- `MiniPlayer.tsx` already hides itself on `/listen/:id` and renders fixed-positioned, so it works inside the Reader without layout conflicts.
-- `useAudioPlayer` already accepts the `BookSection[]` shape that `allSections` produces (same `id/part?/chapter?/heading/content` interface), so no mapping is required.
-- TTS, caching, sleep timer, and expand-to-full-player flows are reused as-is.
+One codebase, two layouts driven by `useIsMobile()` (or a `lg:` breakpoint):
 
-## Out of scope
-- No changes to the audio generation pipeline.
-- No new settings (voice picker, speed, etc.) added to the reader — those remain on the full audio player page reachable by tapping the MiniPlayer.
-- No persistence of "auto-resume audio when reopening a book"; tapping the speaker is always an explicit action.
+- **Mobile (≤ 768px)** — unchanged. Current pocket-paperback reader, bottom nav, MiniPlayer, etc.
+- **Desktop (≥ 1024px)** — new marketing-style shell inspired by Fayda Digital Sanctuary.
+
+```text
+Desktop layout
+┌─────────────────────────────────────────────┐
+│  Navbar (logo · Home · Library · Listen · Search) │
+├─────────────────────────────────────────────┤
+│  HERO  (image + title + search)             │
+│  Continue reading row                       │
+│  Featured / Tidjaniya series row            │
+│  Categories grid (Tasawwuf, Fiqh, …)        │
+│  Quote slider                               │
+│  Footer                                     │
+└─────────────────────────────────────────────┘
+```
+
+Reader on desktop: keep the 4:7 book pane (already supported by `PagedView`) but wrap it in the new navbar + a sidebar for TOC/bookmarks instead of the mobile sheet.
+
+## What to build
+
+### 1. Visual tokens
+- Add the cream/emerald/gold palette from the reference as **light-mode** variants in `src/index.css` (we already have a light theme — refine it to match).
+- Add font `Playfair Display` for `font-display` headings; keep `Crimson Pro` for reader body (memory rule).
+- Add utilities: `.text-gradient-gold`, `.bg-gradient-emerald`, `.bg-gradient-gold`, `.bg-gradient-hero`.
+
+### 2. New desktop-only components
+- `src/components/desktop/Navbar.tsx` — fixed top bar, logo, links, search button.
+- `src/components/desktop/Footer.tsx` — simple footer with credits and language switcher.
+- `src/components/desktop/Hero.tsx` — hero image + title + search input wired to existing `SearchBar` logic.
+- `src/components/desktop/QuoteSlider.tsx` — rotating quotes (use a small `quotes` array seeded from the books data).
+
+### 3. Page updates (responsive — no new routes)
+- `src/pages/Index.tsx`: render `<DesktopHome />` on `lg:` and the existing mobile layout below `lg:`. Desktop home composes Navbar + Hero + Continue Reading row + Featured row + Categories grid + Quote + Footer.
+- `src/pages/Library.tsx`: on desktop, render Navbar + the reference's filter UI (search bar + filter chip drawer) feeding the same `useBooks` data; mobile stays as-is.
+- `src/pages/BookDetail.tsx`: on desktop, two-column layout (cover left, metadata + actions right) like the reference; mobile stays as-is.
+- `src/pages/Reader.tsx`: on desktop, keep current `PagedView` but show the new Navbar at the top and surface TOC/bookmarks in a left sidebar instead of the slide-over sheet. Hide the bottom nav on desktop. Immersive mode still works.
+
+### 4. Hide BottomNav on desktop
+- In `BottomNav.tsx`, return `null` when not mobile, so the desktop shell takes over navigation.
+
+### 5. Categories
+- Map the reference's `Tasawwuf / Fiqh / Tafsir / Poetry / Speeches` to whatever categorization fits Faydabook's actual library (we already have "Tidjaniya.com series vs Other Works" — surface that, and optionally a thematic grid if metadata allows).
+
+## What we explicitly keep
+
+- All hooks: `useAudioPlayer`, `useBookContent`, `useBookmarks`, `useReadingProgress`, `useLanguage`, `useTheme`, `useReadAlong`, `useGeminiTts`.
+- Reader engine (`PagedView`, `FormattedContent`, `ReaderSearch`, `BookmarkDialog`, `ChapterDropdown`).
+- `MiniPlayer`, `AudioPlayer`, `AudioLibrary`, Settings.
+- Supabase `books` table, content registry, volume loader.
+- RTL, i18n, light/dark/system theme, no human depictions, all current memory rules.
+
+## What we do NOT do
+
+- Do not import/copy the reference project as-is.
+- Do not introduce `framer-motion` heavily — use it only inside the new desktop components if needed (small footprint).
+- Do not change mobile UX.
+- Do not add a `/about` route just because the reference navbar mentions it.
+
+## Suggested execution order (small steps)
+
+1. Add desktop tokens + fonts + gradient utilities in `index.css`.
+2. Build `Navbar`, `Footer`, `Hero`, `QuoteSlider`.
+3. Wire desktop `Index.tsx` (Home).
+4. Wire desktop `Library.tsx` and `BookDetail.tsx`.
+5. Add desktop chrome to `Reader.tsx` (sidebar TOC + top navbar).
+6. QA on 1280×720, 1440×900, 1920×1080.
+
+## Open question for you
+
+Want me to also offer a **separate `/desktop` preview route** during development so we can iterate without affecting mobile users, or go straight to the responsive single-codebase approach above?
