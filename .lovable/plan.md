@@ -1,51 +1,44 @@
-# Continuing audio generation after the Gemini daily limit
+# Read Aloud Button in the Reader
 
-## Quick answer to your two ideas
+Add a small speaker icon next to the Search/Menu icons in the reader's top bar. Tapping it starts text-to-speech for the current page using the existing audio engine, and surfaces the compact MiniPlayer at the bottom of the screen. From there the user can pause, scrub, set a sleep timer, or expand to the full audio player — exactly like in the rest of the app.
 
-**1. "Can we generate the MP3s with Lovable AI?"**
-No. The Lovable AI gateway only exposes chat models (Gemini/GPT text) and image models (Nano Banana). It does **not** expose any TTS model. I confirmed by querying the gateway — `gemini-2.5-flash-preview-tts` is rejected with "invalid model". So we cannot route TTS through `LOVABLE_API_KEY`.
+## What the user sees
 
-**2. "I have ChatGPT MCP."**
-MCP connectors extend *me* (the Lovable building agent) during edits — they do **not** give your deployed app a way to call ChatGPT, and there isn't a "ChatGPT MCP" in the catalog that exposes TTS to me either. So this doesn't help generate the audio files.
+- A new `Volume2` (speaker) icon button in the reader's top bar, between the Search icon and the Menu icon.
+- On tap: the MiniPlayer slides in at the bottom of the reader and starts speaking the current section/page.
+- While the MiniPlayer is visible the icon turns into a `Volume2` highlighted in the primary color (so it acts as an indicator that audio is active for this book).
+- Tapping the speaker again while audio for this book is active toggles play/pause.
+- The MiniPlayer's existing close (X) button stops audio and removes the player.
+- Chrome auto-hide behavior is unchanged — the speaker icon hides/shows with the rest of the top bar.
 
-## What actually works — three real options
+## Implementation
 
-### Option A (recommended): switch the edge function to OpenAI TTS
+### 1. `src/pages/Reader.tsx`
+- Import `Volume2` from `lucide-react` and `useAudioPlayer` from `@/hooks/use-audio-player`.
+- Import `MiniPlayer` from `@/components/MiniPlayer`.
+- Inside the component, pull `setActiveBook`, `playChapter`, `togglePlayPause`, `tts`, `book: activeAudioBook` from `useAudioPlayer()`.
+- Add a handler `handleReadAloud()`:
+  - If `activeAudioBook?.id === book.id` and `tts.isPlaying || tts.isPaused`, call `togglePlayPause()`.
+  - Otherwise call `setActiveBook(book, allSections)` then `playChapter(currentSectionIdx)`.
+- In the top bar JSX (around line 599–604, between the Search and Menu buttons), add:
+  ```tsx
+  <button
+    onClick={handleReadAloud}
+    disabled={!book || allSections.length === 0}
+    className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full transition-colors hover:bg-accent"
+    aria-label="Read aloud"
+  >
+    <Volume2 className={`h-4 w-4 ${activeAudioBook?.id === book?.id ? 'text-primary' : ''}`} />
+  </button>
+  ```
+- Render `<MiniPlayer />` once near the bottom of the Reader's returned JSX (just before the closing root `div`), so the player appears even when the user is on `/read/:id` (today it is only mounted under the `max-w-lg` layout in `App.tsx`).
 
-OpenAI's `tts-1` / `gpt-4o-mini-tts` API returns ready-to-use MP3 directly (no PCM-to-WAV wrapping, no CPU timeouts), supports English/French/Arabic well, and has its own quota independent from your Gemini key. Cost is roughly $0.015 per 1K characters for `tts-1` — generating audio for the remaining ~17 small books is on the order of a few dollars total.
+### 2. No other files need changes
+- `MiniPlayer.tsx` already hides itself on `/listen/:id` and renders fixed-positioned, so it works inside the Reader without layout conflicts.
+- `useAudioPlayer` already accepts the `BookSection[]` shape that `allSections` produces (same `id/part?/chapter?/heading/content` interface), so no mapping is required.
+- TTS, caching, sleep timer, and expand-to-full-player flows are reused as-is.
 
-**Changes:**
-- Add a new secret `OPENAI_API_KEY` (you provide it from platform.openai.com).
-- Modify `supabase/functions/generate-audio/index.ts`:
-  - Add a `provider` field (`"openai"` default, `"gemini"` fallback).
-  - When `provider="openai"`, call `https://api.openai.com/v1/audio/speech` with `model: "tts-1"`, `voice: "alloy"` (or `nova`/`shimmer`/`onyx`), `response_format: "mp3"`.
-  - Output goes straight to MP3 bytes — no chunking, no WAV header, no PCM math. Much simpler code path.
-  - Upload to `book-audio/{bookId}/chapter-{idx}.mp3`.
-- Update `scripts/run-audio-generation.ts`:
-  - Default to provider=openai.
-  - OpenAI rate limit on tier 1 is ~50 req/min → reduce delay from 4500ms to ~1500ms (about 3× faster).
-- Update `src/hooks/use-gemini-tts.ts` fast-path:
-  - Try `chapter-{idx}.mp3` first, fall back to `chapter-{idx}.wav` (for chapters already generated). This way nothing breaks for already-stored WAV files.
-
-After that, re-run the bulk script. With faster pacing it finishes in ~10–15 minutes for the remaining books.
-
-### Option B: just wait ~24h for the Gemini free-tier daily quota to reset
-
-Zero code changes. Tomorrow we re-run `scripts/run-audio-generation.ts` with `skipIfExists=true` and it picks up exactly where it stopped. Downside: another day with broken Play on un-generated chapters.
-
-### Option C: upload your own MP3s
-
-If you'd rather record/source audio yourself, I can add a small admin uploader (drag MP3 → bucket at `{bookId}/chapter-{idx}.mp3`). Useful for select chapters but tedious for 100+ files.
-
-## My recommendation
-
-Go with **Option A**. It's a ~30-minute change, removes the WAV-vs-MP3 awkwardness we adopted as a workaround, and OpenAI TTS quality in French/Arabic is on par with Gemini's. The only thing I need from you is the `OPENAI_API_KEY` (created at https://platform.openai.com/api-keys → any tier with billing enabled).
-
-## Files that will change (Option A)
-
-- `supabase/functions/generate-audio/index.ts` — add OpenAI provider branch, simplify (no WAV wrapping)
-- `scripts/run-audio-generation.ts` — switch default provider, faster pacing
-- `src/hooks/use-gemini-tts.ts` — try `.mp3` then `.wav` in storage fast-path
-- New secret: `OPENAI_API_KEY`
-
-Approve and I'll request the secret, then implement and re-run the bulk job.
+## Out of scope
+- No changes to the audio generation pipeline.
+- No new settings (voice picker, speed, etc.) added to the reader — those remain on the full audio player page reachable by tapping the MiniPlayer.
+- No persistence of "auto-resume audio when reopening a book"; tapping the speaker is always an explicit action.

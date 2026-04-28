@@ -18,7 +18,9 @@ import { stationsDeenEnSections, stationsDeenEnMeta } from "@/data/stations-deen
 import { loadConditionsReglesSections, conditionsReglesMeta, type ConditionsSection } from "@/data/conditions-regles";
 import { loadIfadatouSections, ifadatouAhmediyyaMeta, type IfadatouSection } from "@/data/ifadatou-ahmediyya";
 import { loadVolumeSections, type VolumeSection } from "@/data/volume-loader";
-import { ArrowLeft, Loader2, Search, Maximize, Minimize, Bookmark, BookmarkCheck, Menu, BookOpen, ScrollText, Home, Headphones, Settings } from "lucide-react";
+import { ArrowLeft, Loader2, Search, Maximize, Minimize, Bookmark, BookmarkCheck, Menu, BookOpen, ScrollText, Home, Headphones, Settings, Volume2 } from "lucide-react";
+import { useAudioPlayer } from "@/hooks/use-audio-player";
+import MiniPlayer from "@/components/MiniPlayer";
 import { Slider } from "@/components/ui/slider";
 import { useSaveProgress, getSavedProgress } from "@/hooks/use-reading-progress";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -116,6 +118,14 @@ const Reader = () => {
   const { bookmarks, addBookmark, removeBookmark, isBookmarked } = useBookmarks(id);
   const [bookmarkDialogOpen, setBookmarkDialogOpen] = useState(false);
   const [showResumeBanner, setShowResumeBanner] = useState(() => getSavedProgress(id) > 0);
+
+  const {
+    setActiveBook,
+    playChapter,
+    togglePlayPause,
+    tts: audioTts,
+    book: activeAudioBook,
+  } = useAudioPlayer();
 
   const toggleFullscreen = useCallback(() => {
     if (!document.fullscreenElement) {
@@ -338,6 +348,17 @@ const Reader = () => {
       }
     }
   }, [allSections, goToSection, isPagedMode]);
+
+  const handleReadAloud = useCallback(() => {
+    if (!book || allSections.length === 0) return;
+    const isActiveBook = activeAudioBook?.id === book.id;
+    if (isActiveBook && (audioTts.isPlaying || audioTts.isPaused)) {
+      togglePlayPause();
+      return;
+    }
+    setActiveBook(book, allSections);
+    playChapter(currentSectionIdx);
+  }, [book, allSections, activeAudioBook?.id, audioTts.isPlaying, audioTts.isPaused, togglePlayPause, setActiveBook, playChapter, currentSectionIdx]);
 
   const fontClass = fontIdx === 0 ? "font-sans" : fontIdx === 1 ? "font-reader" : "font-arabic";
 
@@ -598,6 +619,14 @@ const Reader = () => {
         </div>
         <button onClick={() => setSearchOpen(true)} className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full transition-colors hover:bg-accent" aria-label="Search in book">
           <Search className="h-4 w-4" />
+        </button>
+        <button
+          onClick={handleReadAloud}
+          disabled={!book || allSections.length === 0}
+          className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full transition-colors hover:bg-accent disabled:opacity-50"
+          aria-label="Read aloud"
+        >
+          <Volume2 className={`h-4 w-4 ${activeAudioBook?.id === book?.id ? 'text-primary' : ''}`} />
         </button>
         <button onClick={() => setMainMenuOpen(true)} className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full transition-colors hover:bg-accent" aria-label="Open reader menu">
           <Menu className="h-4 w-4" />
@@ -934,6 +963,7 @@ const Reader = () => {
         onNavigate={goToSection}
         themeClasses={{ bg: theme.bg, text: theme.text }}
       />
+      <MiniPlayer />
     </div>
   );
 };
