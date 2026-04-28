@@ -349,6 +349,17 @@ const Reader = () => {
     }
   }, [allSections, goToSection, isPagedMode]);
 
+  const handleReadAloud = useCallback(() => {
+    if (!book || allSections.length === 0) return;
+    const isActiveBook = activeAudioBook?.id === book.id;
+    if (isActiveBook && (audioTts.isPlaying || audioTts.isPaused)) {
+      togglePlayPause();
+      return;
+    }
+    setActiveBook(book, allSections);
+    playChapter(currentSectionIdx);
+  }, [book, allSections, activeAudioBook?.id, audioTts.isPlaying, audioTts.isPaused, togglePlayPause, setActiveBook, playChapter, currentSectionIdx]);
+
   const fontClass = fontIdx === 0 ? "font-sans" : fontIdx === 1 ? "font-reader" : "font-arabic";
 
   const renderMeta = () => {
