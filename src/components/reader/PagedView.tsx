@@ -142,11 +142,11 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
 
             <div
               className="absolute left-0 right-0 flex justify-center pointer-events-none select-none"
-              style={{ bottom: isMobile ? 4 : padBottom * 0.3 }}
+              style={{ bottom: isMobile ? 6 : padBottom * 0.3 }}
             >
               <span
-                className="text-muted-foreground/60 font-serif italic tracking-widest"
-                style={{ fontSize: 12, fontVariant: 'small-caps' }}
+                className="text-muted-foreground/60 font-serif italic tracking-widest text-[11px] sm:text-xs md:text-sm lg:text-base"
+                style={{ fontVariant: 'small-caps' }}
               >
                 — {page + 1} —
               </span>
