@@ -65,13 +65,13 @@ const AudioPlayer = () => {
         await navigator.share(shareData);
       } else {
         await navigator.clipboard.writeText(shareUrl);
-        toast({ title: t("audioPlayer.linkCopied") || "Link copied" });
+        toast({ title: "Link copied" });
       }
     } catch (err) {
       if ((err as Error)?.name !== "AbortError") {
         try {
           await navigator.clipboard.writeText(shareUrl);
-          toast({ title: t("audioPlayer.linkCopied") || "Link copied" });
+          toast({ title: "Link copied" });
         } catch {}
       }
     }
