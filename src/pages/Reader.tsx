@@ -601,6 +601,14 @@ const Reader = () => {
         <button onClick={() => setSearchOpen(true)} className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full transition-colors hover:bg-accent" aria-label="Search in book">
           <Search className="h-4 w-4" />
         </button>
+        <button
+          onClick={handleReadAloud}
+          disabled={!book || allSections.length === 0}
+          className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full transition-colors hover:bg-accent disabled:opacity-50"
+          aria-label="Read aloud"
+        >
+          <Volume2 className={`h-4 w-4 ${activeAudioBook?.id === book?.id ? 'text-primary' : ''}`} />
+        </button>
         <button onClick={() => setMainMenuOpen(true)} className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full transition-colors hover:bg-accent" aria-label="Open reader menu">
           <Menu className="h-4 w-4" />
         </button>
