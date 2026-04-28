@@ -125,6 +125,7 @@ const Reader = () => {
     togglePlayPause,
     tts: audioTts,
     book: activeAudioBook,
+    chapterIdx: activeChapterIdx,
   } = useAudioPlayer();
 
   const toggleFullscreen = useCallback(() => {
