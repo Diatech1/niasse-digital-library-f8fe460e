@@ -188,14 +188,6 @@ const AudioPlayer = () => {
             label={t("audioPlayer.queue")}
           />
 
-          <VoiceButton
-            voices={tts.voices}
-            selectedVoiceURI={tts.selectedVoiceURI}
-            setSelectedVoiceURI={tts.setSelectedVoiceURI}
-            label={t("audioPlayer.voice")}
-            defaultLabel={t("audioPlayer.voiceDefault")}
-          />
-
           <SpeedButton
             rate={tts.rate}
             setRate={tts.setRate}
