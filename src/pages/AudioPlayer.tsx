@@ -5,10 +5,9 @@ import { useBook } from "@/hooks/use-books";
 import { useBookContent } from "@/hooks/use-book-content";
 import { useAudioPlayer } from "@/hooks/use-audio-player";
 import { useLanguage } from "@/hooks/use-language";
-import type { GeminiVoice } from "@/hooks/use-gemini-tts";
 import {
   ChevronDown, Share2, SkipBack, Play, Pause, SkipForward,
-  Repeat, Moon, ListMusic, Gauge, Loader2, Mic2,
+  Repeat, Moon, ListMusic, Gauge, Loader2,
 } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
