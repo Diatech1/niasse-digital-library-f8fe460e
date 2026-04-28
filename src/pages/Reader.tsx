@@ -963,6 +963,7 @@ const Reader = () => {
         onNavigate={goToSection}
         themeClasses={{ bg: theme.bg, text: theme.text }}
       />
+      <MiniPlayer />
     </div>
   );
 };
