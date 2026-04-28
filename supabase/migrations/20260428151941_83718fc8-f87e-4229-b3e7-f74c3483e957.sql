@@ -1,0 +1,2 @@
+UPDATE public.books SET has_audio = TRUE WHERE id IN ('11','12','13','14','15','16','17','18','8','priere-shaykh-ibrahim','stations-deen-en','volume-1-conditions');
+UPDATE public.books SET has_audio = FALSE WHERE id = '7';
