@@ -45,6 +45,7 @@ function chunkText(text: string, maxLen = MAX_CHUNK_CHARS): string[] {
 function getKeys(): string[] {
   // Skip key 1 (depleted prepay). Try 2, then 3.
   return [
+    Deno.env.get("GEMINI_API_KEY_4"),
     Deno.env.get("GEMINI_API_KEY_2"),
     Deno.env.get("GEMINI_API_KEY_3"),
     Deno.env.get("GEMINI_API_KEY"),

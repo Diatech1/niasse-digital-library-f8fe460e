@@ -47,6 +47,7 @@ function chunkText(text: string, maxLen = MAX_CHUNK_CHARS): string[] {
 
 function getKeys(): string[] {
   return [
+    Deno.env.get("GEMINI_API_KEY_4"),
     Deno.env.get("GEMINI_API_KEY_2"),
     Deno.env.get("GEMINI_API_KEY_3"),
     Deno.env.get("GEMINI_API_KEY"),
