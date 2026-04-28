@@ -14,6 +14,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { toast } from "@/hooks/use-toast";
 
 const SPEEDS = [0.75, 1, 1.25, 1.5, 2];
 const SLEEP_OPTIONS = [0, 5, 10, 15, 30];
@@ -51,6 +52,31 @@ const AudioPlayer = () => {
 
   const currentSection = sections[chapterIdx];
 
+  const handleShare = async () => {
+    if (!book) return;
+    const shareUrl = `${window.location.origin}/listen/${book.id}`;
+    const shareData = {
+      title: book.title,
+      text: `${book.title} — ${book.author}`,
+      url: shareUrl,
+    };
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        toast({ title: t("audioPlayer.linkCopied") || "Link copied" });
+      }
+    } catch (err) {
+      if ((err as Error)?.name !== "AbortError") {
+        try {
+          await navigator.clipboard.writeText(shareUrl);
+          toast({ title: t("audioPlayer.linkCopied") || "Link copied" });
+        } catch {}
+      }
+    }
+  };
+
   if (!book) return null;
 
   const totalChapters = sections.length;
@@ -76,7 +102,7 @@ const AudioPlayer = () => {
           <div className="text-center">
             <p className="text-xs text-muted-foreground uppercase tracking-wider">{t("audioPlayer.nowPlaying")}</p>
           </div>
-          <button className="p-2" aria-label="Share">
+          <button onClick={handleShare} className="p-2" aria-label="Share">
             <Share2 className="w-5 h-5 text-foreground" />
           </button>
         </div>
