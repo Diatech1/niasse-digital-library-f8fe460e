@@ -18,7 +18,9 @@ import { stationsDeenEnSections, stationsDeenEnMeta } from "@/data/stations-deen
 import { loadConditionsReglesSections, conditionsReglesMeta, type ConditionsSection } from "@/data/conditions-regles";
 import { loadIfadatouSections, ifadatouAhmediyyaMeta, type IfadatouSection } from "@/data/ifadatou-ahmediyya";
 import { loadVolumeSections, type VolumeSection } from "@/data/volume-loader";
-import { ArrowLeft, Loader2, Search, Maximize, Minimize, Bookmark, BookmarkCheck, Menu, BookOpen, ScrollText, Home, Headphones, Settings } from "lucide-react";
+import { ArrowLeft, Loader2, Search, Maximize, Minimize, Bookmark, BookmarkCheck, Menu, BookOpen, ScrollText, Home, Headphones, Settings, Volume2 } from "lucide-react";
+import { useAudioPlayer } from "@/hooks/use-audio-player";
+import MiniPlayer from "@/components/MiniPlayer";
 import { Slider } from "@/components/ui/slider";
 import { useSaveProgress, getSavedProgress } from "@/hooks/use-reading-progress";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
