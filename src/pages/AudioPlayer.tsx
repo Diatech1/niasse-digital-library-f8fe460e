@@ -5,10 +5,9 @@ import { useBook } from "@/hooks/use-books";
 import { useBookContent } from "@/hooks/use-book-content";
 import { useAudioPlayer } from "@/hooks/use-audio-player";
 import { useLanguage } from "@/hooks/use-language";
-import type { GeminiVoice } from "@/hooks/use-gemini-tts";
 import {
   ChevronDown, Share2, SkipBack, Play, Pause, SkipForward,
-  Repeat, Moon, ListMusic, Gauge, Loader2, Mic2,
+  Repeat, Moon, ListMusic, Gauge, Loader2,
 } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -189,14 +188,6 @@ const AudioPlayer = () => {
             label={t("audioPlayer.queue")}
           />
 
-          <VoiceButton
-            voices={tts.voices}
-            selectedVoiceURI={tts.selectedVoiceURI}
-            setSelectedVoiceURI={tts.setSelectedVoiceURI}
-            label={t("audioPlayer.voice")}
-            defaultLabel={t("audioPlayer.voiceDefault")}
-          />
-
           <SpeedButton
             rate={tts.rate}
             setRate={tts.setRate}
@@ -333,64 +324,5 @@ const SpeedButton = ({ rate, setRate, label, note }: SpeedProps) => (
   </Popover>
 );
 
-interface VoiceProps {
-  voices: GeminiVoice[];
-  selectedVoiceURI: string | null;
-  setSelectedVoiceURI: (uri: string | null) => void;
-  label: string;
-  defaultLabel: string;
-}
-const VoiceButton = ({
-  voices, selectedVoiceURI, setSelectedVoiceURI,
-  label, defaultLabel,
-}: VoiceProps) => {
-  return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <button
-          className={cn("p-2 transition-colors", selectedVoiceURI && "text-primary")}
-          aria-label={label}
-        >
-          <Mic2 className="w-5 h-5" />
-        </button>
-      </PopoverTrigger>
-      <PopoverContent className="w-64 p-2" align="center" side="top" sideOffset={8}>
-        <p className="text-sm font-medium px-2 py-1.5 text-foreground">{label}</p>
-        <ScrollArea className="max-h-64">
-          <div className="flex flex-col">
-            <button
-              onClick={() => setSelectedVoiceURI(null)}
-              className={cn(
-                "text-left text-sm px-2 py-1.5 rounded-md hover:bg-accent",
-                !selectedVoiceURI && "bg-accent text-accent-foreground"
-              )}
-            >
-              {defaultLabel}
-            </button>
-            {voices.map((v) => (
-              <button
-                key={v.voiceURI}
-                onClick={() => setSelectedVoiceURI(v.voiceURI)}
-                className={cn(
-                  "text-left text-sm px-2 py-1.5 rounded-md hover:bg-accent",
-                  selectedVoiceURI === v.voiceURI && "bg-accent text-accent-foreground"
-                )}
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <span className="truncate">{v.name}</span>
-                  {v.description && (
-                    <span className="text-[10px] text-muted-foreground shrink-0">
-                      {v.description}
-                    </span>
-                  )}
-                </div>
-              </button>
-            ))}
-          </div>
-        </ScrollArea>
-      </PopoverContent>
-    </Popover>
-  );
-};
 
 export default AudioPlayer;
