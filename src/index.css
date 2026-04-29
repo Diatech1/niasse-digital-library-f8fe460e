@@ -34,6 +34,11 @@
     --input: 160 6% 18%;
     --ring: 155 40% 47%;
 
+    --gold: 37 55% 60%;
+    --gold-light: 40 70% 78%;
+    --cream: 40 30% 96%;
+    --cream-dark: 36 25% 88%;
+
     --radius: 1.5rem;
 
     --sidebar-background: 160 8% 8%;
@@ -74,6 +79,11 @@
     --border: 40 10% 82%;
     --input: 40 10% 82%;
     --ring: 155 40% 40%;
+
+    --gold: 37 50% 45%;
+    --gold-light: 40 55% 60%;
+    --cream: 40 30% 96%;
+    --cream-dark: 36 25% 88%;
 
     --sidebar-background: 40 15% 94%;
     --sidebar-foreground: 160 10% 10%;
