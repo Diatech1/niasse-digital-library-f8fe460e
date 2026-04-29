@@ -125,7 +125,7 @@ const BookDetail = () => {
             onClick={() => navigate(-1)}
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8"
           >
-            <ArrowLeft className="w-4 h-4" /> {t("common.back") || "Back"}
+            <ArrowLeft className="w-4 h-4" /> Back
           </button>
 
           <div className="grid grid-cols-[minmax(0,320px)_minmax(0,1fr)] gap-12 items-start">
