@@ -1,0 +1,1 @@
+UPDATE public.books SET is_favorite = false WHERE id = '7';
