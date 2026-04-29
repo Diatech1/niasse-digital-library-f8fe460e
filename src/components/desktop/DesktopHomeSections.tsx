@@ -25,7 +25,19 @@ const quotes = [
 const DesktopHomeSections = () => {
   const { books } = useBooks();
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const [quoteIndex, setQuoteIndex] = useState(0);
+
+  const continueReading = useMemo(
+    () =>
+      books
+        .map((b) => ({ book: b, idx: getSavedProgress(b.id) }))
+        .filter(({ idx }) => idx > 0)
+        .sort((a, b) => b.idx - a.idx),
+    [books]
+  );
+
+  const favorites = books.filter((b) => b.isFavorite);
 
   useEffect(() => {
     const interval = setInterval(() => {
