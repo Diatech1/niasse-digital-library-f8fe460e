@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { BookOpen, Headphones, Languages, Library as LibraryIcon, Heart } from "lucide-react";
 import BookCard from "@/components/BookCard";
 import { useBooks } from "@/hooks/use-books";
 import { useLanguage } from "@/hooks/use-language";
+import { getSavedProgress } from "@/hooks/use-reading-progress";
 
 const quotes = [
   {
