@@ -46,7 +46,7 @@ const App = () => (
               <Route path="*" element={
                 <div className="relative">
                   <DesktopNav />
-                  <div className="max-w-lg mx-auto lg:max-w-5xl lg:pt-20">
+                  <div className="max-w-lg mx-auto lg:pt-20">
                     <Routes>
                       <Route path="/library" element={<Library />} />
                       <Route path="/book/:id" element={<BookDetail />} />
@@ -55,12 +55,9 @@ const App = () => (
                       <Route path="/settings" element={<Settings />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
+                    <MiniPlayer />
                     <div className="lg:hidden">
-                      <MiniPlayer />
                       <BottomNav />
-                    </div>
-                    <div className="hidden lg:block">
-                      <MiniPlayer />
                     </div>
                   </div>
                 </div>
