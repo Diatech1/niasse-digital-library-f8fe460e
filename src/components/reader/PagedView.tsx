@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect, forwardRef, useImperativeHandle, useCallback } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
 
 export interface PagedViewHandle {
   getPageForSection: (sectionIndex: number) => number;
@@ -14,6 +15,14 @@ interface PagedViewProps {
   fitToPage?: boolean;
 }
 
+// True A4 ratio (height / width)
+const A4_RATIO = 297 / 210; // ≈ 1.4142
+
+const ZOOM_KEY = 'faydabook-reader-zoom';
+const ZOOM_MIN = 0.6;
+const ZOOM_MAX = 2.0;
+const ZOOM_STEP = 0.1;
+
 const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
   ({ children, page, onTotalPagesChange, className, onScroll, fitToPage = false }, ref) => {
     const outerRef = useRef<HTMLDivElement>(null);
@@ -23,6 +32,15 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
     const lastTotal = useRef(0);
     const measureRaf = useRef(0);
     const isMobile = useIsMobile();
+
+    // Zoom (desktop only). 1.0 = "fit to viewport".
+    const [zoom, setZoom] = useState<number>(() => {
+      const saved = parseFloat(localStorage.getItem(ZOOM_KEY) || '');
+      return isNaN(saved) ? 1 : Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, saved));
+    });
+    useEffect(() => {
+      localStorage.setItem(ZOOM_KEY, String(zoom));
+    }, [zoom]);
 
     useEffect(() => {
       if (!outerRef.current) return;
@@ -35,56 +53,39 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
       return () => ro.disconnect();
     }, []);
 
-    // Desktop: open-book two-page spread (each page ~ A5 portrait, ratio 1:1.414).
-    // Mobile: full-width single page (existing behavior).
-    const PAGE_RATIO = 1.45; // height / width per page — slightly taller than A4 for elegance
-    const horizontalMargin = 96; // breathing room on left/right of the book
-    const verticalMargin = 40;
-    const maxStageHeight = Math.max(0, availHeight - verticalMargin * 2);
-    const maxStageWidth = Math.max(0, availWidth - horizontalMargin * 2);
+    // Single A4 page. Mobile keeps existing full-width behavior.
+    const stagePadX = isMobile ? 0 : 40;
+    const stagePadY = isMobile ? 0 : 32;
+    const fitWidthBy = Math.max(0, availWidth - stagePadX * 2);
+    const fitHeightBy = Math.max(0, availHeight - stagePadY * 2);
+    // Fit a single A4 portrait to the viewport at zoom = 1
+    const fitWidthFromHeight = fitHeightBy / A4_RATIO;
+    const baseWidth = isMobile ? availWidth : Math.min(fitWidthBy, fitWidthFromHeight);
 
-    // Decide spread vs single page on desktop based on available width.
-    const wantsSpread = !isMobile && availWidth >= 980;
-    const pagesPerTurn = wantsSpread ? 2 : 1;
+    const pagesPerTurn = 1;
+    const wantsSpread = false;
 
-    let bookWidth: number;
-    let bookHeight: number;
-    if (isMobile) {
-      bookWidth = availWidth;
-      bookHeight = fitToPage ? availHeight : availHeight * 4;
-    } else if (wantsSpread) {
-      // book spread = 2 pages side by side
-      const widthFromHeight = (maxStageHeight / PAGE_RATIO) * 2;
-      bookWidth = Math.min(maxStageWidth, widthFromHeight, 1280);
-      bookHeight = (bookWidth / 2) * PAGE_RATIO;
-    } else {
-      const widthFromHeight = maxStageHeight / PAGE_RATIO;
-      bookWidth = Math.min(maxStageWidth, widthFromHeight, 720);
-      bookHeight = bookWidth * PAGE_RATIO;
-    }
+    const bookWidth = isMobile ? availWidth : baseWidth * zoom;
+    const bookHeight = isMobile
+      ? (fitToPage ? availHeight : availHeight * 4)
+      : bookWidth * A4_RATIO;
 
-    // Per-page padding (asymmetric: outer margin larger than inner gutter, like real books)
-    const singlePageWidth = bookWidth / pagesPerTurn;
+    // A4-style margins (mirror the asymmetric typographic margins of a real book page)
     const padTop = isMobile ? 56 : Math.round(bookHeight * 0.085);
-    const padBottom = isMobile ? 24 : Math.round(bookHeight * 0.085);
-    const padOuter = isMobile ? 24 : Math.round(singlePageWidth * 0.11);
-    const padInner = isMobile ? 24 : Math.round(singlePageWidth * 0.085);
-    // For single-page (or mobile), use symmetric padding
-    const padLeft = wantsSpread ? padOuter : (isMobile ? 24 : padOuter);
-    const padRight = wantsSpread ? padOuter : (isMobile ? 24 : padOuter);
+    const padBottom = isMobile ? 24 : Math.round(bookHeight * 0.095);
+    const padLeft = isMobile ? 24 : Math.round(bookWidth * 0.105);
+    const padRight = isMobile ? 24 : Math.round(bookWidth * 0.105);
 
-    const singleContentWidth = singlePageWidth - padLeft - padRight;
+    const singleContentWidth = bookWidth - padLeft - padRight;
     const contentHeight = bookHeight - padTop - padBottom;
 
-    // Reserved band for folio
-    const folioFontPx = isMobile ? 11 : 12;
+    // Folio band
+    const folioFontPx = isMobile ? 11 : Math.max(11, Math.round(12 * Math.sqrt(zoom)));
     const folioLineHeight = Math.ceil(folioFontPx * 1.4);
     const folioBandHeight = Math.max(folioLineHeight + 6, 20);
-    const folioHeight = folioBandHeight;
 
-    // Column gap = inner gutter (both gutters around the spine)
-    const gap = wantsSpread ? padInner * 2 : (isMobile ? 48 : 48);
-    const strideWidth = singleContentWidth + gap;
+    const gap = isMobile ? 48 : 0; // single page → gap unused for layout but used for column stride
+    const strideWidth = singleContentWidth + (isMobile ? gap : 48);
 
     const measure = useCallback(() => {
       if (!innerRef.current || singleContentWidth <= 0) return;
@@ -106,37 +107,43 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
         requestAnimationFrame(measure);
       });
       return () => cancelAnimationFrame(measureRaf.current);
-    }, [children, availWidth, availHeight, measure]);
+    }, [children, availWidth, availHeight, zoom, measure]);
 
     useImperativeHandle(ref, () => ({
       getPageForSection: (sectionIndex: number) => {
         if (!innerRef.current || strideWidth === 0) return 0;
         const el = innerRef.current.querySelector(`[data-section-index="${sectionIndex}"]`);
         if (!el) return 0;
-        const colIndex = Math.floor((el as HTMLElement).offsetLeft / strideWidth);
-        return wantsSpread ? colIndex - (colIndex % 2) : colIndex;
+        return Math.floor((el as HTMLElement).offsetLeft / strideWidth);
       },
-    }), [strideWidth, wantsSpread]);
+    }), [strideWidth]);
 
     const translateX = page * strideWidth;
 
+    // Reset scroll on page change (mobile vertical, desktop both axes when zoomed)
     useEffect(() => {
-      if (isMobile && outerRef.current) {
-        outerRef.current.scrollTop = 0;
-      }
+      if (!outerRef.current) return;
+      outerRef.current.scrollTop = 0;
+      if (!isMobile) outerRef.current.scrollLeft = 0;
     }, [page, isMobile]);
 
-    const innerWidth = wantsSpread ? singleContentWidth * 2 + gap : singleContentWidth;
+    // Allow scrolling on desktop only when the page is bigger than the viewport (i.e. zoomed in)
+    const allowDesktopScroll = !isMobile && (bookWidth > fitWidthBy + 1 || bookHeight > fitHeightBy + 1);
+
+    const handleZoomIn = () => setZoom((z) => Math.min(ZOOM_MAX, +(z + ZOOM_STEP).toFixed(2)));
+    const handleZoomOut = () => setZoom((z) => Math.max(ZOOM_MIN, +(z - ZOOM_STEP).toFixed(2)));
+    const handleZoomReset = () => setZoom(1);
 
     return (
       <div
         ref={outerRef}
-        className={`reader-stage overflow-hidden relative flex justify-center ${isMobile && !fitToPage ? 'items-start' : 'items-center'} ${className || ''}`}
+        className={`reader-stage overflow-hidden relative flex justify-center ${(isMobile && !fitToPage) || allowDesktopScroll ? 'items-start' : 'items-center'} ${className || ''}`}
         style={{
           height: '100%',
-          overflowY: isMobile && !fitToPage ? 'auto' : 'hidden',
-          paddingTop: isMobile && !fitToPage ? 8 : 0,
-          paddingBottom: isMobile && !fitToPage ? 16 : 0,
+          overflowY: (isMobile && !fitToPage) || allowDesktopScroll ? 'auto' : 'hidden',
+          overflowX: allowDesktopScroll ? 'auto' : 'hidden',
+          paddingTop: isMobile && !fitToPage ? 8 : (allowDesktopScroll ? stagePadY : 0),
+          paddingBottom: isMobile && !fitToPage ? 16 : (allowDesktopScroll ? stagePadY : 0),
         }}
         onScroll={onScroll}
       >
@@ -146,46 +153,16 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
             style={{
               width: bookWidth,
               height: bookHeight,
-              borderRadius: isMobile ? 0 : 6,
+              borderRadius: isMobile ? 0 : 2,
             }}
           >
-            {/* Center spine for spread mode */}
-            {wantsSpread && (
-              <>
-                {/* Soft inner shadow on both inner edges to suggest the gutter */}
-                <div
-                  aria-hidden
-                  className="absolute top-0 bottom-0 pointer-events-none z-10"
-                  style={{
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    width: 40,
-                    background:
-                      'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.10) 35%, rgba(0,0,0,0.18) 50%, rgba(0,0,0,0.10) 65%, transparent 100%)',
-                  }}
-                />
-                {/* Crisp spine line */}
-                <div
-                  aria-hidden
-                  className="absolute top-0 bottom-0 pointer-events-none z-10"
-                  style={{
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    width: 1,
-                    background:
-                      'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.18) 12%, rgba(0,0,0,0.18) 88%, transparent 100%)',
-                  }}
-                />
-              </>
-            )}
-
             <div
               style={{
                 position: 'absolute',
                 top: padTop,
                 left: padLeft,
-                width: innerWidth,
-                height: contentHeight - folioHeight,
+                width: singleContentWidth,
+                height: contentHeight - folioBandHeight,
                 overflow: 'hidden',
               }}
             >
@@ -194,8 +171,9 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
                 className="pocket-paragraphs"
                 style={{
                   height: '100%',
+                  fontSize: isMobile ? undefined : `${zoom}em`,
                   columnWidth: `${singleContentWidth}px`,
-                  columnGap: `${gap}px`,
+                  columnGap: `${isMobile ? gap : 48}px`,
                   columnFill: 'auto',
                   transform: `translateX(-${translateX}px)`,
                   transition: 'transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
@@ -206,61 +184,70 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
               </div>
             </div>
 
-            {/* Folios */}
-            {wantsSpread ? (
-              <>
-                <div
-                  className="absolute flex items-center justify-center pointer-events-none select-none"
-                  style={{
-                    bottom: Math.max(0, (padBottom - folioBandHeight) / 2),
-                    left: 0,
-                    width: bookWidth / 2,
-                    height: folioBandHeight,
-                    lineHeight: `${folioLineHeight}px`,
-                  }}
-                >
-                  <span
-                    className="text-muted-foreground/60 font-serif italic tracking-widest"
-                    style={{ fontVariant: 'small-caps', fontSize: `${folioFontPx}px` }}
-                  >
-                    — {page + 1} —
-                  </span>
-                </div>
-                <div
-                  className="absolute flex items-center justify-center pointer-events-none select-none"
-                  style={{
-                    bottom: Math.max(0, (padBottom - folioBandHeight) / 2),
-                    left: bookWidth / 2,
-                    width: bookWidth / 2,
-                    height: folioBandHeight,
-                    lineHeight: `${folioLineHeight}px`,
-                  }}
-                >
-                  <span
-                    className="text-muted-foreground/60 font-serif italic tracking-widest"
-                    style={{ fontVariant: 'small-caps', fontSize: `${folioFontPx}px` }}
-                  >
-                    — {page + 2} —
-                  </span>
-                </div>
-              </>
-            ) : (
-              <div
-                className="absolute left-0 right-0 flex items-center justify-center pointer-events-none select-none"
-                style={{
-                  bottom: Math.max(0, (padBottom - folioBandHeight) / 2),
-                  height: folioBandHeight,
-                  lineHeight: `${folioLineHeight}px`,
-                }}
+            {/* Folio */}
+            <div
+              className="absolute left-0 right-0 flex items-center justify-center pointer-events-none select-none"
+              style={{
+                bottom: Math.max(0, (padBottom - folioBandHeight) / 2),
+                height: folioBandHeight,
+                lineHeight: `${folioLineHeight}px`,
+              }}
+            >
+              <span
+                className="text-muted-foreground/60 font-serif italic tracking-widest"
+                style={{ fontVariant: 'small-caps', fontSize: `${folioFontPx}px` }}
               >
-                <span
-                  className="text-muted-foreground/60 font-serif italic tracking-widest"
-                  style={{ fontVariant: 'small-caps', fontSize: `${folioFontPx}px` }}
-                >
-                  — {page + 1} —
-                </span>
-              </div>
-            )}
+                — {page + 1} —
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Desktop zoom controls — floating, sticky to the stage */}
+        {!isMobile && availWidth > 0 && (
+          <div
+            className="absolute z-20 flex items-center gap-1 rounded-full border border-border/40 bg-background/85 px-1.5 py-1 shadow-md backdrop-blur"
+            style={{ bottom: 16, right: 16 }}
+          >
+            <button
+              type="button"
+              onClick={handleZoomOut}
+              disabled={zoom <= ZOOM_MIN + 0.001}
+              className="flex h-7 w-7 items-center justify-center rounded-full text-foreground/80 transition-colors hover:bg-accent disabled:opacity-40"
+              aria-label="Zoom out"
+              title="Zoom out"
+            >
+              <ZoomOut className="h-3.5 w-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={handleZoomReset}
+              className="min-w-[3.25rem] rounded-full px-2 py-0.5 text-xs font-medium tabular-nums text-foreground/80 transition-colors hover:bg-accent"
+              aria-label="Reset zoom"
+              title="Fit page"
+            >
+              {Math.round(zoom * 100)}%
+            </button>
+            <button
+              type="button"
+              onClick={handleZoomIn}
+              disabled={zoom >= ZOOM_MAX - 0.001}
+              className="flex h-7 w-7 items-center justify-center rounded-full text-foreground/80 transition-colors hover:bg-accent disabled:opacity-40"
+              aria-label="Zoom in"
+              title="Zoom in"
+            >
+              <ZoomIn className="h-3.5 w-3.5" />
+            </button>
+            <div className="mx-0.5 h-4 w-px bg-border/60" aria-hidden />
+            <button
+              type="button"
+              onClick={handleZoomReset}
+              className="flex h-7 w-7 items-center justify-center rounded-full text-foreground/80 transition-colors hover:bg-accent"
+              aria-label="Fit to page"
+              title="Fit to page"
+            >
+              <Maximize2 className="h-3.5 w-3.5" />
+            </button>
           </div>
         )}
       </div>
