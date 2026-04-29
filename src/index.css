@@ -300,3 +300,50 @@ body.reader-chrome-hidden .bottom-nav {
 .font-reader {
   font-family: 'Crimson Pro', 'Lora', serif;
 }
+
+/* ============================================================
+   Reader stage — desktop ambient backdrop & paper styling.
+   Mobile keeps a flat surface (no stage background).
+   ============================================================ */
+@media (min-width: 768px) {
+  .reader-stage {
+    background:
+      radial-gradient(ellipse at 50% 0%, hsl(var(--foreground) / 0.04) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 100%, hsl(var(--foreground) / 0.06) 0%, transparent 60%),
+      linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--muted) / 0.55) 100%);
+  }
+
+  .reader-stage::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse at center, transparent 55%, hsl(0 0% 0% / 0.18) 100%);
+  }
+
+  /* The "book" — warm paper with edge shadow + subtle grain */
+  .reader-book {
+    background-color: hsl(var(--background));
+    background-image:
+      /* very subtle paper grain */
+      radial-gradient(hsl(var(--foreground) / 0.012) 1px, transparent 1px),
+      /* warm vignette on the page */
+      radial-gradient(ellipse at 50% 40%, hsl(var(--background)) 0%, hsl(var(--background)) 70%, hsl(var(--foreground) / 0.04) 100%);
+    background-size: 3px 3px, 100% 100%;
+    box-shadow:
+      0 1px 0 hsl(0 0% 100% / 0.5) inset,
+      0 30px 60px -20px hsl(0 0% 0% / 0.35),
+      0 18px 36px -18px hsl(0 0% 0% / 0.25),
+      0 0 0 1px hsl(var(--foreground) / 0.06);
+  }
+
+  .dark .reader-book,
+  html.dark .reader-book {
+    box-shadow:
+      0 1px 0 hsl(0 0% 100% / 0.04) inset,
+      0 30px 60px -20px hsl(0 0% 0% / 0.7),
+      0 18px 36px -18px hsl(0 0% 0% / 0.5),
+      0 0 0 1px hsl(0 0% 100% / 0.04);
+  }
+}

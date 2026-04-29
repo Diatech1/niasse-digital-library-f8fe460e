@@ -35,42 +35,55 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
       return () => ro.disconnect();
     }, []);
 
-    // Desktop: single A4 page (210:297 ≈ 1:1.414), sized to fit available area.
+    // Desktop: open-book two-page spread (each page ~ A5 portrait, ratio 1:1.414).
     // Mobile: full-width single page (existing behavior).
-    const A4_RATIO = 297 / 210; // height / width
-    const maxPageHeight = Math.max(0, availHeight - 16);
-    const maxPageWidth = Math.max(0, availWidth * 0.9);
-    // Fit within both width and height constraints, cap width for readability
-    const a4WidthFromHeight = maxPageHeight / A4_RATIO;
-    const singlePageWidth = isMobile
-      ? availWidth
-      : Math.min(maxPageWidth, a4WidthFromHeight, 820);
-    const wantsSpread = false;
-    const pagesPerTurn = 1;
+    const PAGE_RATIO = 1.45; // height / width per page — slightly taller than A4 for elegance
+    const horizontalMargin = 96; // breathing room on left/right of the book
+    const verticalMargin = 40;
+    const maxStageHeight = Math.max(0, availHeight - verticalMargin * 2);
+    const maxStageWidth = Math.max(0, availWidth - horizontalMargin * 2);
 
-    const bookWidth = isMobile ? availWidth : singlePageWidth;
-    const singleHeight = isMobile
-      ? (fitToPage ? availHeight : availHeight * 4)
-      : Math.min(maxPageHeight, bookWidth * A4_RATIO);
-    const bookHeight = singleHeight;
+    // Decide spread vs single page on desktop based on available width.
+    const wantsSpread = !isMobile && availWidth >= 980;
+    const pagesPerTurn = wantsSpread ? 2 : 1;
 
-    const padTop = isMobile ? 56 : bookHeight * 0.10;
-    const padBottom = isMobile ? 24 : bookHeight * 0.08;
-    const padLeft = isMobile ? 24 : (bookWidth / pagesPerTurn) * 0.10;
-    const padRight = isMobile ? 24 : (bookWidth / pagesPerTurn) * 0.08;
+    let bookWidth: number;
+    let bookHeight: number;
+    if (isMobile) {
+      bookWidth = availWidth;
+      bookHeight = fitToPage ? availHeight : availHeight * 4;
+    } else if (wantsSpread) {
+      // book spread = 2 pages side by side
+      const widthFromHeight = (maxStageHeight / PAGE_RATIO) * 2;
+      bookWidth = Math.min(maxStageWidth, widthFromHeight, 1280);
+      bookHeight = (bookWidth / 2) * PAGE_RATIO;
+    } else {
+      const widthFromHeight = maxStageHeight / PAGE_RATIO;
+      bookWidth = Math.min(maxStageWidth, widthFromHeight, 720);
+      bookHeight = bookWidth * PAGE_RATIO;
+    }
 
-    // Single-page content width (one column). When in spread mode the inner area
-    // shows two columns of this width side-by-side.
-    const singleContentWidth = (bookWidth / pagesPerTurn) - padLeft - padRight;
+    // Per-page padding (asymmetric: outer margin larger than inner gutter, like real books)
+    const singlePageWidth = bookWidth / pagesPerTurn;
+    const padTop = isMobile ? 56 : Math.round(bookHeight * 0.085);
+    const padBottom = isMobile ? 24 : Math.round(bookHeight * 0.085);
+    const padOuter = isMobile ? 24 : Math.round(singlePageWidth * 0.11);
+    const padInner = isMobile ? 24 : Math.round(singlePageWidth * 0.085);
+    // For single-page (or mobile), use symmetric padding
+    const padLeft = wantsSpread ? padOuter : (isMobile ? 24 : padOuter);
+    const padRight = wantsSpread ? padOuter : (isMobile ? 24 : padOuter);
+
+    const singleContentWidth = singlePageWidth - padLeft - padRight;
     const contentHeight = bookHeight - padTop - padBottom;
-    // Reserved band at the bottom of the page for the folio (page number).
-    // Must be >= the folio's rendered line-height so it never overlaps body text.
+
+    // Reserved band for folio
     const folioFontPx = isMobile ? 11 : 12;
-    const folioLineHeight = Math.ceil(folioFontPx * 1.4); // ~17px
+    const folioLineHeight = Math.ceil(folioFontPx * 1.4);
     const folioBandHeight = Math.max(folioLineHeight + 6, 20);
     const folioHeight = folioBandHeight;
 
-    const gap = 48;
+    // Column gap = inner gutter (both gutters around the spine)
+    const gap = wantsSpread ? padInner * 2 : (isMobile ? 48 : 48);
     const strideWidth = singleContentWidth + gap;
 
     const measure = useCallback(() => {
@@ -84,7 +97,6 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
     }, [singleContentWidth, strideWidth, onTotalPagesChange, pagesPerTurn]);
 
     useEffect(() => {
-      // Re-emit when pagesPerTurn changes (responsive resize crosses spread threshold)
       onTotalPagesChange(lastTotal.current || 1, pagesPerTurn);
     }, [pagesPerTurn, onTotalPagesChange]);
 
@@ -102,16 +114,12 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
         const el = innerRef.current.querySelector(`[data-section-index="${sectionIndex}"]`);
         if (!el) return 0;
         const colIndex = Math.floor((el as HTMLElement).offsetLeft / strideWidth);
-        // Snap to the start of a spread when in 2-up mode
         return wantsSpread ? colIndex - (colIndex % 2) : colIndex;
       },
     }), [strideWidth, wantsSpread]);
 
-    // Translate by the page index. In spread mode `page` from parent is the
-    // left page of the spread; we move two columns at a time.
     const translateX = page * strideWidth;
 
-    // Reset scroll to top when page changes on mobile
     useEffect(() => {
       if (isMobile && outerRef.current) {
         outerRef.current.scrollTop = 0;
@@ -123,7 +131,7 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
     return (
       <div
         ref={outerRef}
-        className={`overflow-hidden relative flex justify-center ${isMobile && !fitToPage ? 'items-start' : 'items-center'} ${className || ''}`}
+        className={`reader-stage overflow-hidden relative flex justify-center ${isMobile && !fitToPage ? 'items-start' : 'items-center'} ${className || ''}`}
         style={{
           height: '100%',
           overflowY: isMobile && !fitToPage ? 'auto' : 'hidden',
@@ -134,27 +142,41 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
       >
         {bookWidth > 0 && (
           <div
-            className="relative flex-shrink-0"
+            className="reader-book relative flex-shrink-0"
             style={{
               width: bookWidth,
               height: bookHeight,
-              boxShadow: isMobile ? 'none' : '0 4px 32px rgba(0,0,0,0.18), 0 0 0 1px rgba(128,128,128,0.08)',
-              borderRadius: isMobile ? 0 : 4,
-              overflow: 'hidden',
+              borderRadius: isMobile ? 0 : 6,
             }}
           >
             {/* Center spine for spread mode */}
             {wantsSpread && (
-              <div
-                aria-hidden
-                className="absolute top-0 bottom-0 pointer-events-none"
-                style={{
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  width: 1,
-                  background: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.10) 12%, rgba(0,0,0,0.10) 88%, transparent 100%)',
-                }}
-              />
+              <>
+                {/* Soft inner shadow on both inner edges to suggest the gutter */}
+                <div
+                  aria-hidden
+                  className="absolute top-0 bottom-0 pointer-events-none z-10"
+                  style={{
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: 40,
+                    background:
+                      'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.10) 35%, rgba(0,0,0,0.18) 50%, rgba(0,0,0,0.10) 65%, transparent 100%)',
+                  }}
+                />
+                {/* Crisp spine line */}
+                <div
+                  aria-hidden
+                  className="absolute top-0 bottom-0 pointer-events-none z-10"
+                  style={{
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: 1,
+                    background:
+                      'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.18) 12%, rgba(0,0,0,0.18) 88%, transparent 100%)',
+                  }}
+                />
+              </>
             )}
 
             <div
@@ -176,7 +198,7 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
                   columnGap: `${gap}px`,
                   columnFill: 'auto',
                   transform: `translateX(-${translateX}px)`,
-                  transition: 'transform 0.35s cubic-bezier(0.25, 0.1, 0.25, 1.0)',
+                  transition: 'transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1)',
                   willChange: 'transform',
                 }}
               >
@@ -188,18 +210,36 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
             {wantsSpread ? (
               <>
                 <div
-                  className="absolute flex justify-center pointer-events-none select-none"
-                  style={{ bottom: padBottom * 0.3, left: 0, width: bookWidth / 2 }}
+                  className="absolute flex items-center justify-center pointer-events-none select-none"
+                  style={{
+                    bottom: Math.max(0, (padBottom - folioBandHeight) / 2),
+                    left: 0,
+                    width: bookWidth / 2,
+                    height: folioBandHeight,
+                    lineHeight: `${folioLineHeight}px`,
+                  }}
                 >
-                  <span className="text-muted-foreground/60 font-serif italic tracking-widest text-sm" style={{ fontVariant: 'small-caps' }}>
+                  <span
+                    className="text-muted-foreground/60 font-serif italic tracking-widest"
+                    style={{ fontVariant: 'small-caps', fontSize: `${folioFontPx}px` }}
+                  >
                     — {page + 1} —
                   </span>
                 </div>
                 <div
-                  className="absolute flex justify-center pointer-events-none select-none"
-                  style={{ bottom: padBottom * 0.3, left: bookWidth / 2, width: bookWidth / 2 }}
+                  className="absolute flex items-center justify-center pointer-events-none select-none"
+                  style={{
+                    bottom: Math.max(0, (padBottom - folioBandHeight) / 2),
+                    left: bookWidth / 2,
+                    width: bookWidth / 2,
+                    height: folioBandHeight,
+                    lineHeight: `${folioLineHeight}px`,
+                  }}
                 >
-                  <span className="text-muted-foreground/60 font-serif italic tracking-widest text-sm" style={{ fontVariant: 'small-caps' }}>
+                  <span
+                    className="text-muted-foreground/60 font-serif italic tracking-widest"
+                    style={{ fontVariant: 'small-caps', fontSize: `${folioFontPx}px` }}
+                  >
                     — {page + 2} —
                   </span>
                 </div>
