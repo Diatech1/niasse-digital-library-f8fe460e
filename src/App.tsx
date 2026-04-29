@@ -15,6 +15,7 @@ import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import BottomNav from "./components/BottomNav";
 import MiniPlayer from "./components/MiniPlayer";
+import DesktopNav from "./components/desktop/DesktopNav";
 import { AudioPlayerProvider } from "@/hooks/use-audio-player";
 
 const queryClient = new QueryClient();
@@ -29,30 +30,39 @@ const App = () => (
         <BrowserRouter>
           <AudioPlayerProvider>
             <Routes>
-              {/* Reader breaks out of max-w-lg to use full screen */}
+              {/* Reader breaks out of max-w-lg to use full screen, no DesktopNav */}
               <Route path="/read/:id" element={<Reader />} />
               {/* Home breaks out of max-w-lg so the desktop hero can go full-bleed */}
               <Route path="/" element={
                 <div className="relative">
+                  <DesktopNav />
                   <Index />
-                  <div className="max-w-lg mx-auto">
+                  <div className="max-w-lg mx-auto lg:hidden">
                     <MiniPlayer />
                     <BottomNav />
                   </div>
                 </div>
               } />
               <Route path="*" element={
-                <div className="max-w-lg mx-auto relative">
-                  <Routes>
-                    <Route path="/library" element={<Library />} />
-                    <Route path="/book/:id" element={<BookDetail />} />
-                    <Route path="/listen/:id" element={<AudioPlayer />} />
-                    <Route path="/audio" element={<AudioLibrary />} />
-                    <Route path="/settings" element={<Settings />} />
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                  <MiniPlayer />
-                  <BottomNav />
+                <div className="relative">
+                  <DesktopNav />
+                  <div className="max-w-lg mx-auto lg:max-w-5xl lg:pt-20">
+                    <Routes>
+                      <Route path="/library" element={<Library />} />
+                      <Route path="/book/:id" element={<BookDetail />} />
+                      <Route path="/listen/:id" element={<AudioPlayer />} />
+                      <Route path="/audio" element={<AudioLibrary />} />
+                      <Route path="/settings" element={<Settings />} />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                    <div className="lg:hidden">
+                      <MiniPlayer />
+                      <BottomNav />
+                    </div>
+                    <div className="hidden lg:block">
+                      <MiniPlayer />
+                    </div>
+                  </div>
                 </div>
               } />
             </Routes>
