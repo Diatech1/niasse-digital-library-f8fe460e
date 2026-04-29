@@ -37,7 +37,7 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
 
     // Desktop: single page sized to fill height; on wide screens, render a 2-page spread
     // Mobile: full-width single page
-    const singlePageWidth = isMobile ? availWidth : Math.min(availWidth * 0.55, availHeight * (4 / 7));
+    const singlePageWidth = isMobile ? availWidth : Math.min(availWidth * 0.9, availHeight * (4 / 7) * 1.8, 900);
     const wantsSpread = false;
     const pagesPerTurn = wantsSpread ? 2 : 1;
 
