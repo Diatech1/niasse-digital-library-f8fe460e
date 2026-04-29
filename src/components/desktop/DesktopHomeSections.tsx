@@ -185,17 +185,17 @@ const DesktopHomeSections = () => {
       </section>
 
       {/* Browse by language */}
-      <section className="py-20 bg-card">
+      <section className="py-12 bg-card">
         <div className="container mx-auto px-6">
-          <div className="text-center mb-12">
-            <p className="text-accent text-xs font-medium tracking-[0.2em] uppercase mb-2">
+          <div className="text-center mb-8">
+            <p className="text-accent text-xs font-medium tracking-[0.2em] uppercase mb-1">
               Browse by
             </p>
             <h2 className="font-display text-2xl font-bold text-foreground">
               Language
             </h2>
-            <div className="mx-auto mt-4 h-px w-16 bg-gradient-to-r from-transparent via-accent to-transparent" />
-            <p className="mt-4 text-sm text-muted-foreground max-w-md mx-auto">
+            <div className="mx-auto mt-3 h-px w-12 bg-gradient-to-r from-transparent via-accent to-transparent" />
+            <p className="mt-3 text-sm text-muted-foreground max-w-md mx-auto">
               Explore the library in its original tongue, or in translation.
             </p>
           </div>
@@ -206,7 +206,7 @@ const DesktopHomeSections = () => {
                 <Link
                   key={g.code}
                   to={`/library?lang=${g.code}`}
-                  className="group relative flex flex-col items-center justify-between gap-5 p-8 rounded-2xl bg-background border border-border hover:border-accent/60 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 overflow-hidden"
+                  className="group relative flex flex-col items-center justify-between gap-4 p-6 rounded-2xl bg-background border border-border hover:border-accent/60 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 overflow-hidden"
                 >
                   {/* Subtle gradient wash on hover */}
                   <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-accent/5 via-transparent to-primary/5" />
@@ -215,7 +215,7 @@ const DesktopHomeSections = () => {
                   <div className="relative flex flex-col items-center gap-1">
                     <span
                       dir={g.dir}
-                      className="font-display text-4xl font-semibold text-foreground group-hover:text-primary transition-colors leading-none"
+                      className="font-display text-2xl font-semibold text-foreground group-hover:text-primary transition-colors leading-none"
                       style={g.code === "ar" ? { fontFamily: '"Scheherazade New", serif' } : undefined}
                     >
                       {g.native}
