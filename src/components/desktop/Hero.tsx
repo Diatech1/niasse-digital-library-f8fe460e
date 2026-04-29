@@ -28,7 +28,7 @@ const Hero = () => {
       />
       <div className="absolute inset-0 bg-gradient-hero" />
 
-      <div className="relative z-10 text-center px-4 max-w-3xl mx-auto hero-text-shadow">
+      <div className="relative z-10 text-center px-4 max-w-3xl mx-auto">
         <motion.p
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -46,7 +46,7 @@ const Hero = () => {
         >
           Cheikh Ibrahim
           <br />
-          <span className="text-gold drop-shadow-[0_2px_12px_rgba(20,12,4,0.85)]">Niass</span>
+          <span className="text-gold">Niass</span>
         </motion.h1>
 
         <motion.p
