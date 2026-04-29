@@ -28,7 +28,7 @@ const Hero = () => {
       />
       <div className="absolute inset-0 bg-gradient-hero" />
 
-      <div className="relative z-10 text-center px-4 max-w-3xl mx-auto">
+      <div className="relative z-10 text-center px-4 max-w-3xl mx-auto hero-text-shadow">
         <motion.p
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}

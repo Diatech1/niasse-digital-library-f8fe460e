@@ -162,7 +162,13 @@
   }
 
   .bg-gradient-hero {
-    background: linear-gradient(180deg, hsl(0 0% 0% / 0.55) 0%, hsl(0 0% 0% / 0.45) 50%, hsl(0 0% 0% / 0.85) 100%);
+    background:
+      radial-gradient(ellipse at center, hsl(0 0% 0% / 0.55) 0%, hsl(0 0% 0% / 0.35) 60%, transparent 100%),
+      linear-gradient(180deg, hsl(0 0% 0% / 0.6) 0%, hsl(0 0% 0% / 0.5) 50%, hsl(0 0% 0% / 0.85) 100%);
+  }
+
+  .hero-text-shadow {
+    text-shadow: 0 2px 16px hsl(0 0% 0% / 0.6), 0 1px 3px hsl(0 0% 0% / 0.5);
   }
 }
 }
