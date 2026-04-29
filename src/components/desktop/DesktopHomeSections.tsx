@@ -215,7 +215,7 @@ const DesktopHomeSections = () => {
                   <div className="relative flex flex-col items-center gap-1">
                     <span
                       dir={g.dir}
-                      className="font-display text-4xl font-semibold text-foreground group-hover:text-primary transition-colors leading-none"
+                      className="font-display text-2xl font-semibold text-foreground group-hover:text-primary transition-colors leading-none"
                       style={g.code === "ar" ? { fontFamily: '"Scheherazade New", serif' } : undefined}
                     >
                       {g.native}
