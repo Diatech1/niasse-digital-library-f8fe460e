@@ -5,6 +5,7 @@ import { useBooks } from "@/hooks/use-books";
 import BookCard from "@/components/BookCard";
 import SearchBar from "@/components/SearchBar";
 import Hero from "@/components/desktop/Hero";
+import DesktopHomeSections from "@/components/desktop/DesktopHomeSections";
 import { getSavedProgress } from "@/hooks/use-reading-progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage } from "@/hooks/use-language";
@@ -49,13 +50,13 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="min-h-screen bg-background pb-24 lg:pb-0">
       {/* Desktop hero — hidden on mobile/tablet */}
       <div className="hidden lg:block">
         <Hero />
       </div>
 
-      <div className="max-w-lg mx-auto">
+      <div className="max-w-lg mx-auto lg:hidden">
       {/* Header — hidden on desktop where the hero takes its place */}
       <div className="px-5 pt-12 pb-4 lg:hidden">
         <motion.div
@@ -148,6 +149,9 @@ const Index = () => {
         }
       </section>
       </div>
+
+      {/* Desktop home sections — featured, languages, quotes, footer */}
+      <DesktopHomeSections />
     </div>
   );
 };
