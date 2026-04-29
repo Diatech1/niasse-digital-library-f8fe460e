@@ -714,8 +714,8 @@ const Reader = () => {
           touchStartX.current = null;
           touchStartY.current = null;
           if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
-            if (dx < 0 && currentSectionIdx < effectiveTotalPages - 1) goToSection(currentSectionIdx + 1);
-            else if (dx > 0 && currentSectionIdx > 0) goToSection(currentSectionIdx - 1);
+            if (dx < 0 && currentSectionIdx < effectiveTotalPages - 1) goToSection(currentSectionIdx + pagesPerTurn);
+            else if (dx > 0 && currentSectionIdx > 0) goToSection(currentSectionIdx - pagesPerTurn);
             return;
           }
           // Tap (no significant movement) toggles the menu chrome
@@ -737,7 +737,10 @@ const Reader = () => {
             <PagedView
               ref={pagedViewRef}
               page={currentSectionIdx}
-              onTotalPagesChange={setPagedTotal}
+              onTotalPagesChange={(total, ppt) => {
+                setPagedTotal(total);
+                if (ppt && ppt !== pagesPerTurn) setPagesPerTurn(ppt);
+              }}
               className="flex-1"
               fitToPage={fitToPage}
             >
@@ -763,8 +766,8 @@ const Reader = () => {
           <ReaderBottomBar
             currentPage={currentSectionIdx + 1}
             totalPages={effectiveTotalPages}
-            onPrevPage={() => goToSection(currentSectionIdx - 1)}
-            onNextPage={() => goToSection(currentSectionIdx + 1)}
+            onPrevPage={() => goToSection(currentSectionIdx - pagesPerTurn)}
+            onNextPage={() => goToSection(currentSectionIdx + pagesPerTurn)}
             onJumpToPage={(page) => goToSection(page - 1)}
             hasPrev={currentSectionIdx > 0}
             hasNext={currentSectionIdx < effectiveTotalPages - 1}
