@@ -1,15 +1,16 @@
 import { motion } from "framer-motion";
 import { Book } from "@/data/books";
 import { useNavigate } from "react-router-dom";
-import { Headphones } from "lucide-react";
 
 interface BookCardProps {
   book: Book;
   index: number;
+  size?: "default" | "compact";
 }
 
-const BookCard = ({ book, index }: BookCardProps) => {
+const BookCard = ({ book, index, size = "default" }: BookCardProps) => {
   const navigate = useNavigate();
+  const isCompact = size === "compact";
 
   return (
     <motion.div
@@ -19,7 +20,7 @@ const BookCard = ({ book, index }: BookCardProps) => {
       className="cursor-pointer group"
       onClick={() => navigate(`/book/${book.id}`)}
     >
-      <div className="relative overflow-hidden rounded-[6px] aspect-[2/3] mb-3 shadow-[4px_4px_10px_rgba(0,0,0,0.3),_1px_1px_3px_rgba(0,0,0,0.2)] border-l-[3px] border-l-black/10">
+      <div className={`relative overflow-hidden rounded-[6px] aspect-[2/3] shadow-[4px_4px_10px_rgba(0,0,0,0.3),_1px_1px_3px_rgba(0,0,0,0.2)] border-l-[3px] border-l-black/10 ${isCompact ? "mb-2" : "mb-3"}`}>
         <img
           src={book.cover}
           alt={book.title}
@@ -37,10 +38,12 @@ const BookCard = ({ book, index }: BookCardProps) => {
           {book.language}
         </div>
       </div>
-      <h3 className="font-serif text-xs sm:text-sm font-medium leading-tight line-clamp-2 text-foreground">
+      <h3 className={`font-serif font-medium leading-tight line-clamp-2 text-foreground ${isCompact ? "text-[11px]" : "text-xs sm:text-sm"}`}>
         {book.title}
       </h3>
-      <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 sm:mt-1">{book.author}</p>
+      <p className={`text-muted-foreground ${isCompact ? "text-[10px] mt-0.5" : "text-[10px] sm:text-xs mt-0.5 sm:mt-1"}`}>
+        {book.author}
+      </p>
     </motion.div>
   );
 };

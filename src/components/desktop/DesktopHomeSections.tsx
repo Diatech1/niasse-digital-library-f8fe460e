@@ -89,9 +89,9 @@ const DesktopHomeSections = () => {
             {t("common.seeAll")} →
           </Link>
         </div>
-        <div className="grid grid-cols-6 gap-5">
+        <div className="grid grid-cols-6 gap-4 max-w-5xl mx-auto">
           {featured.map((book, i) => (
-            <BookCard key={book.id} book={book} index={i} />
+            <BookCard key={book.id} book={book} index={i} size="compact" />
           ))}
         </div>
       </section>
