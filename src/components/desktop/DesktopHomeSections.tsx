@@ -34,6 +34,7 @@ const DesktopHomeSections = () => {
   }, []);
 
   const featured = books.slice(0, 8);
+
   const audioCount = books.filter((b) => b.hasAudio).length;
   const languages = Array.from(new Set(books.map((b) => b.language)));
 
@@ -89,7 +90,7 @@ const DesktopHomeSections = () => {
             {t("common.seeAll")} →
           </Link>
         </div>
-        <div className="grid grid-cols-6 gap-5">
+        <div className="grid grid-cols-8 gap-4">
           {featured.map((book, i) => (
             <BookCard key={book.id} book={book} index={i} />
           ))}
