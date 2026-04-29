@@ -88,12 +88,12 @@ const DesktopHomeSections = () => {
       {/* Continue Reading */}
       {continueReading.length > 0 && (
         <section className="py-8 container mx-auto px-6">
-          <div className="flex items-end justify-between mb-6">
+          <div className="flex items-end justify-between mb-4">
             <div>
-              <p className="text-accent text-sm font-medium tracking-[0.2em] uppercase mb-2">
+              <p className="text-accent text-xs font-medium tracking-[0.2em] uppercase mb-1">
                 Resume
               </p>
-              <h2 className="font-display text-4xl font-bold text-foreground">
+              <h2 className="font-display text-2xl font-bold text-foreground">
                 {t("home.continueReading")}
               </h2>
             </div>
@@ -140,12 +140,12 @@ const DesktopHomeSections = () => {
       {/* Favorites */}
       {favorites.length > 0 && (
         <section className="py-8 container mx-auto px-6">
-          <div className="flex items-end justify-between mb-6">
+          <div className="flex items-end justify-between mb-4">
             <div>
-              <p className="text-accent text-sm font-medium tracking-[0.2em] uppercase mb-2">
+              <p className="text-accent text-xs font-medium tracking-[0.2em] uppercase mb-1">
                 Loved
               </p>
-              <h2 className="font-display text-4xl font-bold text-foreground">
+              <h2 className="font-display text-2xl font-bold text-foreground">
                 {t("home.favorites")}
               </h2>
             </div>
@@ -160,12 +160,12 @@ const DesktopHomeSections = () => {
 
       {/* Featured Books */}
       <section className="py-8 container mx-auto px-6">
-        <div className="flex items-end justify-between mb-6">
+        <div className="flex items-end justify-between mb-4">
           <div>
-            <p className="text-accent text-sm font-medium tracking-[0.2em] uppercase mb-2">
+            <p className="text-accent text-xs font-medium tracking-[0.2em] uppercase mb-1">
               Collection
             </p>
-            <h2 className="font-display text-4xl font-bold text-foreground">
+            <h2 className="font-display text-2xl font-bold text-foreground">
               Featured Books
             </h2>
           </div>
@@ -188,10 +188,10 @@ const DesktopHomeSections = () => {
       <section className="py-20 bg-card">
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
-            <p className="text-accent text-sm font-medium tracking-[0.2em] uppercase mb-2">
+            <p className="text-accent text-xs font-medium tracking-[0.2em] uppercase mb-1">
               Browse by
             </p>
-            <h2 className="font-display text-4xl font-bold text-foreground">
+            <h2 className="font-display text-2xl font-bold text-foreground">
               Language
             </h2>
           </div>
