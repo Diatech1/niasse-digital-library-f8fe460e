@@ -33,7 +33,7 @@ const Hero = () => {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-[hsl(40_70%_78%)] text-sm tracking-[0.3em] uppercase mb-4 font-medium"
+          className="text-gold-light text-sm tracking-[0.3em] uppercase mb-4 font-medium"
         >
           {t("hero.eyebrow")}
         </motion.p>
@@ -42,18 +42,18 @@ const Hero = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="font-display text-5xl lg:text-7xl font-bold text-[hsl(40_30%_96%)] mb-6 leading-tight"
+          className="font-display text-5xl lg:text-7xl font-bold text-cream mb-6 leading-tight"
         >
           Cheikh Ibrahim
           <br />
-          <span className="text-gradient-gold">Niass</span>
+          <span className="text-gold drop-shadow-[0_2px_12px_rgba(20,12,4,0.85)]">Niass</span>
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="text-[hsl(36_25%_90%)] text-base lg:text-xl mb-8 font-serif max-w-2xl mx-auto"
+          className="text-cream-dark text-base lg:text-xl mb-8 font-serif max-w-2xl mx-auto"
         >
           {t("hero.subtitle")}
         </motion.p>
