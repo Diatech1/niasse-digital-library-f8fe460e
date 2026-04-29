@@ -50,7 +50,7 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="min-h-screen bg-background pb-24 lg:pb-0">
       {/* Desktop hero — hidden on mobile/tablet */}
       <div className="hidden lg:block">
         <Hero />
