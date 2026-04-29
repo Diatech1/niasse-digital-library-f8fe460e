@@ -91,7 +91,7 @@ const DesktopHomeSections = () => {
           <div className="flex items-end justify-between mb-10">
             <div>
               <p className="text-accent text-sm font-medium tracking-[0.2em] uppercase mb-2">
-                {t("home.resume") ?? "Resume"}
+                Resume
               </p>
               <h2 className="font-display text-4xl font-bold text-foreground">
                 {t("home.continueReading")}
@@ -143,7 +143,7 @@ const DesktopHomeSections = () => {
           <div className="flex items-end justify-between mb-10">
             <div>
               <p className="text-accent text-sm font-medium tracking-[0.2em] uppercase mb-2">
-                {t("home.loved") ?? "Loved"}
+                Loved
               </p>
               <h2 className="font-display text-4xl font-bold text-foreground">
                 {t("home.favorites")}
