@@ -13,10 +13,6 @@ import AudioPlayer from "./pages/AudioPlayer";
 import AudioLibrary from "./pages/AudioLibrary";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
-import DesktopLayout from "./pages/desktop/DesktopLayout";
-import DesktopHome from "./pages/desktop/DesktopHome";
-import DesktopLibrary from "./pages/desktop/DesktopLibrary";
-import DesktopBookDetail from "./pages/desktop/DesktopBookDetail";
 import BottomNav from "./components/BottomNav";
 import MiniPlayer from "./components/MiniPlayer";
 import { AudioPlayerProvider } from "@/hooks/use-audio-player";
@@ -35,12 +31,6 @@ const App = () => (
             <Routes>
               {/* Reader breaks out of max-w-lg to use full screen */}
               <Route path="/read/:id" element={<Reader />} />
-              {/* Desktop preview shell — isolated from mobile layout */}
-              <Route path="/desktop" element={<DesktopLayout />}>
-                <Route index element={<DesktopHome />} />
-                <Route path="library" element={<DesktopLibrary />} />
-                <Route path="book/:id" element={<DesktopBookDetail />} />
-              </Route>
               <Route path="*" element={
                 <div className="max-w-lg mx-auto relative">
                   <Routes>
