@@ -59,9 +59,9 @@ const DesktopHomeSections = () => {
   ];
 
   const langGroups = [
-    { code: "en", label: t("library.lang.english") },
-    { code: "ar", label: t("library.lang.arabic") },
-    { code: "fr", label: t("library.lang.french") },
+    { code: "en", label: t("library.lang.english"), native: "English", script: "Latin", dir: "ltr" as const },
+    { code: "ar", label: t("library.lang.arabic"), native: "العربية", script: "Arabic", dir: "rtl" as const },
+    { code: "fr", label: t("library.lang.french"), native: "Français", script: "Latin", dir: "ltr" as const },
   ];
 
   return (
