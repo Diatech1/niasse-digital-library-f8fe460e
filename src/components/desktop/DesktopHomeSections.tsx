@@ -59,9 +59,9 @@ const DesktopHomeSections = () => {
   ];
 
   const langGroups = [
-    { code: "en", label: t("library.lang.english") },
-    { code: "ar", label: t("library.lang.arabic") },
-    { code: "fr", label: t("library.lang.french") },
+    { code: "en", label: t("library.lang.english"), native: "English", script: "Latin", dir: "ltr" as const },
+    { code: "ar", label: t("library.lang.arabic"), native: "العربية", script: "Arabic", dir: "rtl" as const },
+    { code: "fr", label: t("library.lang.french"), native: "Français", script: "Latin", dir: "ltr" as const },
   ];
 
   return (
@@ -188,26 +188,57 @@ const DesktopHomeSections = () => {
       <section className="py-20 bg-card">
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
-            <p className="text-accent text-xs font-medium tracking-[0.2em] uppercase mb-1">
+            <p className="text-accent text-xs font-medium tracking-[0.2em] uppercase mb-2">
               Browse by
             </p>
             <h2 className="font-display text-2xl font-bold text-foreground">
               Language
             </h2>
+            <div className="mx-auto mt-4 h-px w-16 bg-gradient-to-r from-transparent via-accent to-transparent" />
+            <p className="mt-4 text-sm text-muted-foreground max-w-md mx-auto">
+              Explore the library in its original tongue, or in translation.
+            </p>
           </div>
-          <div className="grid grid-cols-3 gap-6 max-w-4xl mx-auto">
+          <div className="grid grid-cols-3 gap-6 max-w-5xl mx-auto">
             {langGroups.map((g) => {
               const count = books.filter((b) => b.language === g.code).length;
               return (
                 <Link
                   key={g.code}
                   to={`/library?lang=${g.code}`}
-                  className="group flex flex-col items-center gap-3 p-8 rounded-2xl bg-background border border-border hover:border-accent hover:shadow-lg transition-all duration-300"
+                  className="group relative flex flex-col items-center justify-between gap-5 p-8 rounded-2xl bg-background border border-border hover:border-accent/60 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 overflow-hidden"
                 >
-                  <span className="font-display text-2xl font-semibold text-foreground group-hover:text-primary transition-colors">
-                    {g.label}
-                  </span>
-                  <span className="text-sm text-muted-foreground">{count} books</span>
+                  {/* Subtle gradient wash on hover */}
+                  <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-accent/5 via-transparent to-primary/5" />
+
+                  {/* Top: native script */}
+                  <div className="relative flex flex-col items-center gap-1">
+                    <span
+                      dir={g.dir}
+                      className="font-display text-4xl font-semibold text-foreground group-hover:text-primary transition-colors leading-none"
+                      style={g.code === "ar" ? { fontFamily: '"Scheherazade New", serif' } : undefined}
+                    >
+                      {g.native}
+                    </span>
+                    <span className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground/70">
+                      {g.label}
+                    </span>
+                  </div>
+
+                  {/* Divider */}
+                  <div className="relative h-px w-10 bg-border group-hover:bg-accent/50 transition-colors" />
+
+                  {/* Bottom: count + CTA */}
+                  <div className="relative flex flex-col items-center gap-3">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-muted/60 text-xs font-medium text-foreground/80">
+                      <BookOpen className="h-3 w-3" strokeWidth={1.75} />
+                      {count} {count === 1 ? "book" : "books"}
+                    </span>
+                    <span className="inline-flex items-center gap-1 text-xs font-medium text-accent opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0 transition-all duration-300">
+                      Browse
+                      <span aria-hidden className="rtl:-scale-x-100">→</span>
+                    </span>
+                  </div>
                 </Link>
               );
             })}
