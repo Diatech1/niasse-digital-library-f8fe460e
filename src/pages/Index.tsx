@@ -56,7 +56,7 @@ const Index = () => {
         <Hero />
       </div>
 
-      <div className="max-w-lg mx-auto">
+      <div className="max-w-lg mx-auto lg:hidden">
       {/* Header — hidden on desktop where the hero takes its place */}
       <div className="px-5 pt-12 pb-4 lg:hidden">
         <motion.div
@@ -149,6 +149,9 @@ const Index = () => {
         }
       </section>
       </div>
+
+      {/* Desktop home sections — featured, languages, quotes, footer */}
+      <DesktopHomeSections />
     </div>
   );
 };
