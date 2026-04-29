@@ -1,85 +1,78 @@
-# Adopt Fayda Digital Sanctuary front-end for desktop
 
-## My honest take first
+# Add desktop hero section to Home (single codebase)
 
-The referenced project (Fayda Digital Sanctuary) is a **marketing-style website**: hero image, stats band, featured carousel, category tiles, quote slider, top navbar + footer. It looks beautiful on desktop and matches the Cheikh Ibrahim Niass theme nicely.
+## Scope
 
-But it is **only a shell**. It has 4 pages (Index, Library, BookDetail, NotFound), a dummy `books.ts`, and **none** of Faydabook's real engine: the paged reader, TTS, audio player, bookmarks, reading history, search-in-reader, RTL, i18n, content-registry loader, Supabase integration, etc.
+Port **only the hero section** from the Fayda Digital Sanctuary reference project into Faydabook. Everything else — Library, BookDetail, Reader, BottomNav, MiniPlayer, the existing mobile Home layout — stays exactly as it is today.
 
-So we should **not replace** the current app with that codebase. Instead, we **port its visual language and landing/library layout** into Faydabook as a desktop experience, while keeping the mobile-first reader and all existing features untouched.
+The hero appears **only on desktop** (`lg:` and up). On mobile/tablet (<1024px), the current Home page renders unchanged.
 
-## Proposed approach: responsive dual layout
-
-One codebase, two layouts driven by `useIsMobile()` (or a `lg:` breakpoint):
-
-- **Mobile (≤ 768px)** — unchanged. Current pocket-paperback reader, bottom nav, MiniPlayer, etc.
-- **Desktop (≥ 1024px)** — new marketing-style shell inspired by Fayda Digital Sanctuary.
+## What the hero looks like
 
 ```text
-Desktop layout
-┌─────────────────────────────────────────────┐
-│  Navbar (logo · Home · Library · Listen · Search) │
-├─────────────────────────────────────────────┤
-│  HERO  (image + title + search)             │
-│  Continue reading row                       │
-│  Featured / Tidjaniya series row            │
-│  Categories grid (Tasawwuf, Fiqh, …)        │
-│  Quote slider                               │
-│  Footer                                     │
-└─────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────┐
+│  [full-bleed library photo, dark gradient overlay]      │
+│                                                         │
+│            THE DIGITAL LIBRARY OF                       │
+│                                                         │
+│           Cheikh Ibrahim Niass                          │
+│                  (gold gradient on "Niass")             │
+│                                                         │
+│   Explore the spiritual treasures of Medina Baye —      │
+│   books, lectures, and poetry...                        │
+│                                                         │
+│        ┌─────────────────────────────────┐              │
+│        │ 🔍  Search books, lectures...   │              │
+│        └─────────────────────────────────┘              │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+       ↓ below: existing Home page (Continue Reading,
+         Favorites, Library grid) — full-width container
 ```
 
-Reader on desktop: keep the 4:7 book pane (already supported by `PagedView`) but wrap it in the new navbar + a sidebar for TOC/bookmarks instead of the mobile sheet.
+- Height: `85vh` minimum 600px.
+- Background: full-bleed library photo + dark gradient overlay.
+- Headline: serif display font, "Niass" in gold gradient.
+- Search input: rounded pill, submits to `/library?q=...` (reuses existing Library search).
+- All copy is wired through `useLanguage().t()` so EN/FR/AR work.
 
-## What to build
+## Files to add
 
-### 1. Visual tokens
-- Add the cream/emerald/gold palette from the reference as **light-mode** variants in `src/index.css` (we already have a light theme — refine it to match).
-- Add font `Playfair Display` for `font-display` headings; keep `Crimson Pro` for reader body (memory rule).
-- Add utilities: `.text-gradient-gold`, `.bg-gradient-emerald`, `.bg-gradient-gold`, `.bg-gradient-hero`.
+1. **`src/assets/hero-library.jpg`** — copy from the reference project.
+2. **`src/components/desktop/Hero.tsx`** — the hero section component.
 
-### 2. New desktop-only components
-- `src/components/desktop/Navbar.tsx` — fixed top bar, logo, links, search button.
-- `src/components/desktop/Footer.tsx` — simple footer with credits and language switcher.
-- `src/components/desktop/Hero.tsx` — hero image + title + search input wired to existing `SearchBar` logic.
-- `src/components/desktop/QuoteSlider.tsx` — rotating quotes (use a small `quotes` array seeded from the books data).
+## Files to edit
 
-### 3. Page updates (responsive — no new routes)
-- `src/pages/Index.tsx`: render `<DesktopHome />` on `lg:` and the existing mobile layout below `lg:`. Desktop home composes Navbar + Hero + Continue Reading row + Featured row + Categories grid + Quote + Footer.
-- `src/pages/Library.tsx`: on desktop, render Navbar + the reference's filter UI (search bar + filter chip drawer) feeding the same `useBooks` data; mobile stays as-is.
-- `src/pages/BookDetail.tsx`: on desktop, two-column layout (cover left, metadata + actions right) like the reference; mobile stays as-is.
-- `src/pages/Reader.tsx`: on desktop, keep current `PagedView` but show the new Navbar at the top and surface TOC/bookmarks in a left sidebar instead of the slide-over sheet. Hide the bottom nav on desktop. Immersive mode still works.
+1. **`src/index.css`**
+   - Import Playfair Display font (alongside existing Lora/Crimson Pro).
+   - Add the `--gold-light` and `--cream-dark` CSS variables (light + dark themes) so the hero text colors render correctly without changing other surfaces.
+   - Add three utilities used by the hero only: `.text-gradient-gold`, `.bg-gradient-hero`, `.font-display` (Playfair Display).
 
-### 4. Hide BottomNav on desktop
-- In `BottomNav.tsx`, return `null` when not mobile, so the desktop shell takes over navigation.
+2. **`src/pages/Index.tsx`**
+   - Wrap the existing mobile layout: render `<Hero />` inside a `hidden lg:block` wrapper at the top.
+   - The current page width constraint (`max-w-lg` in `App.tsx`) will clip the hero, so we also need to allow the Home route to break out of that wrapper on desktop.
 
-### 5. Categories
-- Map the reference's `Tasawwuf / Fiqh / Tafsir / Poetry / Speeches` to whatever categorization fits Faydabook's actual library (we already have "Tidjaniya.com series vs Other Works" — surface that, and optionally a thematic grid if metadata allows).
+3. **`src/App.tsx`**
+   - Currently every non-Reader route is wrapped in `<div className="max-w-lg mx-auto">`. To let the hero go full-bleed on desktop **for the Home page only**, change this wrapper to `max-w-lg lg:max-w-none mx-auto` for the Home route, OR pull `Index` out of the wrapper similarly to how `Reader` is already pulled out. Cleaner option: extract Home into its own Route entry like Reader, and let `Index.tsx` re-add the `max-w-lg` container internally for the existing mobile content below the hero.
+   - BottomNav and MiniPlayer must continue to render on Home.
 
-## What we explicitly keep
+4. **`src/i18n/translations.ts`**
+   - Add 3 new keys for the hero copy (eyebrow, subtitle, search placeholder) in EN/FR/AR. The headline "Cheikh Ibrahim Niass" stays as-is across languages.
 
-- All hooks: `useAudioPlayer`, `useBookContent`, `useBookmarks`, `useReadingProgress`, `useLanguage`, `useTheme`, `useReadAlong`, `useGeminiTts`.
-- Reader engine (`PagedView`, `FormattedContent`, `ReaderSearch`, `BookmarkDialog`, `ChapterDropdown`).
-- `MiniPlayer`, `AudioPlayer`, `AudioLibrary`, Settings.
-- Supabase `books` table, content registry, volume loader.
-- RTL, i18n, light/dark/system theme, no human depictions, all current memory rules.
+## What we are NOT doing
 
-## What we do NOT do
+- No Navbar, Footer, Stats band, Featured row, Categories grid, or Quote slider.
+- No changes to Library, BookDetail, Reader, AudioPlayer, Settings.
+- No changes to mobile Home — below `lg:`, the page renders identically to today.
+- No new routes.
 
-- Do not import/copy the reference project as-is.
-- Do not introduce `framer-motion` heavily — use it only inside the new desktop components if needed (small footprint).
-- Do not change mobile UX.
-- Do not add a `/about` route just because the reference navbar mentions it.
+## QA checklist
 
-## Suggested execution order (small steps)
+- 390×844 (mobile): hero hidden, current Home renders exactly as before.
+- 1280×720 and 1920×1080: hero fills the top, search submits to `/library?q=...`, existing Continue Reading / Favorites / Library grid sit below in their current `max-w-lg` column (acceptable for v1; we can widen them in a follow-up if you want).
+- Light and dark themes both readable.
+- EN / FR / AR copy renders correctly.
 
-1. Add desktop tokens + fonts + gradient utilities in `index.css`.
-2. Build `Navbar`, `Footer`, `Hero`, `QuoteSlider`.
-3. Wire desktop `Index.tsx` (Home).
-4. Wire desktop `Library.tsx` and `BookDetail.tsx`.
-5. Add desktop chrome to `Reader.tsx` (sidebar TOC + top navbar).
-6. QA on 1280×720, 1440×900, 1920×1080.
+## Open follow-ups (not in this plan)
 
-## Open question for you
-
-Want me to also offer a **separate `/desktop` preview route** during development so we can iterate without affecting mobile users, or go straight to the responsive single-codebase approach above?
+If you like the hero, the natural next steps would be: (a) widen the Home content below the hero on desktop, and (b) port the Library/BookDetail desktop layouts. Both are easy add-ons later.
