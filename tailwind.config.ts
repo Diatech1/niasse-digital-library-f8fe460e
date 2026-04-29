@@ -17,6 +17,7 @@ export default {
         sans: ["Inter", "sans-serif"],
         serif: ["Lora", "serif"],
         arabic: ["Amiri", "serif"],
+        display: ["'Playfair Display'", "Lora", "serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -62,6 +63,10 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        cream: "hsl(var(--cream))",
+        "cream-dark": "hsl(var(--cream-dark))",
+        gold: "hsl(var(--gold))",
+        "gold-light": "hsl(var(--gold-light))",
       },
       borderRadius: {
         lg: "var(--radius)",

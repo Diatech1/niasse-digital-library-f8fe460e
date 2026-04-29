@@ -16,6 +16,9 @@ export type TranslationKey =
   | "home.favorites"
   | "home.library"
   | "home.searchResults"
+  | "hero.eyebrow"
+  | "hero.subtitle"
+  | "hero.searchPlaceholder"
   | "library.title"
   | "library.subtitle"
   | "library.lang.all"
@@ -86,6 +89,9 @@ const en: Dict = {
   "home.favorites": "Favorites",
   "home.library": "Library",
   "home.searchResults": "Search Results",
+  "hero.eyebrow": "The Digital Library of",
+  "hero.subtitle": "Explore the spiritual treasures of Medina Baye — books, lectures, and poetry from one of the greatest scholars of the 20th century.",
+  "hero.searchPlaceholder": "Search books, lectures, poetry...",
   "library.title": "Library",
   "library.subtitle": "Browse all works",
   "library.lang.all": "All",
@@ -155,6 +161,9 @@ const fr: Dict = {
   "home.favorites": "Favoris",
   "home.library": "Bibliothèque",
   "home.searchResults": "Résultats",
+  "hero.eyebrow": "La Bibliothèque Numérique de",
+  "hero.subtitle": "Explorez les trésors spirituels de Médina Baye — livres, conférences et poésie de l'un des plus grands savants du XXᵉ siècle.",
+  "hero.searchPlaceholder": "Rechercher livres, conférences, poésie...",
   "library.title": "Bibliothèque",
   "library.subtitle": "Parcourir toutes les œuvres",
   "library.lang.all": "Toutes",
@@ -224,6 +233,9 @@ const ar: Dict = {
   "home.favorites": "المفضلة",
   "home.library": "المكتبة",
   "home.searchResults": "نتائج البحث",
+  "hero.eyebrow": "المكتبة الرقمية لـ",
+  "hero.subtitle": "اكتشف الكنوز الروحية لمدينة باي — كتب ومحاضرات وأشعار من أحد أعظم علماء القرن العشرين.",
+  "hero.searchPlaceholder": "ابحث في الكتب والمحاضرات والأشعار...",
   "library.title": "المكتبة",
   "library.subtitle": "تصفح جميع الأعمال",
   "library.lang.all": "الكل",

@@ -31,10 +31,19 @@ const App = () => (
             <Routes>
               {/* Reader breaks out of max-w-lg to use full screen */}
               <Route path="/read/:id" element={<Reader />} />
+              {/* Home breaks out of max-w-lg so the desktop hero can go full-bleed */}
+              <Route path="/" element={
+                <div className="relative">
+                  <Index />
+                  <div className="max-w-lg mx-auto">
+                    <MiniPlayer />
+                    <BottomNav />
+                  </div>
+                </div>
+              } />
               <Route path="*" element={
                 <div className="max-w-lg mx-auto relative">
                   <Routes>
-                    <Route path="/" element={<Index />} />
                     <Route path="/library" element={<Library />} />
                     <Route path="/book/:id" element={<BookDetail />} />
                     <Route path="/listen/:id" element={<AudioPlayer />} />

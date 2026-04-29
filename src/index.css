@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Amiri:ital,wght@0,400;0,700;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Amiri:ital,wght@0,400;0,700;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -33,6 +33,11 @@
     --border: 160 6% 18%;
     --input: 160 6% 18%;
     --ring: 155 40% 47%;
+
+    --gold: 37 55% 60%;
+    --gold-light: 40 70% 78%;
+    --cream: 40 30% 96%;
+    --cream-dark: 36 25% 88%;
 
     --radius: 1.5rem;
 
@@ -74,6 +79,11 @@
     --border: 40 10% 82%;
     --input: 40 10% 82%;
     --ring: 155 40% 40%;
+
+    --gold: 37 50% 45%;
+    --gold-light: 40 55% 60%;
+    --cream: 40 30% 96%;
+    --cream-dark: 36 25% 88%;
 
     --sidebar-background: 40 15% 94%;
     --sidebar-foreground: 160 10% 10%;
@@ -138,8 +148,29 @@
     to {
       opacity: 1;
       transform: translateY(0);
-    }
   }
+
+  .font-display {
+    font-family: 'Playfair Display', 'Lora', serif;
+  }
+
+  .text-gradient-gold {
+    background: linear-gradient(135deg, hsl(var(--gold)), hsl(var(--gold-light)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .bg-gradient-hero {
+    background:
+      radial-gradient(ellipse at center, hsl(0 0% 0% / 0.55) 0%, hsl(0 0% 0% / 0.35) 60%, transparent 100%),
+      linear-gradient(180deg, hsl(0 0% 0% / 0.6) 0%, hsl(0 0% 0% / 0.5) 50%, hsl(0 0% 0% / 0.85) 100%);
+  }
+
+  .hero-text-shadow {
+    text-shadow: 0 2px 16px hsl(0 0% 0% / 0.6), 0 1px 3px hsl(0 0% 0% / 0.5);
+  }
+}
 }
 
 body.reader-chrome-hidden .bottom-nav {
