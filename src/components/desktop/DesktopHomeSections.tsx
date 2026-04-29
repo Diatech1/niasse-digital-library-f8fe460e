@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { BookOpen, Headphones, Languages, Library as LibraryIcon, Heart } from "lucide-react";
 import BookCard from "@/components/BookCard";
 import { useBooks } from "@/hooks/use-books";
 import { useLanguage } from "@/hooks/use-language";
+import { getSavedProgress } from "@/hooks/use-reading-progress";
 
 const quotes = [
   {
@@ -24,7 +25,19 @@ const quotes = [
 const DesktopHomeSections = () => {
   const { books } = useBooks();
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const [quoteIndex, setQuoteIndex] = useState(0);
+
+  const continueReading = useMemo(
+    () =>
+      books
+        .map((b) => ({ book: b, idx: getSavedProgress(b.id) }))
+        .filter(({ idx }) => idx > 0)
+        .sort((a, b) => b.idx - a.idx),
+    [books]
+  );
+
+  const favorites = books.filter((b) => b.isFavorite);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -71,6 +84,69 @@ const DesktopHomeSections = () => {
           </div>
         </div>
       </section>
+
+      {/* Continue Reading */}
+      {continueReading.length > 0 && (
+        <section className="py-12 container mx-auto px-6">
+          <div className="flex items-end justify-between mb-6">
+            <h2 className="font-display text-2xl font-bold text-foreground">
+              {t("home.continueReading")}
+            </h2>
+          </div>
+          <div className="grid grid-cols-8 gap-4">
+            {continueReading.slice(0, 8).map(({ book, idx }) => {
+              const progress = book.pages > 0 ? Math.round((idx / book.pages) * 100) : 0;
+              return (
+                <motion.div
+                  key={book.id}
+                  className="cursor-pointer"
+                  whileHover={{ y: -4 }}
+                  onClick={() => navigate(`/read/${book.id}`)}
+                >
+                  <div className="relative rounded-[6px] overflow-hidden shadow-[4px_4px_10px_rgba(0,0,0,0.3),_1px_1px_3px_rgba(0,0,0,0.2)] border-l-[3px] border-l-black/10 mb-3">
+                    <img
+                      src={book.cover}
+                      alt={book.title}
+                      className="w-full aspect-[2/3] object-cover"
+                    />
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-2 pt-4 pb-2">
+                      <div className="h-0.5 bg-white/30 rounded-full">
+                        <div
+                          className="h-full bg-primary rounded-full transition-all"
+                          style={{ width: `${Math.min(progress, 100)}%` }}
+                        />
+                      </div>
+                      <p className="text-white text-[9px] mt-0.5 opacity-80">
+                        {Math.min(progress, 100)}%
+                      </p>
+                    </div>
+                  </div>
+                  <h3 className="font-serif text-xs font-medium leading-tight line-clamp-2 text-foreground">
+                    {book.title}
+                  </h3>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">{book.author}</p>
+                </motion.div>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* Favorites */}
+      {favorites.length > 0 && (
+        <section className="py-12 container mx-auto px-6">
+          <div className="flex items-end justify-between mb-6">
+            <h2 className="font-display text-2xl font-bold text-foreground">
+              {t("home.favorites")}
+            </h2>
+          </div>
+          <div className="grid grid-cols-8 gap-4">
+            {favorites.slice(0, 8).map((book, i) => (
+              <BookCard key={book.id} book={book} index={i} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Featured Books */}
       <section className="py-20 container mx-auto px-6">
