@@ -33,14 +33,16 @@ const Index = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background pb-24">
-        <div className="px-5 pt-12 pb-4">
-          <Skeleton className="h-8 w-40 mb-2" />
-          <Skeleton className="h-4 w-60" />
-        </div>
-        <div className="px-5 grid grid-cols-3 gap-4 gap-y-5 mt-8">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="aspect-[2/3] rounded-lg" />
-          ))}
+        <div className="max-w-lg mx-auto">
+          <div className="px-5 pt-12 pb-4">
+            <Skeleton className="h-8 w-40 mb-2" />
+            <Skeleton className="h-4 w-60" />
+          </div>
+          <div className="px-5 grid grid-cols-3 gap-4 gap-y-5 mt-8">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Skeleton key={i} className="aspect-[2/3] rounded-lg" />
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -48,8 +50,14 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background pb-24">
-      {/* Header */}
-      <div className="px-5 pt-12 pb-4">
+      {/* Desktop hero — hidden on mobile/tablet */}
+      <div className="hidden lg:block">
+        <Hero />
+      </div>
+
+      <div className="max-w-lg mx-auto">
+      {/* Header — hidden on desktop where the hero takes its place */}
+      <div className="px-5 pt-12 pb-4 lg:hidden">
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
