@@ -241,6 +241,7 @@ const Settings = () => {
           </p>
         </Section>
       </motion.div>
+      </div>
     </div>
   );
 };
