@@ -87,11 +87,16 @@ const DesktopHomeSections = () => {
 
       {/* Continue Reading */}
       {continueReading.length > 0 && (
-        <section className="py-12 container mx-auto px-6">
-          <div className="flex items-end justify-between mb-6">
-            <h2 className="font-display text-2xl font-bold text-foreground">
-              {t("home.continueReading")}
-            </h2>
+        <section className="py-16 container mx-auto px-6">
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <p className="text-accent text-sm font-medium tracking-[0.2em] uppercase mb-2">
+                {t("home.resume") ?? "Resume"}
+              </p>
+              <h2 className="font-display text-4xl font-bold text-foreground">
+                {t("home.continueReading")}
+              </h2>
+            </div>
           </div>
           <div className="grid grid-cols-6 gap-5">
             {continueReading.slice(0, 6).map(({ book, idx }) => {
@@ -134,11 +139,16 @@ const DesktopHomeSections = () => {
 
       {/* Favorites */}
       {favorites.length > 0 && (
-        <section className="py-12 container mx-auto px-6">
-          <div className="flex items-end justify-between mb-6">
-            <h2 className="font-display text-2xl font-bold text-foreground">
-              {t("home.favorites")}
-            </h2>
+        <section className="py-16 container mx-auto px-6">
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <p className="text-accent text-sm font-medium tracking-[0.2em] uppercase mb-2">
+                {t("home.loved") ?? "Loved"}
+              </p>
+              <h2 className="font-display text-4xl font-bold text-foreground">
+                {t("home.favorites")}
+              </h2>
+            </div>
           </div>
           <div className="grid grid-cols-6 gap-5">
             {favorites.slice(0, 6).map((book, i) => (
@@ -149,7 +159,7 @@ const DesktopHomeSections = () => {
       )}
 
       {/* Featured Books */}
-      <section className="py-20 container mx-auto px-6">
+      <section className="py-16 container mx-auto px-6">
         <div className="flex items-end justify-between mb-10">
           <div>
             <p className="text-accent text-sm font-medium tracking-[0.2em] uppercase mb-2">
