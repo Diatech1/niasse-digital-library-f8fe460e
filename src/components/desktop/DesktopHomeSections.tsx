@@ -187,15 +187,15 @@ const DesktopHomeSections = () => {
       {/* Browse by language */}
       <section className="py-12 bg-card">
         <div className="container mx-auto px-6">
-          <div className="text-center mb-12">
-            <p className="text-accent text-xs font-medium tracking-[0.2em] uppercase mb-2">
+          <div className="text-center mb-8">
+            <p className="text-accent text-xs font-medium tracking-[0.2em] uppercase mb-1">
               Browse by
             </p>
             <h2 className="font-display text-2xl font-bold text-foreground">
               Language
             </h2>
-            <div className="mx-auto mt-4 h-px w-16 bg-gradient-to-r from-transparent via-accent to-transparent" />
-            <p className="mt-4 text-sm text-muted-foreground max-w-md mx-auto">
+            <div className="mx-auto mt-3 h-px w-12 bg-gradient-to-r from-transparent via-accent to-transparent" />
+            <p className="mt-3 text-sm text-muted-foreground max-w-md mx-auto">
               Explore the library in its original tongue, or in translation.
             </p>
           </div>
