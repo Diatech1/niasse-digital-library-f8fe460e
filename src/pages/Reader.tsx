@@ -111,6 +111,7 @@ const Reader = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const pagedViewRef = useRef<PagedViewHandle>(null);
   const [pagedTotal, setPagedTotal] = useState(1);
+  const [pagesPerTurn, setPagesPerTurn] = useState(1);
   const lastScrollY = useRef(0);
   const isMobile = useIsMobile();
 
@@ -331,12 +332,14 @@ const Reader = () => {
 
   const goToSection = useCallback((idx: number) => {
     const clamped = Math.max(0, Math.min(idx, effectiveTotalPages - 1));
-    setCurrentSectionIdx(clamped);
-    saveProgress(clamped);
+    // Snap to spread boundary in 2-up mode so the left page is always even-indexed
+    const snapped = pagesPerTurn > 1 ? clamped - (clamped % pagesPerTurn) : clamped;
+    setCurrentSectionIdx(snapped);
+    saveProgress(snapped);
     if (!isPagedMode) {
       contentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
     }
-  }, [effectiveTotalPages, saveProgress, isPagedMode]);
+  }, [effectiveTotalPages, saveProgress, isPagedMode, pagesPerTurn]);
 
   const goToSectionById = useCallback((id: string) => {
     const idx = allSections.findIndex((s) => s.id === id);
