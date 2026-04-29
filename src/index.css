@@ -94,6 +94,59 @@
     --sidebar-border: 40 10% 82%;
     --sidebar-ring: 155 40% 40%;
   }
+
+  /* Desktop sections — match the Fayda Digital Sanctuary reference exactly.
+     Scoped via .desktop-surface so mobile design tokens stay untouched.
+     Applied on the DesktopNav and the full desktop home block. */
+  .desktop-surface {
+    --background: 36 33% 97%;
+    --foreground: 30 10% 15%;
+    --card: 36 30% 95%;
+    --card-foreground: 30 10% 15%;
+    --popover: 36 33% 97%;
+    --popover-foreground: 30 10% 15%;
+    --primary: 153 40% 28%;
+    --primary-foreground: 36 33% 97%;
+    --secondary: 36 30% 90%;
+    --secondary-foreground: 30 10% 25%;
+    --muted: 36 20% 92%;
+    --muted-foreground: 30 8% 50%;
+    --accent: 40 60% 55%;
+    --accent-foreground: 30 10% 10%;
+    --border: 36 20% 88%;
+    --input: 36 20% 88%;
+    --ring: 153 40% 28%;
+    --gold: 40 60% 55%;
+    --gold-light: 40 50% 70%;
+    --cream: 36 33% 97%;
+    --cream-dark: 36 25% 90%;
+    --radius: 0.75rem;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  .dark .desktop-surface,
+  html.dark .desktop-surface {
+    --background: 30 10% 10%;
+    --foreground: 36 25% 90%;
+    --card: 30 10% 14%;
+    --card-foreground: 36 25% 90%;
+    --popover: 30 10% 12%;
+    --popover-foreground: 36 25% 90%;
+    --primary: 153 35% 40%;
+    --primary-foreground: 36 33% 97%;
+    --secondary: 30 10% 18%;
+    --secondary-foreground: 36 25% 85%;
+    --muted: 30 8% 20%;
+    --muted-foreground: 36 15% 60%;
+    --accent: 40 55% 50%;
+    --accent-foreground: 36 33% 97%;
+    --border: 30 8% 22%;
+    --input: 30 8% 22%;
+    --ring: 153 35% 40%;
+    --gold: 40 55% 50%;
+    --gold-light: 40 45% 60%;
+  }
 }
 
 @layer base {
