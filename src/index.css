@@ -216,15 +216,16 @@
   }
 
   .bg-gradient-emerald {
-    background: linear-gradient(135deg, hsl(var(--primary)), hsl(155 35% 30%));
+    background: linear-gradient(135deg, hsl(153 40% 28%), hsl(153 30% 45%));
   }
 
-  /* Hero overlay — matches the reference: lets the warm library photo show
-     through, only adds a soft vignette + bottom fade so type stays legible. */
+  .bg-gradient-gold {
+    background: linear-gradient(135deg, hsl(40 60% 55%), hsl(40 50% 70%));
+  }
+
+  /* Exact hero overlay copied from the Fayda Digital Sanctuary reference. */
   .bg-gradient-hero {
-    background:
-      radial-gradient(ellipse 90% 70% at 50% 45%, transparent 0%, hsl(30 20% 8% / 0.20) 60%, hsl(30 20% 8% / 0.45) 100%),
-      linear-gradient(180deg, hsl(30 20% 8% / 0.20) 0%, hsl(30 20% 8% / 0.10) 45%, hsl(30 20% 8% / 0.65) 100%);
+    background: linear-gradient(180deg, hsl(30 10% 10% / 0.7) 0%, hsl(30 10% 10% / 0.4) 50%, hsl(30 10% 10% / 0.8) 100%);
   }
 
   .hero-text-shadow {
