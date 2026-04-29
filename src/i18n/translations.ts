@@ -16,6 +16,9 @@ export type TranslationKey =
   | "home.favorites"
   | "home.library"
   | "home.searchResults"
+  | "hero.eyebrow"
+  | "hero.subtitle"
+  | "hero.searchPlaceholder"
   | "library.title"
   | "library.subtitle"
   | "library.lang.all"
@@ -86,6 +89,9 @@ const en: Dict = {
   "home.favorites": "Favorites",
   "home.library": "Library",
   "home.searchResults": "Search Results",
+  "hero.eyebrow": "The Digital Library of",
+  "hero.subtitle": "Explore the spiritual treasures of Medina Baye — books, lectures, and poetry from one of the greatest scholars of the 20th century.",
+  "hero.searchPlaceholder": "Search books, lectures, poetry...",
   "library.title": "Library",
   "library.subtitle": "Browse all works",
   "library.lang.all": "All",
