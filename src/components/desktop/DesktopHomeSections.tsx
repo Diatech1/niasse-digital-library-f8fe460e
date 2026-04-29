@@ -185,7 +185,7 @@ const DesktopHomeSections = () => {
       </section>
 
       {/* Browse by language */}
-      <section className="py-20 bg-card">
+      <section className="py-12 bg-card">
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
             <p className="text-accent text-xs font-medium tracking-[0.2em] uppercase mb-2">
