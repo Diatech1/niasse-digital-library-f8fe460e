@@ -201,12 +201,14 @@ const DesktopHomeSections = () => {
           </div>
           <div className="grid grid-cols-3 gap-6 max-w-5xl mx-auto">
             {langGroups.map((g) => {
-              const count = books.filter((b) => b.language === g.code).length;
+              const count = books.filter(
+                (b) => b.language?.toLowerCase() === g.native.toLowerCase() || b.language?.toLowerCase() === g.label.toLowerCase() || b.language?.toLowerCase() === g.code,
+              ).length;
               return (
                 <Link
                   key={g.code}
                   to={`/library?lang=${g.code}`}
-                  className="group relative flex flex-col items-center justify-between gap-4 p-6 rounded-2xl bg-background border border-border hover:border-accent/60 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 overflow-hidden"
+                  className="group relative flex flex-col items-center justify-between gap-4 p-6 rounded-xl bg-background border border-border hover:border-accent/60 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 overflow-hidden"
                 >
                   {/* Subtle gradient wash on hover */}
                   <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-accent/5 via-transparent to-primary/5" />
