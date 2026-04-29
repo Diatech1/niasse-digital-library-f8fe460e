@@ -111,6 +111,7 @@ const Reader = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const pagedViewRef = useRef<PagedViewHandle>(null);
   const [pagedTotal, setPagedTotal] = useState(1);
+  const [pagesPerTurn, setPagesPerTurn] = useState(1);
   const lastScrollY = useRef(0);
   const isMobile = useIsMobile();
 
@@ -331,12 +332,14 @@ const Reader = () => {
 
   const goToSection = useCallback((idx: number) => {
     const clamped = Math.max(0, Math.min(idx, effectiveTotalPages - 1));
-    setCurrentSectionIdx(clamped);
-    saveProgress(clamped);
+    // Snap to spread boundary in 2-up mode so the left page is always even-indexed
+    const snapped = pagesPerTurn > 1 ? clamped - (clamped % pagesPerTurn) : clamped;
+    setCurrentSectionIdx(snapped);
+    saveProgress(snapped);
     if (!isPagedMode) {
       contentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
     }
-  }, [effectiveTotalPages, saveProgress, isPagedMode]);
+  }, [effectiveTotalPages, saveProgress, isPagedMode, pagesPerTurn]);
 
   const goToSectionById = useCallback((id: string) => {
     const idx = allSections.findIndex((s) => s.id === id);
@@ -711,8 +714,8 @@ const Reader = () => {
           touchStartX.current = null;
           touchStartY.current = null;
           if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
-            if (dx < 0 && currentSectionIdx < effectiveTotalPages - 1) goToSection(currentSectionIdx + 1);
-            else if (dx > 0 && currentSectionIdx > 0) goToSection(currentSectionIdx - 1);
+            if (dx < 0 && currentSectionIdx < effectiveTotalPages - 1) goToSection(currentSectionIdx + pagesPerTurn);
+            else if (dx > 0 && currentSectionIdx > 0) goToSection(currentSectionIdx - pagesPerTurn);
             return;
           }
           // Tap (no significant movement) toggles the menu chrome
@@ -734,7 +737,10 @@ const Reader = () => {
             <PagedView
               ref={pagedViewRef}
               page={currentSectionIdx}
-              onTotalPagesChange={setPagedTotal}
+              onTotalPagesChange={(total, ppt) => {
+                setPagedTotal(total);
+                if (ppt && ppt !== pagesPerTurn) setPagesPerTurn(ppt);
+              }}
               className="flex-1"
               fitToPage={fitToPage}
             >
@@ -760,8 +766,8 @@ const Reader = () => {
           <ReaderBottomBar
             currentPage={currentSectionIdx + 1}
             totalPages={effectiveTotalPages}
-            onPrevPage={() => goToSection(currentSectionIdx - 1)}
-            onNextPage={() => goToSection(currentSectionIdx + 1)}
+            onPrevPage={() => goToSection(currentSectionIdx - pagesPerTurn)}
+            onNextPage={() => goToSection(currentSectionIdx + pagesPerTurn)}
             onJumpToPage={(page) => goToSection(page - 1)}
             hasPrev={currentSectionIdx > 0}
             hasNext={currentSectionIdx < effectiveTotalPages - 1}
