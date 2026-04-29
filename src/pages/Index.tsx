@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useBooks } from "@/hooks/use-books";
 import BookCard from "@/components/BookCard";
 import SearchBar from "@/components/SearchBar";
+import Hero from "@/components/desktop/Hero";
 import { getSavedProgress } from "@/hooks/use-reading-progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage } from "@/hooks/use-language";
