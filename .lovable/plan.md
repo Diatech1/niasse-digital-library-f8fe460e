@@ -1,78 +1,91 @@
+# Make the rest of the app responsive
 
-# Add desktop hero section to Home (single codebase)
+## Current state
 
-## Scope
+The desktop home page already has a proper wide layout (`Hero`, `DesktopHomeSections`). Everything else is still pinned to a 512px-wide phone column on a 1187px screen because `App.tsx` wraps every non-home route in `max-w-lg mx-auto`.
 
-Port **only the hero section** from the Fayda Digital Sanctuary reference project into Faydabook. Everything else — Library, BookDetail, Reader, BottomNav, MiniPlayer, the existing mobile Home layout — stays exactly as it is today.
+The Reader is a special case: its book canvas already adapts (4:7 ratio book on desktop via `useIsMobile`), but its toolbars, TOC sheet, and side margins were built for narrow screens.
 
-The hero appears **only on desktop** (`lg:` and up). On mobile/tablet (<1024px), the current Home page renders unchanged.
+## What to change
 
-## What the hero looks like
+### 1. App shell — unlock the width
 
-```text
-┌─────────────────────────────────────────────────────────┐
-│  [full-bleed library photo, dark gradient overlay]      │
-│                                                         │
-│            THE DIGITAL LIBRARY OF                       │
-│                                                         │
-│           Cheikh Ibrahim Niass                          │
-│                  (gold gradient on "Niass")             │
-│                                                         │
-│   Explore the spiritual treasures of Medina Baye —      │
-│   books, lectures, and poetry...                        │
-│                                                         │
-│        ┌─────────────────────────────────┐              │
-│        │ 🔍  Search books, lectures...   │              │
-│        └─────────────────────────────────┘              │
-│                                                         │
-└─────────────────────────────────────────────────────────┘
-       ↓ below: existing Home page (Continue Reading,
-         Favorites, Library grid) — full-width container
-```
+`src/App.tsx`: remove the unconditional `max-w-lg` wrapper around the catch-all routes. Replace it with a layout that:
+- centers content with a sensible max width per page,
+- keeps the mobile bottom nav (`lg:hidden`) and `MiniPlayer`,
+- adds top padding `lg:pt-20` so content clears the desktop nav.
 
-- Height: `85vh` minimum 600px.
-- Background: full-bleed library photo + dark gradient overlay.
-- Headline: serif display font, "Niass" in gold gradient.
-- Search input: rounded pill, submits to `/library?q=...` (reuses existing Library search).
-- All copy is wired through `useLanguage().t()` so EN/FR/AR work.
+Pages will own their own container width.
 
-## Files to add
+### 2. Library (`src/pages/Library.tsx`)
 
-1. **`src/assets/hero-library.jpg`** — copy from the reference project.
-2. **`src/components/desktop/Hero.tsx`** — the hero section component.
+- Wrap content in `container mx-auto px-6 lg:px-8`.
+- Larger header on desktop: `text-2xl lg:text-4xl`, with the same eyebrow + display-font treatment used on the home sections.
+- Move language pills onto the same row as the search bar at `lg` (search left, pills right).
+- Grid: `grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7` with `gap-5 lg:gap-6`.
+- Drop `pb-24` on `lg` (no bottom nav there).
 
-## Files to edit
+### 3. BookDetail (`src/pages/BookDetail.tsx`)
 
-1. **`src/index.css`**
-   - Import Playfair Display font (alongside existing Lora/Crimson Pro).
-   - Add the `--gold-light` and `--cream-dark` CSS variables (light + dark themes) so the hero text colors render correctly without changing other surfaces.
-   - Add three utilities used by the hero only: `.text-gradient-gold`, `.bg-gradient-hero`, `.font-display` (Playfair Display).
+- On `lg+`, switch to a two-column layout:
+  - Left (sticky): cover at ~`max-w-xs`, language badge, action buttons (Read / Listen / Favorite).
+  - Right: title, author, metadata grid, description, table-of-contents preview.
+- Mobile keeps current single-column hero layout.
+- Constrain to `max-w-5xl mx-auto px-6 lg:px-8`.
 
-2. **`src/pages/Index.tsx`**
-   - Wrap the existing mobile layout: render `<Hero />` inside a `hidden lg:block` wrapper at the top.
-   - The current page width constraint (`max-w-lg` in `App.tsx`) will clip the hero, so we also need to allow the Home route to break out of that wrapper on desktop.
+### 4. AudioLibrary (`src/pages/AudioLibrary.tsx`)
 
-3. **`src/App.tsx`**
-   - Currently every non-Reader route is wrapped in `<div className="max-w-lg mx-auto">`. To let the hero go full-bleed on desktop **for the Home page only**, change this wrapper to `max-w-lg lg:max-w-none mx-auto` for the Home route, OR pull `Index` out of the wrapper similarly to how `Reader` is already pulled out. Cleaner option: extract Home into its own Route entry like Reader, and let `Index.tsx` re-add the `max-w-lg` container internally for the existing mobile content below the hero.
-   - BottomNav and MiniPlayer must continue to render on Home.
+- Container `max-w-6xl mx-auto px-6`.
+- Card grid: `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3` for the audiobook list.
+- Match the home eyebrow/heading styling.
 
-4. **`src/i18n/translations.ts`**
-   - Add 3 new keys for the hero copy (eyebrow, subtitle, search placeholder) in EN/FR/AR. The headline "Cheikh Ibrahim Niass" stays as-is across languages.
+### 5. AudioPlayer (`src/pages/AudioPlayer.tsx`)
 
-## What we are NOT doing
+- On `lg+`, two-column: blurred cover + cover art on the left, track list / chapter controls on the right.
+- Cap content width at `max-w-4xl`.
 
-- No Navbar, Footer, Stats band, Featured row, Categories grid, or Quote slider.
-- No changes to Library, BookDetail, Reader, AudioPlayer, Settings.
-- No changes to mobile Home — below `lg:`, the page renders identically to today.
-- No new routes.
+### 6. Settings (`src/pages/Settings.tsx`)
 
-## QA checklist
+- Container `max-w-2xl mx-auto px-6 lg:px-8`.
+- Larger headings on desktop, more vertical breathing room (`lg:py-12`).
+- Group settings into cards (`bg-card border rounded-xl p-6`) on `lg+`.
 
-- 390×844 (mobile): hero hidden, current Home renders exactly as before.
-- 1280×720 and 1920×1080: hero fills the top, search submits to `/library?q=...`, existing Continue Reading / Favorites / Library grid sit below in their current `max-w-lg` column (acceptable for v1; we can widen them in a follow-up if you want).
-- Light and dark themes both readable.
-- EN / FR / AR copy renders correctly.
+### 7. Reader chrome (`src/pages/Reader.tsx` + reader subcomponents)
 
-## Open follow-ups (not in this plan)
+The book canvas (`PagedView`) already does the right thing above 768px. What needs polish:
 
-If you like the hero, the natural next steps would be: (a) widen the Home content below the hero on desktop, and (b) port the Library/BookDetail desktop layouts. Both are easy add-ons later.
+- **Top bar / bottom bar** (`ReaderBottomBar`): on `lg+`, widen to the full viewport, increase icon hit-targets to ~44px, larger text on the page indicator.
+- **Side navigation arrows**: on `lg+`, render absolute prev/next chevrons in the side margins next to the book (already partly present per `mem://features/reader-fullscreen` — verify and extend).
+- **TOC sheet**: on `lg+`, open as a left-side `Sheet` with `lg:max-w-md` instead of bottom sheet width.
+- **Search overlay** (`ReaderSearch`): cap modal at `max-w-2xl` and center.
+- **Bookmark dialog**: already uses Radix `Dialog`, just verify max-width.
+- Keep distraction-free behavior (chrome hidden by default, toggled via bottom-right menu) intact on all sizes.
+
+### 8. Bottom nav / mini player
+
+Already correctly hidden on `lg` via `App.tsx`. No change needed beyond removing the `max-w-lg` wrapper around them so MiniPlayer can stretch on desktop if it ever shows there (kept hidden for now).
+
+## Out of scope
+
+- No new features, no data-model changes.
+- No changes to the home page (already done).
+- No RTL re-audit (covered earlier).
+- No database / auth work.
+
+## Technical notes
+
+- Breakpoints: stick with Tailwind defaults — `sm` 640, `md` 768, `lg` 1024, `xl` 1280. The desktop nav and home already key off `lg`, so we'll match that.
+- `useIsMobile` (768px) stays the trigger for Reader canvas mode; do not change it.
+- Verify each page at 390px, 820px, and 1280px viewports after the change.
+
+## Files touched
+
+- `src/App.tsx`
+- `src/pages/Library.tsx`
+- `src/pages/BookDetail.tsx`
+- `src/pages/AudioLibrary.tsx`
+- `src/pages/AudioPlayer.tsx`
+- `src/pages/Settings.tsx`
+- `src/pages/Reader.tsx`
+- `src/components/reader/ReaderBottomBar.tsx`
+- `src/components/reader/ReaderSearch.tsx` (minor)

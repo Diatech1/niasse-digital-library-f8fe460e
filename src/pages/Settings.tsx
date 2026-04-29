@@ -51,16 +51,20 @@ const Settings = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="min-h-screen bg-background pb-24 lg:pb-12">
+      <div className="container mx-auto max-w-2xl lg:px-8">
       {/* Header — matches Library/Home */}
-      <div className="px-5 pt-12 pb-4">
+      <div className="px-5 pt-12 lg:pt-4 pb-4 lg:pb-8">
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <h1 className="text-2xl font-serif font-bold text-foreground">{t("settings.title")}</h1>
-          <p className="text-sm text-muted-foreground mt-1">{t("settings.subtitle")}</p>
+          <p className="hidden lg:block text-accent text-xs font-medium tracking-[0.2em] uppercase mb-2">
+            Preferences
+          </p>
+          <h1 className="text-2xl lg:text-4xl font-display font-bold text-foreground">{t("settings.title")}</h1>
+          <p className="text-sm lg:text-base text-muted-foreground mt-1">{t("settings.subtitle")}</p>
         </motion.div>
       </div>
 
@@ -237,6 +241,7 @@ const Settings = () => {
           </p>
         </Section>
       </motion.div>
+      </div>
     </div>
   );
 };

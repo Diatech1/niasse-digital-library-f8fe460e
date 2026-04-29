@@ -94,10 +94,11 @@ const AudioPlayer = () => {
         <div className="absolute inset-0 bg-background/80" />
       </div>
 
-      <div className="relative z-10 min-h-screen flex flex-col pb-24">
-        <div className="flex items-center justify-between px-5 pt-8 pb-2">
+      <div className="relative z-10 min-h-screen flex flex-col pb-24 lg:pb-12">
+        <div className="flex items-center justify-between px-5 lg:px-10 pt-8 lg:pt-4 pb-2">
           <button onClick={() => navigate(-1)} className="p-2" aria-label="Close">
-            <ChevronDown className="w-6 h-6 text-foreground" />
+            <ChevronDown className="w-6 h-6 text-foreground lg:hidden" />
+            <span className="hidden lg:inline text-sm text-muted-foreground hover:text-foreground transition-colors">← Back</span>
           </button>
           <div className="text-center">
             <p className="text-xs text-muted-foreground uppercase tracking-wider">{t("audioPlayer.nowPlaying")}</p>
@@ -107,119 +108,167 @@ const AudioPlayer = () => {
           </button>
         </div>
 
-        <div className="flex-1 flex items-center justify-center px-10 py-2 min-h-0">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.85 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6 }}
-            className="w-full max-w-[200px] aspect-square rounded-2xl overflow-hidden shadow-glow"
-          >
-            <img src={book.cover} alt={book.title} className="w-full h-full object-cover" />
-          </motion.div>
-        </div>
+        {/* Mobile vertical layout */}
+        <div className="lg:hidden flex-1 flex flex-col">
+          <div className="flex-1 flex items-center justify-center px-10 py-2 min-h-0">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.85 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6 }}
+              className="w-full max-w-[200px] aspect-square rounded-2xl overflow-hidden shadow-glow"
+            >
+              <img src={book.cover} alt={book.title} className="w-full h-full object-cover" />
+            </motion.div>
+          </div>
 
-        <div className="px-8 text-center mb-1">
-          <h2 className="text-base font-serif font-bold text-foreground line-clamp-1">{book.title}</h2>
-          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{book.author}</p>
-          {totalChapters > 0 && (
-            <p className="text-[11px] text-muted-foreground mt-1 line-clamp-1">
-              {chapterIdx + 1} / {totalChapters} · {chapterLabel}
-            </p>
+          <div className="px-8 text-center mb-1">
+            <h2 className="text-base font-serif font-bold text-foreground line-clamp-1">{book.title}</h2>
+            <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{book.author}</p>
+            {totalChapters > 0 && (
+              <p className="text-[11px] text-muted-foreground mt-1 line-clamp-1">
+                {chapterIdx + 1} / {totalChapters} · {chapterLabel}
+              </p>
+            )}
+          </div>
+
+          {tts.error && (
+            <p className="px-8 text-center text-xs text-destructive mb-1">{tts.error}</p>
           )}
-        </div>
+          {tts.isLoading && !tts.error && (
+            <p className="px-8 text-center text-xs text-muted-foreground mb-1">{t("audioPlayer.preparing")}</p>
+          )}
 
-        {tts.error && (
-          <p className="px-8 text-center text-xs text-destructive mb-1">
-            {tts.error}
-          </p>
-        )}
-        {tts.isLoading && !tts.error && (
-          <p className="px-8 text-center text-xs text-muted-foreground mb-1">
-            {t("audioPlayer.preparing")}
-          </p>
-        )}
+          <div className="px-8 mt-1 mb-2">
+            <Slider
+              value={[seekValue]}
+              min={0}
+              max={Math.max(seekMax, 1)}
+              step={1}
+              onValueChange={(vals) => tts.seek(vals[0] ?? 0)}
+              disabled={isLoading || totalDuration <= 0}
+              aria-label="Audio progress"
+            />
+            <div className="flex justify-between text-[11px] text-muted-foreground mt-0.5">
+              <span>{formatTime(elapsed)}</span>
+              <span>{totalDuration > 0 ? formatTime(totalDuration) : "--:--"}</span>
+            </div>
+          </div>
 
-        <div className="px-8 mt-1 mb-2">
-          <Slider
-            value={[seekValue]}
-            min={0}
-            max={Math.max(seekMax, 1)}
-            step={1}
-            onValueChange={(vals) => tts.seek(vals[0] ?? 0)}
-            disabled={isLoading || totalDuration <= 0}
-            aria-label="Audio progress"
-          />
-          <div className="flex justify-between text-[11px] text-muted-foreground mt-0.5">
-            <span>{formatTime(elapsed)}</span>
-            <span>{totalDuration > 0 ? formatTime(totalDuration) : "--:--"}</span>
+          <div className="flex items-center justify-center gap-8 mb-3">
+            <button onClick={() => goToChapter(chapterIdx - 1)} disabled={chapterIdx <= 0} className="p-2 text-muted-foreground disabled:opacity-30" aria-label="Previous chapter">
+              <SkipBack className="w-6 h-6" />
+            </button>
+            <button
+              onClick={togglePlayPause}
+              disabled={!tts.isSupported || isLoading || tts.isLoading || totalChapters === 0}
+              className="w-14 h-14 rounded-full bg-secondary flex items-center justify-center transition-transform active:scale-95 disabled:opacity-50"
+              aria-label={tts.isPlaying ? "Pause" : "Play"}
+            >
+              {isLoading || tts.isLoading ? (
+                <Loader2 className="w-6 h-6 text-secondary-foreground animate-spin" />
+              ) : tts.isPlaying ? (
+                <Pause className="w-6 h-6 text-secondary-foreground" />
+              ) : (
+                <Play className="w-6 h-6 text-secondary-foreground ml-0.5" />
+              )}
+            </button>
+            <button onClick={() => goToChapter(chapterIdx + 1)} disabled={chapterIdx >= sliderMax} className="p-2 text-muted-foreground disabled:opacity-30" aria-label="Next chapter">
+              <SkipForward className="w-6 h-6" />
+            </button>
+          </div>
+
+          <div className="flex items-center justify-around px-6 pb-2 text-muted-foreground">
+            <button onClick={() => setRepeat((r) => !r)} className={cn("p-2 transition-colors", repeat && "text-primary")} aria-label={t("audioPlayer.repeat")} aria-pressed={repeat}>
+              <Repeat className="w-5 h-5" />
+            </button>
+            <SleepTimerButton sleepMinutes={sleepMinutes} setSleepMinutes={setSleepMinutes} countdown={sleepCountdown} label={t("audioPlayer.sleepTimer")} offLabel={t("audioPlayer.sleepOff")} minLabel={t("audioPlayer.minutes")} />
+            <ChapterQueueButton sections={sections} current={chapterIdx} onSelect={(i) => goToChapter(i)} label={t("audioPlayer.queue")} />
+            <SpeedButton rate={tts.rate} setRate={tts.setRate} label={t("audioPlayer.speed")} note={t("audioPlayer.speedNote")} />
           </div>
         </div>
 
-        <div className="flex items-center justify-center gap-8 mb-3">
-          <button
-            onClick={() => goToChapter(chapterIdx - 1)}
-            disabled={chapterIdx <= 0}
-            className="p-2 text-muted-foreground disabled:opacity-30"
-            aria-label="Previous chapter"
+        {/* Desktop two-column layout */}
+        <div className="hidden lg:grid lg:grid-cols-[minmax(0,360px)_minmax(0,1fr)] gap-12 container mx-auto max-w-5xl px-8 pt-8 flex-1 items-start">
+          {/* Left: cover */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="aspect-square rounded-2xl overflow-hidden shadow-glow"
           >
-            <SkipBack className="w-6 h-6" />
-          </button>
-          <button
-            onClick={togglePlayPause}
-            disabled={!tts.isSupported || isLoading || tts.isLoading || totalChapters === 0}
-            className="w-14 h-14 rounded-full bg-secondary flex items-center justify-center transition-transform active:scale-95 disabled:opacity-50"
-            aria-label={tts.isPlaying ? "Pause" : "Play"}
-          >
-            {isLoading || tts.isLoading ? (
-              <Loader2 className="w-6 h-6 text-secondary-foreground animate-spin" />
-            ) : tts.isPlaying ? (
-              <Pause className="w-6 h-6 text-secondary-foreground" />
-            ) : (
-              <Play className="w-6 h-6 text-secondary-foreground ml-0.5" />
+            <img src={book.cover} alt={book.title} className="w-full h-full object-cover" />
+          </motion.div>
+
+          {/* Right: title + controls + queue */}
+          <div className="flex flex-col">
+            <div className="mb-6">
+              <p className="text-accent text-xs font-medium tracking-[0.2em] uppercase mb-2">
+                {t("audioPlayer.nowPlaying")}
+              </p>
+              <h2 className="font-display text-3xl xl:text-4xl font-bold text-foreground mb-2 line-clamp-2">
+                {book.title}
+              </h2>
+              <p className="text-base text-muted-foreground">{book.author}</p>
+              {totalChapters > 0 && (
+                <p className="text-sm text-muted-foreground mt-3 line-clamp-1">
+                  {chapterIdx + 1} / {totalChapters} · {chapterLabel}
+                </p>
+              )}
+            </div>
+
+            {tts.error && <p className="text-sm text-destructive mb-3">{tts.error}</p>}
+            {tts.isLoading && !tts.error && (
+              <p className="text-sm text-muted-foreground mb-3">{t("audioPlayer.preparing")}</p>
             )}
-          </button>
-          <button
-            onClick={() => goToChapter(chapterIdx + 1)}
-            disabled={chapterIdx >= sliderMax}
-            className="p-2 text-muted-foreground disabled:opacity-30"
-            aria-label="Next chapter"
-          >
-            <SkipForward className="w-6 h-6" />
-          </button>
-        </div>
 
-        <div className="flex items-center justify-around px-6 pb-2 text-muted-foreground">
-          <button
-            onClick={() => setRepeat((r) => !r)}
-            className={cn("p-2 transition-colors", repeat && "text-primary")}
-            aria-label={t("audioPlayer.repeat")}
-            aria-pressed={repeat}
-          >
-            <Repeat className="w-5 h-5" />
-          </button>
+            <div className="mb-4">
+              <Slider
+                value={[seekValue]}
+                min={0}
+                max={Math.max(seekMax, 1)}
+                step={1}
+                onValueChange={(vals) => tts.seek(vals[0] ?? 0)}
+                disabled={isLoading || totalDuration <= 0}
+                aria-label="Audio progress"
+              />
+              <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                <span>{formatTime(elapsed)}</span>
+                <span>{totalDuration > 0 ? formatTime(totalDuration) : "--:--"}</span>
+              </div>
+            </div>
 
-          <SleepTimerButton
-            sleepMinutes={sleepMinutes}
-            setSleepMinutes={setSleepMinutes}
-            countdown={sleepCountdown}
-            label={t("audioPlayer.sleepTimer")}
-            offLabel={t("audioPlayer.sleepOff")}
-            minLabel={t("audioPlayer.minutes")}
-          />
+            <div className="flex items-center justify-center gap-10 mb-6">
+              <button onClick={() => goToChapter(chapterIdx - 1)} disabled={chapterIdx <= 0} className="p-2 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-30" aria-label="Previous chapter">
+                <SkipBack className="w-7 h-7" />
+              </button>
+              <button
+                onClick={togglePlayPause}
+                disabled={!tts.isSupported || isLoading || tts.isLoading || totalChapters === 0}
+                className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center transition-transform active:scale-95 hover:opacity-90 disabled:opacity-50"
+                aria-label={tts.isPlaying ? "Pause" : "Play"}
+              >
+                {isLoading || tts.isLoading ? (
+                  <Loader2 className="w-7 h-7 animate-spin" />
+                ) : tts.isPlaying ? (
+                  <Pause className="w-7 h-7" />
+                ) : (
+                  <Play className="w-7 h-7 ml-0.5" />
+                )}
+              </button>
+              <button onClick={() => goToChapter(chapterIdx + 1)} disabled={chapterIdx >= sliderMax} className="p-2 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-30" aria-label="Next chapter">
+                <SkipForward className="w-7 h-7" />
+              </button>
+            </div>
 
-          <ChapterQueueButton
-            sections={sections}
-            current={chapterIdx}
-            onSelect={(i) => goToChapter(i)}
-            label={t("audioPlayer.queue")}
-          />
-
-          <SpeedButton
-            rate={tts.rate}
-            setRate={tts.setRate}
-            label={t("audioPlayer.speed")}
-            note={t("audioPlayer.speedNote")}
-          />
+            <div className="flex items-center justify-center gap-8 text-muted-foreground border-t border-border/40 pt-5">
+              <button onClick={() => setRepeat((r) => !r)} className={cn("p-2 transition-colors", repeat && "text-primary")} aria-label={t("audioPlayer.repeat")} aria-pressed={repeat}>
+                <Repeat className="w-5 h-5" />
+              </button>
+              <SleepTimerButton sleepMinutes={sleepMinutes} setSleepMinutes={setSleepMinutes} countdown={sleepCountdown} label={t("audioPlayer.sleepTimer")} offLabel={t("audioPlayer.sleepOff")} minLabel={t("audioPlayer.minutes")} />
+              <ChapterQueueButton sections={sections} current={chapterIdx} onSelect={(i) => goToChapter(i)} label={t("audioPlayer.queue")} />
+              <SpeedButton rate={tts.rate} setRate={tts.setRate} label={t("audioPlayer.speed")} note={t("audioPlayer.speedNote")} />
+            </div>
+          </div>
         </div>
       </div>
     </div>
