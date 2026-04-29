@@ -53,13 +53,13 @@ const ReaderBottomBar = ({
     <div
       className={`fixed bottom-0 left-0 right-0 z-40 transition-all duration-300 ${expanded ? 'border-t border-border/20 bg-background/95 backdrop-blur-sm' : 'pointer-events-none bg-transparent'}`}
     >
-      <div className={`mx-5 mt-2 h-0.5 rounded-full bg-muted/30 transition-opacity duration-300 ${expanded ? 'opacity-100' : 'opacity-0'}`}>
+      <div className={`mx-5 lg:mx-auto lg:max-w-3xl mt-2 h-0.5 rounded-full bg-muted/30 transition-opacity duration-300 ${expanded ? 'opacity-100' : 'opacity-0'}`}>
         <div
           className="h-full rounded-full bg-primary transition-all duration-300"
           style={{ width: `${progress}%` }}
         />
       </div>
-      <div className={`grid items-center px-3 pb-safe transition-all duration-300 ${expanded ? 'grid-cols-[48px_minmax(0,1fr)_48px] py-2' : 'grid-cols-1 py-3'}`}>
+      <div className={`grid items-center px-3 lg:max-w-3xl lg:mx-auto pb-safe transition-all duration-300 ${expanded ? 'grid-cols-[48px_minmax(0,1fr)_48px] py-2 lg:py-3' : 'grid-cols-1 py-3'}`}>
         {hasPrev ? (
           <button
             className={`flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground ${expanded ? '' : 'hidden'}`}

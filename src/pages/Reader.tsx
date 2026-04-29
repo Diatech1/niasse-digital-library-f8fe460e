@@ -772,7 +772,7 @@ const Reader = () => {
 
       {/* TOC Sheet */}
       <Sheet open={mainMenuOpen} onOpenChange={setMainMenuOpen}>
-        <SheetContent side="right" className={`${theme.bg} ${theme.text} w-[78%] sm:max-w-xs p-0`}>
+        <SheetContent side="right" className={`${theme.bg} ${theme.text} w-[78%] sm:max-w-xs lg:max-w-md p-0`}>
           <SheetHeader className="px-4 pt-4 pb-3 border-b border-border/20">
             <SheetTitle className={theme.text}>Main Menu</SheetTitle>
           </SheetHeader>

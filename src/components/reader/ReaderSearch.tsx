@@ -116,7 +116,7 @@ const ReaderSearch = ({ open, onOpenChange, sections, onNavigate, themeClasses }
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="top" className={`${themeClasses.bg} ${themeClasses.text} p-0 h-[85vh]`}>
+      <SheetContent side="top" className={`${themeClasses.bg} ${themeClasses.text} p-0 h-[85vh] lg:h-[80vh] lg:max-w-3xl lg:mx-auto lg:rounded-b-2xl`}>
         <SheetHeader className="px-4 pt-4 pb-0">
           <SheetTitle className={`${themeClasses.text} sr-only`}>Search</SheetTitle>
         </SheetHeader>
