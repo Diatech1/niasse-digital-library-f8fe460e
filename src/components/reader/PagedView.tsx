@@ -63,7 +63,12 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
     // shows two columns of this width side-by-side.
     const singleContentWidth = (bookWidth / pagesPerTurn) - padLeft - padRight;
     const contentHeight = bookHeight - padTop - padBottom;
-    const folioHeight = 20;
+    // Reserved band at the bottom of the page for the folio (page number).
+    // Must be >= the folio's rendered line-height so it never overlaps body text.
+    const folioFontPx = isMobile ? 11 : 12;
+    const folioLineHeight = Math.ceil(folioFontPx * 1.4); // ~17px
+    const folioBandHeight = Math.max(folioLineHeight + 6, 20);
+    const folioHeight = folioBandHeight;
 
     const gap = 48;
     const strideWidth = singleContentWidth + gap;
@@ -201,12 +206,16 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
               </>
             ) : (
               <div
-                className="absolute left-0 right-0 flex justify-center pointer-events-none select-none"
-                style={{ bottom: isMobile ? 6 : padBottom * 0.3 }}
+                className="absolute left-0 right-0 flex items-center justify-center pointer-events-none select-none"
+                style={{
+                  bottom: Math.max(0, (padBottom - folioBandHeight) / 2),
+                  height: folioBandHeight,
+                  lineHeight: `${folioLineHeight}px`,
+                }}
               >
                 <span
-                  className="text-muted-foreground/60 font-serif italic tracking-widest text-[11px] sm:text-xs"
-                  style={{ fontVariant: 'small-caps' }}
+                  className="text-muted-foreground/60 font-serif italic tracking-widest"
+                  style={{ fontVariant: 'small-caps', fontSize: `${folioFontPx}px` }}
                 >
                   — {page + 1} —
                 </span>
