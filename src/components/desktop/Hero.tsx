@@ -46,7 +46,7 @@ const Hero = () => {
         >
           Cheikh Ibrahim
           <br />
-          <span className="text-gradient-gold">Niass</span>
+          <span className="text-gold drop-shadow-[0_2px_12px_rgba(20,12,4,0.85)]">Niass</span>
         </motion.h1>
 
         <motion.p
