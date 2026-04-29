@@ -46,7 +46,7 @@ const DesktopHomeSections = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const featured = books.slice(0, 8);
+  const featured = books.slice(0, 6);
 
   const audioCount = books.filter((b) => b.hasAudio).length;
   const languages = Array.from(new Set(books.map((b) => b.language)));
@@ -94,7 +94,7 @@ const DesktopHomeSections = () => {
             </h2>
           </div>
           <div className="grid grid-cols-6 gap-5">
-            {continueReading.slice(0, 8).map(({ book, idx }) => {
+            {continueReading.slice(0, 6).map(({ book, idx }) => {
               const progress = book.pages > 0 ? Math.round((idx / book.pages) * 100) : 0;
               return (
                 <motion.div
@@ -141,7 +141,7 @@ const DesktopHomeSections = () => {
             </h2>
           </div>
           <div className="grid grid-cols-6 gap-5">
-            {favorites.slice(0, 8).map((book, i) => (
+            {favorites.slice(0, 6).map((book, i) => (
               <BookCard key={book.id} book={book} index={i} />
             ))}
           </div>
