@@ -51,7 +51,7 @@ const DesktopHomeSections = () => {
   ];
 
   return (
-    <div className="hidden lg:block">
+    <div className="desktop-surface hidden lg:block bg-background">
       {/* Stats */}
       <section className="py-12 bg-card border-y border-border">
         <div className="container mx-auto px-6">

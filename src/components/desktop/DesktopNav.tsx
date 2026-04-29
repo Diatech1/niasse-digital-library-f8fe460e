@@ -23,7 +23,7 @@ const DesktopNav = () => {
   ];
 
   return (
-    <nav className="hidden lg:block fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/60">
+    <nav className="desktop-surface hidden lg:block fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/60">
       <div className="container mx-auto px-6 h-16 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
           <BookOpen className="h-5 w-5 text-primary" />
