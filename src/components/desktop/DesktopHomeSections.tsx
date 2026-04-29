@@ -93,7 +93,7 @@ const DesktopHomeSections = () => {
               {t("home.continueReading")}
             </h2>
           </div>
-          <div className="grid grid-cols-8 gap-4">
+          <div className="grid grid-cols-6 gap-5">
             {continueReading.slice(0, 8).map(({ book, idx }) => {
               const progress = book.pages > 0 ? Math.round((idx / book.pages) * 100) : 0;
               return (
@@ -140,7 +140,7 @@ const DesktopHomeSections = () => {
               {t("home.favorites")}
             </h2>
           </div>
-          <div className="grid grid-cols-8 gap-4">
+          <div className="grid grid-cols-6 gap-5">
             {favorites.slice(0, 8).map((book, i) => (
               <BookCard key={book.id} book={book} index={i} />
             ))}
@@ -167,7 +167,7 @@ const DesktopHomeSections = () => {
             <span aria-hidden className="rtl:-scale-x-100">→</span>
           </Link>
         </div>
-        <div className="grid grid-cols-8 gap-4">
+        <div className="grid grid-cols-6 gap-5">
           {featured.map((book, i) => (
             <BookCard key={book.id} book={book} index={i} />
           ))}
