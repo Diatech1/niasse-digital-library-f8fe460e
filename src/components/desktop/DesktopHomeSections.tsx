@@ -161,9 +161,10 @@ const DesktopHomeSections = () => {
           </div>
           <Link
             to="/library"
-            className="text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+            className="text-sm font-medium text-primary hover:text-primary/80 transition-colors inline-flex items-center gap-1"
           >
-            {t("common.seeAll")} →
+            <span>{t("common.seeAll")}</span>
+            <span aria-hidden className="rtl:-scale-x-100">→</span>
           </Link>
         </div>
         <div className="grid grid-cols-8 gap-4">
@@ -294,9 +295,11 @@ const DesktopHomeSections = () => {
             </div>
           </div>
           <div className="border-t border-border pt-6 text-center">
-            <p className="text-xs text-muted-foreground flex items-center justify-center gap-1">
-              Made with <Heart className="h-3 w-3 text-accent" /> for the Tijānī community ·
-              Faydabook © {new Date().getFullYear()}
+            <p className="text-xs text-muted-foreground inline-flex items-center justify-center gap-1 flex-wrap">
+              <span className="inline-flex items-center gap-1">
+                Made with <Heart className="h-3 w-3 text-accent" /> for the Tijānī community
+              </span>
+              <span>· Faydabook © {new Date().getFullYear()}</span>
             </p>
           </div>
         </div>
