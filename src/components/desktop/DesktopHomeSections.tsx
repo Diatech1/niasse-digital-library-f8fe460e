@@ -53,16 +53,16 @@ const DesktopHomeSections = () => {
   return (
     <div className="desktop-surface hidden lg:block bg-background">
       {/* Stats */}
-      <section className="py-16 border-b border-border/60">
+      <section className="py-6 border-b border-border/60">
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-4 divide-x divide-border/60">
             {stats.map((stat) => (
               <div key={stat.label} className="flex flex-col items-center text-center px-6">
-                <stat.icon className="h-5 w-5 text-accent mb-4" strokeWidth={1.5} />
-                <p className="font-display text-5xl font-semibold text-foreground leading-none mb-3">
+                <stat.icon className="h-4 w-4 text-accent mb-2" strokeWidth={1.5} />
+                <p className="font-display text-2xl font-semibold text-foreground leading-none mb-1">
                   {stat.value}
                 </p>
-                <p className="text-[11px] text-muted-foreground tracking-[0.25em] uppercase">
+                <p className="text-[10px] text-muted-foreground tracking-[0.25em] uppercase">
                   {stat.label}
                 </p>
               </div>
