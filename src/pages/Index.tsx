@@ -71,8 +71,8 @@ const Index = () => {
         </motion.div>
       </div>
 
-      {/* Search */}
-      <div className="px-5 mb-6">
+      {/* Search — hidden on desktop where the hero search takes its place */}
+      <div className="px-5 mb-6 lg:hidden">
         <SearchBar onSearch={setSearchQuery} />
       </div>
 
@@ -147,6 +147,7 @@ const Index = () => {
           <p className="text-center text-muted-foreground py-12">{t("common.noBooksFound")}</p>
         }
       </section>
+      </div>
     </div>
   );
 };
