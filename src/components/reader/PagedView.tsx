@@ -8,7 +8,7 @@ export interface PagedViewHandle {
 interface PagedViewProps {
   children: React.ReactNode;
   page: number;
-  onTotalPagesChange: (total: number) => void;
+  onTotalPagesChange: (total: number, pagesPerTurn?: number) => void;
   className?: string;
   onScroll?: (e: React.UIEvent<HTMLDivElement>) => void;
   fitToPage?: boolean;
@@ -71,9 +71,14 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
       const total = Math.max(1, Math.ceil(sw / strideWidth));
       if (total !== lastTotal.current) {
         lastTotal.current = total;
-        onTotalPagesChange(total);
+        onTotalPagesChange(total, pagesPerTurn);
       }
-    }, [singleContentWidth, strideWidth, onTotalPagesChange]);
+    }, [singleContentWidth, strideWidth, onTotalPagesChange, pagesPerTurn]);
+
+    useEffect(() => {
+      // Re-emit when pagesPerTurn changes (responsive resize crosses spread threshold)
+      onTotalPagesChange(lastTotal.current || 1, pagesPerTurn);
+    }, [pagesPerTurn, onTotalPagesChange]);
 
     useEffect(() => {
       cancelAnimationFrame(measureRaf.current);
