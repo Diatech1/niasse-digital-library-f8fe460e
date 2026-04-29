@@ -65,7 +65,7 @@ const Hero = () => {
           className="max-w-xl mx-auto"
         >
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <Search className="pointer-events-none absolute start-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <input
               type="text"
               placeholder={t("hero.searchPlaceholder")}
@@ -74,7 +74,7 @@ const Hero = () => {
               onKeyDown={(e) => {
                 if (e.key === "Enter") submit();
               }}
-              className="w-full pl-12 pr-4 py-4 rounded-full bg-background/95 backdrop-blur-sm text-foreground placeholder:text-muted-foreground border border-border focus:outline-none focus:ring-2 focus:ring-accent text-sm"
+              className="w-full ps-12 pe-4 py-4 rounded-full bg-background/95 backdrop-blur-sm text-foreground placeholder:text-muted-foreground border border-border focus:outline-none focus:ring-2 focus:ring-accent text-sm"
             />
           </div>
         </motion.div>
