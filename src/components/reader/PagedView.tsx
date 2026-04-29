@@ -63,7 +63,12 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
     // shows two columns of this width side-by-side.
     const singleContentWidth = (bookWidth / pagesPerTurn) - padLeft - padRight;
     const contentHeight = bookHeight - padTop - padBottom;
-    const folioHeight = 20;
+    // Reserved band at the bottom of the page for the folio (page number).
+    // Must be >= the folio's rendered line-height so it never overlaps body text.
+    const folioFontPx = isMobile ? 11 : 12;
+    const folioLineHeight = Math.ceil(folioFontPx * 1.4); // ~17px
+    const folioBandHeight = Math.max(folioLineHeight + 6, 20);
+    const folioHeight = folioBandHeight;
 
     const gap = 48;
     const strideWidth = singleContentWidth + gap;
