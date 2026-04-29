@@ -87,8 +87,8 @@ const DesktopHomeSections = () => {
 
       {/* Continue Reading */}
       {continueReading.length > 0 && (
-        <section className="py-16 container mx-auto px-6">
-          <div className="flex items-end justify-between mb-10">
+        <section className="py-8 container mx-auto px-6">
+          <div className="flex items-end justify-between mb-6">
             <div>
               <p className="text-accent text-sm font-medium tracking-[0.2em] uppercase mb-2">
                 Resume
@@ -139,8 +139,8 @@ const DesktopHomeSections = () => {
 
       {/* Favorites */}
       {favorites.length > 0 && (
-        <section className="py-16 container mx-auto px-6">
-          <div className="flex items-end justify-between mb-10">
+        <section className="py-8 container mx-auto px-6">
+          <div className="flex items-end justify-between mb-6">
             <div>
               <p className="text-accent text-sm font-medium tracking-[0.2em] uppercase mb-2">
                 Loved
@@ -159,8 +159,8 @@ const DesktopHomeSections = () => {
       )}
 
       {/* Featured Books */}
-      <section className="py-16 container mx-auto px-6">
-        <div className="flex items-end justify-between mb-10">
+      <section className="py-8 container mx-auto px-6">
+        <div className="flex items-end justify-between mb-6">
           <div>
             <p className="text-accent text-sm font-medium tracking-[0.2em] uppercase mb-2">
               Collection
@@ -254,7 +254,7 @@ const DesktopHomeSections = () => {
       {/* Footer */}
       <footer className="bg-card border-t border-border py-14">
         <div className="container mx-auto px-6">
-          <div className="grid grid-cols-3 gap-12 mb-10">
+          <div className="grid grid-cols-3 gap-12 mb-6">
             <div>
               <Link to="/" className="flex items-center gap-2 mb-4">
                 <BookOpen className="h-5 w-5 text-primary" />
