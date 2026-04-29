@@ -44,9 +44,9 @@ const Hero = () => {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="font-display text-5xl lg:text-7xl font-bold text-cream mb-6 leading-tight"
         >
-          Cheikh Ibrahim
+          Faydah
           <br />
-          <span className="text-gold">Niass</span>
+          <span className="text-gold">Tidjaniyah</span>
         </motion.h1>
 
         <motion.p
