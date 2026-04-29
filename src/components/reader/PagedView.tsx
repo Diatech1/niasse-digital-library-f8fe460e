@@ -35,20 +35,23 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
       return () => ro.disconnect();
     }, []);
 
-    // Desktop: single page sized to fill height; on wide screens, render a 2-page spread
-    // Mobile: full-width single page
-    const singlePageWidth = isMobile ? availWidth : Math.min(availWidth * 0.9, availHeight * (4 / 7) * 1.8, 900);
-    const wantsSpread = false;
-    const pagesPerTurn = wantsSpread ? 2 : 1;
-
-    const bookWidth = isMobile
+    // Desktop: single A4 page (210:297 ≈ 1:1.414), sized to fit available area.
+    // Mobile: full-width single page (existing behavior).
+    const A4_RATIO = 297 / 210; // height / width
+    const maxPageHeight = Math.max(0, availHeight - 16);
+    const maxPageWidth = Math.max(0, availWidth * 0.9);
+    // Fit within both width and height constraints, cap width for readability
+    const a4WidthFromHeight = maxPageHeight / A4_RATIO;
+    const singlePageWidth = isMobile
       ? availWidth
-      : wantsSpread
-        ? Math.min(availWidth - 32, singlePageWidth * 2 + 32)
-        : singlePageWidth;
+      : Math.min(maxPageWidth, a4WidthFromHeight, 820);
+    const wantsSpread = false;
+    const pagesPerTurn = 1;
+
+    const bookWidth = isMobile ? availWidth : singlePageWidth;
     const singleHeight = isMobile
       ? (fitToPage ? availHeight : availHeight * 4)
-      : Math.min(availHeight - 16, (bookWidth / pagesPerTurn) * (7 / 4));
+      : Math.min(maxPageHeight, bookWidth * A4_RATIO);
     const bookHeight = singleHeight;
 
     const padTop = isMobile ? 56 : bookHeight * 0.10;
