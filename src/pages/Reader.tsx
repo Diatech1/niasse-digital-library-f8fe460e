@@ -322,15 +322,42 @@ const Reader = () => {
 
   const currentSection = allSections[currentSectionIdx] || allSections[0];
 
+  // Footnotes for what is *visible* on the current display page. In paged
+  // mode the same logical section may span many CSS-column pages, so we ask
+  // PagedView which section indices overlap the current page band, then
+  // aggregate their pre-extracted footnotes (falling back to a parser).
+  const [visibleSectionIdxs, setVisibleSectionIdxs] = useState<number[]>([]);
+  useEffect(() => {
+    // Wait for the page transform + measurement to settle.
+    const raf1 = requestAnimationFrame(() => {
+      const raf2 = requestAnimationFrame(() => {
+        const idxs = pagedViewRef.current?.getSectionsOnPage(currentSectionIdx) ?? [];
+        setVisibleSectionIdxs(idxs.length ? idxs : [currentSectionIdx]);
+      });
+      return () => cancelAnimationFrame(raf2);
+    });
+    return () => cancelAnimationFrame(raf1);
+  }, [currentSectionIdx, pagedTotal, allSections]);
+
   const currentFootnotes = useMemo(() => {
-    if (!currentSection || typeof currentSection.content !== "string") return [];
-    // Prefer pre-extracted structured footnotes (e.g. from kashif-en's
-    // layout-aware PDF extraction) so they never appear in body prose.
-    const preExtracted = (currentSection as { footnotes?: { number: string; text: string }[] }).footnotes;
-    if (Array.isArray(preExtracted)) return preExtracted;
-    if (currentSection.content.startsWith("__")) return [];
-    return extractFootnotes(currentSection.content).footnotes;
-  }, [currentSection]);
+    const seen = new Set<string>();
+    const out: { number: string; text: string }[] = [];
+    for (const idx of visibleSectionIdxs) {
+      const s = allSections[idx];
+      if (!s || typeof s.content !== "string") continue;
+      const pre = (s as { footnotes?: { number: string; text: string }[] }).footnotes;
+      const fns = Array.isArray(pre)
+        ? pre
+        : (s.content.startsWith("__") ? [] : extractFootnotes(s.content).footnotes);
+      for (const fn of fns) {
+        const key = `${idx}:${fn.number}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        out.push(fn);
+      }
+    }
+    return out;
+  }, [visibleSectionIdxs, allSections]);
 
 
   const goToSection = useCallback((idx: number) => {

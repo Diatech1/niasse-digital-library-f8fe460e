@@ -4,6 +4,8 @@ import { ZoomIn, ZoomOut, Maximize2, ChevronLeft, ChevronRight } from 'lucide-re
 
 export interface PagedViewHandle {
   getPageForSection: (sectionIndex: number) => number;
+  /** Returns the section indices whose content overlaps the given display page. */
+  getSectionsOnPage: (page: number) => number[];
 }
 
 interface PagedViewProps {
@@ -119,6 +121,25 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
         const el = innerRef.current.querySelector(`[data-section-index="${sectionIndex}"]`);
         if (!el) return 0;
         return Math.floor((el as HTMLElement).offsetLeft / strideWidth);
+      },
+      getSectionsOnPage: (pageIdx: number) => {
+        if (!innerRef.current || strideWidth === 0) return [];
+        const pageStart = pageIdx * strideWidth;
+        const pageEnd = pageStart + strideWidth;
+        const els = Array.from(
+          innerRef.current.querySelectorAll<HTMLElement>('[data-section-index]')
+        );
+        const result: number[] = [];
+        for (const el of els) {
+          const left = el.offsetLeft;
+          const right = left + el.offsetWidth;
+          // Section overlaps the page band [pageStart, pageEnd)
+          if (right > pageStart && left < pageEnd) {
+            const idx = Number(el.dataset.sectionIndex);
+            if (!Number.isNaN(idx)) result.push(idx);
+          }
+        }
+        return result;
       },
     }), [strideWidth]);
 
