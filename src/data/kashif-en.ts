@@ -6,6 +6,11 @@ export const kashifEnMeta = {
   publisher: "Fons Vitae, 2009",
 };
 
+export interface KashifEnFootnote {
+  number: string;
+  text: string;
+}
+
 export interface KashifEnSection {
   id: string;
   part: string;
@@ -13,6 +18,9 @@ export interface KashifEnSection {
   heading: string;
   content: string;
   pageNumber?: number;
+  /** Footnotes detached from this page's body during PDF extraction.
+   *  Surfaced via the reader's footnotes panel — never inlined into prose. */
+  footnotes?: KashifEnFootnote[];
 }
 
 /**
