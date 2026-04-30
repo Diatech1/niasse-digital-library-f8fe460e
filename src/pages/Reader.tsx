@@ -19,7 +19,8 @@ import { stationsDeenEnSections, stationsDeenEnMeta } from "@/data/stations-deen
 import { loadConditionsReglesSections, conditionsReglesMeta, type ConditionsSection } from "@/data/conditions-regles";
 import { loadIfadatouSections, ifadatouAhmediyyaMeta, type IfadatouSection } from "@/data/ifadatou-ahmediyya";
 import { loadVolumeSections, type VolumeSection } from "@/data/volume-loader";
-import { ArrowLeft, Loader2, Search, Maximize, Minimize, Bookmark, BookmarkCheck, Menu, BookOpen, ScrollText, Home, Headphones, Settings, Volume2 } from "lucide-react";
+import { ArrowLeft, Loader2, Search, Maximize, Minimize, Bookmark, BookmarkCheck, Menu, BookOpen, ScrollText, Home, Headphones, Settings, Volume2, NotebookText } from "lucide-react";
+import { extractFootnotes } from "@/lib/extractFootnotes";
 import { useAudioPlayer } from "@/hooks/use-audio-player";
 import MiniPlayer from "@/components/MiniPlayer";
 import { Slider } from "@/components/ui/slider";
@@ -96,6 +97,7 @@ const Reader = () => {
   const [mainMenuOpen, setMainMenuOpen] = useState(false);
   const [tocOpen, setTocOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [footnotesOpen, setFootnotesOpen] = useState(false);
   const [currentSectionIdx, setCurrentSectionIdx] = useState(() => getSavedProgress(id));
   const contentRef = useRef<HTMLDivElement>(null);
   const [kashifEnData, setKashifEnData] = useState<KashifEnSection[]>([]);
@@ -319,6 +321,12 @@ const Reader = () => {
   const effectiveTotalPages = pagedTotal;
 
   const currentSection = allSections[currentSectionIdx] || allSections[0];
+
+  const currentFootnotes = useMemo(() => {
+    if (!currentSection || typeof currentSection.content !== "string") return [];
+    if (currentSection.content.startsWith("__")) return [];
+    return extractFootnotes(currentSection.content).footnotes;
+  }, [currentSection]);
 
 
   const goToSection = useCallback((idx: number) => {
@@ -680,6 +688,20 @@ const Reader = () => {
           <Search className="h-4 w-4" />
         </button>
         <button
+          onClick={() => setFootnotesOpen(true)}
+          disabled={currentFootnotes.length === 0}
+          className="relative flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full transition-colors hover:bg-accent disabled:opacity-40 disabled:hover:bg-transparent"
+          aria-label={`Show footnotes${currentFootnotes.length ? ` (${currentFootnotes.length})` : ""}`}
+          title={currentFootnotes.length ? `Footnotes (${currentFootnotes.length})` : "No footnotes on this page"}
+        >
+          <NotebookText className="h-4 w-4" />
+          {currentFootnotes.length > 0 && (
+            <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold leading-none text-primary-foreground">
+              {currentFootnotes.length}
+            </span>
+          )}
+        </button>
+        <button
           onClick={handleReadAloud}
           disabled={!book || allSections.length === 0}
           className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full transition-colors hover:bg-accent disabled:opacity-50"
@@ -1030,6 +1052,38 @@ const Reader = () => {
         themeClasses={{ bg: theme.bg, text: theme.text }}
       />
       <MiniPlayer />
+
+      {/* Footnotes panel for the current page */}
+      <Sheet open={footnotesOpen} onOpenChange={setFootnotesOpen}>
+        <SheetContent side="right" className={`${theme.bg} ${theme.text} w-[85%] sm:max-w-sm p-0`}>
+          <SheetHeader className="px-4 pt-4 pb-3 border-b border-border/20">
+            <SheetTitle className={theme.text}>
+              Footnotes
+              <span className="ml-2 text-xs font-normal text-muted-foreground">
+                page {currentSectionIdx + 1}
+              </span>
+            </SheetTitle>
+          </SheetHeader>
+          <ScrollArea className="h-[calc(100vh-72px)]">
+            <div className="px-4 py-4 space-y-4">
+              {currentFootnotes.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-8">
+                  No footnotes on this page.
+                </p>
+              ) : (
+                currentFootnotes.map((fn) => (
+                  <div key={fn.number} className="flex gap-3">
+                    <span className="shrink-0 font-semibold text-primary tabular-nums" style={{ minWidth: "1.6em" }}>
+                      {fn.number}.
+                    </span>
+                    <p className="text-sm leading-relaxed text-foreground/85">{fn.text}</p>
+                  </div>
+                ))
+              )}
+            </div>
+          </ScrollArea>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };
