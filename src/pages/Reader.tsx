@@ -636,6 +636,7 @@ const Reader = () => {
               fontSize={fontSize}
               textColor={pagedTextColor}
               dir={directionForBookLanguage(book?.language)}
+              lang={book?.language}
             />
           )}
         </div>
@@ -691,6 +692,7 @@ const Reader = () => {
           fontSize={fontSize}
           textColor={theme.text.replace('text-[', '').replace(']', '')}
           dir={directionForBookLanguage(book?.language)}
+          lang={book?.language}
         />
       </div>
     );
