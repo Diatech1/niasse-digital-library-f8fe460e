@@ -719,11 +719,11 @@ const Reader = () => {
           <Search className="h-4 w-4" />
         </button>
         <button
+          type="button"
           onClick={() => setFootnotesOpen(true)}
-          disabled={currentFootnotes.length === 0}
-          className="relative flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full transition-colors hover:bg-accent disabled:opacity-40 disabled:hover:bg-transparent"
+          className="relative flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full transition-colors hover:bg-accent"
           aria-label={`Show footnotes${currentFootnotes.length ? ` (${currentFootnotes.length})` : ""}`}
-          title={currentFootnotes.length ? `Footnotes (${currentFootnotes.length})` : "No footnotes on this page"}
+          title={currentFootnotes.length ? `Footnotes (${currentFootnotes.length})` : "Footnotes"}
         >
           <NotebookText className="h-4 w-4" />
           {currentFootnotes.length > 0 && (
