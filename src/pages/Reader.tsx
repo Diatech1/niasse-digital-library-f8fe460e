@@ -322,6 +322,12 @@ const Reader = () => {
 
   const currentSection = allSections[currentSectionIdx] || allSections[0];
 
+  const currentFootnotes = useMemo(() => {
+    if (!currentSection || typeof currentSection.content !== "string") return [];
+    if (currentSection.content.startsWith("__")) return [];
+    return extractFootnotes(currentSection.content).footnotes;
+  }, [currentSection]);
+
 
   const goToSection = useCallback((idx: number) => {
     const clamped = Math.max(0, Math.min(idx, effectiveTotalPages - 1));
