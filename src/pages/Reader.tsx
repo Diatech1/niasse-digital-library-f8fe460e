@@ -97,6 +97,7 @@ const Reader = () => {
   const [mainMenuOpen, setMainMenuOpen] = useState(false);
   const [tocOpen, setTocOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [footnotesOpen, setFootnotesOpen] = useState(false);
   const [currentSectionIdx, setCurrentSectionIdx] = useState(() => getSavedProgress(id));
   const contentRef = useRef<HTMLDivElement>(null);
   const [kashifEnData, setKashifEnData] = useState<KashifEnSection[]>([]);
