@@ -114,22 +114,20 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
       }
 
       // ---- Fallback clip detection ----
-      // Find blocks whose intrinsic content is wider than the column
-      // (a long unbreakable word, a URL, a transliterated term...).
-      // Tag them so the CSS fallback kicks in, and log which one caused it.
+      // Only flag a block when its content actually pokes past the column by
+      // a meaningful amount — sub-pixel rounding from justified text +
+      // zoom (em sizing) routinely produces 0.5–2px noise that we should
+      // ignore. Use 0.5em (~8px) as the threshold.
       const colW = singleContentWidth;
+      const tolerance = Math.max(8, baseFontPx * 0.5);
       const candidates = innerRef.current.querySelectorAll<HTMLElement>(
         '.formatted-content p, .formatted-content blockquote, .formatted-content > .flex'
       );
       candidates.forEach((el) => {
-        // Reset first so blocks that have been fixed (resize / zoom change)
-        // can recover hyphenation.
         if (el.dataset.clipFallback === 'true') {
           el.removeAttribute('data-clip-fallback');
         }
-        // scrollWidth includes overflowing children; if it exceeds the
-        // column width by more than 1px we have a clip.
-        if (el.scrollWidth > colW + 1) {
+        if (el.scrollWidth > colW + tolerance) {
           el.dataset.clipFallback = 'true';
           const sectionEl = el.closest<HTMLElement>('[data-section-index]');
           const sectionIdx = sectionEl?.dataset.sectionIndex ?? '?';
@@ -137,12 +135,12 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
           // eslint-disable-next-line no-console
           console.warn(
             `[reader] hyphenation fallback applied — section ${sectionIdx}, ` +
-            `block scrollWidth=${el.scrollWidth}px > column=${colW}px. ` +
-            `Preview: "${preview}${preview.length === 80 ? '…' : ''}"`
+            `block scrollWidth=${el.scrollWidth}px > column=${colW.toFixed(1)}px ` +
+            `(tol=${tolerance.toFixed(1)}px). Preview: "${preview}${preview.length === 80 ? '…' : ''}"`
           );
         }
       });
-    }, [singleContentWidth, strideWidth, onTotalPagesChange, pagesPerTurn]);
+    }, [singleContentWidth, strideWidth, onTotalPagesChange, pagesPerTurn, baseFontPx]);
 
     useEffect(() => {
       onTotalPagesChange(lastTotal.current || 1, pagesPerTurn);
