@@ -28,7 +28,7 @@ const ZOOM_MAX = 2.0;
 const ZOOM_STEP = 0.1;
 
 const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
-  ({ children, page, onTotalPagesChange, className, onScroll, fitToPage = false }, ref) => {
+  ({ children, page, onTotalPagesChange, className, onScroll, fitToPage = false, onPrevPage, onNextPage, hasPrev, hasNext }, ref) => {
     const outerRef = useRef<HTMLDivElement>(null);
     const innerRef = useRef<HTMLDivElement>(null);
     const [availWidth, setAvailWidth] = useState(0);
