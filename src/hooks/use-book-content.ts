@@ -23,6 +23,10 @@ export interface BookSection {
   chapter?: string;
   heading: string;
   content: string;
+  /** Pre-extracted footnotes (e.g. from layout-aware PDF extraction).
+   *  When present, the reader's footnotes panel uses these directly
+   *  instead of parsing them out of the body. */
+  footnotes?: { number: string; text: string }[];
 }
 
 const volumeMap: Record<string, string> = {
