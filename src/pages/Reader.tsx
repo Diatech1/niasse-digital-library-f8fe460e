@@ -743,6 +743,10 @@ const Reader = () => {
               }}
               className="flex-1"
               fitToPage={fitToPage}
+              onPrevPage={() => goToSection(currentSectionIdx - pagesPerTurn)}
+              onNextPage={() => goToSection(currentSectionIdx + pagesPerTurn)}
+              hasPrev={currentSectionIdx > 0}
+              hasNext={currentSectionIdx < effectiveTotalPages - 1}
             >
               {pagedContent}
             </PagedView>
