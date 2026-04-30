@@ -20,7 +20,7 @@ const TERMINAL_PUNCTUATION_RE = /[.!?…:;][)\]"'”’]*$/u;
 function cleanExtractedSpacing(content: string) {
   return content
     .replace(/\u00ad/g, '')
-    .replace(/([\p{L}\p{M}])\-\s+([\p{L}\p{M}])/gu, '$1-$2');
+    .replace(/([\p{L}\p{M}])-\s+([\p{L}\p{M}])/gu, '$1-$2');
 }
 
 function stitchMergedContent(previous: string, next: string) {
