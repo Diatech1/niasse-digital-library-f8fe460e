@@ -75,8 +75,92 @@ const MISSING_INITIAL_FIXES: [RegExp, string][] = [
   [/^ufism/m, "Sufism"],
 ];
 
+/**
+ * Detach footnote blocks from running prose.
+ *
+ * Footnotes in the source PDF appear as numbered blocks (e.g. "4. For more…",
+ * "5. Statistics presented…") that the extractor inserts in the middle of the
+ * page text — between the line where the reference superscript was anchored
+ * and the page's running header. This breaks any sentence whose anchor falls
+ * mid-paragraph, and especially mangles prose that continues onto the next
+ * page (e.g. the page 9 → 10 boundary in Kāshif al-Ilbās).
+ *
+ * Heuristic: a footnote block starts at a line matching `^\d{1,3}\. ` AND
+ * the previous non-empty line ends with sentence-mid punctuation, a comma,
+ * a hyphen, or a word (i.e. NOT terminal punctuation that would make this
+ * line a numbered list item in the body). The block extends until a blank
+ * line followed by something that looks like prose again, or to end-of-text.
+ *
+ * Detected blocks are removed from their inline position and re-emitted at
+ * the end of the page, separated by a blank line, so prose reads continuously.
+ */
+function detachFootnotes(text: string): { body: string; footnotes: string } {
+  const lines = text.split("\n");
+  const footnoteLineIdx = new Set<number>();
+
+  // Find footnote start candidates: "N. <Capital or quote>" with N in 1..99
+  for (let i = 0; i < lines.length; i++) {
+    const m = lines[i].match(/^(\d{1,3})\.\s+(["“'A-Z])/);
+    if (!m) continue;
+
+    // Look backward for the previous non-empty line.
+    let prevIdx = i - 1;
+    while (prevIdx >= 0 && lines[prevIdx].trim() === "") prevIdx--;
+    if (prevIdx < 0) continue;
+    const prev = lines[prevIdx].trim();
+
+    // If previous line ends with terminal punctuation (. ! ?) the "N." line
+    // is more likely a numbered list item in body prose, not a footnote.
+    // Footnote anchors typically attach to mid-sentence words ending with
+    // a letter, comma, or close-paren/bracket.
+    if (/[.!?]["”')\]]?$/.test(prev)) continue;
+
+    // Mark this line and following continuation lines as part of the footnote
+    // block. Continuation = non-empty lines OR a single blank then another
+    // numbered footnote line. Stop at: a blank line followed by prose, or EOT.
+    footnoteLineIdx.add(i);
+    let j = i + 1;
+    while (j < lines.length) {
+      const t = lines[j].trim();
+      if (t === "") {
+        // Peek ahead: if the next non-empty line is another "N. " entry,
+        // keep going; otherwise the footnote block ends here.
+        let k = j + 1;
+        while (k < lines.length && lines[k].trim() === "") k++;
+        if (k < lines.length && /^\d{1,3}\.\s+["“'A-Z]/.test(lines[k])) {
+          footnoteLineIdx.add(j);
+          j++;
+          continue;
+        }
+        break;
+      }
+      footnoteLineIdx.add(j);
+      j++;
+    }
+    i = j - 1;
+  }
+
+  if (footnoteLineIdx.size === 0) return { body: text, footnotes: "" };
+
+  const bodyLines: string[] = [];
+  const footnoteLines: string[] = [];
+  for (let i = 0; i < lines.length; i++) {
+    if (footnoteLineIdx.has(i)) footnoteLines.push(lines[i]);
+    else bodyLines.push(lines[i]);
+  }
+
+  return {
+    body: bodyLines.join("\n"),
+    footnotes: footnoteLines.join("\n").trim(),
+  };
+}
+
 function cleanContent(text: string): string {
-  let cleaned = fixEncoding(text)
+  // Detach footnote blocks BEFORE other normalization so they cannot interrupt
+  // sentence flow when adjacent pages are later merged by the reader.
+  const { body, footnotes } = detachFootnotes(text);
+
+  let cleaned = fixEncoding(body)
     // Rejoin standalone drop cap letters (PDF extraction artifact: "T\nhe" → "The")
     .replace(/^([A-Z])\n([a-z])/gm, "$1$2")
     // Remove running headers (e.g., "vi THE REMOVAL OF CONFUSION", "General Introduction")
@@ -131,6 +215,12 @@ function cleanContent(text: string): string {
       cleaned = cleaned.replace(pattern, replacement);
       break;
     }
+  }
+
+  // Re-attach detached footnotes at the end of the page so they remain
+  // accessible to readers without interrupting sentence flow.
+  if (footnotes) {
+    cleaned = `${cleaned}\n\n${fixEncoding(footnotes)}`;
   }
   
   return cleaned;
