@@ -1052,6 +1052,38 @@ const Reader = () => {
         themeClasses={{ bg: theme.bg, text: theme.text }}
       />
       <MiniPlayer />
+
+      {/* Footnotes panel for the current page */}
+      <Sheet open={footnotesOpen} onOpenChange={setFootnotesOpen}>
+        <SheetContent side="right" className={`${theme.bg} ${theme.text} w-[85%] sm:max-w-sm p-0`}>
+          <SheetHeader className="px-4 pt-4 pb-3 border-b border-border/20">
+            <SheetTitle className={theme.text}>
+              Footnotes
+              <span className="ml-2 text-xs font-normal text-muted-foreground">
+                page {currentSectionIdx + 1}
+              </span>
+            </SheetTitle>
+          </SheetHeader>
+          <ScrollArea className="h-[calc(100vh-72px)]">
+            <div className="px-4 py-4 space-y-4">
+              {currentFootnotes.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-8">
+                  No footnotes on this page.
+                </p>
+              ) : (
+                currentFootnotes.map((fn) => (
+                  <div key={fn.number} className="flex gap-3">
+                    <span className="shrink-0 font-semibold text-primary tabular-nums" style={{ minWidth: "1.6em" }}>
+                      {fn.number}.
+                    </span>
+                    <p className="text-sm leading-relaxed text-foreground/85">{fn.text}</p>
+                  </div>
+                ))
+              )}
+            </div>
+          </ScrollArea>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };
