@@ -103,6 +103,11 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
 
     const gap = isMobile ? 48 : 0; // single page → gap unused for layout but used for column stride
     const strideWidth = singleContentWidth + (isMobile ? gap : 48);
+    // Serif glyphs and italic overhang can extend a few pixels outside their
+    // line box. Because the visible page viewport uses overflow clipping, that
+    // overhang can shave off the first/last letter at a column edge. Give the
+    // viewport a tiny horizontal bleed without changing the actual column width.
+    const columnBleedPx = Math.max(4, Math.round(baseFontPx * 0.28));
 
     const measure = useCallback(() => {
       if (!innerRef.current || singleContentWidth <= 0) return;
@@ -307,8 +312,8 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
               style={{
                 position: 'absolute',
                 top: padTop,
-                left: padLeft,
-                width: singleContentWidth,
+                left: Math.max(0, padLeft - columnBleedPx),
+                width: singleContentWidth + columnBleedPx * 2,
                 height: Math.max(
                   lineStepPx,
                   Math.floor((contentHeight - folioBandHeight) / lineStepPx) * lineStepPx
