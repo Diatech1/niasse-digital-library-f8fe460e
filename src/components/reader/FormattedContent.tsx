@@ -5,18 +5,19 @@ interface FormattedContentProps {
   fontSize: number;
   textColor?: string;
   dir?: "ltr" | "rtl";
+  lang?: string;
 }
 
 /**
  * Renders book content with formatting matching the original PDF.
  */
-const FormattedContent = ({ content, fontSize, textColor, dir = "ltr" }: FormattedContentProps) => {
+const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang }: FormattedContentProps) => {
   const paragraphs = content.split("\n\n").filter((p) => p.trim().length > 0);
   const isRtl = dir === "rtl";
   const proseAlign = isRtl ? "text-right" : "text-justify";
 
   return (
-    <div className="formatted-content" dir={dir}>
+    <div className="formatted-content" dir={dir} lang={lang}>
       {paragraphs.map((para, idx) => {
         const trimmed = para.trim();
 
