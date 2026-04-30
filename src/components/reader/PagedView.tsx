@@ -122,6 +122,25 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
         if (!el) return 0;
         return Math.floor((el as HTMLElement).offsetLeft / strideWidth);
       },
+      getSectionsOnPage: (pageIdx: number) => {
+        if (!innerRef.current || strideWidth === 0) return [];
+        const pageStart = pageIdx * strideWidth;
+        const pageEnd = pageStart + strideWidth;
+        const els = Array.from(
+          innerRef.current.querySelectorAll<HTMLElement>('[data-section-index]')
+        );
+        const result: number[] = [];
+        for (const el of els) {
+          const left = el.offsetLeft;
+          const right = left + el.offsetWidth;
+          // Section overlaps the page band [pageStart, pageEnd)
+          if (right > pageStart && left < pageEnd) {
+            const idx = Number(el.dataset.sectionIndex);
+            if (!Number.isNaN(idx)) result.push(idx);
+          }
+        }
+        return result;
+      },
     }), [strideWidth]);
 
     const translateX = page * strideWidth;
