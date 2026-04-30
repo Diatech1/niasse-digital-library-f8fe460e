@@ -220,25 +220,19 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
               borderRadius: isMobile ? 0 : 2,
             }}
           >
-            {(() => {
-              const rawInnerH = contentHeight - folioBandHeight;
-              // Snap DOWN to a whole multiple of the body line step so the
-              // last line of the column is never sliced by `overflow: hidden`.
-              const snappedInnerH = Math.max(
-                lineStepPx,
-                Math.floor(rawInnerH / lineStepPx) * lineStepPx
-              );
-              return (
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: padTop,
-                    left: padLeft,
-                    width: singleContentWidth,
-                    height: snappedInnerH,
-                    overflow: 'hidden',
-                  }}
-                >
+            <div
+              style={{
+                position: 'absolute',
+                top: padTop,
+                left: padLeft,
+                width: singleContentWidth,
+                height: Math.max(
+                  lineStepPx,
+                  Math.floor((contentHeight - folioBandHeight) / lineStepPx) * lineStepPx
+                ),
+                overflow: 'hidden',
+              }}
+            >
               <div
                 ref={innerRef}
                 className="pocket-paragraphs"
