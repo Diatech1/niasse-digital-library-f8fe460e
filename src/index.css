@@ -308,7 +308,8 @@ body.reader-chrome-hidden .bottom-nav {
    hyphenation (some long words hyphenate badly and still overflow), and
    force aggressive wrapping so nothing pokes outside the column box. */
 .formatted-content [data-clip-fallback="true"],
-.formatted-content [data-clip-fallback="true"] * {
+.formatted-content [data-clip-fallback="true"] *,
+.formatted-content [data-clip-token="true"] {
   -webkit-hyphens: none;
   -ms-hyphens: none;
   hyphens: none;
