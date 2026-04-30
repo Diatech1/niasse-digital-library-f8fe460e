@@ -121,7 +121,7 @@ export function useBookContent(contentModule?: string) {
       case "kachiful-albas":
         return kachiful.map((s) => ({ id: s.id, part: s.part, chapter: s.chapter, heading: s.heading, content: s.content }));
       case "kashif-en":
-        return kashifEn.map((s) => ({ id: s.id, part: s.part, chapter: s.chapter, heading: s.heading, content: s.content }));
+        return kashifEn.map((s) => ({ id: s.id, part: s.part, chapter: s.chapter, heading: s.heading, content: s.content, footnotes: s.footnotes }));
       case "conditions-regles":
         return conditions.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
       case "ifadatou-ahmediyya":
