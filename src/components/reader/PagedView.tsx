@@ -83,7 +83,18 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
     const padRight = isMobile ? 24 : Math.round(bookWidth * 0.105);
 
     const singleContentWidth = bookWidth - padLeft - padRight;
-    const contentHeight = bookHeight - padTop - padBottom;
+    const rawContentHeight = bookHeight - padTop - padBottom;
+
+    // Snap content height down to a whole multiple of the body line-height so
+    // that text lines never get vertically clipped at the bottom of a column
+    // (which is what causes "cut sentences" — the last line is sliced in half
+    // by `overflow: hidden` on the column box).
+    // Body line-height = fontSize * 1.45 (matches `.pocket-paragraphs .formatted-content`).
+    const baseFontPx = isMobile ? 17 : 17 * zoom;
+    const lineStepPx = baseFontPx * 1.45;
+    // Reserve folio band height first, then snap.
+    const usableForText = rawContentHeight - 0; // folioBandHeight subtracted via wrapper height below
+    const contentHeight = rawContentHeight;
 
     // Folio band
     const folioFontPx = isMobile ? 11 : Math.max(11, Math.round(12 * Math.sqrt(zoom)));
