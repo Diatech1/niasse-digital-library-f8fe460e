@@ -239,8 +239,17 @@ body.reader-chrome-hidden .bottom-nav {
   display: none;
 }
 
-/* Sections can span columns, but headings stick to their content */
+/* ============================================================
+   CSS-column pagination rules
+   ------------------------------------------------------------
+   Goal: fill each column vertically with no big empty gaps and
+   no cut words. Long prose paragraphs MUST be allowed to break
+   across columns — otherwise a paragraph that doesn't fit at the
+   bottom of a column jumps entirely to the next, leaving a huge
+   blank band at the bottom of the previous page.
+   ============================================================ */
 
+/* Headings stay glued to the paragraph that follows them */
 .paged-section h3,
 .paged-section h4,
 .paged-section h5 {
@@ -248,7 +257,6 @@ body.reader-chrome-hidden .bottom-nav {
   break-inside: avoid-column;
 }
 
-/* If a heading would be orphaned at the bottom of a column, push it to the next */
 .pocket-paragraphs .paged-section h3,
 .pocket-paragraphs .paged-section h4,
 .pocket-paragraphs .paged-section h5 {
@@ -257,7 +265,7 @@ body.reader-chrome-hidden .bottom-nav {
   break-inside: avoid-column;
 }
 
-/* Let sections flow naturally so each page fills vertically before breaking */
+/* Let sections + paragraphs flow naturally so columns fill before breaking */
 .pocket-paragraphs .paged-section {
   break-inside: auto;
 }
@@ -265,12 +273,33 @@ body.reader-chrome-hidden .bottom-nav {
 .formatted-content {
   text-align: justify;
   -webkit-hyphens: auto;
+  -ms-hyphens: auto;
   hyphens: auto;
+  /* Avoid cutting words at the column edge: hyphenate at syllables and
+     keep at least 3 chars on either side of the break. */
+  -webkit-hyphenate-limit-chars: 6 3 3;
+  hyphenate-limit-chars: 6 3 3;
+  /* Avoid more than 2 consecutive hyphenated lines */
+  -webkit-hyphenate-limit-lines: 2;
+  hyphenate-limit-lines: 2;
+  /* Prevent a single word from sticking out of the column box */
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
-.formatted-content p,
+/* Prose paragraphs MAY break across columns. Keep at least 2 lines
+   together at top/bottom of a column to avoid widows/orphans. */
+.formatted-content p {
+  break-inside: auto;
+  orphans: 2;
+  widows: 2;
+}
+
+/* Blocks that must NOT be split: Arabic verses, poetry blockquotes,
+   numbered list items (the .flex containers used by FormattedContent). */
 .formatted-content blockquote,
-.formatted-content .flex {
+.formatted-content > .flex,
+.formatted-content p[lang="ar"] {
   break-inside: avoid-column;
 }
 
