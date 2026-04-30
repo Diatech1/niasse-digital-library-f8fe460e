@@ -164,12 +164,17 @@ export async function loadKashifEnSections(): Promise<KashifEnSection[]> {
   const headerRegex = /^([ivxlc]+\s+THE REMOVAL OF CONFUSION|[ivxlc]+|\d+\s+THE REMOVAL OF CONFUSION)\s*$/i;
 
   for (let i = 0; i < rawLines.length - 1; i++) {
-    if (/^[A-Z]$/.test(rawLines[i].trim())) {
+    const orphan = rawLines[i].trim();
+    if (/^[A-Z]$/.test(orphan)) {
       for (let j = i + 1; j < Math.min(i + 5, rawLines.length); j++) {
         const trimJ = rawLines[j].trim();
         if (trimJ === "" || headerRegex.test(trimJ)) continue;
         if (/^[a-z]/.test(trimJ)) {
-          rawLines[j] = rawLines[i].trim() + rawLines[j];
+          // Lowercase next line: orphan letter is the missing capital → prepend
+          rawLines[j] = orphan + rawLines[j];
+          rawLines[i] = "";
+        } else if (trimJ.charAt(0) === orphan) {
+          // Next line already starts with the same capital (PDF drop-cap duplicate) → drop orphan
           rawLines[i] = "";
         }
         break;
