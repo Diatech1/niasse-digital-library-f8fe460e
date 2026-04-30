@@ -15,6 +15,32 @@ export interface MergeableSection {
   content: string;
 }
 
+const TERMINAL_PUNCTUATION_RE = /[.!?…:;][)\]"'”’]*$/u;
+
+function cleanExtractedSpacing(content: string) {
+  return content
+    .replace(/\u00ad/g, '')
+    .replace(/([\p{L}\p{M}])-\s+([\p{L}\p{M}])/gu, '$1-$2');
+}
+
+function stitchMergedContent(previous: string, next: string) {
+  const left = cleanExtractedSpacing(previous).trimEnd();
+  const right = cleanExtractedSpacing(next).trimStart();
+
+  if (!left) return right;
+  if (!right) return left;
+
+  if (/-$/u.test(left) && /^[\p{L}\p{M}\d]/u.test(right)) {
+    return `${left.slice(0, -1)}${right}`;
+  }
+
+  if (!TERMINAL_PUNCTUATION_RE.test(left)) {
+    return `${left} ${right}`;
+  }
+
+  return `${left}\n\n${right}`;
+}
+
 export function mergeAdjacentSections<T extends MergeableSection>(sections: T[]): MergeableSection[] {
   const merged: MergeableSection[] = [];
   for (const s of sections) {
@@ -25,14 +51,14 @@ export function mergeAdjacentSections<T extends MergeableSection>(sections: T[])
       last.chapter === s.chapter &&
       last.part === s.part
     ) {
-      last.content = `${last.content}\n\n${s.content}`;
+      last.content = stitchMergedContent(last.content, s.content);
     } else {
       merged.push({
         id: s.id,
         part: s.part,
         chapter: s.chapter,
         heading: s.heading,
-        content: s.content,
+        content: cleanExtractedSpacing(s.content),
       });
     }
   }
