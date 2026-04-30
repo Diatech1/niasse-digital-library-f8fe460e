@@ -4,6 +4,8 @@ import { ZoomIn, ZoomOut, Maximize2, ChevronLeft, ChevronRight } from 'lucide-re
 
 export interface PagedViewHandle {
   getPageForSection: (sectionIndex: number) => number;
+  /** Returns the section indices whose content overlaps the given display page. */
+  getSectionsOnPage: (page: number) => number[];
 }
 
 interface PagedViewProps {
