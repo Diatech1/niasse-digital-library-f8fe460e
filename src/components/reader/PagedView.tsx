@@ -101,6 +101,36 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
         lastTotal.current = total;
         onTotalPagesChange(total, pagesPerTurn);
       }
+
+      // ---- Fallback clip detection ----
+      // Find blocks whose intrinsic content is wider than the column
+      // (a long unbreakable word, a URL, a transliterated term...).
+      // Tag them so the CSS fallback kicks in, and log which one caused it.
+      const colW = singleContentWidth;
+      const candidates = innerRef.current.querySelectorAll<HTMLElement>(
+        '.formatted-content p, .formatted-content blockquote, .formatted-content > .flex'
+      );
+      candidates.forEach((el) => {
+        // Reset first so blocks that have been fixed (resize / zoom change)
+        // can recover hyphenation.
+        if (el.dataset.clipFallback === 'true') {
+          el.removeAttribute('data-clip-fallback');
+        }
+        // scrollWidth includes overflowing children; if it exceeds the
+        // column width by more than 1px we have a clip.
+        if (el.scrollWidth > colW + 1) {
+          el.dataset.clipFallback = 'true';
+          const sectionEl = el.closest<HTMLElement>('[data-section-index]');
+          const sectionIdx = sectionEl?.dataset.sectionIndex ?? '?';
+          const preview = (el.textContent || '').trim().slice(0, 80);
+          // eslint-disable-next-line no-console
+          console.warn(
+            `[reader] hyphenation fallback applied — section ${sectionIdx}, ` +
+            `block scrollWidth=${el.scrollWidth}px > column=${colW}px. ` +
+            `Preview: "${preview}${preview.length === 80 ? '…' : ''}"`
+          );
+        }
+      });
     }, [singleContentWidth, strideWidth, onTotalPagesChange, pagesPerTurn]);
 
     useEffect(() => {
