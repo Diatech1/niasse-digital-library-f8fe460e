@@ -303,6 +303,19 @@ body.reader-chrome-hidden .bottom-nav {
   break-inside: avoid-column;
 }
 
+/* Fallback: when the runtime detector finds a block whose word still clips
+   the column, it tags the element with `data-clip-fallback`. We then disable
+   hyphenation (some long words hyphenate badly and still overflow), and
+   force aggressive wrapping so nothing pokes outside the column box. */
+.formatted-content [data-clip-fallback="true"],
+.formatted-content [data-clip-fallback="true"] * {
+  -webkit-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
 /* Pocket book paragraph indentation — no gap, first-line indent */
 .pocket-paragraphs .formatted-content {
   line-height: 1.45;
