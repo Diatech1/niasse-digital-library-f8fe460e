@@ -324,6 +324,10 @@ const Reader = () => {
 
   const currentFootnotes = useMemo(() => {
     if (!currentSection || typeof currentSection.content !== "string") return [];
+    // Prefer pre-extracted structured footnotes (e.g. from kashif-en's
+    // layout-aware PDF extraction) so they never appear in body prose.
+    const preExtracted = (currentSection as { footnotes?: { number: string; text: string }[] }).footnotes;
+    if (Array.isArray(preExtracted)) return preExtracted;
     if (currentSection.content.startsWith("__")) return [];
     return extractFootnotes(currentSection.content).footnotes;
   }, [currentSection]);
