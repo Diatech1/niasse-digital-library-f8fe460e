@@ -1,4 +1,5 @@
 import { useState, useRef, useMemo, useEffect, useCallback, memo } from "react";
+import { mergeAdjacentSections } from "@/lib/mergeSections";
 import { useParams, useNavigate } from "react-router-dom";
 import { useBook } from "@/hooks/use-books";
 import { ruhAlAdabVerses, ruhAlAdabMeta } from "@/data/ruh-al-adab";
