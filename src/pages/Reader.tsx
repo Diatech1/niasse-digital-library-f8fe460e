@@ -240,42 +240,12 @@ const Reader = () => {
       }));
     }
     if (book?.contentModule === "kachiful-albas") {
-      const merged: Section[] = [];
-      for (const s of kachifulAlbasData) {
-        const last = merged[merged.length - 1];
-        if (last && last.heading === s.heading && last.chapter === s.chapter && last.part === s.part) {
-          last.content = `${last.content}\n\n${s.content}`;
-        } else {
-          merged.push({
-            id: s.id,
-            part: s.part,
-            chapter: s.chapter,
-            heading: s.heading,
-            content: s.content,
-          });
-        }
-      }
-      return merged;
+      return mergeAdjacentSections(kachifulAlbasData) as Section[];
     }
     if (book?.contentModule === "kashif-en") {
       // Merge consecutive page-sections that share the same heading so chapter prose
       // flows continuously across CSS-column pagination instead of repeating the heading.
-      const merged: Section[] = [];
-      for (const s of kashifEnData) {
-        const last = merged[merged.length - 1];
-        if (last && last.heading === s.heading && last.chapter === s.chapter && last.part === s.part) {
-          last.content = `${last.content}\n\n${s.content}`;
-        } else {
-          merged.push({
-            id: s.id,
-            part: s.part,
-            chapter: s.chapter,
-            heading: s.heading,
-            content: s.content,
-          });
-        }
-      }
-      return merged;
+      return mergeAdjacentSections(kashifEnData) as Section[];
     }
     if (book?.contentModule === "adeb-dhikr") {
       return adebDhikrSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
