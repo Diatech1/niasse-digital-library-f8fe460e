@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, forwardRef, useImperativeHandle, useCallback } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
+import { ZoomIn, ZoomOut, Maximize2, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export interface PagedViewHandle {
   getPageForSection: (sectionIndex: number) => number;
