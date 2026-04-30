@@ -13,6 +13,10 @@ interface PagedViewProps {
   className?: string;
   onScroll?: (e: React.UIEvent<HTMLDivElement>) => void;
   fitToPage?: boolean;
+  onPrevPage?: () => void;
+  onNextPage?: () => void;
+  hasPrev?: boolean;
+  hasNext?: boolean;
 }
 
 // True A4 ratio (height / width)
