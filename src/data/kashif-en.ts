@@ -6,6 +6,11 @@ export const kashifEnMeta = {
   publisher: "Fons Vitae, 2009",
 };
 
+export interface KashifEnFootnote {
+  number: string;
+  text: string;
+}
+
 export interface KashifEnSection {
   id: string;
   part: string;
@@ -13,6 +18,9 @@ export interface KashifEnSection {
   heading: string;
   content: string;
   pageNumber?: number;
+  /** Footnotes detached from this page's body during PDF extraction.
+   *  Surfaced via the reader's footnotes panel — never inlined into prose. */
+  footnotes?: KashifEnFootnote[];
 }
 
 /**
@@ -139,11 +147,27 @@ export async function loadKashifEnSections(): Promise<KashifEnSection[]> {
     const chapter = lastCtx?.chapter || fallback;
     const heading = ctx?.heading || lastCtx?.heading || (rp.pnum ? `Page ${rp.pnum}` : "");
 
-    let content = rp.body;
+    const content = rp.body;
+    if (content.length < 5 && !rp.footnotes) continue;
+
+    // Parse the footnotes block into structured entries. Each entry begins
+    // with "N. " on its own line; continuation lines belong to the previous.
+    const footnotes: KashifEnFootnote[] = [];
     if (rp.footnotes) {
-      content = content ? `${content}\n\n${rp.footnotes}` : rp.footnotes;
+      let current: KashifEnFootnote | null = null;
+      for (const raw of rp.footnotes.split(/\n+/)) {
+        const line = raw.trim();
+        if (!line) continue;
+        const m = line.match(/^(\d{1,3})\.\s+(.*)$/);
+        if (m) {
+          if (current) footnotes.push(current);
+          current = { number: m[1], text: m[2] };
+        } else if (current) {
+          current.text = `${current.text} ${line}`.trim();
+        }
+      }
+      if (current) footnotes.push(current);
     }
-    if (content.length < 5) continue;
 
     displayPage++;
     sections.push({
@@ -153,6 +177,7 @@ export async function loadKashifEnSections(): Promise<KashifEnSection[]> {
       heading,
       content,
       pageNumber: displayPage,
+      footnotes: footnotes.length ? footnotes : undefined,
     });
   }
 
