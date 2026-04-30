@@ -114,29 +114,112 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
       }
 
       // ---- Fallback clip detection ----
-      // Only flag a block when its content actually pokes past the column by
-      // a meaningful amount — sub-pixel rounding from justified text +
-      // zoom (em sizing) routinely produces 0.5–2px noise that we should
-      // ignore. Use 0.5em (~8px) as the threshold.
+      // Strategy: walk each candidate block, and only when it actually clips
+      // (scrollWidth > clientWidth by more than ~0.5em), inspect its text
+      // tokens via a Range to find the SPECIFIC word(s) that overflow.
+      // We then wrap only those tokens in a <span data-clip-token> so the
+      // CSS fallback (no hyphenation, overflow-wrap: anywhere) applies to
+      // the smallest possible scope. The block itself is NOT tagged unless
+      // we cannot localize the offender.
       const colW = singleContentWidth;
       const tolerance = Math.max(8, baseFontPx * 0.5);
       const candidates = innerRef.current.querySelectorAll<HTMLElement>(
         '.formatted-content p, .formatted-content blockquote, .formatted-content > .flex'
       );
+
+      const unwrapPreviousFallbacks = (root: HTMLElement) => {
+        root.querySelectorAll('span[data-clip-token="true"]').forEach((span) => {
+          const parent = span.parentNode;
+          if (!parent) return;
+          while (span.firstChild) parent.insertBefore(span.firstChild, span);
+          parent.removeChild(span);
+        });
+        // Merge adjacent text nodes so future Range walks stay clean.
+        root.normalize();
+      };
+
       candidates.forEach((el) => {
-        if (el.dataset.clipFallback === 'true') {
-          el.removeAttribute('data-clip-fallback');
+        // Always reset previous fallback markers so resize/zoom can recover.
+        if (el.dataset.clipFallback === 'true') el.removeAttribute('data-clip-fallback');
+        unwrapPreviousFallbacks(el);
+
+        if (el.scrollWidth <= colW + tolerance) return;
+
+        const sectionEl = el.closest<HTMLElement>('[data-section-index]');
+        const sectionIdx = sectionEl?.dataset.sectionIndex ?? '?';
+
+        // Walk text nodes; for each, use a Range to measure each whitespace-
+        // separated token and find ones whose box exceeds the column width.
+        const offenders: { node: Text; start: number; end: number; text: string }[] = [];
+        const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+        let textNode = walker.nextNode() as Text | null;
+        const range = document.createRange();
+        while (textNode) {
+          const text = textNode.nodeValue || '';
+          // Match runs of non-whitespace (tokens). Whitespace can wrap freely.
+          const tokenRe = /\S+/g;
+          let m: RegExpExecArray | null;
+          while ((m = tokenRe.exec(text)) !== null) {
+            const start = m.index;
+            const end = start + m[0].length;
+            try {
+              range.setStart(textNode, start);
+              range.setEnd(textNode, end);
+              const rects = range.getClientRects();
+              let widest = 0;
+              for (const r of rects) if (r.width > widest) widest = r.width;
+              if (widest > colW + tolerance) {
+                offenders.push({ node: textNode, start, end, text: m[0] });
+              }
+            } catch {
+              /* ignore range errors on detached nodes */
+            }
+          }
+          textNode = walker.nextNode() as Text | null;
         }
-        if (el.scrollWidth > colW + tolerance) {
+
+        if (offenders.length > 0) {
+          // Wrap each offender token (work back-to-front per node so offsets stay valid).
+          const byNode = new Map<Text, typeof offenders>();
+          offenders.forEach((o) => {
+            const arr = byNode.get(o.node) || [];
+            arr.push(o);
+            byNode.set(o.node, arr);
+          });
+          byNode.forEach((list, node) => {
+            list.sort((a, b) => b.start - a.start);
+            for (const o of list) {
+              try {
+                const r = document.createRange();
+                r.setStart(node, o.start);
+                r.setEnd(node, o.end);
+                const span = document.createElement('span');
+                span.dataset.clipToken = 'true';
+                r.surroundContents(span);
+              } catch {
+                /* token spans element boundary — fall back to block tag */
+                el.dataset.clipFallback = 'true';
+              }
+            }
+          });
+          const previews = offenders.slice(0, 3).map((o) => o.text).join(', ');
+          // eslint-disable-next-line no-console
+          console.warn(
+            `[reader] inline clip fallback — section ${sectionIdx}, ` +
+            `${offenders.length} token(s) > column=${colW.toFixed(1)}px ` +
+            `(tol=${tolerance.toFixed(1)}px). Tokens: ${previews}${offenders.length > 3 ? '…' : ''}`
+          );
+        } else {
+          // Could not localize a single token (e.g. inline-block, image, or
+          // composite element overflow). Tag the whole block as before.
           el.dataset.clipFallback = 'true';
-          const sectionEl = el.closest<HTMLElement>('[data-section-index]');
-          const sectionIdx = sectionEl?.dataset.sectionIndex ?? '?';
           const preview = (el.textContent || '').trim().slice(0, 80);
           // eslint-disable-next-line no-console
           console.warn(
-            `[reader] hyphenation fallback applied — section ${sectionIdx}, ` +
-            `block scrollWidth=${el.scrollWidth}px > column=${colW.toFixed(1)}px ` +
-            `(tol=${tolerance.toFixed(1)}px). Preview: "${preview}${preview.length === 80 ? '…' : ''}"`
+            `[reader] block-level clip fallback — section ${sectionIdx}, ` +
+            `no single token > column; tagging whole block ` +
+            `(scrollWidth=${el.scrollWidth}px, column=${colW.toFixed(1)}px). ` +
+            `Preview: "${preview}${preview.length === 80 ? '…' : ''}"`
           );
         }
       });
