@@ -331,11 +331,23 @@ export async function loadKashifEnSections(): Promise<KashifEnSection[]> {
     }
 
     const rawContent = lines.slice(contentStart, contentEnd).join("\n");
-    const content = cleanContent(rawContent);
+    let content = cleanContent(rawContent);
+
+    // Strip section heading from start of content (it's already shown as the page heading)
+    const marker = activeMarkerIdx >= 0 ? SECTION_MARKERS[activeMarkerIdx] : null;
+    if (marker) {
+      const normContent = normalizeApostrophes(content);
+      const normMarker = normalizeApostrophes(marker.line);
+      // Look at first non-empty line; strip if it matches the marker prefix
+      const firstLineMatch = normContent.match(/^([^\n]+)/);
+      if (firstLineMatch && firstLineMatch[1].trim().startsWith(normMarker.trim())) {
+        content = content.replace(/^[^\n]+\n+/, "").trim();
+      }
+    }
+
     if (content.length < 5) continue;
 
     displayPage++;
-    const marker = activeMarkerIdx >= 0 ? SECTION_MARKERS[activeMarkerIdx] : null;
     const isFrontMatter = virtualPage < 0;
 
     sections.push({
