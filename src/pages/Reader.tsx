@@ -341,6 +341,60 @@ const Reader = () => {
     }
   }, [effectiveTotalPages, saveProgress, isPagedMode, pagesPerTurn]);
 
+  // Keyboard navigation: ArrowLeft/Right + PageUp/PageDown
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (searchOpen) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const target = e.target as HTMLElement | null;
+      if (target) {
+        const tag = target.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || target.isContentEditable) return;
+      }
+      const isRtl = directionForBookLanguage(book?.language) === 'rtl';
+      const goPrev = () => {
+        if (currentSectionIdx > 0) goToSection(currentSectionIdx - pagesPerTurn);
+      };
+      const goNext = () => {
+        if (currentSectionIdx < effectiveTotalPages - 1) goToSection(currentSectionIdx + pagesPerTurn);
+      };
+      switch (e.key) {
+        case 'ArrowLeft':
+          e.preventDefault();
+          isRtl ? goNext() : goPrev();
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          isRtl ? goPrev() : goNext();
+          break;
+        case 'PageUp':
+          e.preventDefault();
+          goPrev();
+          break;
+        case 'PageDown':
+        case ' ':
+          if (e.key === ' ' && e.shiftKey) {
+            e.preventDefault();
+            goPrev();
+          } else if (e.key === 'PageDown') {
+            e.preventDefault();
+            goNext();
+          }
+          break;
+        case 'Home':
+          e.preventDefault();
+          goToSection(0);
+          break;
+        case 'End':
+          e.preventDefault();
+          goToSection(effectiveTotalPages - 1);
+          break;
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [searchOpen, currentSectionIdx, pagesPerTurn, effectiveTotalPages, goToSection, book?.language]);
+
   const goToSectionById = useCallback((id: string) => {
     const idx = allSections.findIndex((s) => s.id === id);
     if (idx >= 0) {
