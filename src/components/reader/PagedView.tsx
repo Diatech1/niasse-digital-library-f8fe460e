@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, forwardRef, useImperativeHandle, useCallback } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
+import { ZoomIn, ZoomOut, Maximize2, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export interface PagedViewHandle {
   getPageForSection: (sectionIndex: number) => number;
@@ -13,6 +13,10 @@ interface PagedViewProps {
   className?: string;
   onScroll?: (e: React.UIEvent<HTMLDivElement>) => void;
   fitToPage?: boolean;
+  onPrevPage?: () => void;
+  onNextPage?: () => void;
+  hasPrev?: boolean;
+  hasNext?: boolean;
 }
 
 // True A4 ratio (height / width)
@@ -24,7 +28,7 @@ const ZOOM_MAX = 2.0;
 const ZOOM_STEP = 0.1;
 
 const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
-  ({ children, page, onTotalPagesChange, className, onScroll, fitToPage = false }, ref) => {
+  ({ children, page, onTotalPagesChange, className, onScroll, fitToPage = false, onPrevPage, onNextPage, hasPrev, hasNext }, ref) => {
     const outerRef = useRef<HTMLDivElement>(null);
     const innerRef = useRef<HTMLDivElement>(null);
     const [availWidth, setAvailWidth] = useState(0);
@@ -249,6 +253,32 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
               <Maximize2 className="h-3.5 w-3.5" />
             </button>
           </div>
+        )}
+
+        {/* Side navigation arrows (desktop) */}
+        {!isMobile && availWidth > 0 && (
+          <>
+            <button
+              type="button"
+              onClick={onPrevPage}
+              disabled={!hasPrev}
+              aria-label="Previous page"
+              title="Previous page"
+              className="absolute left-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-border/40 bg-background/85 text-foreground/80 shadow-md backdrop-blur transition-all hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-30"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <button
+              type="button"
+              onClick={onNextPage}
+              disabled={!hasNext}
+              aria-label="Next page"
+              title="Next page"
+              className="absolute right-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-border/40 bg-background/85 text-foreground/80 shadow-md backdrop-blur transition-all hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-30"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+          </>
         )}
       </div>
     );
