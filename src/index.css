@@ -349,9 +349,20 @@ body.reader-chrome-hidden .bottom-nav {
    Mobile keeps a flat surface (no stage background).
    ============================================================ */
 @media (min-width: 768px) {
-  /* Whole reader window gets the desktop backdrop so there is never a
-     visible seam between the page area and the chrome strips. */
+  /* Fix the backdrop to the viewport so only the paper scrolls.
+     Using a fixed pseudo-element guarantees no seam appears when
+     the user scrolls past the initial viewport height. */
   .reader-shell {
+    background: transparent;
+    position: relative;
+  }
+
+  .reader-shell::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
     background:
       radial-gradient(ellipse at 50% -10%, hsl(var(--primary) / 0.06) 0%, transparent 55%),
       radial-gradient(ellipse at 50% 110%, hsl(var(--accent) / 0.07) 0%, transparent 60%),
@@ -361,8 +372,8 @@ body.reader-chrome-hidden .bottom-nav {
         hsl(var(--muted)) 100%);
   }
 
-  .dark .reader-shell,
-  html.dark .reader-shell {
+  .dark .reader-shell::after,
+  html.dark .reader-shell::after {
     background:
       radial-gradient(ellipse at 50% -10%, hsl(var(--primary) / 0.10) 0%, transparent 55%),
       radial-gradient(ellipse at 50% 110%, hsl(0 0% 0% / 0.6) 0%, transparent 65%),
