@@ -276,6 +276,28 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
 
     // Allow scrolling on desktop only when the page is bigger than the viewport (i.e. zoomed in)
     const allowDesktopScroll = !isMobile && (bookWidth > fitWidthBy + 1 || bookHeight > fitHeightBy + 1);
+    const visibleBookWidth = isMobile ? bookWidth : Math.min(bookWidth, fitWidthBy);
+    const visibleBookHeight = isMobile ? bookHeight : Math.min(bookHeight, fitHeightBy);
+    const pageGutterX = isMobile ? 0 : Math.max(0, (availWidth - visibleBookWidth) / 2);
+    const pageGutterY = isMobile ? 0 : Math.max(0, (availHeight - visibleBookHeight) / 2);
+    const desktopArrowSize = 44;
+    const desktopZoomRailWidth = 44;
+    const controlGap = 14;
+    const sideControlOffset = isMobile
+      ? 12
+      : allowDesktopScroll
+        ? 16
+        : Math.max(12, pageGutterX - desktopArrowSize - controlGap);
+    const zoomControlRight = isMobile
+      ? 16
+      : allowDesktopScroll
+        ? 16
+        : Math.max(12, pageGutterX - desktopZoomRailWidth - controlGap);
+    const zoomControlBottom = isMobile
+      ? 16
+      : allowDesktopScroll
+        ? 16
+        : Math.max(16, pageGutterY + 8);
 
     const handleZoomIn = () => setZoom((z) => Math.min(ZOOM_MAX, +(z + ZOOM_STEP).toFixed(2)));
     const handleZoomOut = () => setZoom((z) => Math.max(ZOOM_MIN, +(z - ZOOM_STEP).toFixed(2)));
@@ -356,14 +378,14 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
         {/* Desktop zoom controls — floating, sticky to the stage */}
         {!isMobile && availWidth > 0 && (
           <div
-            className="absolute z-20 flex items-center gap-1 rounded-full border border-border/40 bg-background/85 px-1.5 py-1 shadow-md backdrop-blur"
-            style={{ bottom: 16, right: 16 }}
+            className="absolute z-20 flex flex-col items-center gap-1 rounded-[22px] border border-border/50 bg-background/88 px-1.5 py-1.5 shadow-lg backdrop-blur"
+            style={{ bottom: zoomControlBottom, right: zoomControlRight }}
           >
             <button
               type="button"
               onClick={handleZoomOut}
               disabled={zoom <= ZOOM_MIN + 0.001}
-              className="flex h-7 w-7 items-center justify-center rounded-full text-foreground/80 transition-colors hover:bg-accent disabled:opacity-40"
+              className="flex h-8 w-8 items-center justify-center rounded-full text-foreground/80 transition-colors hover:bg-accent disabled:opacity-40"
               aria-label="Zoom out"
               title="Zoom out"
             >
@@ -372,7 +394,7 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
             <button
               type="button"
               onClick={handleZoomReset}
-              className="min-w-[3.25rem] rounded-full px-2 py-0.5 text-xs font-medium tabular-nums text-foreground/80 transition-colors hover:bg-accent"
+              className="min-w-0 rounded-full px-1 py-1 text-[11px] font-medium tabular-nums text-foreground/80 transition-colors hover:bg-accent"
               aria-label="Reset zoom"
               title="Fit page"
             >
@@ -382,17 +404,17 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
               type="button"
               onClick={handleZoomIn}
               disabled={zoom >= ZOOM_MAX - 0.001}
-              className="flex h-7 w-7 items-center justify-center rounded-full text-foreground/80 transition-colors hover:bg-accent disabled:opacity-40"
+              className="flex h-8 w-8 items-center justify-center rounded-full text-foreground/80 transition-colors hover:bg-accent disabled:opacity-40"
               aria-label="Zoom in"
               title="Zoom in"
             >
               <ZoomIn className="h-3.5 w-3.5" />
             </button>
-            <div className="mx-0.5 h-4 w-px bg-border/60" aria-hidden />
+            <div className="h-px w-6 bg-border/60" aria-hidden />
             <button
               type="button"
               onClick={handleZoomReset}
-              className="flex h-7 w-7 items-center justify-center rounded-full text-foreground/80 transition-colors hover:bg-accent"
+              className="flex h-8 w-8 items-center justify-center rounded-full text-foreground/80 transition-colors hover:bg-accent"
               aria-label="Fit to page"
               title="Fit to page"
             >
@@ -410,7 +432,8 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
               disabled={!hasPrev}
               aria-label="Previous page"
               title="Previous page"
-              className="absolute left-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-border/40 bg-background/85 text-foreground/80 shadow-md backdrop-blur transition-all hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-30"
+              className="absolute top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-border/50 bg-background/90 text-foreground/85 shadow-lg backdrop-blur transition-all hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-30"
+              style={{ left: sideControlOffset }}
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
@@ -420,7 +443,8 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
               disabled={!hasNext}
               aria-label="Next page"
               title="Next page"
-              className="absolute right-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-border/40 bg-background/85 text-foreground/80 shadow-md backdrop-blur transition-all hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-30"
+              className="absolute top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-border/50 bg-background/90 text-foreground/85 shadow-lg backdrop-blur transition-all hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-30"
+              style={{ right: sideControlOffset }}
             >
               <ChevronRight className="h-5 w-5" />
             </button>
