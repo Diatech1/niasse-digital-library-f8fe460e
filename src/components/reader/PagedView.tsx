@@ -276,6 +276,17 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
 
     // Allow scrolling on desktop only when the page is bigger than the viewport (i.e. zoomed in)
     const allowDesktopScroll = !isMobile && (bookWidth > fitWidthBy + 1 || bookHeight > fitHeightBy + 1);
+    const visibleBookWidth = isMobile ? bookWidth : Math.min(bookWidth, fitWidthBy);
+    const visibleBookHeight = isMobile ? bookHeight : Math.min(bookHeight, fitHeightBy);
+    const sideControlOffset = isMobile
+      ? 12
+      : Math.max(12, (availWidth - visibleBookWidth) / 2 - 56);
+    const zoomControlRight = isMobile
+      ? 16
+      : Math.max(16, (availWidth - visibleBookWidth) / 2 - 12);
+    const zoomControlBottom = isMobile
+      ? 16
+      : Math.max(16, (availHeight - visibleBookHeight) / 2 - 4);
 
     const handleZoomIn = () => setZoom((z) => Math.min(ZOOM_MAX, +(z + ZOOM_STEP).toFixed(2)));
     const handleZoomOut = () => setZoom((z) => Math.max(ZOOM_MIN, +(z - ZOOM_STEP).toFixed(2)));
@@ -357,7 +368,7 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
         {!isMobile && availWidth > 0 && (
           <div
             className="absolute z-20 flex items-center gap-1 rounded-full border border-border/40 bg-background/85 px-1.5 py-1 shadow-md backdrop-blur"
-            style={{ bottom: 16, right: 16 }}
+            style={{ bottom: zoomControlBottom, right: zoomControlRight }}
           >
             <button
               type="button"
@@ -410,7 +421,8 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
               disabled={!hasPrev}
               aria-label="Previous page"
               title="Previous page"
-              className="absolute left-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-border/40 bg-background/85 text-foreground/80 shadow-md backdrop-blur transition-all hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-30"
+              className="absolute top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-border/40 bg-background/85 text-foreground/80 shadow-md backdrop-blur transition-all hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-30"
+              style={{ left: sideControlOffset }}
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
@@ -420,7 +432,8 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
               disabled={!hasNext}
               aria-label="Next page"
               title="Next page"
-              className="absolute right-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-border/40 bg-background/85 text-foreground/80 shadow-md backdrop-blur transition-all hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-30"
+              className="absolute top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-border/40 bg-background/85 text-foreground/80 shadow-md backdrop-blur transition-all hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-30"
+              style={{ right: sideControlOffset }}
             >
               <ChevronRight className="h-5 w-5" />
             </button>
