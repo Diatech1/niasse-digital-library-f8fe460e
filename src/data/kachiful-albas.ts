@@ -174,12 +174,32 @@ export async function loadKachifulAlbasSections(): Promise<KachifulSection[]> {
     if (content.length < 5) continue; // skip empty pages
 
     const marker = activeMarkerIdx >= 0 ? SECTION_MARKERS[activeMarkerIdx] : null;
+    const headingForPage = marker?.heading || `Page ${pageNum}`;
+
+    // If the previous page ended mid-sentence AND this page belongs to the same
+    // chapter, stitch this page's content onto the previous one with a single
+    // space (no paragraph break). This prevents stray PDF page numbers (e.g.
+    // a "8" line falling inside a quoted sentence) from spawning a fake new
+    // paragraph that the reader indents like a chapter opening.
+    const prev = sections[sections.length - 1];
+    const prevEndsMidSentence = prev
+      ? !/[.!?»"”\)\]]\s*$/.test(prev.content.replace(/\s+$/, ""))
+      : false;
+    const sameChapter = prev && prev.heading === headingForPage;
+
+    if (prev && prevEndsMidSentence && sameChapter) {
+      // Strip a leading indent/whitespace from the new page's first line so
+      // it flows as a continuation rather than a new paragraph.
+      const continuation = content.replace(/^\s+/, "");
+      prev.content = `${prev.content.replace(/\s+$/, "")} ${continuation}`;
+      continue;
+    }
 
     sections.push({
       id: `kfr-page-${pageNum}`,
       part: marker?.part || "",
       chapter: marker?.chapter || "",
-      heading: marker?.heading || `Page ${pageNum}`,
+      heading: headingForPage,
       content,
       pageNumber: pageNum,
     });
