@@ -14,196 +14,228 @@ export interface KachifulSection {
   pageNumber: number;
 }
 
-// Chapter markers – used to track part/chapter context for each page
-const SECTION_MARKERS = [
-  { line: "AVANT PROPOS", part: "", chapter: "Avant-propos", heading: "Avant-propos" },
-  { line: "INTRODUCTION", part: "", chapter: "Introduction", heading: "Introduction — L'éducation spirituelle (Tarbiya)" },
-  { line: "PREMIERE PARTIE", part: "", chapter: "Première Partie", heading: "Première Partie" },
-  { line: "LES REALITES DU SOUFISME ET L'ORIGINE DE LA TRANSMISSION DES ZIKR", part: "Première Partie", chapter: "Chapitre I — Les réalités du soufisme", heading: "Les réalités du soufisme et l'origine de la transmission des Zikr" },
-  { line: "LES BIENFAITS DU ZIKR", part: "Première Partie", chapter: "Chapitre II — Les bienfaits du Zikr", heading: "Les bienfaits du Zikr" },
-  { line: "LA REUNION POUR LE ZIKR", part: "Première Partie", chapter: "Chapitre III — La récitation du Coran", heading: "La réunion pour le Zikr ; l'exhortation à l'apprentissage du Coran et le rassemblement pour la récitation du Coran" },
-  { line: "DEUXIEME PARTIE", part: "", chapter: "Deuxième Partie", heading: "Deuxième Partie" },
-  { line: "LA FAYDA TIJANIYA", part: "Deuxième Partie", chapter: "Chapitre I — La Fayda Tijâniya", heading: "La Fayda Tijâniya ; ce que son fondateur en a dit ainsi que les hommes de Dieu et ses références dans le Coran et la Tradition" },
-  { line: "LES CONNAISSANCES EXPERIMENTALES", part: "Deuxième Partie", chapter: "Chapitre II — Les connaissances expérimentales", heading: "Les connaissances expérimentales et leur argumentation dans le Coran et la Tradition" },
-  { line: "LES METHODES D'EDUCATION SPIRITUELLE", part: "Deuxième Partie", chapter: "Chapitre III — L'éducation spirituelle", heading: "Les méthodes d'éducation spirituelle dans la voie Tijâne" },
-  { line: "TROISIEME PARTIE", part: "", chapter: "Troisième Partie", heading: "Troisième Partie" },
-  { line: "MISE EN GARDE CONTRE LA CONTRADICTION", part: "Troisième Partie", chapter: "Chapitre I — Mise en garde", heading: "Mise en garde contre la contradiction des élus de Dieu et ce que doivent être les qualités de celui qui a droit à la contradiction" },
-  { line: "LA NECESSITE DE RECHERCHER UN GUIDE", part: "Troisième Partie", chapter: "Chapitre II — Le guide spirituel", heading: "La nécessité de rechercher un guide droit ; les qualités qui définissent le guide et les relations du disciple avec ce guide" },
-  { line: "PROPOS DESTINES A UN CHAPITRE PRECEDENT", part: "Troisième Partie", chapter: "Chapitre II (suite)", heading: "Propos destinés à un chapitre précédent du livre et rapportés dans ce chapitre" },
-  { line: "LA VERACITE DE LA VISION", part: "Troisième Partie", chapter: "Chapitre III — La vision divine", heading: "La véracité de la vision que prétendent avoir eu les hommes de Dieu et ce qu'en ont dit les savants" },
-  { line: "CONCLUSION", part: "", chapter: "Conclusion", heading: "Conclusion" },
-  { line: "Présentation de l", part: "", chapter: "Annexes", heading: "Présentation des autorisations (Idjâzah)" },
-];
+const UNDERLINE_RE = /^-{3,}\s*$/;
+const BLANK_RE = /^\s*$/;
 
-function normalizeApostrophes(text: string): string {
-  return text.replace(/[\u2018\u2019\u201A\u201B\u0060\u00B4\u2032]/g, "'");
+/** A "title-like" line: predominantly uppercase letters / punctuation,
+ *  no lowercase words, length within reasonable header bounds. */
+function isTitleCaseLine(line: string): boolean {
+  const t = line.trim();
+  if (!t) return false;
+  if (t.length > 200) return false;
+  // Reject lines containing any lowercase letter (latin or accented).
+  if (/[a-zàâäéèêëîïôöùûüÿç]/.test(t)) return false;
+  // Must contain at least one uppercase letter.
+  return /[A-ZÀÂÄÉÈÊËÎÏÔÖÙÛÜŸÇ]/.test(t);
 }
 
-function cleanContent(text: string): string {
-  return text
-    // Remove sommaire/TOC-style lines (containing sequences of dots)
-    .replace(/^.*\.{5,}.*$/gm, "")
-    // Remove standalone section marker lines (all-caps chapter titles)
-    .replace(/^AVANT PROPOS\s*$/gm, "")
-    .replace(/^INTRODUCTION\s*$/gm, "")
-    .replace(/^PREMIERE PARTIE\s*$/gm, "")
-    .replace(/^DEUXIEME PARTIE\s*$/gm, "")
-    .replace(/^TROISIEME PARTIE\s*$/gm, "")
-    .replace(/^CONCLUSION\s*$/gm, "")
-    .replace(/^LES REALITES DU SOUFISME.*$/gm, "")
-    .replace(/^LES BIENFAITS DU ZIKR\s*$/gm, "")
-    .replace(/^LA REUNION POUR LE ZIKR.*$/gm, "")
-    .replace(/^LA FAYDA TIJANIYA.*$/gm, "")
-    .replace(/^LES CONNAISSANCES EXPERIMENTALES.*$/gm, "")
-    .replace(/^LES METHODES D.EDUCATION SPIRITUELLE.*$/gm, "")
-    .replace(/^MISE EN GARDE CONTRE LA CONTRADICTION.*$/gm, "")
-    .replace(/^LA NECESSITE DE RECHERCHER UN GUIDE.*$/gm, "")
-    .replace(/^PROPOS DESTINES A UN CHAPITRE PRECEDENT.*$/gm, "")
-    .replace(/^LA VERACITE DE LA VISION.*$/gm, "")
-    .replace(/^Présentation de l.*(Idi|Idj).*$/gm, "")
-    // Remove chapter headers
-    .replace(/^CHAPITRE [IVX]+\s*$/gm, "")
-    .replace(/^Chapitre [IVX]+\s*$/gm, "")
-    .replace(/^Elle contient trois chap[iî]tres[.:]\s*$/gm, "")
-    .replace(/^Elle est composée de Trois chap[iî]tres[.:]\s*$/gm, "")
-    // Collapse multiple blank lines
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
+/** Determine the (part, chapter, heading) for a logical title. */
+function classifyHeading(title: string): { part: string; chapter: string; heading: string } | null {
+  const upper = title.toUpperCase();
+
+  if (/^AVANT[- ]PROPOS$/.test(upper)) {
+    return { part: "", chapter: "Avant-propos", heading: "Avant-propos" };
+  }
+  if (/^INTRODUCTION$/.test(upper)) {
+    return { part: "", chapter: "Introduction", heading: "Introduction — L'éducation spirituelle (Tarbiya)" };
+  }
+  if (/^PREMI[EÈÉ]RE PARTIE$/.test(upper)) {
+    return { part: "Première Partie", chapter: "Première Partie", heading: "Première Partie" };
+  }
+  if (/^DEUXI[EÈÉ]ME PARTIE$/.test(upper)) {
+    return { part: "Deuxième Partie", chapter: "Deuxième Partie", heading: "Deuxième Partie" };
+  }
+  if (/^TROISI[EÈÉ]ME PARTIE$/.test(upper)) {
+    return { part: "Troisième Partie", chapter: "Troisième Partie", heading: "Troisième Partie" };
+  }
+  if (/^CONCLUSION$/.test(upper)) {
+    return { part: "", chapter: "Conclusion", heading: "Conclusion" };
+  }
+  // Standalone "CHAPITRE I/II/III" lines act as separators only — the next
+  // title line provides the actual heading. Skip them.
+  if (/^CHAPITRE\s+[IVX]+$/.test(upper)) return null;
+  // Skip the chapter-count blurbs ("Elle contient trois chapitres").
+  return null;
+}
+
+/** Resolve a free-form chapter title to a chapter slot, given the current part. */
+function chapterForTitle(part: string, title: string): { chapter: string; heading: string } {
+  const upper = title.toUpperCase();
+  if (part === "Première Partie") {
+    if (/SOUFISME/.test(upper)) return { chapter: "Chapitre I — Les réalités du soufisme", heading: title };
+    if (/BIENFAITS DU ZIKR/.test(upper)) return { chapter: "Chapitre II — Les bienfaits du Zikr", heading: title };
+    if (/R[EÉ]CITATION DU CORAN|R[EÉ]UNION POUR LE ZIKR/.test(upper))
+      return { chapter: "Chapitre III — La récitation du Coran", heading: title };
+  }
+  if (part === "Deuxième Partie") {
+    if (/FAYDA TIJANIYA/.test(upper)) return { chapter: "Chapitre I — La Fayda Tijâniya", heading: title };
+    if (/CONNAISSANCES EXP[EÉ]RIMENTALES/.test(upper))
+      return { chapter: "Chapitre II — Les connaissances expérimentales", heading: title };
+    if (/M[EÉ]THODES D.EDUCATION|EDUCATION SPIRITUELLE/.test(upper))
+      return { chapter: "Chapitre III — L'éducation spirituelle", heading: title };
+  }
+  if (part === "Troisième Partie") {
+    if (/MISE EN GARDE/.test(upper))
+      return { chapter: "Chapitre I — Mise en garde", heading: title };
+    if (/RECHERCHER UN GUIDE|N[EÉ]CESSIT[EÉ]/.test(upper))
+      return { chapter: "Chapitre II — Le guide spirituel", heading: title };
+    if (/PROPOS DESTIN[EÉ]S/.test(upper))
+      return { chapter: "Chapitre II (suite)", heading: title };
+    if (/V[EÉ]RACIT[EÉ] DE LA VISION|VISION/.test(upper))
+      return { chapter: "Chapitre III — La vision divine", heading: title };
+  }
+  return { chapter: title, heading: title };
+}
+
+/** Title-case a heading derived from upper-case source so it reads like a book chapter. */
+function prettifyTitle(raw: string): string {
+  // Lowercase everything, then re-capitalize the first letter of each word
+  // (except very short particles), and the first letter overall.
+  const stop = new Set(["de", "du", "des", "le", "la", "les", "et", "à", "a", "en", "un", "une", "ou", "que", "qui", "dans", "pour", "par", "sur", "ce", "ces"]);
+  const lower = raw.toLocaleLowerCase("fr");
+  const words = lower.split(/(\s+|[;:—-])/);
+  let firstWord = true;
+  const out = words.map((w) => {
+    if (/^\s+$/.test(w) || /^[;:—-]$/.test(w)) {
+      if (/[;:—]/.test(w)) firstWord = true;
+      return w;
+    }
+    if (!w) return w;
+    if (firstWord || !stop.has(w)) {
+      firstWord = false;
+      return w.charAt(0).toLocaleUpperCase("fr") + w.slice(1);
+    }
+    firstWord = false;
+    return w;
+  });
+  return out.join("").trim();
 }
 
 /**
- * Parse the TXT file page-by-page using standalone page numbers as split points.
- * Each resulting section corresponds to one physical page from the original PDF.
+ * Parse the cleaned TXT into logical sections. The clean source has:
+ *   - Headers as 1+ consecutive UPPERCASE lines, each followed by a `---` underline
+ *   - Body paragraphs separated by blank lines
+ *   - No stray page numbers
  */
 export async function loadKachifulAlbasSections(): Promise<KachifulSection[]> {
   const response = await fetch("/books/kachiful-albas-fr.txt");
   const text = await response.text();
   const lines = text.split("\n");
 
-  // Regex to detect standalone page numbers
-  const pageNumRegex = /^\s*(\d{1,3})\s*$/;
+  type Block =
+    | { kind: "title"; title: string; lineIdx: number }
+    | { kind: "para"; text: string };
 
-  // First pass: find all page boundaries (line index → page number)
-  const pageBoundaries: { lineIdx: number; pageNum: number }[] = [];
-  for (let i = 0; i < lines.length; i++) {
-    const match = lines[i].match(pageNumRegex);
-    if (match) {
-      const num = parseInt(match[1], 10);
-      // Only accept sequential or near-sequential page numbers
-      if (pageBoundaries.length === 0) {
-        if (num <= 3) pageBoundaries.push({ lineIdx: i, pageNum: num });
-      } else {
-        const lastNum = pageBoundaries[pageBoundaries.length - 1].pageNum;
-        // Allow pages in order (some pages might be missing)
-        if (num > lastNum && num <= lastNum + 5) {
-          pageBoundaries.push({ lineIdx: i, pageNum: num });
-        }
-      }
-    }
-  }
+  const blocks: Block[] = [];
 
-  // Find where actual content begins (after the sommaire/TOC).
-  // The sommaire contains chapter titles with "..." dots. The actual "AVANT PROPOS" 
-  // section starts on a line without dots, after the TOC.
-  let scanStartLine = 0;
-  for (let i = 0; i < lines.length; i++) {
-    const trimmed = lines[i].trim().toUpperCase();
-    // Find "AVANT PROPOS" that is NOT a sommaire entry (no dots)
-    if (trimmed === "AVANT PROPOS" || trimmed === "AVANT-PROPOS") {
-      scanStartLine = i;
+  let i = 0;
+  // Skip the very front matter (first few lines: author / book title / translator)
+  // by jumping to the first "AVANT-PROPOS" header.
+  let startLine = 0;
+  for (let k = 0; k < lines.length; k++) {
+    const t = lines[k].trim().toUpperCase();
+    if ((t === "AVANT-PROPOS" || t === "AVANT PROPOS") && k + 1 < lines.length && UNDERLINE_RE.test(lines[k + 1])) {
+      startLine = k;
       break;
     }
   }
+  i = startLine;
 
-  // Second pass: for each page, track which chapter marker applies
-  // Only scan AFTER the sommaire to avoid false matches in the table of contents
-  let currentMarkerIdx = -1;
-  const lineToMarker: Map<number, number> = new Map(); // lineIdx → marker index changes
+  while (i < lines.length) {
+    const line = lines[i];
 
-  for (let i = scanStartLine; i < lines.length; i++) {
-    const normalized = normalizeApostrophes(lines[i].trim()).toUpperCase();
-    for (let m = currentMarkerIdx + 1; m < SECTION_MARKERS.length; m++) {
-      if (normalized.startsWith(normalizeApostrophes(SECTION_MARKERS[m].line).toUpperCase())) {
-        currentMarkerIdx = m;
-        lineToMarker.set(i, m);
-        break;
-      }
-    }
-  }
-
-  // Build sections: skip pages 1-2 (title + TOC)
-  const sections: KachifulSection[] = [];
-  let activeMarkerIdx = -1;
-
-  for (let p = 0; p < pageBoundaries.length; p++) {
-    const { lineIdx, pageNum } = pageBoundaries[p];
-
-    // Skip front matter (pages 1 and 2)
-    if (pageNum <= 2) {
-      // But still update marker context for lines in these pages
-      const endLine = p + 1 < pageBoundaries.length ? pageBoundaries[p + 1].lineIdx : lines.length;
-      for (let i = lineIdx; i < endLine; i++) {
-        if (lineToMarker.has(i)) activeMarkerIdx = lineToMarker.get(i)!;
-      }
-      continue;
-    }
-
-    // Determine content range: from line after page number to next page boundary
-    let contentStart = lineIdx + 1;
-    const contentEnd = p + 1 < pageBoundaries.length ? pageBoundaries[p + 1].lineIdx : lines.length;
-
-    // For the first content page (page 3), skip remaining sommaire lines
-    // by starting from the first section marker found on that page
-    if (pageNum === 3) {
-      for (let i = contentStart; i < contentEnd; i++) {
-        if (lineToMarker.has(i)) {
-          contentStart = i;
+    // Header detection: title line + underline (possibly multi-segment with blanks).
+    if (isTitleCaseLine(line) && i + 1 < lines.length && UNDERLINE_RE.test(lines[i + 1])) {
+      const titleParts: string[] = [line.trim()];
+      const headerStart = i;
+      i += 2; // consume title + underline
+      // Continue collecting subsequent title+underline pairs separated by blanks.
+      while (i < lines.length) {
+        // Skip blank lines between header segments.
+        let j = i;
+        while (j < lines.length && BLANK_RE.test(lines[j])) j++;
+        if (j < lines.length && isTitleCaseLine(lines[j]) && j + 1 < lines.length && UNDERLINE_RE.test(lines[j + 1])) {
+          titleParts.push(lines[j].trim());
+          i = j + 2;
+        } else {
           break;
         }
       }
-    }
-
-    // Update marker context for lines within this page
-    for (let i = lineIdx; i < contentEnd; i++) {
-      if (lineToMarker.has(i)) activeMarkerIdx = lineToMarker.get(i)!;
-    }
-
-    const rawContent = lines.slice(contentStart, contentEnd).join("\n");
-    const content = cleanContent(rawContent);
-
-    if (content.length < 5) continue; // skip empty pages
-
-    const marker = activeMarkerIdx >= 0 ? SECTION_MARKERS[activeMarkerIdx] : null;
-    const headingForPage = marker?.heading || `Page ${pageNum}`;
-
-    // If the previous page ended mid-sentence AND this page belongs to the same
-    // chapter, stitch this page's content onto the previous one with a single
-    // space (no paragraph break). This prevents stray PDF page numbers (e.g.
-    // a "8" line falling inside a quoted sentence) from spawning a fake new
-    // paragraph that the reader indents like a chapter opening.
-    const prev = sections[sections.length - 1];
-    const prevEndsMidSentence = prev
-      ? !/[.!?»"”\)\]]\s*$/.test(prev.content.replace(/\s+$/, ""))
-      : false;
-    const sameChapter = prev && prev.heading === headingForPage;
-
-    if (prev && prevEndsMidSentence && sameChapter) {
-      // Strip a leading indent/whitespace from the new page's first line so
-      // it flows as a continuation rather than a new paragraph.
-      const continuation = content.replace(/^\s+/, "");
-      prev.content = `${prev.content.replace(/\s+$/, "")} ${continuation}`;
+      const fullTitle = titleParts.join(" ").replace(/\s+/g, " ").trim();
+      blocks.push({ kind: "title", title: fullTitle, lineIdx: headerStart });
       continue;
     }
 
-    sections.push({
-      id: `kfr-page-${pageNum}`,
-      part: marker?.part || "",
-      chapter: marker?.chapter || "",
-      heading: headingForPage,
-      content,
-      pageNumber: pageNum,
-    });
+    // Body paragraph: collect non-blank lines until a blank line or a header.
+    if (!BLANK_RE.test(line)) {
+      const paraLines: string[] = [];
+      while (i < lines.length && !BLANK_RE.test(lines[i])) {
+        // Stop early if a header begins here.
+        if (isTitleCaseLine(lines[i]) && i + 1 < lines.length && UNDERLINE_RE.test(lines[i + 1])) break;
+        paraLines.push(lines[i].trim());
+        i++;
+      }
+      const text = paraLines.join(" ").replace(/\s+/g, " ").trim();
+      if (text && !/^Elle (contient|est compos[eé]e)/.test(text) && !/^Chapitre [IVX]+\s*$/.test(text)) {
+        blocks.push({ kind: "para", text });
+      }
+      continue;
+    }
+
+    i++;
   }
 
-  return sections;
+  // Now walk blocks to assemble sections.
+  const sections: KachifulSection[] = [];
+  let currentPart = "";
+  let currentChapter = "";
+  let currentHeading = "";
+  let currentParagraphs: string[] = [];
+  let pageCounter = 1;
+
+  const flush = () => {
+    if (!currentHeading) return;
+    const content = currentParagraphs.join("\n\n").trim();
+    if (!content && !currentParagraphs.length) return;
+    sections.push({
+      id: `kfr-page-${pageCounter}`,
+      part: currentPart,
+      chapter: currentChapter,
+      heading: currentHeading,
+      content,
+      pageNumber: pageCounter,
+    });
+    pageCounter++;
+    currentParagraphs = [];
+  };
+
+  for (const blk of blocks) {
+    if (blk.kind === "title") {
+      const cls = classifyHeading(blk.title);
+      if (cls) {
+        // Major structural heading.
+        flush();
+        if (cls.part) currentPart = cls.part;
+        // For "PREMIÈRE PARTIE" etc. we emit a stub section so users can land on it,
+        // but we don't reset content — wait for the chapter-title that follows.
+        currentChapter = cls.chapter;
+        currentHeading = cls.heading;
+      } else {
+        // Free-form title: a chapter heading inside the current part.
+        flush();
+        const ch = chapterForTitle(currentPart, blk.title);
+        currentChapter = ch.chapter;
+        currentHeading = prettifyTitle(ch.heading);
+      }
+    } else {
+      // Paragraph belongs to current section. If we have no heading yet, skip.
+      if (!currentHeading) continue;
+      currentParagraphs.push(blk.text);
+    }
+  }
+  flush();
+
+  // Drop empty stub sections (e.g. a "PREMIÈRE PARTIE" with no body because the
+  // next chapter title flushed it immediately).
+  return sections.filter((s) => s.content.trim().length > 0);
 }
