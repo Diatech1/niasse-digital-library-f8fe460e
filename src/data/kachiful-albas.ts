@@ -60,6 +60,8 @@ function classifyHeading(title: string): { part: string; chapter: string; headin
 
 /** Resolve a free-form chapter title to a chapter slot, given the current part. */
 function chapterForTitle(part: string, title: string): { chapter: string; heading: string } {
+  // Strip leading "CHAPITRE I/II/III " prefix if present.
+  title = title.replace(/^CHAPITRE\s+[IVX]+\s+/i, "").trim();
   const upper = title.toUpperCase();
   if (part === "Première Partie") {
     if (/SOUFISME/.test(upper)) return { chapter: "Chapitre I — Les réalités du soufisme", heading: title };
