@@ -349,11 +349,33 @@ body.reader-chrome-hidden .bottom-nav {
    Mobile keeps a flat surface (no stage background).
    ============================================================ */
 @media (min-width: 768px) {
-  .reader-stage {
+  /* Whole reader window gets the desktop backdrop so there is never a
+     visible seam between the page area and the chrome strips. */
+  .reader-shell {
     background:
-      radial-gradient(ellipse at 50% 0%, hsl(var(--foreground) / 0.04) 0%, transparent 55%),
-      radial-gradient(ellipse at 50% 100%, hsl(var(--foreground) / 0.06) 0%, transparent 60%),
-      linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--muted) / 0.55) 100%);
+      radial-gradient(ellipse at 50% -10%, hsl(var(--primary) / 0.06) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 110%, hsl(var(--accent) / 0.07) 0%, transparent 60%),
+      linear-gradient(180deg,
+        hsl(var(--muted) / 0.55) 0%,
+        hsl(var(--muted) / 0.85) 50%,
+        hsl(var(--muted)) 100%);
+  }
+
+  .dark .reader-shell,
+  html.dark .reader-shell {
+    background:
+      radial-gradient(ellipse at 50% -10%, hsl(var(--primary) / 0.10) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 110%, hsl(0 0% 0% / 0.6) 0%, transparent 65%),
+      linear-gradient(180deg,
+        hsl(var(--background)) 0%,
+        hsl(var(--background) / 0.92) 100%);
+  }
+
+  /* Stage is transparent so the unified shell backdrop shows through;
+     keep the soft inner vignette around the page for depth. */
+  .reader-stage {
+    background: transparent;
+    min-height: 100%;
   }
 
   .reader-stage::before {
@@ -362,7 +384,13 @@ body.reader-chrome-hidden .bottom-nav {
     inset: 0;
     pointer-events: none;
     background:
-      radial-gradient(ellipse at center, transparent 55%, hsl(0 0% 0% / 0.18) 100%);
+      radial-gradient(ellipse at center, transparent 60%, hsl(0 0% 0% / 0.10) 100%);
+  }
+
+  .dark .reader-stage::before,
+  html.dark .reader-stage::before {
+    background:
+      radial-gradient(ellipse at center, transparent 55%, hsl(0 0% 0% / 0.35) 100%);
   }
 
   /* The "book" — warm paper with edge shadow + subtle grain */
@@ -375,10 +403,10 @@ body.reader-chrome-hidden .bottom-nav {
       radial-gradient(ellipse at 50% 40%, hsl(var(--background)) 0%, hsl(var(--background)) 70%, hsl(var(--foreground) / 0.04) 100%);
     background-size: 3px 3px, 100% 100%;
     box-shadow:
-      0 1px 0 hsl(0 0% 100% / 0.5) inset,
-      0 30px 60px -20px hsl(0 0% 0% / 0.35),
-      0 18px 36px -18px hsl(0 0% 0% / 0.25),
-      0 0 0 1px hsl(var(--foreground) / 0.06);
+      0 1px 0 hsl(0 0% 100% / 0.6) inset,
+      0 18px 40px -18px hsl(0 0% 0% / 0.22),
+      0 10px 24px -16px hsl(0 0% 0% / 0.18),
+      0 0 0 1px hsl(var(--foreground) / 0.05);
   }
 
   .dark .reader-book,
