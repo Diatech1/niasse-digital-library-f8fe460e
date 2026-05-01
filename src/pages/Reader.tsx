@@ -699,7 +699,7 @@ const Reader = () => {
   };
 
   return (
-    <div ref={containerRef} className={`h-screen ${theme.bg} ${theme.text} transition-colors duration-300 flex flex-col`}>
+    <div ref={containerRef} className={`reader-shell h-screen ${theme.bg} md:bg-transparent ${theme.text} transition-colors duration-300 flex flex-col`}>
       {/* Top bar */}
       <div className={`flex items-center gap-1 px-2 py-2 border-b border-border/20 transition-all duration-300 ${chromeVisible ? '' : 'opacity-0 max-h-0 overflow-hidden !py-0 !border-b-0'}`}>
         <button onClick={() => navigate(-1)} className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full transition-colors hover:bg-accent" aria-label="Go back">
@@ -773,8 +773,8 @@ const Reader = () => {
         </div>
       )}
 
-      {/* Top spacer when chrome is hidden */}
-      {!chromeVisible && <div className="flex-shrink-0 h-2" />}
+      {/* Top spacer when chrome is hidden (mobile only — desktop lets the stage backdrop fill) */}
+      {!chromeVisible && <div className="flex-shrink-0 h-2 md:hidden" />}
 
       {/* Reading content */}
       <div
