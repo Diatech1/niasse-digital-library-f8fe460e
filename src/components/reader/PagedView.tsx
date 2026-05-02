@@ -356,7 +356,7 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
         {/* Desktop zoom controls — floating, sticky to the stage */}
         {!isMobile && availWidth > 0 && (
           <div
-            className="absolute z-20 flex items-center gap-1 rounded-full border border-border/40 bg-background/85 px-1.5 py-1 shadow-md backdrop-blur"
+            className="fixed z-20 flex items-center gap-1 rounded-full border border-border/40 bg-background/85 px-1.5 py-1 shadow-md backdrop-blur"
             style={{ bottom: 16, right: 16 }}
           >
             <button
