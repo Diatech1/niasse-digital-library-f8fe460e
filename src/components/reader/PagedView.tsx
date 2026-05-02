@@ -356,7 +356,7 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
         {/* Desktop zoom controls — floating, sticky to the stage */}
         {!isMobile && availWidth > 0 && (
           <div
-            className="absolute z-20 flex items-center gap-1 rounded-full border border-border/40 bg-background/85 px-1.5 py-1 shadow-md backdrop-blur"
+            className="fixed z-20 flex items-center gap-1 rounded-full border border-border/40 bg-background/85 px-1.5 py-1 shadow-md backdrop-blur"
             style={{ bottom: 16, right: 16 }}
           >
             <button
@@ -410,7 +410,7 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
               disabled={!hasPrev}
               aria-label="Previous page"
               title="Previous page"
-              className="absolute left-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-border/40 bg-background/85 text-foreground/80 shadow-md backdrop-blur transition-all hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-30"
+              className="fixed left-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-border/40 bg-background/85 text-foreground/80 shadow-md backdrop-blur transition-all hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-30"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
@@ -420,7 +420,7 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
               disabled={!hasNext}
               aria-label="Next page"
               title="Next page"
-              className="absolute right-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-border/40 bg-background/85 text-foreground/80 shadow-md backdrop-blur transition-all hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-30"
+              className="fixed right-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-border/40 bg-background/85 text-foreground/80 shadow-md backdrop-blur transition-all hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-30"
             >
               <ChevronRight className="h-5 w-5" />
             </button>
