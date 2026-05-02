@@ -77,8 +77,8 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
       : bookWidth * A4_RATIO;
 
     // A4-style margins (mirror the asymmetric typographic margins of a real book page)
-    const padTop = isMobile ? 56 : Math.round(bookHeight * 0.075);
-    const padBottom = isMobile ? 24 : Math.round(bookHeight * 0.070);
+    const padTop = isMobile ? 56 : Math.round(bookHeight * 0.070);
+    const padBottom = isMobile ? 24 : Math.round(bookHeight * 0.050);
     const padLeft = isMobile ? 24 : Math.round(bookWidth * 0.105);
     const padRight = isMobile ? 24 : Math.round(bookWidth * 0.105);
 
@@ -92,8 +92,6 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
     // Body line-height = fontSize * 1.45 (matches `.pocket-paragraphs .formatted-content`).
     const baseFontPx = isMobile ? 17 : 17 * zoom;
     const lineStepPx = baseFontPx * 1.45;
-    // Reserve folio band height first, then snap.
-    const usableForText = rawContentHeight - 0; // folioBandHeight subtracted via wrapper height below
     const contentHeight = rawContentHeight;
 
     // Folio band
@@ -311,7 +309,7 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
                 width: singleContentWidth,
                 height: Math.max(
                   lineStepPx,
-                  Math.floor((contentHeight - folioBandHeight) / lineStepPx) * lineStepPx
+                  Math.floor(contentHeight / lineStepPx) * lineStepPx
                 ),
                 overflow: 'hidden',
               }}
