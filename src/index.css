@@ -382,24 +382,26 @@ body.reader-chrome-hidden .bottom-nav {
         hsl(var(--background) / 0.92) 100%);
   }
 
-  /* Stage is transparent so the unified shell backdrop shows through;
-     keep the soft inner vignette around the page for depth. */
+  /* Stage is transparent so the unified shell backdrop shows through.
+     The inner vignette is also fixed to the viewport so it never produces
+     a horizontal seam when the stage becomes a scroll container (zoom > 1). */
   .reader-stage {
     background: transparent;
     min-height: 100%;
   }
 
-  .reader-stage::before {
+  .reader-shell::before {
     content: '';
-    position: absolute;
+    position: fixed;
     inset: 0;
+    z-index: -1;
     pointer-events: none;
     background:
       radial-gradient(ellipse at center, transparent 60%, hsl(0 0% 0% / 0.10) 100%);
   }
 
-  .dark .reader-stage::before,
-  html.dark .reader-stage::before {
+  .dark .reader-shell::before,
+  html.dark .reader-shell::before {
     background:
       radial-gradient(ellipse at center, transparent 55%, hsl(0 0% 0% / 0.35) 100%);
   }
