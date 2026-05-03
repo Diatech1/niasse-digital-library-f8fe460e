@@ -37,8 +37,8 @@ const App = () => (
                 <div className="relative">
                   <DesktopNav />
                   <Index />
+                  <MiniPlayer />
                   <div className="max-w-lg mx-auto lg:hidden">
-                    <MiniPlayer />
                     <BottomNav />
                   </div>
                 </div>
