@@ -31,7 +31,12 @@ const App = () => (
           <AudioPlayerProvider>
             <Routes>
               {/* Reader breaks out of max-w-lg to use full screen, no DesktopNav */}
-              <Route path="/read/:id" element={<Reader />} />
+              <Route path="/read/:id" element={
+                <>
+                  <Reader />
+                  <MiniPlayer />
+                </>
+              } />
               {/* Home breaks out of max-w-lg so the desktop hero can go full-bleed */}
               <Route path="/" element={
                 <div className="relative">
