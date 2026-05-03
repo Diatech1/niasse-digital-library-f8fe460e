@@ -95,7 +95,7 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
     const contentHeight = rawContentHeight;
 
     // Folio band
-    const folioFontPx = isMobile ? 11 : Math.max(11, Math.round(12 * Math.sqrt(zoom)));
+    const folioFontPx = isMobile ? 10 : Math.max(9, Math.round(10 * Math.sqrt(zoom)));
     const folioLineHeight = Math.ceil(folioFontPx * 1.4);
     const folioBandHeight = Math.max(folioLineHeight + 6, 20);
 
