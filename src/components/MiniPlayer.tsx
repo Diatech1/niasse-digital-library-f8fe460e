@@ -1,9 +1,12 @@
 import { Play, Pause, X, ChevronUp, Moon, Loader2 } from "lucide-react";
+import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAudioPlayer } from "@/hooks/use-audio-player";
 import { useLanguage } from "@/hooks/use-language";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+
+const SEEK_STEP = 5; // seconds
 
 const SLEEP_OPTIONS = [0, 5, 10, 15, 30];
 
