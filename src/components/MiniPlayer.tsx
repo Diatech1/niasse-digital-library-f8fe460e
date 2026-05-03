@@ -32,7 +32,7 @@ const MiniPlayer = () => {
 
   return (
     <div
-      className="fixed bottom-[60px] left-0 right-0 z-40 px-2 pb-1 pointer-events-none"
+      className="fixed bottom-[60px] lg:bottom-4 left-0 right-0 z-40 px-2 pb-1 pointer-events-none"
       role="region"
       aria-label="Mini audio player"
     >
