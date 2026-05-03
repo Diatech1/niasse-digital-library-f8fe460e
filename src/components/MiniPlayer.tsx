@@ -26,6 +26,7 @@ const MiniPlayer = () => {
   const { t } = useLanguage();
 
   const isOnPlayerRoute = book ? location.pathname === `/listen/${book.id}` : false;
+  const isOnReaderRoute = location.pathname.startsWith("/read/");
 
   useEffect(() => {
     if (!book || isOnPlayerRoute) return;
