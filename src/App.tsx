@@ -37,8 +37,8 @@ const App = () => (
                 <div className="relative">
                   <DesktopNav />
                   <Index />
+                  <MiniPlayer />
                   <div className="max-w-lg mx-auto lg:hidden">
-                    <MiniPlayer />
                     <BottomNav />
                   </div>
                 </div>
@@ -57,8 +57,8 @@ const App = () => (
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                     </div>
+                    <MiniPlayer />
                     <div className="max-w-lg mx-auto lg:hidden">
-                      <MiniPlayer />
                       <BottomNav />
                     </div>
                   </div>
