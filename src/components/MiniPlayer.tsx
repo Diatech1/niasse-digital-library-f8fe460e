@@ -1,9 +1,12 @@
 import { Play, Pause, X, ChevronUp, Moon, Loader2 } from "lucide-react";
+import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAudioPlayer } from "@/hooks/use-audio-player";
 import { useLanguage } from "@/hooks/use-language";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+
+const SEEK_STEP = 5; // seconds
 
 const SLEEP_OPTIONS = [0, 5, 10, 15, 30];
 
@@ -22,8 +25,40 @@ const MiniPlayer = () => {
   const location = useLocation();
   const { t } = useLanguage();
 
+  const isOnPlayerRoute = book ? location.pathname === `/listen/${book.id}` : false;
+
+  useEffect(() => {
+    if (!book || isOnPlayerRoute) return;
+    const isTypingTarget = (el: EventTarget | null) => {
+      if (!(el instanceof HTMLElement)) return false;
+      const tag = el.tagName;
+      return (
+        tag === "INPUT" ||
+        tag === "TEXTAREA" ||
+        tag === "SELECT" ||
+        el.isContentEditable
+      );
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey) return;
+      if (isTypingTarget(e.target)) return;
+      if (e.key === " " || e.code === "Space") {
+        e.preventDefault();
+        togglePlayPause();
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        tts.seek((tts.currentTime || 0) + SEEK_STEP);
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        tts.seek((tts.currentTime || 0) - SEEK_STEP);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [book, isOnPlayerRoute, togglePlayPause, tts]);
+
   if (!book) return null;
-  if (location.pathname === `/listen/${book.id}`) return null;
+  if (isOnPlayerRoute) return null;
 
   const currentSection = sections[chapterIdx];
   const subtitle = currentSection?.heading || `${t("audioPlayer.chapter")} ${chapterIdx + 1}`;
