@@ -457,8 +457,7 @@ const Reader = () => {
       playChapter(currentSectionIdx);
       return;
     }
-    setActiveBook(book, allSections);
-    playChapter(currentSectionIdx);
+    setActiveBook(book, allSections, currentSectionIdx);
   }, [book, allSections, activeAudioBook?.id, activeChapterIdx, audioTts.isPlaying, audioTts.isPaused, audioTts.isLoading, togglePlayPause, setActiveBook, playChapter, currentSectionIdx]);
 
   const fontClass = fontIdx === 0 ? "font-sans" : fontIdx === 1 ? "font-reader" : "font-arabic";
