@@ -15,6 +15,17 @@ export interface MergeableSection {
   content: string;
 }
 
+function shouldJoinInline(previousContent: string, nextContent: string): boolean {
+  const prev = previousContent.trimEnd();
+  const next = nextContent.trimStart();
+
+  if (!prev || !next) return false;
+
+  // If the source page ends without terminal punctuation, it is almost always
+  // a PDF page-wrap inside the same paragraph, so continue inline.
+  return !/[.!?…:;”"')\]]$/.test(prev);
+}
+
 export function mergeAdjacentSections<T extends MergeableSection>(sections: T[]): MergeableSection[] {
   const merged: MergeableSection[] = [];
   for (const s of sections) {
@@ -25,7 +36,8 @@ export function mergeAdjacentSections<T extends MergeableSection>(sections: T[])
       last.chapter === s.chapter &&
       last.part === s.part
     ) {
-      last.content = `${last.content}\n\n${s.content}`;
+      const separator = shouldJoinInline(last.content, s.content) ? " " : "\n\n";
+      last.content = `${last.content.trimEnd()}${separator}${s.content.trimStart()}`;
     } else {
       merged.push({
         id: s.id,
