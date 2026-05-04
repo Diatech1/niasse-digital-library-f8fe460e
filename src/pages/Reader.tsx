@@ -290,7 +290,7 @@ const Reader = () => {
     if (book?.contentModule && asyncModules.includes(book.contentModule)) {
       return [];
     }
-    return [{ id: "sample", heading: "Sample", content: "__sample__" }];
+    return [];
   }, [book?.contentModule, kashifEnData, kachifulAlbasData, conditionsReglesData, ifadatouData, volumeData]);
 
   const tocItems = useMemo(() => {
