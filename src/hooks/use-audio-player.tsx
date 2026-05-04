@@ -25,7 +25,7 @@ interface AudioPlayerContextValue {
   sleepCountdown: number;
   elapsed: number; // seconds (real audio time)
   totalDuration: number; // seconds (real audio time, 0 until loaded)
-  setActiveBook: (book: Book, sections: BookSection[]) => void;
+  setActiveBook: (book: Book, sections: BookSection[], autoPlayIdx?: number) => void;
   goToChapter: (idx: number) => void;
   playChapter: (idx: number) => void;
   togglePlayPause: () => void;
