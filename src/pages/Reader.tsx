@@ -607,23 +607,29 @@ const Reader = () => {
          return (
          <div key={section.id} data-section-index={idx} className="paged-section">
            {showPart && (
-             <h3 className="text-center font-serif font-bold text-primary mb-3 mt-4 uppercase tracking-[0.2em]" style={{ fontSize: fontSize * 0.85, breakAfter: 'avoid' as const }}>
+             <h3
+               className="text-center font-serif font-bold text-primary uppercase tracking-[0.2em] mt-8 sm:mt-10 md:mt-12 mb-4 sm:mb-5 md:mb-6"
+               style={{ fontSize: fontSize * 0.85, lineHeight: 1.4, breakAfter: 'avoid' as const }}
+             >
                {section.part}
              </h3>
            )}
            {showChapter && (
-             <h4 className="text-center font-serif font-semibold text-primary/80 mb-4" style={{ fontSize: fontSize * 1.1, breakAfter: 'avoid' as const }}>
+             <h4
+               className="text-center font-serif font-semibold text-primary/90 mt-7 sm:mt-9 md:mt-10 mb-5 sm:mb-6 md:mb-7"
+               style={{ fontSize: fontSize * 1.25, lineHeight: 1.35, breakAfter: 'avoid' as const }}
+             >
                {section.chapter}
              </h4>
            )}
            {section.heading && section.heading !== section.chapter && section.heading !== section.part && (
-            <h5
-              className="font-serif font-bold mb-4 text-center"
-              style={{ fontSize: fontSize * 1.05, breakAfter: 'avoid' as const }}
-            >
-              {section.heading}
-            </h5>
-          )}
+             <h5
+               className="font-serif font-bold text-center mt-5 sm:mt-6 md:mt-7 mb-4 sm:mb-5 md:mb-6"
+               style={{ fontSize: fontSize * 1.1, lineHeight: 1.4, breakAfter: 'avoid' as const }}
+             >
+               {section.heading}
+             </h5>
+           )}
           {section.content === "__ruh__" ? (
             <div className="space-y-3">
               {ruhAlAdabVerses.map((v) => (
