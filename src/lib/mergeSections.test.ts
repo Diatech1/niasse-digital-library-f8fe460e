@@ -94,6 +94,33 @@ describe("mergeAdjacentSections — page boundary continuity", () => {
     ]);
   });
 
+  it("joins page continuations inline when the previous page ends mid-sentence", () => {
+    const mockPages: MergeableSection[] = [
+      {
+        id: "page-24",
+        part: "Front Matter",
+        chapter: "Biography of Authors",
+        heading: "Biography of Authors",
+        content: "Zachary is also the author of On the Path of the Prophet. He has been",
+      },
+      {
+        id: "page-25",
+        part: "Front Matter",
+        chapter: "Biography of Authors",
+        heading: "Biography of Authors",
+        content: "blessed to maintain close contact with the community.",
+      },
+    ];
+
+    const merged = mergeAdjacentSections(mockPages);
+
+    expect(merged).toHaveLength(1);
+    expect(merged[0].content).toBe(
+      "Zachary is also the author of On the Path of the Prophet. He has been blessed to maintain close contact with the community."
+    );
+    expect(merged[0].content).not.toContain("been\n\nblessed");
+  });
+
   it("does not merge when `part` differs even if heading matches", () => {
     const mockPages: MergeableSection[] = [
       {
