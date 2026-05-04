@@ -285,6 +285,11 @@ const Reader = () => {
     if (book?.contentModule && volumeModules.includes(book.contentModule)) {
       return volumeData.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
     }
+    // Async-loaded module hasn't populated yet — show nothing instead of the sample placeholder
+    const asyncModules = ["kashif-en", "kachiful-albas", "conditions-regles", "ifadatou-ahmediyya", ...volumeModules];
+    if (book?.contentModule && asyncModules.includes(book.contentModule)) {
+      return [];
+    }
     return [{ id: "sample", heading: "Sample", content: "__sample__" }];
   }, [book?.contentModule, kashifEnData, kachifulAlbasData, conditionsReglesData, ifadatouData, volumeData]);
 
@@ -827,7 +832,7 @@ const Reader = () => {
           }
         }}
       >
-        {loading ? (
+        {loading || bookLoading ? (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="w-6 h-6 animate-spin text-primary" />
             <span className="ml-2 text-muted-foreground">Loading book...</span>
