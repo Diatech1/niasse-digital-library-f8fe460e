@@ -88,7 +88,7 @@ const Index = () => {
           <h2 className="text-gold font-serif text-lg font-semibold px-5 mb-3 flex items-center gap-2">
             {t("home.continueReading")}
           </h2>
-          <div className="flex gap-4 px-5 overflow-x-auto scrollbar-hide">
+          <ScrollRow ariaLabel={t("home.continueReading")}>
             {continueReading.map(({ book, idx }) => {
               const progress = book.pages > 0 ? Math.round(idx / book.pages * 100) : 0;
               return (
@@ -110,7 +110,7 @@ const Index = () => {
                 </motion.div>
               );
             })}
-          </div>
+          </ScrollRow>
         </motion.section>
       }
 
