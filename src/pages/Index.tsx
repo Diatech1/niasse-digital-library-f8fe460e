@@ -118,13 +118,13 @@ const Index = () => {
       {favorites.length > 0 && !searchQuery &&
         <section className="mb-8">
           <h2 className="text-gold font-serif text-lg font-semibold px-5 mb-3">{t("home.favorites")}</h2>
-          <div className="flex gap-4 px-5 overflow-x-auto scrollbar-hide">
+          <ScrollRow ariaLabel={t("home.favorites")}>
             {favorites.map((book, i) =>
               <div key={book.id} className="min-w-[28%] max-w-[28%]">
                 <BookCard book={book} index={i} />
               </div>
             )}
-          </div>
+          </ScrollRow>
         </section>
       }
 
