@@ -72,9 +72,9 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
     const wantsSpread = false;
 
     const bookWidth = isMobile ? availWidth : baseWidth * zoom;
-    const bookHeight = isMobile
-      ? (fitToPage ? availHeight : availHeight * 4)
-      : bookWidth * A4_RATIO;
+    // Mobile: always fit a single page to the viewport (no vertical scroll mode)
+    // so each page is exactly one screen — no empty space tail.
+    const bookHeight = isMobile ? availHeight : bookWidth * A4_RATIO;
 
     // A4-style margins (mirror the asymmetric typographic margins of a real book page)
     const padTop = isMobile ? 56 : Math.round(bookHeight * 0.070);
@@ -282,13 +282,13 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
     return (
       <div
         ref={outerRef}
-        className={`reader-stage overflow-hidden relative flex justify-center ${(isMobile && !fitToPage) || allowDesktopScroll ? 'items-start' : 'items-center'} ${className || ''}`}
+        className={`reader-stage overflow-hidden relative flex justify-center ${allowDesktopScroll ? 'items-start' : 'items-center'} ${className || ''}`}
         style={{
           height: '100%',
-          overflowY: (isMobile && !fitToPage) || allowDesktopScroll ? 'auto' : 'hidden',
+          overflowY: allowDesktopScroll ? 'auto' : 'hidden',
           overflowX: allowDesktopScroll ? 'auto' : 'hidden',
-          paddingTop: isMobile && !fitToPage ? 8 : (allowDesktopScroll ? stagePadY : 0),
-          paddingBottom: isMobile && !fitToPage ? 16 : (allowDesktopScroll ? stagePadY : 0),
+          paddingTop: allowDesktopScroll ? stagePadY : 0,
+          paddingBottom: allowDesktopScroll ? stagePadY : 0,
         }}
         onScroll={onScroll}
       >
