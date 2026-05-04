@@ -1,6 +1,3 @@
-<<<PAGE pdf=4 pnum= heading=>>>
-copyright page
-
 <<<PAGE pdf=7 pnum=vii heading=Acknowledgements>>>
 All thanks and praise is to Allah, the First, the Last.
 
