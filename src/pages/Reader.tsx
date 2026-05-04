@@ -876,20 +876,16 @@ const Reader = () => {
         </button>
       )}
 
-      {(
-        <div className={`transition-all duration-300 ${chromeVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-full pointer-events-none'}`}>
-          <ReaderBottomBar
-            currentPage={currentSectionIdx + 1}
-            totalPages={effectiveTotalPages}
-            onPrevPage={() => goToSection(currentSectionIdx - pagesPerTurn)}
-            onNextPage={() => goToSection(currentSectionIdx + pagesPerTurn)}
-            onJumpToPage={(page) => goToSection(page - 1)}
-            hasPrev={currentSectionIdx > 0}
-            hasNext={currentSectionIdx < effectiveTotalPages - 1}
-            expanded={chromeVisible}
-          />
-        </div>
-      )}
+      <ReaderBottomBar
+        currentPage={currentSectionIdx + 1}
+        totalPages={effectiveTotalPages}
+        onPrevPage={() => goToSection(currentSectionIdx - pagesPerTurn)}
+        onNextPage={() => goToSection(currentSectionIdx + pagesPerTurn)}
+        onJumpToPage={(page) => goToSection(page - 1)}
+        hasPrev={currentSectionIdx > 0}
+        hasNext={currentSectionIdx < effectiveTotalPages - 1}
+        expanded={chromeVisible}
+      />
 
       {/* TOC Sheet */}
       <Sheet open={mainMenuOpen} onOpenChange={setMainMenuOpen}>
