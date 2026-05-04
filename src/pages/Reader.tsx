@@ -870,7 +870,7 @@ const Reader = () => {
         <button
           onClick={handleReadAloud}
           style={{ right: '0.75rem', left: 'auto' }}
-          className="md:hidden fixed top-14 z-40 flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-background/90 shadow-sm backdrop-blur-sm transition-colors hover:bg-accent"
+          className="fixed top-12 sm:top-14 md:top-4 z-40 flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-background/90 shadow-sm backdrop-blur-sm transition-colors hover:bg-accent"
           aria-label="Read aloud"
         >
           <Volume2 className={`h-4 w-4 ${activeAudioBook?.id === book?.id ? 'text-primary' : 'text-foreground'}`} />
