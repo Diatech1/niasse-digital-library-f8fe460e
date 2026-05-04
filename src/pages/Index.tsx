@@ -9,6 +9,7 @@ import DesktopHomeSections from "@/components/desktop/DesktopHomeSections";
 import { getSavedProgress } from "@/hooks/use-reading-progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage } from "@/hooks/use-language";
+import ScrollRow from "@/components/ScrollRow";
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
