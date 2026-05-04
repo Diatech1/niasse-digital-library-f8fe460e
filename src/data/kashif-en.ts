@@ -181,5 +181,22 @@ export async function loadKashifEnSections(): Promise<KashifEnSection[]> {
     });
   }
 
+  // Heal words split across PDF page breaks (e.g. "two-" / "thirds").
+  // When a page's body ends with a hyphenated word fragment, pull the first
+  // token of the next page back and stitch them into a single word.
+  for (let i = 0; i < sections.length - 1; i++) {
+    const cur = sections[i];
+    const next = sections[i + 1];
+    // Match a trailing hyphenated fragment: letters + "-" at very end of body.
+    const tailMatch = cur.content.match(/([A-Za-zĀ-ſ\u0100-\u024F'’]+)-\s*$/);
+    if (!tailMatch) continue;
+    // Take the first whitespace-delimited token from the next page.
+    const headMatch = next.content.match(/^\s*([A-Za-zĀ-ſ\u0100-\u024F'’]+)([\s\S]*)$/);
+    if (!headMatch) continue;
+    const joined = tailMatch[1] + headMatch[1];
+    cur.content = cur.content.slice(0, cur.content.length - tailMatch[0].length) + joined;
+    next.content = headMatch[2].replace(/^\s+/, "");
+  }
+
   return sections;
 }
