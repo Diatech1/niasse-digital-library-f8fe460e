@@ -39,10 +39,10 @@ describe("mergeAdjacentSections — page boundary continuity", () => {
     expect(merged).toHaveLength(1);
     expect(merged[0].id).toBe("page-9");
     expect(merged[0].heading).toBe("Background to the Text");
-    // Both page bodies must be present, joined with a paragraph break, and
-    // the heading must NOT be re-injected between them.
+    // Both page bodies must be present, joined inline because the first page
+    // ends mid-sentence, and the heading must NOT be re-injected between them.
     expect(merged[0].content).toBe(
-      "…the shaykh began composing the work as a response\n\nto the spiritual confusion of his era, drawing upon…"
+      "…the shaykh began composing the work as a response to the spiritual confusion of his era, drawing upon…"
     );
     expect(merged[0].content).not.toContain("Background to the Text");
   });
