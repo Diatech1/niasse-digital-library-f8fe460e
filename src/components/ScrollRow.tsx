@@ -63,7 +63,7 @@ const ScrollRow = ({ children, className = "", ariaLabel }: ScrollRowProps) => {
           type="button"
           onClick={() => scrollBy(-1)}
           aria-label="Previous"
-          className="hidden md:flex absolute start-1 top-1/2 -translate-y-1/2 h-9 w-9 items-center justify-center rounded-full bg-background/90 border border-border/60 shadow-md backdrop-blur-sm text-foreground hover:bg-accent transition-colors z-10"
+          className="flex absolute start-1 top-1/2 -translate-y-1/2 h-9 w-9 items-center justify-center rounded-full bg-background/90 border border-border/60 shadow-md backdrop-blur-sm text-foreground hover:bg-accent transition-colors z-10"
         >
           <ChevronLeft className="h-5 w-5 rtl:hidden" />
           <ChevronRight className="h-5 w-5 hidden rtl:block" />
@@ -74,7 +74,7 @@ const ScrollRow = ({ children, className = "", ariaLabel }: ScrollRowProps) => {
           type="button"
           onClick={() => scrollBy(1)}
           aria-label="Next"
-          className="hidden md:flex absolute end-1 top-1/2 -translate-y-1/2 h-9 w-9 items-center justify-center rounded-full bg-background/90 border border-border/60 shadow-md backdrop-blur-sm text-foreground hover:bg-accent transition-colors z-10"
+          className="flex absolute end-1 top-1/2 -translate-y-1/2 h-9 w-9 items-center justify-center rounded-full bg-background/90 border border-border/60 shadow-md backdrop-blur-sm text-foreground hover:bg-accent transition-colors z-10"
         >
           <ChevronRight className="h-5 w-5 rtl:hidden" />
           <ChevronLeft className="h-5 w-5 hidden rtl:block" />
