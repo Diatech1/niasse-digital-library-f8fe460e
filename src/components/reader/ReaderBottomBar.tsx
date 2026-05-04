@@ -88,15 +88,17 @@ const ReaderBottomBar = ({
             />
             <span className="text-muted-foreground">/ {totalPages}</span>
           </div>
-        ) : (
+        ) : expanded ? (
           <button
             onClick={startEditing}
-            className={`justify-self-center rounded-full font-medium text-foreground transition-all hover:bg-accent hover:text-accent-foreground ${expanded ? 'px-4 py-2 text-base' : 'pointer-events-auto border border-border/60 bg-background/90 px-5 py-2.5 text-base shadow-sm backdrop-blur-sm'}`}
+            className="justify-self-center rounded-full px-4 py-2 text-base font-medium text-foreground transition-all hover:bg-accent hover:text-accent-foreground"
             title="Jump to page"
             aria-label="Jump to page"
           >
             {currentPage} <span className="text-muted-foreground">/ {totalPages}</span>
           </button>
+        ) : (
+          <div aria-hidden="true" />
         )}
 
         {hasNext ? (
