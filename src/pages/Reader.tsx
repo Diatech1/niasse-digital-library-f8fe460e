@@ -599,20 +599,24 @@ const Reader = () => {
 
   const pagedContent = useMemo(() => (
     <div style={{ fontSize }}>
-      {renderMeta()}
-      {allSections.map((section, idx) => (
-        <div key={section.id} data-section-index={idx} className="paged-section">
-          {section.part && (
-            <h3 className="text-center font-serif font-bold text-primary mb-3 mt-4 uppercase tracking-[0.2em]" style={{ fontSize: fontSize * 0.85, breakAfter: 'avoid' as const }}>
-              {section.part}
-            </h3>
-          )}
-          {section.chapter && section.chapter !== section.part && (
-            <h4 className="text-center font-serif font-semibold text-primary/80 mb-4" style={{ fontSize: fontSize * 1.1, breakAfter: 'avoid' as const }}>
-              {section.chapter}
-            </h4>
-          )}
-          {section.heading && section.heading !== section.chapter && section.heading !== section.part && (
+       {renderMeta()}
+       {allSections.map((section, idx) => {
+         const prev = idx > 0 ? allSections[idx - 1] : undefined;
+         const showPart = !!section.part && section.part !== prev?.part;
+         const showChapter = !!section.chapter && section.chapter !== section.part && section.chapter !== prev?.chapter;
+         return (
+         <div key={section.id} data-section-index={idx} className="paged-section">
+           {showPart && (
+             <h3 className="text-center font-serif font-bold text-primary mb-3 mt-4 uppercase tracking-[0.2em]" style={{ fontSize: fontSize * 0.85, breakAfter: 'avoid' as const }}>
+               {section.part}
+             </h3>
+           )}
+           {showChapter && (
+             <h4 className="text-center font-serif font-semibold text-primary/80 mb-4" style={{ fontSize: fontSize * 1.1, breakAfter: 'avoid' as const }}>
+               {section.chapter}
+             </h4>
+           )}
+           {section.heading && section.heading !== section.chapter && section.heading !== section.part && (
             <h5
               className="font-serif font-bold mb-4 text-center"
               style={{ fontSize: fontSize * 1.05, breakAfter: 'avoid' as const }}
