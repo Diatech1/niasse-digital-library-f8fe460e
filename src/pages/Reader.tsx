@@ -648,8 +648,9 @@ const Reader = () => {
               lang={book?.language}
             />
           )}
-        </div>
-      ))}
+         </div>
+         );
+       })}
     </div>
   ), [allSections, fontSize, pagedTextColor, book?.contentModule, book?.language]);
 
