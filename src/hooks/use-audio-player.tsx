@@ -82,14 +82,23 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
     []
   );
 
-  const setActiveBook = useCallback((nextBook: Book, nextSections: BookSection[]) => {
+  const setActiveBook = useCallback((nextBook: Book, nextSections: BookSection[], autoPlayIdx?: number) => {
     if (book?.id !== nextBook.id) {
       tts.stop();
       setChapterIdx(0);
+      chapterIdxRef.current = 0;
     }
     setBook(nextBook);
     setSections(nextSections);
-  }, [book?.id, tts]);
+    // Sync refs immediately so a follow-up playChapter call sees the new book/sections.
+    bookRef.current = nextBook;
+    sectionsRef.current = nextSections;
+    if (typeof autoPlayIdx === "number") {
+      setChapterIdx(autoPlayIdx);
+      chapterIdxRef.current = autoPlayIdx;
+      playChapterInternal(autoPlayIdx);
+    }
+  }, [book?.id, tts, playChapterInternal]);
 
   const playChapter = useCallback((idx: number) => {
     playChapterInternal(idx);
