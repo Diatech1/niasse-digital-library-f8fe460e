@@ -827,7 +827,7 @@ const Reader = () => {
           }
         }}
       >
-        {loading ? (
+        {loading || bookLoading ? (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="w-6 h-6 animate-spin text-primary" />
             <span className="ml-2 text-muted-foreground">Loading book...</span>
