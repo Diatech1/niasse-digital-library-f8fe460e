@@ -9,6 +9,7 @@ import DesktopHomeSections from "@/components/desktop/DesktopHomeSections";
 import { getSavedProgress } from "@/hooks/use-reading-progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage } from "@/hooks/use-language";
+import ScrollRow from "@/components/ScrollRow";
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -87,7 +88,7 @@ const Index = () => {
           <h2 className="text-gold font-serif text-lg font-semibold px-5 mb-3 flex items-center gap-2">
             {t("home.continueReading")}
           </h2>
-          <div className="flex gap-4 px-5 overflow-x-auto scrollbar-hide">
+          <ScrollRow ariaLabel={t("home.continueReading")}>
             {continueReading.map(({ book, idx }) => {
               const progress = book.pages > 0 ? Math.round(idx / book.pages * 100) : 0;
               return (
@@ -109,7 +110,7 @@ const Index = () => {
                 </motion.div>
               );
             })}
-          </div>
+          </ScrollRow>
         </motion.section>
       }
 
@@ -117,13 +118,13 @@ const Index = () => {
       {favorites.length > 0 && !searchQuery &&
         <section className="mb-8">
           <h2 className="text-gold font-serif text-lg font-semibold px-5 mb-3">{t("home.favorites")}</h2>
-          <div className="flex gap-4 px-5 overflow-x-auto scrollbar-hide">
+          <ScrollRow ariaLabel={t("home.favorites")}>
             {favorites.map((book, i) =>
               <div key={book.id} className="min-w-[28%] max-w-[28%]">
                 <BookCard book={book} index={i} />
               </div>
             )}
-          </div>
+          </ScrollRow>
         </section>
       }
 
