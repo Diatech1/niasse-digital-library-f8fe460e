@@ -869,7 +869,7 @@ const Reader = () => {
       {!chromeVisible && book && allSections.length > 0 && (
         <button
           onClick={handleReadAloud}
-          style={{ left: '0.75rem', right: 'auto' }}
+          style={{ right: '0.75rem', left: 'auto' }}
           className="md:hidden fixed top-3 z-40 flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-background/90 shadow-sm backdrop-blur-sm transition-colors hover:bg-accent"
           aria-label="Read aloud"
         >
