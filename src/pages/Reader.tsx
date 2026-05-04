@@ -865,17 +865,24 @@ const Reader = () => {
         </button>
       )}
 
-      {/* Floating Read-aloud button (mobile, persistent so audio stays one tap away) */}
-      {!chromeVisible && book && allSections.length > 0 && (
-        <button
-          onClick={handleReadAloud}
-          style={{ right: '0.75rem', left: 'auto' }}
-          className="fixed top-12 sm:top-14 md:top-4 z-40 flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-background/90 shadow-sm backdrop-blur-sm transition-colors hover:bg-accent"
-          aria-label="Read aloud"
-        >
-          <Volume2 className={`h-4 w-4 ${activeAudioBook?.id === book?.id ? 'text-primary' : 'text-foreground'}`} />
-        </button>
-      )}
+      {/* Floating Read-aloud button (persistent so audio stays one tap away) */}
+      {!chromeVisible && book && allSections.length > 0 && (() => {
+        const banner = showResumeBanner && currentSectionIdx > 0;
+        // Banner height ~44px (py-2.5 + text). Offset button below it when present, else sit near top.
+        const topClass = banner
+          ? 'top-14 sm:top-14 md:top-14'
+          : 'top-3 sm:top-3 md:top-4';
+        return (
+          <button
+            onClick={handleReadAloud}
+            style={{ right: '0.75rem', left: 'auto' }}
+            className={`fixed ${topClass} z-40 flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-background/90 shadow-sm backdrop-blur-sm transition-all duration-200 hover:bg-accent`}
+            aria-label="Read aloud"
+          >
+            <Volume2 className={`h-4 w-4 ${activeAudioBook?.id === book?.id ? 'text-primary' : 'text-foreground'}`} />
+          </button>
+        );
+      })()}
 
       <ReaderBottomBar
         currentPage={currentSectionIdx + 1}
