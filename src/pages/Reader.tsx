@@ -351,9 +351,7 @@ const Reader = () => {
       const s = allSections[idx];
       if (!s || typeof s.content !== "string") continue;
       const pre = (s as { footnotes?: { number: string; text: string }[] }).footnotes;
-      const fns = Array.isArray(pre)
-        ? pre
-        : (s.content.startsWith("__") ? [] : extractFootnotes(s.content).footnotes);
+      const fns = Array.isArray(pre) ? pre : [];
       for (const fn of fns) {
         const key = `${idx}:${fn.number}`;
         if (seen.has(key)) continue;
