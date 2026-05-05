@@ -17,7 +17,7 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang }: F
   const proseAlign = isRtl ? "text-right" : "text-justify";
 
   return (
-    <div className="formatted-content" dir={dir} lang={lang}>
+    <div className="formatted-content space-y-4" dir={dir} lang={lang}>
       {paragraphs.map((para, idx) => {
         const trimmed = para.trim();
 
