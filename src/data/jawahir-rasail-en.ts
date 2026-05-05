@@ -12,7 +12,7 @@ export interface JawahirRasailSection {
 }
 
 const TITLE_RE = /^TITRE:\s*(.+)$/;
-const BODY_OPENING_RE = /^(?:In the Name of|In The Name of|Bismill|Al-?Hamdu|Alhamdu|All praise|May the peace|May Allah|As-Sal[aā]mu|Asʾsalāmu|After this|As for what follows|To\b|From the city|From Kaolack|Allah guides to what is correct|Dear brothers|The praise belongs)/i;
+const BODY_OPENING_RE = /^(?:Chapter:|In the Name of|In The Name of|Bismill|Al-?Hamdu|Alhamdu|All praise|May the peace|May Allah|As-Sal[aā]mu|Asʾsalāmu|After this|As for what follows|To\b|From the city|From Kaolack|Allah guides to what is correct|Dear brothers|The praise belongs)/i;
 const SIGNATURE_RE = /^(?:Salaam\.?|Salam\.?|Salām\.?|Peace\.?|Ibrahim\b|Ibrāhīm\b|Written by\b|Dictated by\b|This was written by\b|Koussi\b|Kaolack\b|Kawsī\b|\d{4}\s*(?:AH|CE|Hijri))/i;
 const NOISE_LINE_RE = /^(?:LETTER\s*#\d+\s+FROM\s+THE\s+DISCOURSES|Letter\s*#\d+|Section:\s|The\s+Eleventh\s+Letter\s+of\s+the\s+Counsels|The\s+\d+(?:st|nd|rd|th)\s+Letter(?:\s+from)?(?:\s+the)?\s+[“"']?Advice[”"']?|Translator:|Translated(?:,\s*with\s*the\s*grace\s*of\s*Allah,)?(?:\s+by|:)\s*|Interpreted from the Arabic by:?|Compiled by:|From:\s+Kitaab|From Jawahir ar-Rasa[’']il|Source:\s*|\[\d{1,2}:\d{2}\s*[AP]M,|tflbwn$|“”$|""$|\{Letter\s*#\d+)/i;
 const COPYRIGHT_RE = /(?:©\d{4}|FLOODPLAINS\b|\[©\d{4}|\|\s*FLOODPLAINS)/i;
