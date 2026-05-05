@@ -86,7 +86,12 @@ function compactWrappedLines(lines: string[]): string[] {
       /^(?:Chapter:|Section:|\{\{PAGE:|\[|\{|\(|\d+\.\s|\d+\s*[&]\s*\d+\.\s|[“"'])/.test(line) ||
       /^(?:Salaam\.?|Salam\.?|Salām\.?|Peace\b|As-Sal[aā]mu|Asʾsalāmu|Wa[s\-\s]?sal[aā]m|May\s+Allah[\u2019']?s|May\s+Allah\b|In\s+the\s+Name\s+of|All\s+praise\b|After\s+this\b|As\s+for\s+what\s+follows\b|To\s+all\b|To\s+Umar\b|To\s+our\b|From\s+the\s+city\b|From\s+Kaolack\b|Written\s+by\b|Dictated\s+by\b|Transcribed\s+by\b|This\s+was\s+(?:written|dictated)\s+by\b|Ibrahim\s+ibn\b|Ibrāhīm\s+ibn\b|Koussi\b|Kaolack\b|Kawsī\b|\d{3,4}\s*(?:AH|CE|Hijri)\b)/i.test(line);
 
-    const canMerge = typeof prev === "string" && prev !== "" && !forceBreak;
+    // A paragraph only ends when the previous line finishes with sentence-ending
+    // punctuation. Otherwise the next line is a wrapped continuation and should merge.
+    const prevEndsParagraph =
+      typeof prev === "string" && /[.!?:”"’')\]]\s*$/.test(prev);
+
+    const canMerge = typeof prev === "string" && prev !== "" && !forceBreak && !prevEndsParagraph;
 
     if (canMerge) {
       out[out.length - 1] = `${prev} ${line}`.replace(/\s+/g, " ").trim();
