@@ -108,18 +108,40 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang }: F
           );
         }
 
-        // Italic opener (e.g. "From the city of Kaolack, on the 25th of Rabi' al-Thani 1356, to all the beloveds.")
-        const isOpener = /^From\s+(?:the\s+city\s+of\s+|Kaolack|Kawl|Kawsī|Koussi)/i.test(trimmed) && trimmed.length < 220;
+        // Italic opener: date/location header at the start of a letter.
+        // e.g. "From the city of Kaolack, on the 25th of Rabi' al-Thani 1356..."
+        //      "From Kaolack, 27 Jumadah al-Ula 1363, to Dakar."
+        //      "From the City of Kaolack at the end of the year 1358 AH..."
+        //      "From the dictations of our Shaikh to al-Hajj Sidi Ali Cisse..."
+        const isOpener =
+          trimmed.length < 320 &&
+          /^From\s+(?:the\s+(?:city|City)\s+of\s+|the\s+dictations?\s+of\s+|Kaolack|Kawl|Kawsī|Koussi|Medina|Fez|Fes|Dakar)/i.test(trimmed);
 
-        // Italic signature block: short paragraph(s) with author name, dates, or sender note
-        const isSignature =
-          trimmed.length < 260 &&
+        // Standalone date / place-date line (often follows the body, before signature)
+        // e.g. "Kaolack, 13 Safar 1361 AH."
+        //      "Kaolack, Senegal 1354H/1935"
+        //      "Medina-Baye, Kaolack Interpreted from the Arabic..."
+        const isDateLine =
+          trimmed.length < 240 &&
           (
-            /^(?:Ibrahim|Ibrāhīm|Ibrahīm)\b/i.test(trimmed) ||
-            /^(?:Your\s+sympathizing|He\s+sends\s+this|Transcribed\s+by|Dictated\s+by|Written\s+by|This\s+was\s+written\s+by)/i.test(trimmed) ||
-            /^\d{3,4}\s*(?:AH|CE|Hijri)\b/i.test(trimmed) ||
-            /—may\s+Allah\s+be\s+kind\s+to\s+him/i.test(trimmed)
+            /^(?:Kaolack|Kawl[aā]kh|Medina(?:-Baye)?|Fez|Fes|Dakar|Senegal)\b[^.]*\d{3,4}\s*(?:AH|H|CE|Hijri)?/i.test(trimmed) ||
+            /^\d{3,4}\s*(?:AH|H|CE|Hijri)\b/i.test(trimmed)
           );
+
+        // Italic signature block: author name, sender note, blessings, transcriber line
+        const isSignature =
+          trimmed.length < 320 &&
+          (
+            /^(?:Ibrahim|Ibrāhīm|Ibrahīm|Ibr[aā]h[iī]m)\b/i.test(trimmed) ||
+            /^(?:Your\s+(?:sympathizing|humble|noble|loving|sincere|devoted|brother|servant|slave)|He\s+sends\s+this|Transcribed\s+by|Dictated\s+by|Written\s+by|Signed(?:\s+by)?|Sent\s+by|Compiled\s+by|This\s+(?:was\s+)?(?:written|dictated|transcribed)\s+by|The\s+(?:humble|poor)\s+(?:servant|slave))/i.test(trimmed) ||
+            /^May\s+Allah\s+(?:be\s+kind\s+to\s+him|elevate|reward|have\s+mercy|bless\s+the\s+author|allow\s+(?:us|him))/i.test(trimmed) ||
+            /^May\s+Allah[\u2019']?s\s+(?:Mercy|Peace|Blessings)/i.test(trimmed) ||
+            /[—–-]\s*may\s+Allah\s+be\s+kind\s+to\s+him/i.test(trimmed) ||
+            /^Wa[s\-\s]?sal[aā]m/i.test(trimmed) ||
+            /^Peace(?:\s+(?:and|be))?\b/i.test(trimmed) && trimmed.length < 80
+          );
+
+        if (isOpener || isDateLine || isSignature) {
 
         if (isOpener || isSignature) {
           return (
