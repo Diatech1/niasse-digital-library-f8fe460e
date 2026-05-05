@@ -15,6 +15,7 @@ import { priereShaykhIbrahimSections } from "@/data/priere-shaykh-ibrahim";
 import { stationsDeenEnSections } from "@/data/stations-deen-en";
 import { loadConditionsReglesSections, type ConditionsSection } from "@/data/conditions-regles";
 import { loadIfadatouSections, type IfadatouSection } from "@/data/ifadatou-ahmediyya";
+import { loadJawahirRasailSections, type JawahirRasailSection } from "@/data/jawahir-rasail-en";
 import { loadVolumeSections, type VolumeSection } from "@/data/volume-loader";
 
 export interface BookSection {
@@ -50,6 +51,7 @@ export function useBookContent(contentModule?: string) {
   const [kachiful, setKachiful] = useState<KachifulSection[]>([]);
   const [conditions, setConditions] = useState<ConditionsSection[]>([]);
   const [ifadatou, setIfadatou] = useState<IfadatouSection[]>([]);
+  const [jawahirRasail, setJawahirRasail] = useState<JawahirRasailSection[]>([]);
   const [volume, setVolume] = useState<VolumeSection[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -76,6 +78,11 @@ export function useBookContent(contentModule?: string) {
       setIsLoading(true);
       loadIfadatouSections().then((s) => {
         if (!cancelled) { setIfadatou(s); setIsLoading(false); }
+      });
+    } else if (contentModule === "jawahir-rasail-en") {
+      setIsLoading(true);
+      loadJawahirRasailSections().then((s) => {
+        if (!cancelled) { setJawahirRasail(s); setIsLoading(false); }
       });
     } else if (volumeMap[contentModule]) {
       setIsLoading(true);
@@ -127,13 +134,15 @@ export function useBookContent(contentModule?: string) {
         return conditions.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
       case "ifadatou-ahmediyya":
         return ifadatou.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
+      case "jawahir-rasail-en":
+        return jawahirRasail.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
       default:
         if (volumeMap[contentModule]) {
           return volume.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
         }
         return [];
     }
-  }, [contentModule, kashifEn, kachiful, conditions, ifadatou, volume]);
+  }, [contentModule, kashifEn, kachiful, conditions, ifadatou, jawahirRasail, volume]);
 
   return { sections, isLoading };
 }

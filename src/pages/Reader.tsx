@@ -18,6 +18,7 @@ import { priereShaykhIbrahimSections, priereShaykhIbrahimMeta } from "@/data/pri
 import { stationsDeenEnSections, stationsDeenEnMeta } from "@/data/stations-deen-en";
 import { loadConditionsReglesSections, conditionsReglesMeta, type ConditionsSection } from "@/data/conditions-regles";
 import { loadIfadatouSections, ifadatouAhmediyyaMeta, type IfadatouSection } from "@/data/ifadatou-ahmediyya";
+import { loadJawahirRasailSections, jawahirRasailEnMeta, type JawahirRasailSection } from "@/data/jawahir-rasail-en";
 import { loadVolumeSections, type VolumeSection } from "@/data/volume-loader";
 import { ArrowLeft, Loader2, Search, Maximize, Minimize, Bookmark, BookmarkCheck, Menu, BookOpen, ScrollText, Home, Headphones, Settings, Volume2, NotebookText } from "lucide-react";
 import { extractFootnotes } from "@/lib/extractFootnotes";
@@ -104,6 +105,7 @@ const Reader = () => {
   const [kachifulAlbasData, setKachifulAlbasData] = useState<KachifulSection[]>([]);
   const [conditionsReglesData, setConditionsReglesData] = useState<ConditionsSection[]>([]);
   const [ifadatouData, setIfadatouData] = useState<IfadatouSection[]>([]);
+  const [jawahirRasailData, setJawahirRasailData] = useState<JawahirRasailSection[]>([]);
   const [volumeData, setVolumeData] = useState<VolumeSection[]>([]);
   const [loading, setLoading] = useState(false);
   const touchStartX = useRef<number | null>(null);
@@ -189,6 +191,15 @@ const Reader = () => {
         if (saved > 0) setCurrentSectionIdx(Math.min(saved, sections.length - 1));
       });
     }
+    if (book?.contentModule === "jawahir-rasail-en") {
+      setLoading(true);
+      loadJawahirRasailSections().then((sections) => {
+        setJawahirRasailData(sections);
+        setLoading(false);
+        const saved = getSavedProgress(id);
+        if (saved > 0) setCurrentSectionIdx(Math.min(saved, sections.length - 1));
+      });
+    }
     // Generic volume loader for volumes 1-5, 7-8
     const volumeMap: Record<string, string> = {
       "volume-1-conditions": "/books/volume-1-conditions-rules.txt",
@@ -198,7 +209,6 @@ const Reader = () => {
       "volume-5-commentaries": "/books/volume-5-commentaries.txt",
       "volume-7-biography": "/books/volume-7-biography.txt",
       "volume-8-teachings": "/books/volume-8-other-teachings.txt",
-      "jawahir-rasail-en": "/books/jawahir-rasail-en.txt",
     };
     const volumePath = book?.contentModule ? volumeMap[book.contentModule] : undefined;
     if (volumePath && book?.contentModule) {
@@ -281,13 +291,16 @@ const Reader = () => {
     if (book?.contentModule === "ifadatou-ahmediyya") {
       return ifadatouData.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
     }
+    if (book?.contentModule === "jawahir-rasail-en") {
+      return jawahirRasailData.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
+    }
     // Generic volume modules
-    const volumeModules = ["volume-1-conditions", "volume-2-liturgies", "volume-3-ethics", "volume-4-letters", "volume-5-commentaries", "volume-7-biography", "volume-8-teachings", "jawahir-rasail-en"];
+    const volumeModules = ["volume-1-conditions", "volume-2-liturgies", "volume-3-ethics", "volume-4-letters", "volume-5-commentaries", "volume-7-biography", "volume-8-teachings"];
     if (book?.contentModule && volumeModules.includes(book.contentModule)) {
       return volumeData.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
     }
     // Async-loaded module hasn't populated yet — show nothing instead of the sample placeholder
-    const asyncModules = ["kashif-en", "kachiful-albas", "conditions-regles", "ifadatou-ahmediyya", ...volumeModules];
+    const asyncModules = ["kashif-en", "kachiful-albas", "conditions-regles", "ifadatou-ahmediyya", "jawahir-rasail-en", ...volumeModules];
     if (book?.contentModule && asyncModules.includes(book.contentModule)) {
       return [];
     }
@@ -584,6 +597,15 @@ const Reader = () => {
         <>
           <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{conditionsReglesMeta.title}</h2>
           <p className="text-center text-xs text-muted-foreground mb-6">Source : {conditionsReglesMeta.source}</p>
+        </>
+      );
+    }
+    if (book.contentModule === "jawahir-rasail-en") {
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{jawahirRasailEnMeta.title}</h2>
+          <p className="text-center text-sm text-muted-foreground mb-1">{jawahirRasailEnMeta.subtitle}</p>
+          <p className="text-center text-xs text-muted-foreground mb-6">by {jawahirRasailEnMeta.author}</p>
         </>
       );
     }
