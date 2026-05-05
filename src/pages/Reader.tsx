@@ -600,6 +600,15 @@ const Reader = () => {
         </>
       );
     }
+    if (book.contentModule === "jawahir-rasail-en") {
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{jawahirRasailEnMeta.title}</h2>
+          <p className="text-center text-sm text-muted-foreground mb-1">{jawahirRasailEnMeta.subtitle}</p>
+          <p className="text-center text-xs text-muted-foreground mb-6">by {jawahirRasailEnMeta.author}</p>
+        </>
+      );
+    }
     return null;
   };
 
