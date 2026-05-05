@@ -108,6 +108,31 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang }: F
           );
         }
 
+        // Italic opener (e.g. "From the city of Kaolack, on the 25th of Rabi' al-Thani 1356, to all the beloveds.")
+        const isOpener = /^From\s+(?:the\s+city\s+of\s+|Kaolack|Kawl|Kawsī|Koussi)/i.test(trimmed) && trimmed.length < 220;
+
+        // Italic signature block: short paragraph(s) with author name, dates, or sender note
+        const isSignature =
+          trimmed.length < 260 &&
+          (
+            /^(?:Ibrahim|Ibrāhīm|Ibrahīm)\b/i.test(trimmed) ||
+            /^(?:Your\s+sympathizing|He\s+sends\s+this|Transcribed\s+by|Dictated\s+by|Written\s+by|This\s+was\s+written\s+by)/i.test(trimmed) ||
+            /^\d{3,4}\s*(?:AH|CE|Hijri)\b/i.test(trimmed) ||
+            /—may\s+Allah\s+be\s+kind\s+to\s+him/i.test(trimmed)
+          );
+
+        if (isOpener || isSignature) {
+          return (
+            <p
+              key={idx}
+              className={`${proseAlign} leading-relaxed italic`}
+              style={{ fontSize, color: textColor || 'inherit' }}
+            >
+              {formatInlineText(trimmed)}
+            </p>
+          );
+        }
+
         // First paragraph gets a drop cap (only if starts with uppercase)
         if (idx === 0 && trimmed.length > 100 && /^[A-Z]/.test(trimmed)) {
           const firstChar = trimmed[0];
