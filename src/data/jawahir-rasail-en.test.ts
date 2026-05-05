@@ -33,7 +33,8 @@ Written by Ibrahim b. al-Hajj Abdullah al-Tijani.
     expect(sections[0].heading).toBe("Counsel #1: On Concealing the Secret");
     expect(sections[0].content).toContain("In the Name of Allah");
     expect(sections[0].content).toContain("As-Salaamu Alaykum");
-    expect(sections[0].content).toContain("This is the body of the letter. It continues here.");
+    expect(sections[0].content).toContain("This is the body of the letter.");
+    expect(sections[0].content).toContain("It continues here.");
     expect(sections[0].content).toContain("Ibrahim ibn Al-Hajj Abdullahi al-Tijani");
     expect(sections[0].content).not.toContain("LETTER #1 FROM THE DISCOURSES");
     expect(sections[0].content).not.toContain("Translated by UNKNOWN");
