@@ -119,7 +119,7 @@ export function parseJawahirRasailSections(text: string): JawahirRasailSection[]
         if (line === arr[index - 1]) return false;
         return true;
       })
-      .join("\n")
+      .join("\n\n")
       .replace(/\n{3,}/g, "\n\n")
       .trim();
 
