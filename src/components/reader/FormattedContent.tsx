@@ -142,8 +142,6 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang }: F
           );
 
         if (isOpener || isDateLine || isSignature) {
-
-        if (isOpener || isSignature) {
           return (
             <p
               key={idx}
