@@ -1,39 +1,30 @@
 ## Problem
 
-On mobile (`/read/:id`), audio is currently inaccessible:
-- The `Volume2` (Read aloud) button only exists in the top bar, which is hidden in the default distraction-free reader state.
-- The global `MiniPlayer` is rendered outside the Reader route in `App.tsx`, so it never appears while reading.
+In the reader's chapter dropdown for *Jawāhir al-Rasāʾil*, every entry appears twice — once as a bold uppercase chapter header and again as a clickable section row directly below it.
+
+## Cause
+
+`parseJawahirRasailSections` sets both `chapter` and `heading` to the same `currentTitle` for every section (each Counsel is its own one-section "chapter"). The TOC builder in `Reader.tsx` (lines 310–337) then groups sections by `chapter`, so every Counsel becomes a 1-section chapter where the chapter header label and the only section's heading are identical. `ChapterDropdown` faithfully renders both — chapter as the uppercase title, then the section button — producing the duplication.
+
+Other books (kashif-en, volumes) don't show this because their sections have distinct `chapter` vs `heading` (e.g. chapter = "Part I — Foundations", heading = "Section 1: ...").
 
 ## Fix
 
-### 1. Floating speaker button in the reader (mobile)
-In `src/pages/Reader.tsx`, add a small floating button anchored bottom-left (mirroring the existing bottom-right floating menu trigger), visible even when chrome is hidden, on mobile only (`md:hidden`).
+In `src/components/reader/ChapterDropdown.tsx`, when a chapter contains exactly one section AND that section's heading equals the chapter label, render only the clickable button (skip the duplicate uppercase header). The button should adopt the highlighted/primary styling so it still reads as a chapter entry.
 
-- Icon: `Volume2` (matches top-bar icon for consistency)
-- Action: reuses the existing `handleReadAloud` handler — starts/toggles Read Aloud for the current book
-- Active state: when `activeAudioBook?.id === book?.id`, tint the icon `text-primary` (same convention already used in the top bar)
-- Style: same glass treatment as the bottom-right menu trigger (`bg-background/90 border border-border/60 backdrop-blur-sm shadow-sm`, ~h-10 w-10 rounded-full)
-- Hidden when `isFullscreen` is true if the existing menu trigger is also hidden in fullscreen (match its visibility rules)
+This is a pure presentation fix — no parser changes, no impact on other books (which have multi-section chapters or distinct headings).
 
-### 2. MiniPlayer visible inside the reader (mobile)
-In `src/App.tsx`, allow `MiniPlayer` to render on the `/read/:id` route on mobile. Currently it's gated by route; relax that gate so when audio is active and the user is on the reader, the mini player appears.
+### Pseudocode
 
-In `src/components/MiniPlayer.tsx`:
-- On the reader route on mobile, position it above the `ReaderBottomBar` so it doesn't overlap the page-number pill. Use `bottom-[64px]` on `/read/*` mobile, falling back to existing `bottom-[60px]` elsewhere and `lg:bottom-4` on desktop (already in place).
-- Keep it auto-hiding when no audio session is active (existing behavior).
-- Keep the keyboard shortcuts gated as today (disabled on `/listen/:id`); they remain active on `/read/:id` which is desired.
+```text
+for each chapter ch:
+  isSingletonSameTitle = ch.sections.length === 1 && ch.sections[0].heading === ch.chapter
+  if isSingletonSameTitle:
+    render one button with the chapter label, styled like a chapter entry
+  else:
+    render uppercase chapter header + section buttons (current behavior)
+```
 
-### 3. No changes to behavior when audio is inactive
-The floating speaker is always tappable to start Read Aloud. The MiniPlayer only appears once a session is active, so the reader stays distraction-free until the user opts in.
+## Files
 
-## Files to edit
-
-- `src/pages/Reader.tsx` — add floating `Volume2` button (mobile, persistent)
-- `src/App.tsx` — let `MiniPlayer` render on `/read/:id`
-- `src/components/MiniPlayer.tsx` — adjust bottom offset on `/read/:id` to clear the bottom bar
-
-## Out of scope
-
-- No changes to the top-bar audio button (kept as-is for when chrome is expanded).
-- No changes to desktop layout (already working per previous round).
-- No changes to TTS engine, voices, or Edge Function.
+- `src/components/reader/ChapterDropdown.tsx` — conditional render inside the `tocItems.map`.

@@ -44,27 +44,50 @@ const ChapterDropdown = ({ tocItems, currentSectionId, onSelectSection, themeCla
         <div
           className={`absolute top-full left-0 mt-1 w-72 max-h-80 overflow-y-auto rounded-lg border border-border/30 shadow-lg z-50 ${themeClasses.bg} ${themeClasses.text}`}
         >
-          {tocItems.map((ch) => (
-            <div key={ch.chapter}>
-              <p className="text-xs font-bold text-primary uppercase tracking-wider px-3 pt-3 pb-1">
-                {ch.chapter}
-              </p>
-              {ch.sections.map((s) => (
+          {tocItems.map((ch) => {
+            const isSingletonSameTitle =
+              ch.sections.length === 1 && ch.sections[0].heading === ch.chapter;
+
+            if (isSingletonSameTitle) {
+              const s = ch.sections[0];
+              return (
                 <button
-                  key={s.id}
+                  key={ch.chapter}
                   onClick={() => {
                     onSelectSection(s.id);
                     setOpen(false);
                   }}
-                  className={`block w-full text-left text-sm py-1.5 px-4 hover:bg-primary/10 transition-colors ${
-                    s.id === currentSectionId ? "bg-primary/15 font-semibold" : ""
+                  className={`block w-full text-left text-xs font-bold uppercase tracking-wider px-3 py-2 hover:bg-primary/10 transition-colors ${
+                    s.id === currentSectionId ? "bg-primary/15 text-primary" : "text-primary"
                   }`}
                 >
-                  {s.heading}
+                  {ch.chapter}
                 </button>
-              ))}
-            </div>
-          ))}
+              );
+            }
+
+            return (
+              <div key={ch.chapter}>
+                <p className="text-xs font-bold text-primary uppercase tracking-wider px-3 pt-3 pb-1">
+                  {ch.chapter}
+                </p>
+                {ch.sections.map((s) => (
+                  <button
+                    key={s.id}
+                    onClick={() => {
+                      onSelectSection(s.id);
+                      setOpen(false);
+                    }}
+                    className={`block w-full text-left text-sm py-1.5 px-4 hover:bg-primary/10 transition-colors ${
+                      s.id === currentSectionId ? "bg-primary/15 font-semibold" : ""
+                    }`}
+                  >
+                    {s.heading}
+                  </button>
+                ))}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
