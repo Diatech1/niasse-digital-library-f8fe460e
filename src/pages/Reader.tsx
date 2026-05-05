@@ -305,7 +305,7 @@ const Reader = () => {
       return [];
     }
     return [];
-  }, [book?.contentModule, kashifEnData, kachifulAlbasData, conditionsReglesData, ifadatouData, volumeData]);
+  }, [book?.contentModule, kashifEnData, kachifulAlbasData, conditionsReglesData, ifadatouData, jawahirRasailData, volumeData]);
 
   const tocItems = useMemo(() => {
     // For page-by-page books (kashif-en, kachiful-albas), build a deduplicated TOC:
