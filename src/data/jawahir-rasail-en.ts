@@ -80,12 +80,13 @@ function compactWrappedLines(lines: string[]): string[] {
     }
 
     const prev = out[out.length - 1];
-    const canMerge =
-      typeof prev === "string" &&
-      prev !== "" &&
-      !/[.!?…:;”"')\]]$/.test(prev) &&
-      !/^(?:[A-Z][a-z]+:|\{|\(|\[|\d+\.|[“"'])/.test(line) &&
-      !/^(?:Salaam\.?|Salam\.?|Salām\.?|Peace\.?|As-Sal[aā]mu|Asʾsalāmu|May Allah|In the Name of|All praise|After this|As for what follows|To all|To Umar|To our|From the city|Written by|This was written by|Ibrahim ibn|Ibrāhīm ibn|Koussi|Kaolack|Kawsī|\d{4}\s*(?:AH|CE)|\d{4}\s*AH\s*\/)/i.test(line);
+
+    // Lines that should always start their own block (headings, list items, signatures, openers).
+    const forceBreak =
+      /^(?:Chapter:|Section:|\{\{PAGE:|\[|\{|\(|\d+\.\s|\d+\s*[&]\s*\d+\.\s|[“"'])/.test(line) ||
+      /^(?:Salaam\.?|Salam\.?|Salām\.?|Peace\b|As-Sal[aā]mu|Asʾsalāmu|Wa[s\-\s]?sal[aā]m|May\s+Allah[\u2019']?s|May\s+Allah\b|In\s+the\s+Name\s+of|All\s+praise\b|After\s+this\b|As\s+for\s+what\s+follows\b|To\s+all\b|To\s+Umar\b|To\s+our\b|From\s+the\s+city\b|From\s+Kaolack\b|Written\s+by\b|Dictated\s+by\b|Transcribed\s+by\b|This\s+was\s+(?:written|dictated)\s+by\b|Ibrahim\s+ibn\b|Ibrāhīm\s+ibn\b|Koussi\b|Kaolack\b|Kawsī\b|\d{3,4}\s*(?:AH|CE|Hijri)\b)/i.test(line);
+
+    const canMerge = typeof prev === "string" && prev !== "" && !forceBreak;
 
     if (canMerge) {
       out[out.length - 1] = `${prev} ${line}`.replace(/\s+/g, " ").trim();
