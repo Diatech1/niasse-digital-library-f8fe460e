@@ -292,7 +292,7 @@ const Reader = () => {
       return ifadatouData.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
     }
     if (book?.contentModule === "jawahir-rasail-en") {
-      return jawahirRasailData.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
+      return jawahirRasailData.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content, footnotes: s.footnotes }));
     }
     // Generic volume modules
     const volumeModules = ["volume-1-conditions", "volume-2-liturgies", "volume-3-ethics", "volume-4-letters", "volume-5-commentaries", "volume-7-biography", "volume-8-teachings"];
