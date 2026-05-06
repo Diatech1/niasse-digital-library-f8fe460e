@@ -4,11 +4,17 @@ export const jawahirRasailEnMeta = {
   author: "Shaykh al-Islam Al-Ḥājj Ibrāhīm b. 'Abd-Allah Niasse",
 };
 
+export interface JawahirRasailFootnote {
+  number: string;
+  text: string;
+}
+
 export interface JawahirRasailSection {
   id: string;
   chapter: string;
   heading: string;
   content: string;
+  footnotes?: JawahirRasailFootnote[];
 }
 
 const TITLE_RE = /^TITRE:\s*(.+)$/;
