@@ -131,7 +131,29 @@ export function parseJawahirRasailSections(text: string): JawahirRasailSection[]
   const flush = () => {
     if (!currentTitle) return;
 
-    const cleaned = compactWrappedLines(buffer)
+    // Split off footnote block delimited by `[FOOTNOTES]` line
+    let bodyLines = buffer;
+    const footnotes: JawahirRasailFootnote[] = [];
+    const footIdx = buffer.findIndex((l) => l.trim() === "[FOOTNOTES]");
+    if (footIdx >= 0) {
+      bodyLines = buffer.slice(0, footIdx);
+      const footLines = buffer.slice(footIdx + 1);
+      let current: JawahirRasailFootnote | null = null;
+      for (const raw of footLines) {
+        const t = raw.trim();
+        if (!t) continue;
+        const m = t.match(/^(\d{1,3})\.\s+(.*)$/);
+        if (m) {
+          if (current) footnotes.push(current);
+          current = { number: m[1], text: m[2] };
+        } else if (current) {
+          current.text = `${current.text} ${t}`.trim();
+        }
+      }
+      if (current) footnotes.push(current);
+    }
+
+    const cleaned = compactWrappedLines(bodyLines)
       .filter((line, index, arr) => {
         if (!line) return true;
         if (NOISE_LINE_RE.test(line)) return false;
@@ -152,6 +174,7 @@ export function parseJawahirRasailSections(text: string): JawahirRasailSection[]
         chapter: currentTitle,
         heading: currentTitle,
         content: cleaned,
+        footnotes: footnotes.length ? footnotes : undefined,
       });
     }
   };
