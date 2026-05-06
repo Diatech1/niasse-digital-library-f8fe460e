@@ -79,8 +79,11 @@ function compactWrappedLines(lines: string[]): string[] {
     let lastNonEmptyIdx = out.length - 1;
     while (lastNonEmptyIdx >= 0 && out[lastNonEmptyIdx] === "") lastNonEmptyIdx--;
     const prevNonEmpty = lastNonEmptyIdx >= 0 ? out[lastNonEmptyIdx] : undefined;
+    // Terminal punctuation must be sentence-ending (.!?:…); closing brackets/quotes
+    // alone don't count, otherwise lines ending in "(save his)" would not merge with
+    // their continuation on the next line.
     const prevEndsParagraph =
-      typeof prevNonEmpty === "string" && /[.!?:”"’')\]]\s*$/.test(prevNonEmpty);
+      typeof prevNonEmpty === "string" && /[.!?:…][”"’'’)\]]*\s*$/.test(prevNonEmpty);
 
     if (!line) {
       // Only honor blank lines as paragraph breaks if the previous line actually finished a sentence.

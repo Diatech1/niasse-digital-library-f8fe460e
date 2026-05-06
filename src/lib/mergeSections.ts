@@ -23,7 +23,9 @@ function shouldJoinInline(previousContent: string, nextContent: string): boolean
 
   // If the source page ends without terminal punctuation, it is almost always
   // a PDF page-wrap inside the same paragraph, so continue inline.
-  return !/[.!?…:;”"')\]]$/.test(prev);
+  // Only treat sentence-ending punctuation as a real paragraph terminator. Closing
+  // brackets/quotes alone (e.g. "(save his)") indicate a mid-sentence wrap.
+  return !/[.!?…:][”"’')\]]*$/.test(prev);
 }
 
 export function mergeAdjacentSections<T extends MergeableSection>(sections: T[]): MergeableSection[] {
