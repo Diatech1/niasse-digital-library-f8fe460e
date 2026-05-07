@@ -190,10 +190,9 @@ const AudioPlayer = () => {
             <SleepTimerButton sleepMinutes={sleepMinutes} setSleepMinutes={setSleepMinutes} countdown={sleepCountdown} label={t("audioPlayer.sleepTimer")} offLabel={t("audioPlayer.sleepOff")} minLabel={t("audioPlayer.minutes")} />
             <ChapterQueueButton sections={sections} current={chapterIdx} onSelect={(i) => goToChapter(i)} label={t("audioPlayer.queue")} />
             <SpeedButton rate={tts.rate} setRate={tts.setRate} label={t("audioPlayer.speed")} note={t("audioPlayer.speedNote")} />
-          </div>
-        </div>
-
-        {/* Desktop two-column layout */}
+            <button onClick={handleClearBookCache} className="p-2 transition-colors hover:text-destructive" aria-label={t("audioPlayer.clearCache")} title={t("audioPlayer.clearCache")}>
+              <Trash2 className="w-5 h-5" />
+            </button>
         <div className="hidden lg:grid lg:grid-cols-[minmax(0,360px)_minmax(0,1fr)] gap-12 container mx-auto max-w-5xl px-8 pt-8 flex-1 items-start">
           {/* Left: cover */}
           <motion.div
