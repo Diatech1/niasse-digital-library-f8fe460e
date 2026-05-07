@@ -189,9 +189,6 @@ const AudioPlayer = () => {
             <SleepTimerButton sleepMinutes={sleepMinutes} setSleepMinutes={setSleepMinutes} countdown={sleepCountdown} label={t("audioPlayer.sleepTimer")} offLabel={t("audioPlayer.sleepOff")} minLabel={t("audioPlayer.minutes")} />
             <ChapterQueueButton sections={sections} current={chapterIdx} onSelect={(i) => goToChapter(i)} label={t("audioPlayer.queue")} />
             <SpeedButton rate={tts.rate} setRate={tts.setRate} label={t("audioPlayer.speed")} note={t("audioPlayer.speedNote")} />
-            <button onClick={handleClearBookCache} className="p-2 transition-colors hover:text-destructive" aria-label={t("audioPlayer.clearCache")} title={t("audioPlayer.clearCache")}>
-              <Trash2 className="w-5 h-5" />
-            </button>
           </div>
         </div>
 
@@ -274,10 +271,7 @@ const AudioPlayer = () => {
               </button>
               <SleepTimerButton sleepMinutes={sleepMinutes} setSleepMinutes={setSleepMinutes} countdown={sleepCountdown} label={t("audioPlayer.sleepTimer")} offLabel={t("audioPlayer.sleepOff")} minLabel={t("audioPlayer.minutes")} />
               <ChapterQueueButton sections={sections} current={chapterIdx} onSelect={(i) => goToChapter(i)} label={t("audioPlayer.queue")} />
-              <SpeedButton rate={tts.rate} setRate={tts.setRate} label={t("audioPlayer.speed")} note={t("audioPlayer.speedNote")} />
-              <button onClick={handleClearBookCache} className="p-2 transition-colors hover:text-destructive" aria-label={t("audioPlayer.clearCache")} title={t("audioPlayer.clearCache")}>
-                <Trash2 className="w-5 h-5" />
-              </button>
+            <SpeedButton rate={tts.rate} setRate={tts.setRate} label={t("audioPlayer.speed")} note={t("audioPlayer.speedNote")} />
             </div>
           </div>
         </div>
