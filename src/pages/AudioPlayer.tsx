@@ -27,13 +27,7 @@ const formatTime = (totalSeconds: number) => {
   const s = Math.floor(totalSeconds % 60);
   if (h > 0) return `${h}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   return `${m}:${s.toString().padStart(2, "0")}`;
-  };
-
-  const handleClearBookCache = async () => {
-    if (!book) return;
-    await clearAudioCacheForBook(book.id);
-    toast({ title: t("audioPlayer.clearCache.toast") });
-  };
+};
 
 
 const AudioPlayer = () => {
