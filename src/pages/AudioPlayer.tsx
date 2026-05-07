@@ -7,7 +7,7 @@ import { useAudioPlayer } from "@/hooks/use-audio-player";
 import { useLanguage } from "@/hooks/use-language";
 import {
   ChevronDown, Share2, SkipBack, Play, Pause, SkipForward,
-  Repeat, Moon, ListMusic, Gauge, Loader2, Trash2,
+  Repeat, Moon, ListMusic, Gauge, Loader2,
 } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -15,7 +15,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
-import { clearAudioCacheForBook } from "@/lib/audio-cache";
 
 const SPEEDS = [0.75, 1, 1.25, 1.5, 2];
 const SLEEP_OPTIONS = [0, 5, 10, 15, 30];
