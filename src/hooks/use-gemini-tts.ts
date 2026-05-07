@@ -62,7 +62,7 @@ interface UseGeminiTtsOptions {
   onEnd?: () => void;
 }
 
-const DEFAULT_VOICE = "Kore";
+const DEFAULT_VOICE = "Zephyr";
 
 export function useGeminiTts(options?: UseGeminiTtsOptions): GeminiTtsControls {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -265,8 +265,8 @@ export function useGeminiTts(options?: UseGeminiTtsOptions): GeminiTtsControls {
       return;
     }
 
-    // Persistent cache key for pre-generated chapter audio (voice-independent).
-    const storedKey = cacheKey ? `stored:${cacheKey}` : null;
+    // Persistent cache key for pre-generated chapter audio (per-voice).
+    const storedKey = cacheKey ? `stored:${cacheKey}:${voice}` : null;
 
     // 1. Try IndexedDB cache for pre-generated chapter (instant, offline-safe).
     if (storedKey) {
@@ -277,12 +277,12 @@ export function useGeminiTts(options?: UseGeminiTtsOptions): GeminiTtsControls {
       }
     }
 
-    // 2. Fetch pre-generated audio from storage, cache it, then play.
+    // 2. Fetch pre-generated audio from storage (per-voice path), cache, play.
     if (cacheKey) {
       const [bookId, sectionIdx] = cacheKey.split(":");
       if (bookId && sectionIdx != null) {
         const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-        const storedUrl = `${supabaseUrl}/storage/v1/object/public/book-audio/${bookId}/chapter-${sectionIdx}.wav`;
+        const storedUrl = `${supabaseUrl}/storage/v1/object/public/book-audio/${bookId}/${voice}/chapter-${sectionIdx}.wav`;
         const blob = await fetchAndCacheStoredBlob(storedUrl, storedKey!);
         if (blob && reqId === requestIdRef.current) {
           await playBlob(blob);

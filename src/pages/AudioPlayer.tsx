@@ -7,7 +7,7 @@ import { useAudioPlayer } from "@/hooks/use-audio-player";
 import { useLanguage } from "@/hooks/use-language";
 import {
   ChevronDown, Share2, SkipBack, Play, Pause, SkipForward,
-  Repeat, Moon, ListMusic, Gauge, Loader2,
+  Repeat, Moon, ListMusic, Gauge, Loader2, Mic2,
 } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -183,6 +183,7 @@ const AudioPlayer = () => {
             </button>
             <SleepTimerButton sleepMinutes={sleepMinutes} setSleepMinutes={setSleepMinutes} countdown={sleepCountdown} label={t("audioPlayer.sleepTimer")} offLabel={t("audioPlayer.sleepOff")} minLabel={t("audioPlayer.minutes")} />
             <ChapterQueueButton sections={sections} current={chapterIdx} onSelect={(i) => goToChapter(i)} label={t("audioPlayer.queue")} />
+            <VoiceButton selected={tts.selectedVoiceURI} setSelected={tts.setSelectedVoiceURI} />
             <SpeedButton rate={tts.rate} setRate={tts.setRate} label={t("audioPlayer.speed")} note={t("audioPlayer.speedNote")} />
           </div>
         </div>
@@ -266,7 +267,8 @@ const AudioPlayer = () => {
               </button>
               <SleepTimerButton sleepMinutes={sleepMinutes} setSleepMinutes={setSleepMinutes} countdown={sleepCountdown} label={t("audioPlayer.sleepTimer")} offLabel={t("audioPlayer.sleepOff")} minLabel={t("audioPlayer.minutes")} />
               <ChapterQueueButton sections={sections} current={chapterIdx} onSelect={(i) => goToChapter(i)} label={t("audioPlayer.queue")} />
-            <SpeedButton rate={tts.rate} setRate={tts.setRate} label={t("audioPlayer.speed")} note={t("audioPlayer.speedNote")} />
+              <VoiceButton selected={tts.selectedVoiceURI} setSelected={tts.setSelectedVoiceURI} />
+              <SpeedButton rate={tts.rate} setRate={tts.setRate} label={t("audioPlayer.speed")} note={t("audioPlayer.speedNote")} />
             </div>
           </div>
         </div>
@@ -399,5 +401,43 @@ const SpeedButton = ({ rate, setRate, label, note }: SpeedProps) => (
   </Popover>
 );
 
+
+interface VoiceProps {
+  selected: string | null;
+  setSelected: (v: string | null) => void;
+}
+const VOICE_OPTIONS: { value: string; label: string }[] = [
+  { value: "Zephyr", label: "Female" },
+  { value: "Orus", label: "Male" },
+];
+const VoiceButton = ({ selected, setSelected }: VoiceProps) => {
+  const current = selected ?? "Zephyr";
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button className="p-2 relative" aria-label="Voice">
+          <Mic2 className="w-5 h-5" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-40 p-2" align="center" side="top" sideOffset={8}>
+        <p className="text-sm font-medium px-2 py-1.5 text-foreground">Voice</p>
+        <div className="flex flex-col">
+          {VOICE_OPTIONS.map((v) => (
+            <button
+              key={v.value}
+              onClick={() => setSelected(v.value)}
+              className={cn(
+                "text-left text-sm px-2 py-1.5 rounded-md hover:bg-accent",
+                current === v.value && "bg-accent text-accent-foreground"
+              )}
+            >
+              {v.label}
+            </button>
+          ))}
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+};
 
 export default AudioPlayer;
