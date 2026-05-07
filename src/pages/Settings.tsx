@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Globe, BookOpen, Info, Moon, Sun, Monitor, Type, Maximize2, Trash2, Mail, Heart, AlertTriangle } from "lucide-react";
+import { Globe, BookOpen, Info, Moon, Sun, Monitor, Type, Maximize2, Trash2, Mail, Heart, AlertTriangle, Volume2 } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { useLanguage, type Language } from "@/hooks/use-language";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
+import { clearAudioCache } from "@/lib/audio-cache";
 
 const fonts = ["Sans", "Crimson Pro", "Amiri"] as const;
 const languages: { value: Language; label: string }[] = [
@@ -193,7 +194,7 @@ const Settings = () => {
 
         {/* Data */}
         <Section title={t("settings.data")}>
-          <div className="glass rounded-2xl overflow-hidden mx-5">
+          <div className="glass rounded-2xl overflow-hidden mx-5 divide-y divide-border/30">
             <button
               onClick={handleClearReadingData}
               className="flex items-center gap-3 px-4 py-3.5 w-full text-left text-destructive hover:bg-destructive/5 transition-colors"
@@ -202,6 +203,19 @@ const Settings = () => {
               <div className="flex-1">
                 <p className="text-sm font-medium">{t("settings.clearReading")}</p>
                 <p className="text-xs text-destructive/70">{t("settings.clearReading.desc")}</p>
+              </div>
+            </button>
+            <button
+              onClick={async () => {
+                await clearAudioCache();
+                toast.success(t("settings.clearAudio.toast"));
+              }}
+              className="flex items-center gap-3 px-4 py-3.5 w-full text-left text-destructive hover:bg-destructive/5 transition-colors"
+            >
+              <Volume2 className="w-4 h-4 shrink-0" />
+              <div className="flex-1">
+                <p className="text-sm font-medium">{t("settings.clearAudio")}</p>
+                <p className="text-xs text-destructive/70">{t("settings.clearAudio.desc")}</p>
               </div>
             </button>
           </div>
