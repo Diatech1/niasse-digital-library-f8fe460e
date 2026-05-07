@@ -7,7 +7,7 @@ import { useAudioPlayer } from "@/hooks/use-audio-player";
 import { useLanguage } from "@/hooks/use-language";
 import {
   ChevronDown, Share2, SkipBack, Play, Pause, SkipForward,
-  Repeat, Moon, ListMusic, Gauge, Loader2, Trash2,
+  Repeat, Moon, ListMusic, Gauge, Loader2,
 } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -15,7 +15,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
-import { clearAudioCacheForBook } from "@/lib/audio-cache";
 
 const SPEEDS = [0.75, 1, 1.25, 1.5, 2];
 const SLEEP_OPTIONS = [0, 5, 10, 15, 30];
@@ -77,11 +76,6 @@ const AudioPlayer = () => {
     }
   };
 
-  const handleClearBookCache = async () => {
-    if (!book) return;
-    await clearAudioCacheForBook(book.id);
-    toast({ title: t("audioPlayer.clearCache.toast") });
-  };
 
   if (!book) return null;
 
@@ -190,9 +184,6 @@ const AudioPlayer = () => {
             <SleepTimerButton sleepMinutes={sleepMinutes} setSleepMinutes={setSleepMinutes} countdown={sleepCountdown} label={t("audioPlayer.sleepTimer")} offLabel={t("audioPlayer.sleepOff")} minLabel={t("audioPlayer.minutes")} />
             <ChapterQueueButton sections={sections} current={chapterIdx} onSelect={(i) => goToChapter(i)} label={t("audioPlayer.queue")} />
             <SpeedButton rate={tts.rate} setRate={tts.setRate} label={t("audioPlayer.speed")} note={t("audioPlayer.speedNote")} />
-            <button onClick={handleClearBookCache} className="p-2 transition-colors hover:text-destructive" aria-label={t("audioPlayer.clearCache")} title={t("audioPlayer.clearCache")}>
-              <Trash2 className="w-5 h-5" />
-            </button>
           </div>
         </div>
 
@@ -275,10 +266,7 @@ const AudioPlayer = () => {
               </button>
               <SleepTimerButton sleepMinutes={sleepMinutes} setSleepMinutes={setSleepMinutes} countdown={sleepCountdown} label={t("audioPlayer.sleepTimer")} offLabel={t("audioPlayer.sleepOff")} minLabel={t("audioPlayer.minutes")} />
               <ChapterQueueButton sections={sections} current={chapterIdx} onSelect={(i) => goToChapter(i)} label={t("audioPlayer.queue")} />
-              <SpeedButton rate={tts.rate} setRate={tts.setRate} label={t("audioPlayer.speed")} note={t("audioPlayer.speedNote")} />
-              <button onClick={handleClearBookCache} className="p-2 transition-colors hover:text-destructive" aria-label={t("audioPlayer.clearCache")} title={t("audioPlayer.clearCache")}>
-                <Trash2 className="w-5 h-5" />
-              </button>
+            <SpeedButton rate={tts.rate} setRate={tts.setRate} label={t("audioPlayer.speed")} note={t("audioPlayer.speedNote")} />
             </div>
           </div>
         </div>
