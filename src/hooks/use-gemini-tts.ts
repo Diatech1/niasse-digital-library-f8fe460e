@@ -231,26 +231,22 @@ export function useGeminiTts(options?: UseGeminiTtsOptions): GeminiTtsControls {
     }
   }, [ensureAudio, rate, releaseObjectUrl]);
 
-  const tryStreamUrl = useCallback(async (url: string): Promise<boolean> => {
-    // HEAD-check first; if missing, return false so caller falls back.
+  // Fetch the stored audio file as a blob so we can cache it persistently
+  // (IndexedDB) — guarantees instant playback after refresh and offline.
+  const fetchAndCacheStoredBlob = useCallback(async (
+    url: string,
+    cacheKey: string,
+  ): Promise<Blob | null> => {
     try {
-      const head = await fetch(url, { method: "HEAD" });
-      if (!head.ok) return false;
+      const resp = await fetch(url);
+      if (!resp.ok) return null;
+      const blob = await resp.blob();
+      void setCachedAudio(cacheKey, blob);
+      return blob;
     } catch {
-      return false;
+      return null;
     }
-    const el = ensureAudio();
-    releaseObjectUrl();
-    el.src = url;
-    el.playbackRate = rate;
-    try {
-      await el.play();
-      return true;
-    } catch (e) {
-      console.error("stream play failed:", e);
-      return false;
-    }
-  }, [ensureAudio, rate, releaseObjectUrl]);
+  }, []);
 
   const start = useCallback(async (
     text: string,
