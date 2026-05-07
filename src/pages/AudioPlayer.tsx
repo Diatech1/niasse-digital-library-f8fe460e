@@ -77,6 +77,12 @@ const AudioPlayer = () => {
     }
   };
 
+  const handleClearBookCache = async () => {
+    if (!book) return;
+    await clearAudioCacheForBook(book.id);
+    toast({ title: t("audioPlayer.clearCache.toast") });
+  };
+
   if (!book) return null;
 
   const totalChapters = sections.length;
