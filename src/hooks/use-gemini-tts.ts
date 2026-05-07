@@ -62,7 +62,7 @@ interface UseGeminiTtsOptions {
   onEnd?: () => void;
 }
 
-const DEFAULT_VOICE = "Kore";
+const DEFAULT_VOICE = "Zephyr";
 
 export function useGeminiTts(options?: UseGeminiTtsOptions): GeminiTtsControls {
   const [isPlaying, setIsPlaying] = useState(false);
