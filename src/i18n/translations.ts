@@ -68,8 +68,6 @@ export type TranslationKey =
   | "settings.clearAudio"
   | "settings.clearAudio.desc"
   | "settings.clearAudio.toast"
-  | "audioPlayer.clearCache"
-  | "audioPlayer.clearCache.toast"
   | "settings.about"
   | "settings.contact"
   | "settings.disclaimer.title"
@@ -146,8 +144,6 @@ const en: Dict = {
   "settings.clearAudio": "Clear cached audio",
   "settings.clearAudio.desc": "Free space used by all downloaded audio",
   "settings.clearAudio.toast": "Audio cache cleared",
-  "audioPlayer.clearCache": "Clear cached audio for this book",
-  "audioPlayer.clearCache.toast": "Cached audio cleared for this book",
   "settings.about": "About",
   "settings.contact": "Contact",
   "settings.disclaimer.title": "Disclaimer",
@@ -223,8 +219,6 @@ const fr: Dict = {
   "settings.clearAudio": "Effacer l'audio en cache",
   "settings.clearAudio.desc": "Libérer l'espace utilisé par tous les audios téléchargés",
   "settings.clearAudio.toast": "Cache audio effacé",
-  "audioPlayer.clearCache": "Effacer l'audio en cache pour ce livre",
-  "audioPlayer.clearCache.toast": "Cache audio effacé pour ce livre",
   "settings.about": "À propos",
   "settings.contact": "Contact",
   "settings.disclaimer.title": "Avertissement",
@@ -300,8 +294,6 @@ const ar: Dict = {
   "settings.clearAudio": "مسح الصوت المخزن مؤقتاً",
   "settings.clearAudio.desc": "تحرير المساحة المستخدمة لجميع الملفات الصوتية",
   "settings.clearAudio.toast": "تم مسح ذاكرة الصوت",
-  "audioPlayer.clearCache": "مسح الصوت المخزن لهذا الكتاب",
-  "audioPlayer.clearCache.toast": "تم مسح الصوت المخزن لهذا الكتاب",
   "settings.about": "حول",
   "settings.contact": "تواصل",
   "settings.disclaimer.title": "تنويه",
