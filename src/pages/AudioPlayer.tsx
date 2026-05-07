@@ -193,6 +193,10 @@ const AudioPlayer = () => {
             <button onClick={handleClearBookCache} className="p-2 transition-colors hover:text-destructive" aria-label={t("audioPlayer.clearCache")} title={t("audioPlayer.clearCache")}>
               <Trash2 className="w-5 h-5" />
             </button>
+          </div>
+        </div>
+
+        {/* Desktop two-column layout */}
         <div className="hidden lg:grid lg:grid-cols-[minmax(0,360px)_minmax(0,1fr)] gap-12 container mx-auto max-w-5xl px-8 pt-8 flex-1 items-start">
           {/* Left: cover */}
           <motion.div
