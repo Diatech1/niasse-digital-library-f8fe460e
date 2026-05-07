@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Globe, BookOpen, Info, Moon, Sun, Monitor, Type, Maximize2, Trash2, Mail, Heart, AlertTriangle } from "lucide-react";
+import { Globe, BookOpen, Info, Moon, Sun, Monitor, Type, Maximize2, Trash2, Mail, Heart, AlertTriangle, Volume2 } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { useLanguage, type Language } from "@/hooks/use-language";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
+import { clearAudioCache } from "@/lib/audio-cache";
 
 const fonts = ["Sans", "Crimson Pro", "Amiri"] as const;
 const languages: { value: Language; label: string }[] = [
