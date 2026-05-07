@@ -402,4 +402,42 @@ const SpeedButton = ({ rate, setRate, label, note }: SpeedProps) => (
 );
 
 
+interface VoiceProps {
+  selected: string | null;
+  setSelected: (v: string | null) => void;
+}
+const VOICE_OPTIONS: { value: string; label: string }[] = [
+  { value: "Zephyr", label: "Female" },
+  { value: "Orus", label: "Male" },
+];
+const VoiceButton = ({ selected, setSelected }: VoiceProps) => {
+  const current = selected ?? "Zephyr";
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button className="p-2 relative" aria-label="Voice">
+          <Mic2 className="w-5 h-5" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-40 p-2" align="center" side="top" sideOffset={8}>
+        <p className="text-sm font-medium px-2 py-1.5 text-foreground">Voice</p>
+        <div className="flex flex-col">
+          {VOICE_OPTIONS.map((v) => (
+            <button
+              key={v.value}
+              onClick={() => setSelected(v.value)}
+              className={cn(
+                "text-left text-sm px-2 py-1.5 rounded-md hover:bg-accent",
+                current === v.value && "bg-accent text-accent-foreground"
+              )}
+            >
+              {v.label}
+            </button>
+          ))}
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+};
+
 export default AudioPlayer;
