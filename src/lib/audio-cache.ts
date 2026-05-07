@@ -68,3 +68,32 @@ export async function clearAudioCache(): Promise<void> {
     // ignore
   }
 }
+
+// Clear all cached audio entries whose key matches the given bookId.
+// Keys used in this app: `stored:{bookId}:{idx}` and `{bookId}:{idx}:{voice}`.
+export async function clearAudioCacheForBook(bookId: string): Promise<number> {
+  try {
+    const db = await openDb();
+    return await new Promise<number>((resolve, reject) => {
+      const tx = db.transaction(STORE, "readwrite");
+      const store = tx.objectStore(STORE);
+      const req = store.openCursor();
+      let count = 0;
+      req.onsuccess = () => {
+        const cursor = req.result;
+        if (cursor) {
+          const key = String(cursor.key);
+          if (key.startsWith(`${bookId}:`) || key.startsWith(`stored:${bookId}:`)) {
+            cursor.delete();
+            count++;
+          }
+          cursor.continue();
+        }
+      };
+      tx.oncomplete = () => resolve(count);
+      tx.onerror = () => reject(tx.error);
+    });
+  } catch {
+    return 0;
+  }
+}
