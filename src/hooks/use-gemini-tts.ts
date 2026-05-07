@@ -231,26 +231,22 @@ export function useGeminiTts(options?: UseGeminiTtsOptions): GeminiTtsControls {
     }
   }, [ensureAudio, rate, releaseObjectUrl]);
 
-  const tryStreamUrl = useCallback(async (url: string): Promise<boolean> => {
-    // HEAD-check first; if missing, return false so caller falls back.
+  // Fetch the stored audio file as a blob so we can cache it persistently
+  // (IndexedDB) — guarantees instant playback after refresh and offline.
+  const fetchAndCacheStoredBlob = useCallback(async (
+    url: string,
+    cacheKey: string,
+  ): Promise<Blob | null> => {
     try {
-      const head = await fetch(url, { method: "HEAD" });
-      if (!head.ok) return false;
+      const resp = await fetch(url);
+      if (!resp.ok) return null;
+      const blob = await resp.blob();
+      void setCachedAudio(cacheKey, blob);
+      return blob;
     } catch {
-      return false;
+      return null;
     }
-    const el = ensureAudio();
-    releaseObjectUrl();
-    el.src = url;
-    el.playbackRate = rate;
-    try {
-      await el.play();
-      return true;
-    } catch (e) {
-      console.error("stream play failed:", e);
-      return false;
-    }
-  }, [ensureAudio, rate, releaseObjectUrl]);
+  }, []);
 
   const start = useCallback(async (
     text: string,
@@ -269,21 +265,35 @@ export function useGeminiTts(options?: UseGeminiTtsOptions): GeminiTtsControls {
       return;
     }
 
-    // 1. Try pre-generated audio in Supabase Storage:
-    //    bookId is the part of cacheKey before the first ":" (format "{bookId}:{idx}")
+    // Persistent cache key for pre-generated chapter audio (voice-independent).
+    const storedKey = cacheKey ? `stored:${cacheKey}` : null;
+
+    // 1. Try IndexedDB cache for pre-generated chapter (instant, offline-safe).
+    if (storedKey) {
+      const cached = await getCachedAudio(storedKey);
+      if (cached && reqId === requestIdRef.current) {
+        await playBlob(cached);
+        return;
+      }
+    }
+
+    // 2. Fetch pre-generated audio from storage, cache it, then play.
     if (cacheKey) {
       const [bookId, sectionIdx] = cacheKey.split(":");
       if (bookId && sectionIdx != null) {
         const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
         const storedUrl = `${supabaseUrl}/storage/v1/object/public/book-audio/${bookId}/chapter-${sectionIdx}.wav`;
-        const ok = await tryStreamUrl(storedUrl);
-        if (ok) return;
+        const blob = await fetchAndCacheStoredBlob(storedUrl, storedKey!);
+        if (blob && reqId === requestIdRef.current) {
+          await playBlob(blob);
+          return;
+        }
       }
     }
 
     const fullKey = cacheKey ? `${cacheKey}:${voice}` : null;
 
-    // 2. Try local IndexedDB cache (legacy live-generated audio)
+    // 3. Try local IndexedDB cache (live-generated audio, voice-specific)
     if (fullKey) {
       const cached = await getCachedAudio(fullKey);
       if (cached && reqId === requestIdRef.current) {
@@ -292,7 +302,7 @@ export function useGeminiTts(options?: UseGeminiTtsOptions): GeminiTtsControls {
       }
     }
 
-    // 3. Fall back to live Gemini generation
+    // 4. Fall back to live Gemini generation
     setIsLoading(true);
     try {
       const blob = await fetchAudioBlob(text, voice, lang ?? "en");
@@ -307,7 +317,7 @@ export function useGeminiTts(options?: UseGeminiTtsOptions): GeminiTtsControls {
     } finally {
       if (reqId === requestIdRef.current) setIsLoading(false);
     }
-  }, [fetchAudioBlob, playBlob, selectedVoiceURI, tryStreamUrl]);
+  }, [fetchAudioBlob, playBlob, selectedVoiceURI, fetchAndCacheStoredBlob]);
 
   const pause = useCallback(() => {
     audioRef.current?.pause();
