@@ -73,6 +73,7 @@ async function loadSections(contentModule: string): Promise<BookSection[]> {
     "salat-fatihi": async () => (await import("../src/data/salat-fatihi")).salatFatihiSections,
     "jawharatul-kamal": async () => (await import("../src/data/jawharatul-kamal")).jawharatulKamalSections,
     "dhikr-groupe": async () => (await import("../src/data/dhikr-groupe")).dhikrGroupeSections,
+    "doua-wazifa": async () => (await import("../src/data/doua-wazifa")).douaWazifaSections,
     "fadail-dhikr": async () => (await import("../src/data/fadail-dhikr")).fadailDhikrSections,
     "priere-shaykh-ibrahim": async () => (await import("../src/data/priere-shaykh-ibrahim")).priereShaykhIbrahimSections,
     "stations-deen-en": async () => (await import("../src/data/stations-deen-en")).stationsDeenEnSections,
