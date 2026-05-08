@@ -10,6 +10,7 @@ import { origineSoubhaSections } from "@/data/origine-soubha";
 import { salatFatihiSections } from "@/data/salat-fatihi";
 import { jawharatulKamalSections } from "@/data/jawharatul-kamal";
 import { dhikrGroupeSections } from "@/data/dhikr-groupe";
+import { douaWazifaSections } from "@/data/doua-wazifa";
 import { fadailDhikrSections } from "@/data/fadail-dhikr";
 import { priereShaykhIbrahimSections } from "@/data/priere-shaykh-ibrahim";
 import { stationsDeenEnSections } from "@/data/stations-deen-en";
@@ -120,6 +121,8 @@ export function useBookContent(contentModule?: string) {
         return jawharatulKamalSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
       case "dhikr-groupe":
         return dhikrGroupeSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
+      case "doua-wazifa":
+        return douaWazifaSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
       case "fadail-dhikr":
         return fadailDhikrSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
       case "priere-shaykh-ibrahim":
