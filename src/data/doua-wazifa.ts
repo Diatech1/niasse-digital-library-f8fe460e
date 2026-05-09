@@ -109,4 +109,102 @@ Sallal laahou haleyhi wahalaa aalihii wassahbihii wasallama tasliimane.
 
 Soub-haana rabbika rabbil izzati hammaa yassifouna. Wasalaamoune halal moursaliina. Walhamdou lil laahi rabbil aalamiina.`,
   },
+  {
+    id: "dw-tr-1",
+    chapter: "Traduction française",
+    heading: "Invocation des Attributs divins — Traduction",
+    content: `Ô Allah, Tu es le Premier : rien n'existait avant Toi.
+
+Tu es le Dernier : rien ne subsistera après Toi.
+
+Tu es l'Apparent : rien n'est au-dessus de Toi.
+
+Tu es le Caché : rien n'est en deçà de Toi.
+
+Sois donc pour nous, ô Premier, ô Dernier, ô Apparent, ô Caché, un Protecteur et un Secoureur.
+
+Tu es notre Protecteur et notre Maître.
+
+Quel excellent Maître et quel excellent Secoureur !
+
+Ô Allah, nous Te demandons, par l'ouverture de Celui qui ouvre, l'ouverture parfaite, et par la clôture de Celui qui clôt, la plus belle des fins.`,
+  },
+  {
+    id: "dw-tr-2",
+    chapter: "Traduction française",
+    heading: "Demande du bien et refuge contre le mal — Traduction",
+    content: `Ô Allah, nous Te demandons tout le bien — proche ou lointain — celui que nous connaissons et celui que nous ignorons.
+
+Et nous cherchons refuge auprès de Toi contre tout mal — proche ou lointain — celui que nous connaissons et celui que nous ignorons.
+
+Ô Allah, nous Te demandons le Paradis et tout ce qui en rapproche, en parole comme en acte.
+
+Et nous cherchons refuge auprès de Toi contre le Feu et tout ce qui en rapproche, en parole comme en acte.
+
+Ô Allah, nous Te demandons le pardon, la bonne santé et la préservation durable, dans la religion, dans ce bas-monde et dans l'au-delà.`,
+  },
+  {
+    id: "dw-tr-3",
+    chapter: "Traduction française",
+    heading: "Demande de l'agrément et de la guidée — Traduction",
+    content: `Ô Allah, nous Te demandons Ton agrément, l'agrément de Ton Prophète, l'agrément des maîtres spirituels et celui de nos parents.
+
+Ô Allah, fais que ce que nous aimons soit conforme à ce que Tu aimes et agrées.
+
+Ô Allah, fais de Ton choix notre choix, et ne nous contrains qu'à recourir à Toi.
+
+Ô notre Seigneur, ô Créateur des mondes, dresse une barrière entre nous et tout oppresseur.
+
+Récompense quiconque nous a fait du bien, et donne-lui la meilleure des récompenses.
+
+Ô Allah, écarte de nous l'effort pénible, la peine et la difficulté, et dissipe pour nous toute épreuve que Tu es seul à pouvoir lever.`,
+  },
+  {
+    id: "dw-tr-4",
+    chapter: "Traduction française",
+    heading: "Faridje pour la Oummah — Traduction",
+    content: `Ô Allah, soulage la communauté de notre maître Muhammad — que la paix et le salut d'Allah soient sur lui.
+
+(à réciter 3 fois)`,
+  },
+  {
+    id: "dw-tr-5",
+    chapter: "Traduction française",
+    heading: "Doua Coranique — Rabbanâ — Traduction",
+    content: `Notre Seigneur, accorde-nous le bien dans ce bas-monde et le bien dans l'au-delà, et préserve-nous du châtiment du Feu.
+
+Notre Seigneur, ne nous tiens pas rigueur si nous oublions ou si nous commettons des erreurs.
+
+Notre Seigneur, ne nous charge pas d'un fardeau semblable à celui dont Tu as chargé ceux qui nous ont précédés.
+
+Notre Seigneur, ne nous impose pas ce que nous ne pouvons supporter. Efface nos fautes, pardonne-nous et fais-nous miséricorde. Tu es notre Maître : accorde-nous la victoire sur le peuple des mécréants.
+
+Notre Seigneur, ne fais pas dévier nos cœurs après nous avoir guidés, et accorde-nous de Ta part une miséricorde. Tu es, en vérité, le Grand Donateur.
+
+Notre Seigneur, nous avons entendu un appelant qui appelait à la foi : « Croyez en votre Seigneur ! » et nous avons cru.
+
+Notre Seigneur, pardonne-nous nos péchés, efface nos mauvaises actions et fais-nous mourir parmi les hommes de bien.
+
+Notre Seigneur, accorde-nous ce que Tu nous as promis par Tes messagers, et ne nous couvre pas d'opprobre au Jour de la Résurrection. Tu ne manques jamais à Ta promesse.
+
+Notre Seigneur, nous nous sommes fait du tort à nous-mêmes ; si Tu ne nous pardonnes pas et si Tu ne nous fais pas miséricorde, nous serons certes parmi les perdants.
+
+Notre Seigneur, accorde-nous de Ta part une miséricorde, et dispose pour nous de notre situation un chemin droit.
+
+Notre Seigneur, fais que nos épouses et notre descendance soient pour nous une source de joie, et fais de nous un guide pour les pieux.
+
+Ô Allah, pardonne à nos vivants et à nos morts, à nos grands et à nos petits, à nos hommes et à nos femmes, à ceux qui sont présents et à ceux qui sont absents, à nos hommes libres et à nos serviteurs, à ceux qui Te sont obéissants et à ceux qui sont en faute.`,
+  },
+  {
+    id: "dw-tr-6",
+    chapter: "Traduction française",
+    heading: "Salaatoul Fatihi — Traduction",
+    content: `Salaatoul Fatihi : 1 fois.
+
+En vérité, Allah et Ses anges prient sur le Prophète. Ô vous qui croyez, priez sur lui et adressez-lui le salut le plus parfait.
+
+Qu'Allah prie sur lui, sur sa famille et ses compagnons, et leur accorde le salut le plus parfait.
+
+Gloire à ton Seigneur, le Seigneur de la Puissance, au-dessus de ce qu'ils décrivent. Que la paix soit sur les envoyés. Et louange à Allah, Seigneur des mondes.`,
+  },
 ];
