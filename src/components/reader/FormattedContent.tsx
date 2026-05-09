@@ -173,7 +173,7 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, cen
 
         // Regular paragraphs
         return (
-          <p key={idx} className={`${proseAlign} leading-relaxed indent-6`} style={{ fontSize }}>
+          <p key={idx} className={`${proseAlign} leading-relaxed ${centered ? "" : "indent-6"}`} style={{ fontSize }}>
             {formatInlineText(trimmed)}
           </p>
         );
