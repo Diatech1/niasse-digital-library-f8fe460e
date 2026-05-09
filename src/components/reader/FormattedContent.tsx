@@ -29,10 +29,10 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, cen
             return (
               <p key={idx} dir="rtl" lang="ar" className="text-center my-5"
                 style={{
-                  fontSize: fontSize * 1.4,
+                  fontSize: fontSize * 1.15,
                   fontFamily: "'Scheherazade New', 'Amiri', 'Noto Naskh Arabic', serif",
                   color: textColor || 'inherit',
-                  lineHeight: 2.2,
+                  lineHeight: 1.7,
                 }}>
                 {trimmed}
               </p>
