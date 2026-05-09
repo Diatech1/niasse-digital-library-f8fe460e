@@ -29,7 +29,7 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, cen
             return (
               <p key={idx} dir="rtl" lang="ar" className="text-center my-5"
                 style={{
-                  fontSize: fontSize * 1.15,
+                  fontSize: fontSize * 1.0,
                   fontFamily: "'Scheherazade New', 'Amiri', 'Noto Naskh Arabic', serif",
                   color: textColor || 'inherit',
                   lineHeight: 1.7,
@@ -87,7 +87,7 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, cen
               lang={isArabicHeading ? "ar" : lang}
               className="text-center font-semibold mt-8 mb-4 text-primary"
               style={{
-                fontSize: fontSize * sizeMul * (isArabicHeading ? 1.2 : 1),
+                fontSize: fontSize * sizeMul * (isArabicHeading ? 1.0 : 1),
                 fontFamily: isArabicHeading
                   ? "'Amiri', 'Scheherazade New', 'Noto Naskh Arabic', serif"
                   : undefined,
@@ -158,7 +158,7 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, cen
               lang="ar"
               className="my-3 text-center"
               style={{
-                fontSize: fontSize * 1.15,
+                fontSize: fontSize * 1.0,
                 fontFamily: "'Amiri', 'Scheherazade New', 'Noto Naskh Arabic', serif",
                 color: textColor || 'inherit',
                 lineHeight: 1.7,
