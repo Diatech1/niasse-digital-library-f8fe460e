@@ -6,15 +6,16 @@ interface FormattedContentProps {
   textColor?: string;
   dir?: "ltr" | "rtl";
   lang?: string;
+  centered?: boolean;
 }
 
 /**
  * Renders book content with formatting matching the original PDF.
  */
-const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang }: FormattedContentProps) => {
+const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, centered = false }: FormattedContentProps) => {
   const paragraphs = content.split("\n\n").filter((p) => p.trim().length > 0);
   const isRtl = dir === "rtl";
-  const proseAlign = isRtl ? "text-right" : "text-justify";
+  const proseAlign = centered ? "text-center" : (isRtl ? "text-right" : "text-justify");
 
   return (
     <div className="formatted-content space-y-4" dir={dir} lang={lang}>
@@ -172,7 +173,7 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang }: F
 
         // Regular paragraphs
         return (
-          <p key={idx} className={`${proseAlign} leading-relaxed indent-6`} style={{ fontSize }}>
+          <p key={idx} className={`${proseAlign} leading-relaxed ${centered ? "" : "indent-6"}`} style={{ fontSize }}>
             {formatInlineText(trimmed)}
           </p>
         );
