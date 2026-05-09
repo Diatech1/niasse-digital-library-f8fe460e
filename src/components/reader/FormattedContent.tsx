@@ -120,21 +120,32 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, cen
         // Detect Arabic text (Unicode Arabic block)
         const isArabic = /[\u0600-\u06FF]/.test(trimmed) && trimmed.replace(/[^\u0600-\u06FF\s]/g, '').length / trimmed.length > 0.3;
         if (isArabic) {
+          const arabicLines = trimmed.split(/\n/).map((l) => l.trim()).filter(Boolean);
           return (
-            <p
+            <div
               key={idx}
               dir="rtl"
               lang="ar"
-              className="leading-loose text-center my-4"
+              className="my-5"
               style={{
                 fontSize: fontSize * 1.35,
                 fontFamily: "'Scheherazade New', 'Amiri', 'Noto Naskh Arabic', serif",
                 color: textColor || 'inherit',
-                lineHeight: 2.2,
+                lineHeight: 2.1,
               }}
             >
-              {trimmed}
-            </p>
+              {arabicLines.map((line, li) => (
+                <p
+                  key={li}
+                  dir="rtl"
+                  lang="ar"
+                  className="text-center my-1"
+                  style={{ textAlignLast: 'center' }}
+                >
+                  {line}
+                </p>
+              ))}
+            </div>
           );
         }
 
