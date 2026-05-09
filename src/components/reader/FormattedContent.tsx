@@ -156,12 +156,12 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, cen
               key={idx}
               dir="rtl"
               lang="ar"
-              className="my-4"
+              className="my-3"
               style={{
-                fontSize: fontSize * 1.4,
+                fontSize: fontSize * 1.15,
                 fontFamily: "'Amiri', 'Scheherazade New', 'Noto Naskh Arabic', serif",
                 color: textColor || 'inherit',
-                lineHeight: 2,
+                lineHeight: 1.7,
                 textAlign: 'justify',
                 textAlignLast: 'center',
                 fontFeatureSettings: '"liga", "calt", "kern"',
