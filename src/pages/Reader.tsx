@@ -1,6 +1,6 @@
 import { useState, useRef, useMemo, useEffect, useCallback, memo } from "react";
 import { mergeAdjacentSections } from "@/lib/mergeSections";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useBook } from "@/hooks/use-books";
 import { ruhAlAdabVerses, ruhAlAdabMeta } from "@/data/ruh-al-adab";
 import { comprendreFaydhahSections, comprendreFaydhahMeta } from "@/data/comprendre-faydhah";
@@ -78,6 +78,8 @@ interface Section {
 const Reader = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const sectionParam = searchParams.get("section");
   const { book, isLoading: bookLoading } = useBook(id);
 
   // Default reader theme matches the app's appearance
@@ -457,6 +459,24 @@ const Reader = () => {
       }
     }
   }, [allSections, goToSection, isPagedMode]);
+
+  // Deep link via ?section=N — jump to that logical section once pagination is ready.
+  const sectionParamApplied = useRef(false);
+  useEffect(() => {
+    if (sectionParamApplied.current) return;
+    if (!sectionParam || allSections.length === 0 || pagedTotal <= 1) return;
+    const n = parseInt(sectionParam, 10);
+    if (isNaN(n) || n < 0 || n >= allSections.length) {
+      sectionParamApplied.current = true;
+      return;
+    }
+    const targetId = allSections[n].id;
+    sectionParamApplied.current = true;
+    goToSectionById(targetId);
+    setShowResumeBanner(false);
+    // strip param so it doesn't fight future navigation
+    setSearchParams({}, { replace: true });
+  }, [sectionParam, allSections, pagedTotal, goToSectionById, setSearchParams]);
 
   const handleReadAloud = useCallback(() => {
     if (!book || allSections.length === 0) return;

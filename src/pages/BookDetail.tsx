@@ -1,10 +1,74 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, MoreHorizontal, Globe, FileText, BookOpen, Headphones } from "lucide-react";
+import { ArrowLeft, MoreHorizontal, Globe, FileText, BookOpen, Headphones, ListOrdered, ChevronRight } from "lucide-react";
 import { useBook } from "@/hooks/use-books";
+import { useBookContent } from "@/hooks/use-book-content";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { directionForBookLanguage, useLanguage } from "@/hooks/use-language";
+
+interface SectionsListProps {
+  bookId: string;
+  contentModule?: string;
+  language: string;
+  variant?: "mobile" | "desktop";
+}
+
+const SectionsList = ({ bookId, contentModule, language, variant = "desktop" }: SectionsListProps) => {
+  const navigate = useNavigate();
+  const { sections, isLoading } = useBookContent(contentModule);
+  const dir = directionForBookLanguage(language);
+
+  if (!contentModule) return null;
+  if (isLoading) {
+    return (
+      <div className="space-y-2">
+        <Skeleton className="h-8 w-full" />
+        <Skeleton className="h-8 w-full" />
+        <Skeleton className="h-8 w-full" />
+      </div>
+    );
+  }
+  if (sections.length <= 1) return null;
+
+  // Group by chapter to dedupe long lists; for the volume-loader format,
+  // each section is its own chapter so we just list them.
+  const items = sections.map((s, idx) => ({
+    idx,
+    label: s.heading || s.chapter || `Section ${idx + 1}`,
+  }));
+
+  return (
+    <div className={variant === "mobile" ? "px-5 mt-2 max-w-md mx-auto text-left" : "mt-10"}>
+      <div className="flex items-center gap-2 mb-3">
+        <ListOrdered className="w-4 h-4 text-primary" />
+        <h2 className="text-sm font-semibold tracking-wide uppercase text-foreground/80">
+          Sections <span className="text-muted-foreground font-normal normal-case">({items.length})</span>
+        </h2>
+      </div>
+      <ol className="rounded-xl border border-border/40 overflow-hidden divide-y divide-border/30 bg-card/40">
+        {items.map((it) => (
+          <li key={it.idx}>
+            <button
+              onClick={() => navigate(`/read/${bookId}?section=${it.idx}`)}
+              className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-primary/5 transition-colors"
+              dir={dir}
+            >
+              <span className="text-xs font-mono text-muted-foreground tabular-nums w-6 text-right shrink-0">
+                {it.idx + 1}
+              </span>
+              <span className="flex-1 text-sm text-foreground leading-snug truncate">
+                {it.label}
+              </span>
+              <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
+            </button>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+};
+
 
 const BookDetail = () => {
   const { id } = useParams();
@@ -116,6 +180,13 @@ const BookDetail = () => {
             </button>
           </div>
         </motion.div>
+
+        <SectionsList
+          bookId={book.id}
+          contentModule={book.contentModule}
+          language={book.language}
+          variant="mobile"
+        />
       </div>
 
       {/* ─── Desktop layout ─── */}
@@ -209,6 +280,13 @@ const BookDetail = () => {
                   ))}
                 </div>
               )}
+
+              <SectionsList
+                bookId={book.id}
+                contentModule={book.contentModule}
+                language={book.language}
+                variant="desktop"
+              />
             </motion.div>
           </div>
         </div>
