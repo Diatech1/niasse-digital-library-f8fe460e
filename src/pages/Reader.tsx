@@ -684,6 +684,7 @@ const Reader = () => {
               textColor={pagedTextColor}
               dir={directionForBookLanguage(book?.language)}
               lang={book?.language}
+              centered={book?.contentModule === "doua-wazifa"}
             />
           )}
          </div>
