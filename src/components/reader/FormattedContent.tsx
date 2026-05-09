@@ -127,13 +127,15 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, cen
               lang="ar"
               className="my-4"
               style={{
-                fontSize: fontSize * 1.5,
-                fontFamily: "'Scheherazade New', 'Amiri', 'Noto Naskh Arabic', serif",
+                fontSize: fontSize * 1.4,
+                fontFamily: "'Amiri', 'Scheherazade New', 'Noto Naskh Arabic', serif",
                 color: textColor || 'inherit',
-                lineHeight: 1.95,
-                textAlign: 'right',
+                lineHeight: 2,
+                textAlign: 'justify',
+                textAlignLast: 'center',
                 fontFeatureSettings: '"liga", "calt", "kern"',
-              }}
+                hyphens: 'none',
+              } as React.CSSProperties}
             >
               {trimmed}
             </p>
