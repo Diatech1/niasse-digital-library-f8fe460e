@@ -13,6 +13,7 @@ import { origineSoubhaSections, origineSoubhaMeta } from "@/data/origine-soubha"
 import { salatFatihiSections, salatFatihiMeta } from "@/data/salat-fatihi";
 import { jawharatulKamalSections, jawharatulKamalMeta } from "@/data/jawharatul-kamal";
 import { dhikrGroupeSections, dhikrGroupeMeta } from "@/data/dhikr-groupe";
+import { douaWazifaSections, douaWazifaMeta } from "@/data/doua-wazifa";
 import { fadailDhikrSections, fadailDhikrMeta } from "@/data/fadail-dhikr";
 import { priereShaykhIbrahimSections, priereShaykhIbrahimMeta } from "@/data/priere-shaykh-ibrahim";
 import { stationsDeenEnSections, stationsDeenEnMeta } from "@/data/stations-deen-en";
@@ -275,6 +276,9 @@ const Reader = () => {
     }
     if (book?.contentModule === "dhikr-groupe") {
       return dhikrGroupeSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
+    }
+    if (book?.contentModule === "doua-wazifa") {
+      return douaWazifaSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
     }
     if (book?.contentModule === "fadail-dhikr") {
       return fadailDhikrSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
@@ -562,6 +566,14 @@ const Reader = () => {
         <>
           <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{dhikrGroupeMeta.title}</h2>
           <p className="text-center text-xs text-muted-foreground mb-6">Source : {dhikrGroupeMeta.source}</p>
+        </>
+      );
+    }
+    if (book.contentModule === "doua-wazifa") {
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{douaWazifaMeta.title}</h2>
+          <p className="text-center text-xs text-muted-foreground mb-6">par {douaWazifaMeta.author}</p>
         </>
       );
     }
