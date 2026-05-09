@@ -18,9 +18,7 @@ En ce qui concerne l’extrait en soi, il résulte de la difficulté de traducti
 
 Avant Propos .......................................................................................... 2
 Table des matières..................................................................................4
-
-TITRE: Prélude
-
+Prélude ...................................................................................................5
 Introduction .............................................................................................5
 
 TITRE: Ses comportements et états
@@ -62,7 +60,7 @@ TITRE: Ses réponses concernant les versets coraniques et les hadiths
 إذا اعتذر الجاني محا العذر ذنبه
 وكل امرئ لا يقبل العذر مذنب
 
-### Prélude
+TITRE: Prélude
 
 Si le coupable demande pardon, l’excuse efface sa faute
 Et quiconque refuse l’excuse est en faute
@@ -71,8 +69,6 @@ Et quiconque refuse l’excuse est en faute
 
 فالتصوف إنما هو زيدة عمل العبد بأحكام الشريعة إذا خلا من عمله اللعل وحظوظ النفس
 Le soufisme n’est que la quintessence de l’application des règles de la charia par le serviteur, à condition que son œuvre soit exempte de faille et d’intérêts personnels
-
-###
 
 TITRE: Introduction
 
