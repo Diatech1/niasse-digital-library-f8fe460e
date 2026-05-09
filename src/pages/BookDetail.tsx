@@ -180,6 +180,13 @@ const BookDetail = () => {
             </button>
           </div>
         </motion.div>
+
+        <SectionsList
+          bookId={book.id}
+          contentModule={book.contentModule}
+          language={book.language}
+          variant="mobile"
+        />
       </div>
 
       {/* ─── Desktop layout ─── */}
