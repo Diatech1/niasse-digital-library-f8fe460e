@@ -684,7 +684,7 @@ const Reader = () => {
               textColor={pagedTextColor}
               dir={directionForBookLanguage(book?.language)}
               lang={book?.language}
-              centered={book?.contentModule === "doua-wazifa"}
+              poem={book?.contentModule === "doua-wazifa"}
             />
           )}
          </div>
@@ -742,7 +742,7 @@ const Reader = () => {
           textColor={theme.text.replace('text-[', '').replace(']', '')}
           dir={directionForBookLanguage(book?.language)}
           lang={book?.language}
-          centered={book?.contentModule === "doua-wazifa"}
+          poem={book?.contentModule === "doua-wazifa"}
         />
       </div>
     );

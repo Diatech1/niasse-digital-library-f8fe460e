@@ -7,15 +7,61 @@ interface FormattedContentProps {
   dir?: "ltr" | "rtl";
   lang?: string;
   centered?: boolean;
+  /** Render each paragraph as a verse line of a poem/doua. */
+  poem?: boolean;
 }
 
 /**
  * Renders book content with formatting matching the original PDF.
  */
-const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, centered = false }: FormattedContentProps) => {
+const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, centered = false, poem = false }: FormattedContentProps) => {
   const paragraphs = content.split("\n\n").filter((p) => p.trim().length > 0);
   const isRtl = dir === "rtl";
-  const proseAlign = centered ? "text-center" : (isRtl ? "text-right" : "text-justify");
+  const proseAlign = (centered || poem) ? "text-center" : (isRtl ? "text-right" : "text-justify");
+
+  if (poem) {
+    return (
+      <div className="formatted-content poem-content" dir={dir} lang={lang}>
+        {paragraphs.map((para, idx) => {
+          const trimmed = para.trim();
+          const isArabic = /[\u0600-\u06FF]/.test(trimmed) && trimmed.replace(/[^\u0600-\u06FF\s]/g, '').length / trimmed.length > 0.3;
+          if (isArabic) {
+            return (
+              <p key={idx} dir="rtl" lang="ar" className="text-center my-5"
+                style={{
+                  fontSize: fontSize * 1.4,
+                  fontFamily: "'Scheherazade New', 'Amiri', 'Noto Naskh Arabic', serif",
+                  color: textColor || 'inherit',
+                  lineHeight: 2.2,
+                }}>
+                {trimmed}
+              </p>
+            );
+          }
+          if (/^\(.*\)$/.test(trimmed) && trimmed.length < 80) {
+            return (
+              <p key={idx} className="text-center my-3 italic text-muted-foreground"
+                style={{ fontSize: fontSize * 0.85 }}>
+                {trimmed}
+              </p>
+            );
+          }
+          return (
+            <p key={idx} className="text-center my-3 font-serif"
+              style={{
+                fontSize: fontSize * 1.02,
+                lineHeight: 1.6,
+                color: textColor || 'inherit',
+                fontStyle: 'italic',
+                letterSpacing: '0.01em',
+              }}>
+              {formatInlineText(trimmed)}
+            </p>
+          );
+        })}
+      </div>
+    );
+  }
 
   return (
     <div className="formatted-content space-y-4" dir={dir} lang={lang}>
