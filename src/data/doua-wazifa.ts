@@ -1,6 +1,6 @@
 export const douaWazifaMeta = {
   title: "Doua Wazifa",
-  author: "Tradition Tijâniyya",
+  author: "Cheikh Ibrahim Niass",
 };
 
 export interface DouaWazifaSection {
