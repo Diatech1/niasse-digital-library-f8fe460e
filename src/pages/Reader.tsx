@@ -212,6 +212,7 @@ const Reader = () => {
       "volume-5-commentaries": "/books/volume-5-commentaries.txt",
       "volume-7-biography": "/books/volume-7-biography.txt",
       "volume-8-teachings": "/books/volume-8-other-teachings.txt",
+      "jawaheer-al-maani": "/books/jawaheer-al-maani.txt",
     };
     const volumePath = book?.contentModule ? volumeMap[book.contentModule] : undefined;
     if (volumePath && book?.contentModule) {
@@ -301,7 +302,16 @@ const Reader = () => {
       return jawahirRasailData.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content, footnotes: s.footnotes }));
     }
     // Generic volume modules
-    const volumeModules = ["volume-1-conditions", "volume-2-liturgies", "volume-3-ethics", "volume-4-letters", "volume-5-commentaries", "volume-7-biography", "volume-8-teachings"];
+    const volumeModules = [
+      "volume-1-conditions",
+      "volume-2-liturgies",
+      "volume-3-ethics",
+      "volume-4-letters",
+      "volume-5-commentaries",
+      "volume-7-biography",
+      "volume-8-teachings",
+      "jawaheer-al-maani",
+    ];
     if (book?.contentModule && volumeModules.includes(book.contentModule)) {
       return volumeData.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
     }
