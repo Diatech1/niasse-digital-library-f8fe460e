@@ -68,6 +68,37 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, cen
       {paragraphs.map((para, idx) => {
         const trimmed = para.trim();
 
+        // Skip empty markdown heading markers (## with no content)
+        if (/^#+\s*$/.test(trimmed)) {
+          return null;
+        }
+
+        // Markdown headings: # / ## / ### ...
+        const headingMatch = trimmed.match(/^(#{1,6})\s+(.+)$/);
+        if (headingMatch) {
+          const level = headingMatch[1].length;
+          const text = headingMatch[2].trim();
+          const isArabicHeading = /[\u0600-\u06FF]/.test(text) && text.replace(/[^\u0600-\u06FF\s]/g, '').length / text.length > 0.3;
+          const sizeMul = level === 1 ? 1.6 : level === 2 ? 1.35 : 1.15;
+          return (
+            <h3
+              key={idx}
+              dir={isArabicHeading ? "rtl" : dir}
+              lang={isArabicHeading ? "ar" : lang}
+              className="text-center font-semibold mt-8 mb-4 text-primary"
+              style={{
+                fontSize: fontSize * sizeMul * (isArabicHeading ? 1.2 : 1),
+                fontFamily: isArabicHeading
+                  ? "'Amiri', 'Scheherazade New', 'Noto Naskh Arabic', serif"
+                  : undefined,
+                lineHeight: isArabicHeading ? 1.8 : 1.3,
+              }}
+            >
+              {text}
+            </h3>
+          );
+        }
+
         // Detect page number markers {{PAGE:N}}
         const pageMatch = trimmed.match(/^\{\{PAGE:(\d+)\}\}$/);
         if (pageMatch) {
