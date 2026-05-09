@@ -460,6 +460,24 @@ const Reader = () => {
     }
   }, [allSections, goToSection, isPagedMode]);
 
+  // Deep link via ?section=N — jump to that logical section once pagination is ready.
+  const sectionParamApplied = useRef(false);
+  useEffect(() => {
+    if (sectionParamApplied.current) return;
+    if (!sectionParam || allSections.length === 0 || pagedTotal <= 1) return;
+    const n = parseInt(sectionParam, 10);
+    if (isNaN(n) || n < 0 || n >= allSections.length) {
+      sectionParamApplied.current = true;
+      return;
+    }
+    const targetId = allSections[n].id;
+    sectionParamApplied.current = true;
+    goToSectionById(targetId);
+    setShowResumeBanner(false);
+    // strip param so it doesn't fight future navigation
+    setSearchParams({}, { replace: true });
+  }, [sectionParam, allSections, pagedTotal, goToSectionById, setSearchParams]);
+
   const handleReadAloud = useCallback(() => {
     if (!book || allSections.length === 0) return;
     const isActiveBook = activeAudioBook?.id === book.id;
