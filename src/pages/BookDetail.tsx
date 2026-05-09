@@ -280,6 +280,13 @@ const BookDetail = () => {
                   ))}
                 </div>
               )}
+
+              <SectionsList
+                bookId={book.id}
+                contentModule={book.contentModule}
+                language={book.language}
+                variant="desktop"
+              />
             </motion.div>
           </div>
         </div>
