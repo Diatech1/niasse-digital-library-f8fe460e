@@ -14,47 +14,6 @@ De notre part, nous ajoutons que le Cheikh Brahim Niyass nous a fait parvenir un
 
 En ce qui concerne l’extrait en soi, il résulte de la difficulté de traduction de la totalité de l’ouvrage, compte tenu de l’expression hautement précise et de signification très profonde de sidna Ech-Cheikh ; d’autant plus qu’il est assez difficile d’utiliser le terme correspondant adéquat en français qui peut ne pas exister ; quant au mode d’extrait à partir du manuscrit précité, il est basé essentiellement sur les propos du Cheikh (AASL) que nous avons estimés les plus importants.
 
-## Table des matières
-
-Avant Propos .......................................................................................... 2
-Table des matières..................................................................................4
-Prélude ...................................................................................................5
-Introduction .............................................................................................5
-
-TITRE: Ses comportements et états
-
-
-
-TITRE: Ses mœurs sunnites
-
-
-
-TITRE: Son savoir et sa générosité
-
-
-
-TITRE: Son appréhension vis-à-vis d'Allah
-
-
-
-TITRE: Ses indications sur Allah
-
-A propos de l’
-
-TITRE: À propos de l'agencement de ses wirds et dhikrs
-
-Les
-
-TITRE: Les privilèges de son wird
-
-La
-
-TITRE: La connaissance de la réalité du Cheikh
-
-
-
-TITRE: Ses réponses concernant les versets coraniques et les hadiths
-
 ## فاتحة الكتاب
 
 إذا اعتذر الجاني محا العذر ذنبه
@@ -138,7 +97,7 @@ L’état (hâl) est un flux (wârid) divin et une exaltation du cœur que seul 
 
 يقع له في كثير من الأحيان فيضان عظيم وخير جسيم، وقد شاهدنا هذا منه غير ما مرة في أوقات فيضه، ولا يتفطن له إلا خاصة الخاصة ممن يلازمه وأراد الله به خيراً... من آثار جذبه وقوة حاله أمور أخرى، كعظم جنته وامتلاء بدنه وتهلل وجهه وثقل الأمر عليه حتى لا يستطيع حركة.. وكثيراً ما بلوح عليه ذلك عند حضور سماع أوصاف النبي صلى الله عليه وسلم.. فيبرز منه ما كمن ... ويقع له الوجد والهيمنة والسكر والفيضان
 
-## Ses comportements et états
+TITRE: Ses comportements et états
 
 Il arrive souvent à Sidna Ech-Cheikh, de recevoir des épanchements massifs et des dons (énormes), ce que nous avons constaté de visu à maintes reprises, aux moment de ses extases, mais dont s'avisent seulement les meilleurs Elus parmi ses proches compagnons, et qu'Allah a doté pleinement de ses bienfaits .. ; Sous l'impact de son extase et la force de son "hâl", des effets grandioses se manifestent en lui, tels l'amplitude plénière de son corps, l'illumination de sa physionomie, l'appesantissement immobilisant de son corps, l'inflammation de son for intérieur, et l'effervescence enivrante de son cœur, tout cela émerge souvent à l'audition des louanges (madîh) des attributs du Prophète (Salat et Salut d'Allah sur lui)... faisant déborder son for intérieur
 
@@ -194,7 +153,9 @@ Ce qui veut dire que le reflet des attributs du Prophète sur les Prophètes et 
 
 يقول كثيرا : أفضل الأذكار ذكر الله عند أمر ربه ونهيه..كان حافظا لحقوق الله مراعا لها شديد التحرز والورع في الدين كثير التحفظ فيه والتحرز للأحوط ؛ ما رأيت أشد حزما ولا أعظم ورعا منه، كله حزم وعزم لا يحب التأويلات ولا يميل إلى ارتكاب الرخص
 
-## Ses mœurs sunnites
+##
+
+TITRE: Ses mœurs sunnites
 
 Le Cheikh disait souvent : La meilleure des prières est la remémoration d’Allah à la citation de ses injonctions et de ses prohibitions... ; le Cheikh qui tient constamment à observer les droits divins, s’y soumet étroitement , s’attachant exclusivement aux commandements divins majeurs ; et l’auteur d’al Jawaheer de souligner qu’il n’a jamais vu d’Elu aussi résolument attaché aux préceptes constants de la charia , n’aimant point les interprétations , et ne penchant guère vers l’adoption des facilités dans l’application des actes rituels
 
@@ -231,7 +192,9 @@ Un roi...avait un jeune serviteur qu’il aimait beaucoup ; ses assistants lui e
 في علمه وكرمه
 العالم على الحقيقة ، من يشكل الواضح ويوضح المشكل.. باطنه حقائق التوحيد وظاهره زهد وتجريد وكلامه هداية لكل مريد
 
-## Son savoir et sa générosité
+##
+
+TITRE: Son savoir et sa générosité
 
 Le vrai savant est celui qui peut problématiser ce qui est clair, et clarifier ce qui suscite problème... son for intérieur réalise les vérités de l’Unicité Divine, et son exotérique insuffle ascétisme et recueillement, sa parole étant un guide pour tout « mouride »
 
@@ -257,7 +220,9 @@ Si tu examines l’état des gens et ce qu’il leur advient de par la prédesti
 
 دخلت عليه مرارا لخلوته، فلم أستطع أن أواجهه بالخطاب لهيبته
 
-## Son appréhension vis-à-vis d’Allah et son impassibilité
+##
+
+TITRE: Son appréhension vis-à-vis d'Allah
 
 L’auteur des « Jawaheer » rapporte : je suis rentré à plusieurs reprises dans son lieu de recueillement « khalwa », sans oser lui adresser la parole, à cause de sa gravité imposante
 
@@ -270,7 +235,7 @@ La nature de toute piété restrictive est de se prémunir contre toute chose su
 
 إذا رأيته ذكرت الله ونسبت ما سواه .. لا يفاجئه أحد إلا صدمته هيئته ولا بداخله إلا ملكته محبته .. كلما ازددت إليه قرابة ازددت منه مهابة ولقد تعرض لنا المهمات فنريد أن نخبره فما نستطيع الإقدام عليه حتى يكون هو الذي ينبئنا بما لديه ، وكثيرا ما ينبئنا عما نريده قبل أن نشرع فيه فيفتح لنا بذلك الباب في الكلام ... وإذا سمع كلامه احد وخصوصا من فيه قابلية القبول، تحول في الحين قلبه وطار به إلى الله له.. يتكلم مع الرجل كلاما عاديا وهو يفعل في قلبه الأفاعيل ويرحل به إلى الله المراحل .. ويشكو الرجل بعلل معنوية وأمراض نفسية يذكرها في باطنه وهو أمامه ، فيجيبه عنها بعينها وه و ..
 
-## Ses indications sur Allah
+TITRE: Ses indications sur Allah
 
 La seule vision du Cheikh, te rappelle Allah, oubliant tout le reste... ; si quelqu’un le rencontre par surprise , il est fortement émotionné par sa gravité révérencielle , et celui qui se familiarise avec lui , est possédé par son amour … ; plus tu l’approches , plus ta vénération à son égard augmente ; quand nous sommes parfois confrontés à des choses importantes , et que nous voulons l’en informer, nous ne pouvons nullement l’aborder , jusqu’à ce qu’il nous en parle lui-même ; souvent il nous fait état d’avance de ce que nous voulons lui dire , ouvrant ainsi la discussion … ; et quand quelqu’un entend ses propos, surtout s’il en bien est réceptif, il influe fortement et instantanément sur son cœur, faisant transcender son esprit vers Allah... ; un entretien courant avec lui, agit intensément sur le for intérieur de son interlocuteur , lui faisant ployer des étapes vers Allah... ; et quand quelqu’un vient se plaindre de ses malaises et maux internes , ne faisant que les évoquer dans son for intérieur, il lui en donne la réponse adéquate
 
@@ -323,7 +288,9 @@ Pour bien concevoir les secrets de ces états, on doit avoir à l’esprit que l
 
 فعلماء الشريعة توغلوا في بيان أحكام الكثرة وإصلاحها لترتفع الكثرة وتظهر الوحدة وهي النهاية إلى البداية، وعلماء الحقيقة في بيان أسرار الوحدة وإحاطة الوجود وسريان نوره في المراتب فكل منهم على طرف ، فالواجب على الصادق أن يستغرق في أنوار الحقيقة باطنا ويعمل بالشريعة ظاهرا حفظا للمراتب وهو الصراط المستقيم لاتباع الرسول صلى الله عليه وسلم
 
-A propos de l’agencement de ses wirds et dhikrs
+A propos de l’
+
+TITRE: À propos de l'agencement de ses wirds et dhikrs
 
 Saches bien que lorsque les oulémas de la charia et du soufisme , ont constaté que la notion de l’Existence une fois a été complètement fléchie par manifestation divine , de l’Unité à la Pluralité, et que le plus important et le plus complet , consiste dans l’ascension vers l’initial , afin que la plénitude des Noms d’Allah puisse se manifester entièrement , - ils se sont afférés essayant d’en élucider le plus important , à savoir le moyen de favoriser l’ascension dans l’immédiat et à terme , et les façons conditionnant la meilleure purification ésotérique et exotérique ; ils y ont alors consacré nombre d’ouvrages , sans se préoccuper de la manière de la descension dans les divers stades de graduation.. ; ainsi les oulémas de la charia ont approfondi le sens et l’amendement qui conditionnent la pluralité afin d’accéder à l’Unité, c’est là le cheminement de la fin vers l’initial ; quant aux doctes soufis ils ont sondé les moyens d’élucider les secrets de l’Unité , de l’englobement plénier du monde ainsi que l’illumination des stades de graduation ; chaque groupe est alors à l’opposé de l’autre ; le fidèle sincère doit se concentrer intimement au fond des lumières de la
 
@@ -349,7 +316,9 @@ Le Cheikh nous incite encore à réciter ce dhikr … après chaque prière : Gl
 
 وهذه الكرامة العظيمة المقدار وهي دخول الجنة بلا حساب ولا عقاب لمن أخذ وردة ودخول والديه وأزواجه وذريته لم تقع لأحد من الأولياء، ولا بلغنا من أخبار ساداتنا الأولياء رضي الله عنهم، وإن وقع لهم أن من رأى من رأيهم يدخل الجنة كالشيخ عبد القادر الجيلاني وسيدي عبد الرحمن الثعالبي ومولاي التهامي رضي الله عن جميعهم ، لم ينقل عن احد من هؤلاء عدم الحساب والعقاب لأصحابه أو لمن رآه كما وقع لشيبنا رلع
 
-## Les privilèges de son wird
+## Les
+
+TITRE: Les privilèges de son wird
 
 Ce prodige de très haut niveau , qui est l’accès au paradis sans rendre nul compte et sans châtiment , pour tout initié qui adopte son « wird », ainsi que pour se parents , ses conjoints et ses enfants, est prodige non atteint par aucun des Elus d’Allah ; il ne nous en a été rapporté sur aucun d’entre eux; Même s’ils sont parvenus à prévoir le paradis pour ceux qui ont eu l’heur de les avoir vus, ainsi que
 
@@ -457,7 +426,9 @@ Celui qui accorde au degré du Messager et Prophète sidna Mohammed (SSASL) , la
 
 حقيقة الشيخ الواصل فهو الذي رفعت له جميع الحجب عن كمال النظر إلى الحضرة الإلهية نظرا عينيا وتحقيقا يقينيا، فان الأمر أوله محاضرة وهو مطالعة الحقائق من وراء ستر كيف، ثم مكاشفة وهو مطالعة الحقائق من وراء ستر رقيق، ثم مشاهدة وهو تجلي الحقائق بلا حجاب لكن مع خصوصية، ثم معاينة وهو مطالعة الحقائق بلا حجاب ولا خصوصية ولا بقاء للغير والغيرية عيناً وأثراً وهو مقام السحق والمحق والدلك وفناء الفناء ، فليس في هذا إلا معاينة الحق في الحق للحق بالحق.
 
-## La connaissance de la réalité du Cheikh
+## La
+
+TITRE: La connaissance de la réalité du Cheikh
 
 En vérité, le cheikh accompli est celui auquel tous les voiles ont été levés permettant une parfaite vision de la haute Instance Divine, vision réelle et conviction concrète ; cela commence par la Présence « mouḥadara», moyen d'exploration des véracités à travers un voile opaque, puis vient la Révélation « moukâchafa », où le voile
 
@@ -507,7 +478,7 @@ Et si l'invocation de l'initié, est en contradiction avec ce que Allah a déter
 
 كلامك بالقرآن دال على مدلولات الكلام الأزلي ، لا على عين الكلام الأزلي من الذات، فان ذلك لا تمكن الدلالة عليه ولا وصول للخلق في تلاوة القرآن إلى هذه المثابة فقط ، لا أنهم يصلون إلى النطق بالكلام من الذات دون مدلولاته ، فان ذلك غير ممكن لبعيد تعابيرهما لأنك إذا سمعت شخصا قال: هذا الحائط والفرس مثلا ، فقلت أنت مثل قوله : هذا الحائط والفرس ، فإنه بالضرورة يُعقل أن اللفظ البارز من ذاتك الدال على الحائط والفرس غير اللفظ البارز من ذات الشخص المتكلم بالحائط والفرس وإنما دلالتهمـا على الحائط والفرس...
 
-## Ses réponses concernant les versets coraniques et les hadiths
+TITRE: Ses réponses concernant les versets coraniques et les hadiths
 
 Le Cheikh précise que la récitation du Coran est l’expression des sens du Verbe éternel d’Allah , et non l’essence même de Ce Verbe émanant de l’Entité Divine ; car cette essence ne peut être exprimée d’aucune façon , et nul ne peut accéder par la seule récitation du Coran, à la réalité intangible de ce Coran , sauf uniquement dans ce sens , car personne ne saurait ainsi parvenir à émettre le sens du Verbe sans recourir aux objets désignés par cette expression , en raison de leur grande différentiation;
 
