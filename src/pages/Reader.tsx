@@ -78,6 +78,8 @@ interface Section {
 const Reader = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const sectionParam = searchParams.get("section");
   const { book, isLoading: bookLoading } = useBook(id);
 
   // Default reader theme matches the app's appearance
