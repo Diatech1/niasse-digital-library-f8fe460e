@@ -93,7 +93,8 @@ const Reader = () => {
   const [fontIdx, setFontIdx] = useState(1);
   const [fontSize, setFontSize] = useState(() => {
     const saved = localStorage.getItem("faydabook-reader-fontsize");
-    return saved ? Number(saved) : 16;
+    if (saved) return Number(saved);
+    return typeof window !== "undefined" && window.innerWidth < 768 ? 20 : 16;
   });
   const [fitToPage, setFitToPage] = useState(() => {
     return localStorage.getItem("faydabook-reader-fit") === "true";

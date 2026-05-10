@@ -330,6 +330,18 @@ body.reader-chrome-hidden .bottom-nav {
   line-height: 1.45;
 }
 
+@media (max-width: 767px) {
+  .pocket-paragraphs .formatted-content {
+    line-height: 1.7;
+  }
+  .pocket-paragraphs .formatted-content,
+  .pocket-paragraphs .formatted-content > p {
+    text-align: left;
+    -webkit-hyphens: none;
+    hyphens: none;
+  }
+}
+
 .pocket-paragraphs .formatted-content > p {
   margin-top: 0;
   margin-bottom: 0;
