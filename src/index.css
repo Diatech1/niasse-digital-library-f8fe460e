@@ -336,7 +336,7 @@ body.reader-chrome-hidden .bottom-nav {
   }
   .pocket-paragraphs .formatted-content,
   .pocket-paragraphs .formatted-content > p {
-    text-align: left;
+    text-align: justify;
     -webkit-hyphens: none;
     hyphens: none;
   }
