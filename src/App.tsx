@@ -38,6 +38,7 @@ const App = () => (
                 </>
               } />
               {/* Home breaks out of max-w-lg so the desktop hero can go full-bleed */}
+              <Route path="/index" element={<Navigate to="/" replace />} />
               <Route path="/" element={
                 <div className="relative">
                   <DesktopNav />
