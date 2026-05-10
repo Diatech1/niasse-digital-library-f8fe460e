@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { LanguageProvider } from "@/hooks/use-language";
 import Index from "./pages/Index";
@@ -38,6 +38,7 @@ const App = () => (
                 </>
               } />
               {/* Home breaks out of max-w-lg so the desktop hero can go full-bleed */}
+              <Route path="/index" element={<Navigate to="/" replace />} />
               <Route path="/" element={
                 <div className="relative">
                   <DesktopNav />
