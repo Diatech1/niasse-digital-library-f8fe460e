@@ -55,18 +55,6 @@ const readerMenuItems = [
   { icon: Settings, label: "Settings", path: "/settings" },
 ];
 
-const sampleTextEn = `In the name of Allah, the Most Merciful, the Most Compassionate.
-
-Knowledge is not merely an accumulation of facts, but a gateway to wisdom, a serene space for contemplation and learning. The teachings of Shaykh Ibrahim Niass, a beacon of light and guidance, deserved a vessel that mirrored their profound beauty and clarity.
-
-The seeker must approach the path with sincerity and devotion, for the journey of the soul is one of both inward purification and outward service. In every moment of remembrance, the heart finds its true home, and the spirit soars beyond the confines of the material world.
-
-Let the words of the righteous ones guide your steps, for they have walked the path before you and left behind lanterns of wisdom for those who follow.`;
-
-const sampleTextAr = `بسم الله الرحمن الرحيم. الحمد لله رب العالمين، والصلاة والسلام على سيدنا محمد وعلى آله وصحبه أجمعين. إن المعرفة نور يهدي إلى الحق، وبها ترتقي الأمم وتسمو الأرواح.`;
-
-
-
 interface Section {
   id: string;
   part?: string;
@@ -703,11 +691,6 @@ const Reader = () => {
               ))}
               <p className="text-center font-semibold mt-8">{ruhAlAdabMeta.closing}</p>
             </div>
-          ) : section.content === "__sample__" ? (
-            <>
-              <p className="mb-6">{sampleTextEn}</p>
-              <p className="font-arabic text-right mb-6" dir="rtl">{sampleTextAr}</p>
-            </>
           ) : (
             <FormattedContent
               content={section.content}
@@ -738,15 +721,6 @@ const Reader = () => {
           ))}
           <p className="text-center font-semibold mt-8">{ruhAlAdabMeta.closing}</p>
         </div>
-      );
-    }
-
-    if (currentSection.content === "__sample__") {
-      return (
-        <>
-          <p className="mb-6">{sampleTextEn}</p>
-          <p className="font-arabic text-right mb-6" dir="rtl">{sampleTextAr}</p>
-        </>
       );
     }
 
@@ -1058,7 +1032,7 @@ const Reader = () => {
                 </button>
               </div>
 
-              {currentSection && currentSection.content !== "__sample__" && currentSection.content !== "__ruh__" && (
+              {currentSection && currentSection.content !== "__ruh__" && (
                 <div className="flex items-center justify-between gap-3">
                   <span className="text-sm font-medium">Bookmark</span>
                   <button
