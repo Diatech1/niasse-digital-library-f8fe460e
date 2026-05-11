@@ -99,6 +99,7 @@ const Reader = () => {
   const [ifadatouData, setIfadatouData] = useState<IfadatouSection[]>([]);
   const [jawahirRasailData, setJawahirRasailData] = useState<JawahirRasailSection[]>([]);
   const [volumeData, setVolumeData] = useState<VolumeSection[]>([]);
+  const [loadedVolumeModule, setLoadedVolumeModule] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
@@ -144,6 +145,12 @@ const Reader = () => {
     document.body.classList.toggle("reader-chrome-hidden", !chromeVisible);
     return () => document.body.classList.remove("reader-chrome-hidden");
   }, [chromeVisible]);
+
+  useEffect(() => {
+    const saved = getSavedProgress(id);
+    setCurrentSectionIdx(saved);
+    setShowResumeBanner(saved > 0);
+  }, [id]);
 
   useEffect(() => {
     if (book?.contentModule === "kashif-en") {
@@ -206,8 +213,11 @@ const Reader = () => {
     const volumePath = book?.contentModule ? volumeMap[book.contentModule] : undefined;
     if (volumePath && book?.contentModule) {
       setLoading(true);
+      setVolumeData([]);
+      setLoadedVolumeModule(null);
       loadVolumeSections(volumePath, book.contentModule).then((sections) => {
         setVolumeData(sections);
+        setLoadedVolumeModule(book.contentModule);
         setLoading(false);
         const saved = getSavedProgress(id);
         if (saved > 0) setCurrentSectionIdx(Math.min(saved, sections.length - 1));
@@ -301,7 +311,7 @@ const Reader = () => {
       "volume-8-teachings",
       "jawaheer-al-maani",
     ];
-    if (book?.contentModule && volumeModules.includes(book.contentModule)) {
+    if (book?.contentModule && volumeModules.includes(book.contentModule) && loadedVolumeModule === book.contentModule) {
       return volumeData.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
     }
     // Async-loaded module hasn't populated yet — show nothing instead of the sample placeholder
@@ -310,7 +320,7 @@ const Reader = () => {
       return [];
     }
     return [];
-  }, [book?.contentModule, kashifEnData, kachifulAlbasData, conditionsReglesData, ifadatouData, jawahirRasailData, volumeData]);
+  }, [book?.contentModule, kashifEnData, kachifulAlbasData, conditionsReglesData, ifadatouData, jawahirRasailData, volumeData, loadedVolumeModule]);
 
   const tocItems = useMemo(() => {
     // For page-by-page books (kashif-en, kachiful-albas), build a deduplicated TOC:
