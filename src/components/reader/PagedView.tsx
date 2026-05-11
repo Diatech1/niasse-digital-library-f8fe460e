@@ -283,10 +283,10 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
     return (
       <div
         ref={outerRef}
-        className={`reader-stage overflow-hidden relative flex justify-center ${allowDesktopScroll ? 'items-start' : 'items-center'} ${className || ''}`}
+        className={`reader-stage overflow-hidden relative flex justify-center ${allowDesktopScroll || isMobile ? 'items-start' : 'items-center'} ${className || ''}`}
         style={{
           height: '100%',
-          overflowY: allowDesktopScroll ? 'auto' : 'hidden',
+          overflowY: allowDesktopScroll || isMobile ? 'auto' : 'hidden',
           overflowX: allowDesktopScroll ? 'auto' : 'hidden',
           paddingTop: allowDesktopScroll ? stagePadY : 0,
           paddingBottom: allowDesktopScroll ? stagePadY : 0,
