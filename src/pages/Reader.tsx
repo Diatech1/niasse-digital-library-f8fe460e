@@ -311,7 +311,7 @@ const Reader = () => {
       "volume-8-teachings",
       "jawaheer-al-maani",
     ];
-    if (book?.contentModule && volumeModules.includes(book.contentModule)) {
+    if (book?.contentModule && volumeModules.includes(book.contentModule) && loadedVolumeModule === book.contentModule) {
       return volumeData.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
     }
     // Async-loaded module hasn't populated yet — show nothing instead of the sample placeholder
@@ -320,7 +320,7 @@ const Reader = () => {
       return [];
     }
     return [];
-  }, [book?.contentModule, kashifEnData, kachifulAlbasData, conditionsReglesData, ifadatouData, jawahirRasailData, volumeData]);
+  }, [book?.contentModule, kashifEnData, kachifulAlbasData, conditionsReglesData, ifadatouData, jawahirRasailData, volumeData, loadedVolumeModule]);
 
   const tocItems = useMemo(() => {
     // For page-by-page books (kashif-en, kachiful-albas), build a deduplicated TOC:
