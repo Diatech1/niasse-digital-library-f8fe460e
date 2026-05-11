@@ -333,15 +333,25 @@ body.reader-chrome-hidden .bottom-nav {
 @media (max-width: 767px) {
   .pocket-paragraphs .formatted-content {
     line-height: 1.7;
-  }
-  .pocket-paragraphs .formatted-content,
-  .pocket-paragraphs .formatted-content > p:not([dir="rtl"]) {
     text-align: justify;
     -webkit-hyphens: none;
     hyphens: none;
   }
-  .pocket-paragraphs .formatted-content > p[dir="rtl"] {
-    text-align: center;
+  /* Arabic / RTL: center every paragraph, heading, blockquote, and any nested
+     RTL block, regardless of nesting depth. Disable hyphenation and indents
+     so the text stays homogeneously centered. */
+  .pocket-paragraphs .formatted-content [dir="rtl"],
+  .pocket-paragraphs .formatted-content [lang="ar"],
+  .pocket-paragraphs[dir="rtl"] .formatted-content,
+  .pocket-paragraphs[dir="rtl"] .formatted-content p,
+  .pocket-paragraphs[dir="rtl"] .formatted-content h3,
+  .pocket-paragraphs[dir="rtl"] .formatted-content h4,
+  .pocket-paragraphs[dir="rtl"] .formatted-content h5,
+  .pocket-paragraphs[dir="rtl"] .formatted-content blockquote {
+    text-align: center !important;
+    text-indent: 0 !important;
+    -webkit-hyphens: none;
+    hyphens: none;
   }
 }
 
