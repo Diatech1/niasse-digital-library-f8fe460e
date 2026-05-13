@@ -279,17 +279,14 @@ body.reader-chrome-hidden .bottom-nav {
   page-break-after: avoid;
 }
 
-/* Keep at least the next 2 lines after a heading on the same column to
-   avoid a heading sitting alone at the bottom. */
-.formatted-content h1 + *,
-.formatted-content h2 + *,
-.formatted-content h3 + *,
-.formatted-content h4 + *,
-.formatted-content h5 + *,
-.formatted-content h6 + * {
-  break-before: avoid-column;
-  page-break-before: avoid;
-}
+/* NOTE: We intentionally do NOT add `break-before: avoid-column` on the
+   sibling that follows a heading. Combined with `break-after: avoid-column`
+   on the heading, that creates an over-constrained "must stay together"
+   group: when the following paragraph is too tall to fit in the remaining
+   column, the entire heading + paragraph block gets pushed to the next
+   page, leaving a large empty band at the bottom of the previous one.
+   `break-after: avoid-column` on the heading alone is enough to prevent
+   an orphaned heading. */
 
 /* Page-number markers (e.g. "p. 42") rendered as a small flex row are
    structural section repères — they must stay whole and stick to the
@@ -334,18 +331,15 @@ body.reader-chrome-hidden .bottom-nav {
   word-wrap: break-word;
 }
 
-/* Prose paragraphs MAY break across columns. Keep at least 2 lines
-   together at top/bottom of a column to avoid widows/orphans. */
+/* Prose paragraphs MAY break across columns. Allow 1-line orphans/widows
+   so columns can fill tightly without pushing whole paragraphs. */
 .formatted-content p {
   break-inside: auto;
-  orphans: 2;
-  widows: 2;
+  orphans: 1;
+  widows: 1;
 }
 
-/* Blocks that must NOT be split: only Arabic verses must stay whole.
-   Long French/English blockquotes, poetry blocks and numbered list items
-   are allowed to flow across columns so that columns fill vertically and
-   paragraphs split naturally — like a real printed book. */
+/* Blocks that must NOT be split: only Arabic verses must stay whole. */
 .formatted-content p[lang="ar"] {
   break-inside: avoid-column;
 }
@@ -353,8 +347,8 @@ body.reader-chrome-hidden .bottom-nav {
 .formatted-content blockquote,
 .formatted-content > .flex {
   break-inside: auto;
-  orphans: 2;
-  widows: 2;
+  orphans: 1;
+  widows: 1;
 }
 
 /* Inside numbered list items, the number marker must stay with at least
