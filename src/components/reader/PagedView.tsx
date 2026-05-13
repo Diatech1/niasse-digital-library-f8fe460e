@@ -74,7 +74,7 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
     const bookWidth = isMobile ? availWidth : baseWidth * zoom;
     // Mobile: each "page" holds 2× viewport height of content. The reader
     // becomes vertically scrollable within a page; swipe still advances pages.
-    const MOBILE_PAGE_MULTIPLIER = 2;
+    const MOBILE_PAGE_MULTIPLIER = 1;
     const bookHeight = isMobile ? availHeight * MOBILE_PAGE_MULTIPLIER : bookWidth * A4_RATIO;
 
     // A4-style margins (mirror the asymmetric typographic margins of a real book page)
