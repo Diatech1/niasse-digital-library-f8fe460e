@@ -115,22 +115,32 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, cen
         }
 
         // Detect numbered list items (e.g. "1. Text..." or "1 & 2. Text...")
+        // Rendered as a block paragraph with hanging indent so the text can
+        // wrap and break across columns naturally — flex containers cannot
+        // be split by CSS multi-column layout, which leaves empty pages.
         const numberedItemMatch = trimmed.match(/^(\d+(?:\s*[&]\s*\d+)?)\.\s+([\s\S]+)$/);
         if (numberedItemMatch) {
           const num = numberedItemMatch[1];
           const text = numberedItemMatch[2];
           return (
-            <div key={idx} className="flex gap-3 items-start py-1">
+            <p
+              key={idx}
+              className={`numbered-item leading-relaxed ${proseAlign}`}
+              style={{
+                fontSize,
+                paddingLeft: '1.8em',
+                textIndent: '-1.8em',
+              }}
+            >
               <span
-                className="shrink-0 font-semibold text-primary/80 tabular-nums"
-                style={{ fontSize: fontSize * 0.85, minWidth: '1.6em', paddingTop: '0.1em' }}
+                className="font-semibold text-primary/80 tabular-nums"
+                style={{ display: 'inline-block', minWidth: '1.5em' }}
               >
                 {num}.
               </span>
-              <p className={`leading-relaxed ${proseAlign} flex-1`} style={{ fontSize }}>
-                {formatInlineText(text)}
-              </p>
-            </div>
+              {' '}
+              {formatInlineText(text)}
+            </p>
           );
         }
 
