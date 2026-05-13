@@ -313,7 +313,7 @@ const BookDetail = () => {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 
