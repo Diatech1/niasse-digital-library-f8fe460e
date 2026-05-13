@@ -262,7 +262,7 @@ const Settings = () => {
         </Section>
       </motion.div>
       </div>
-    </div>
+    </main>
   );
 };
 
