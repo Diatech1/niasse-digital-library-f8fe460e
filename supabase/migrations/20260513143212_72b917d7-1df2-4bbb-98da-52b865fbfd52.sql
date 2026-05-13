@@ -1,0 +1,1 @@
+UPDATE public.books SET cover = 'https://vkjujymsntwacjelyqgv.supabase.co/storage/v1/object/public/book-covers/doua-wazifa.jpg' WHERE id = 'doua-wazifa';
