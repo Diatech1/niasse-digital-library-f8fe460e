@@ -25,7 +25,7 @@ const Hero = () => {
         alt=""
         aria-hidden="true"
         loading="eager"
-        fetchpriority="high"
+        fetchPriority="high"
         className="absolute inset-0 w-full h-full object-cover"
       />
       <div className="absolute inset-0 bg-gradient-hero" />
