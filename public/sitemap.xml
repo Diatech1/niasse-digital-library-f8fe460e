@@ -311,22 +311,22 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://faydabook.com/book/doua-wazifa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://faydabook.com/read/doua-wazifa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://faydabook.com/book/jawaheer-al-maani</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://faydabook.com/read/jawaheer-al-maani</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://faydabook.com/book/doua-wazifa</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://faydabook.com/read/doua-wazifa</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
