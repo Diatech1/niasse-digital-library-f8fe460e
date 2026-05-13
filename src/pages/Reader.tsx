@@ -1036,7 +1036,7 @@ const Reader = () => {
                   {fonts.map((f, i) => (
                     <button
                       key={f}
-                      onClick={() => setFontIdx(i)}
+                      onClick={() => { setFontIdx(i); localStorage.setItem("faydabook-reader-fontidx", String(i)); }}
                       className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${i === fontIdx ? "bg-primary text-primary-foreground" : "bg-muted text-foreground/70 hover:bg-accent"}`}
                     >
                       {f}
