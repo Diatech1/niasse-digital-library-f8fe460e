@@ -79,7 +79,10 @@ const Reader = () => {
         window.matchMedia("(prefers-color-scheme: dark)").matches);
     return isDark ? 2 : 0; // Dark or Light
   });
-  const [fontIdx, setFontIdx] = useState(1);
+  const [fontIdx, setFontIdx] = useState(() => {
+    const saved = localStorage.getItem("faydabook-reader-fontidx");
+    return saved ? Number(saved) : 1;
+  });
   const [fontSize, setFontSize] = useState(() => {
     const saved = localStorage.getItem("faydabook-reader-fontsize");
     if (saved) return Number(saved);
@@ -88,6 +91,23 @@ const Reader = () => {
   const [fitToPage, setFitToPage] = useState(() => {
     return localStorage.getItem("faydabook-reader-fit") === "true";
   });
+
+  // Sync reader prefs when changed elsewhere (e.g. Settings page)
+  useEffect(() => {
+    const sync = () => {
+      const fs = localStorage.getItem("faydabook-reader-fontsize");
+      if (fs) setFontSize(Number(fs));
+      const fi = localStorage.getItem("faydabook-reader-fontidx");
+      if (fi) setFontIdx(Number(fi));
+      setFitToPage(localStorage.getItem("faydabook-reader-fit") === "true");
+    };
+    window.addEventListener("storage", sync);
+    window.addEventListener("focus", sync);
+    return () => {
+      window.removeEventListener("storage", sync);
+      window.removeEventListener("focus", sync);
+    };
+  }, []);
   const [mainMenuOpen, setMainMenuOpen] = useState(false);
   const [tocOpen, setTocOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
