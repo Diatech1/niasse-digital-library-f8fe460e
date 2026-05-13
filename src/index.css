@@ -257,20 +257,59 @@ body.reader-chrome-hidden .bottom-nav {
    blank band at the bottom of the previous page.
    ============================================================ */
 
-/* Headings stay glued to the paragraph that follows them */
+/* Headings & section markers must stay whole and glued to the paragraph
+   that follows. Applies to every heading level inside the reader, not only
+   those nested under .paged-section, so titles never split across pages
+   nor end up orphaned at the bottom of a column. */
+.paged-section h1,
+.paged-section h2,
 .paged-section h3,
 .paged-section h4,
-.paged-section h5 {
-  break-after: avoid-column;
+.paged-section h5,
+.paged-section h6,
+.formatted-content h1,
+.formatted-content h2,
+.formatted-content h3,
+.formatted-content h4,
+.formatted-content h5,
+.formatted-content h6 {
   break-inside: avoid-column;
+  break-after: avoid-column;
+  page-break-inside: avoid;
+  page-break-after: avoid;
 }
 
+/* Keep at least the next 2 lines after a heading on the same column to
+   avoid a heading sitting alone at the bottom. */
+.formatted-content h1 + *,
+.formatted-content h2 + *,
+.formatted-content h3 + *,
+.formatted-content h4 + *,
+.formatted-content h5 + *,
+.formatted-content h6 + * {
+  break-before: avoid-column;
+  page-break-before: avoid;
+}
+
+/* Page-number markers (e.g. "p. 42") rendered as a small flex row are
+   structural section repères — they must stay whole and stick to the
+   following paragraph instead of being stranded at a column edge. */
+.formatted-content > .flex.justify-end {
+  break-inside: avoid-column;
+  break-after: avoid-column;
+  page-break-inside: avoid;
+  page-break-after: avoid;
+}
+
+.pocket-paragraphs .paged-section h1,
+.pocket-paragraphs .paged-section h2,
 .pocket-paragraphs .paged-section h3,
 .pocket-paragraphs .paged-section h4,
-.pocket-paragraphs .paged-section h5 {
+.pocket-paragraphs .paged-section h5,
+.pocket-paragraphs .paged-section h6 {
   break-before: auto;
-  break-after: avoid-column;
   break-inside: avoid-column;
+  break-after: avoid-column;
 }
 
 /* Let sections + paragraphs flow naturally so columns fill before breaking */
