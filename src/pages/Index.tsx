@@ -178,8 +178,9 @@ const Index = () => {
       </div>
 
       {/* Desktop home sections — featured, languages, quotes, footer */}
+      {/* Desktop home sections — featured, languages, quotes, footer */}
       <DesktopHomeSections />
-    </div>
+    </main>
   );
 };
 
