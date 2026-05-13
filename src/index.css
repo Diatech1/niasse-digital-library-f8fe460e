@@ -371,14 +371,78 @@ body.reader-chrome-hidden .bottom-nav {
   word-break: break-word;
 }
 
-/* Pocket book paragraph indentation — no gap, first-line indent */
+/* ============================================================
+   Reader typography — tuned for book-like readability.
+   Margins use em so they scale with the user's font-size.
+   ============================================================ */
+
+/* Body text: comfortable line-height, slight letter spacing for serif. */
 .pocket-paragraphs .formatted-content {
-  line-height: 1.45;
+  line-height: 1.55;
+  letter-spacing: 0.005em;
+  word-spacing: 0.01em;
+}
+
+/* Headings: generous space above to separate sections, tight space below
+   so the title visually "owns" the paragraph that follows. Override the
+   utility classes (mt-8 mb-4) set in FormattedContent.tsx. */
+.formatted-content h1,
+.formatted-content h2,
+.formatted-content h3,
+.formatted-content h4,
+.formatted-content h5,
+.formatted-content h6 {
+  margin-top: 1.6em;
+  margin-bottom: 0.45em;
+  line-height: 1.25;
+  letter-spacing: -0.005em;
+}
+
+/* First heading shouldn't push content down on a fresh page. */
+.formatted-content > h1:first-child,
+.formatted-content > h2:first-child,
+.formatted-content > h3:first-child,
+.formatted-content > h4:first-child,
+.formatted-content > h5:first-child,
+.formatted-content > h6:first-child {
+  margin-top: 0.2em;
+}
+
+/* Subheadings (h4–h6) sit closer to surrounding text. */
+.formatted-content h4,
+.formatted-content h5,
+.formatted-content h6 {
+  margin-top: 1.25em;
+  margin-bottom: 0.35em;
+}
+
+/* Blockquotes (poetry, citations): airy, italic feel, balanced gutters. */
+.formatted-content blockquote {
+  margin-top: 1.4em;
+  margin-bottom: 1.4em;
+  line-height: 1.5;
+}
+
+.formatted-content blockquote p {
+  margin: 0.15em 0;
+}
+
+/* Arabic verses: extra breathing room — Naskh needs more vertical space. */
+.formatted-content p[lang="ar"] {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  line-height: 1.85;
+}
+
+/* Numbered list items: clear gap between siblings. */
+.formatted-content p.numbered-item {
+  margin-top: 0.55em;
+  margin-bottom: 0.55em;
 }
 
 @media (max-width: 767px) {
   .pocket-paragraphs .formatted-content {
-    line-height: 1.7;
+    line-height: 1.65;
     text-align: justify;
     -webkit-hyphens: none;
     hyphens: none;
