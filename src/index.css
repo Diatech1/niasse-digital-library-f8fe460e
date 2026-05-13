@@ -279,17 +279,14 @@ body.reader-chrome-hidden .bottom-nav {
   page-break-after: avoid;
 }
 
-/* Keep at least the next 2 lines after a heading on the same column to
-   avoid a heading sitting alone at the bottom. */
-.formatted-content h1 + *,
-.formatted-content h2 + *,
-.formatted-content h3 + *,
-.formatted-content h4 + *,
-.formatted-content h5 + *,
-.formatted-content h6 + * {
-  break-before: avoid-column;
-  page-break-before: avoid;
-}
+/* NOTE: We intentionally do NOT add `break-before: avoid-column` on the
+   sibling that follows a heading. Combined with `break-after: avoid-column`
+   on the heading, that creates an over-constrained "must stay together"
+   group: when the following paragraph is too tall to fit in the remaining
+   column, the entire heading + paragraph block gets pushed to the next
+   page, leaving a large empty band at the bottom of the previous one.
+   `break-after: avoid-column` on the heading alone is enough to prevent
+   an orphaned heading. */
 
 /* Page-number markers (e.g. "p. 42") rendered as a small flex row are
    structural section repères — they must stay whole and stick to the
