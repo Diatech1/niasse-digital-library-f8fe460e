@@ -1,5 +1,6 @@
 import { useBooks } from "@/hooks/use-books";
 import BookCard from "@/components/BookCard";
+import SEO from "@/components/SEO";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage } from "@/hooks/use-language";
 
@@ -9,7 +10,18 @@ const AudioLibrary = () => {
   const audioBooks = books.filter((b) => b.hasAudio);
 
   return (
-    <div className="min-h-screen bg-background pb-24 lg:pb-12">
+    <main className="min-h-screen bg-background pb-24 lg:pb-12">
+      <SEO
+        title="Audio — Faydabook"
+        description="Écoutez les livres et traités tidjanis en audio : Cheikh Ibrahim Niasse et la Faydah."
+        path="/audio"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: "Bibliothèque audio Faydabook",
+          url: "https://faydabook.com/audio",
+        }}
+      />
       <div className="container mx-auto px-5 lg:px-8 max-w-6xl">
         <div className="pt-12 lg:pt-4 pb-6 lg:pb-8">
           <p className="hidden lg:block text-accent text-xs font-medium tracking-[0.2em] uppercase mb-2">
@@ -33,7 +45,7 @@ const AudioLibrary = () => {
           </div>
         )}
       </div>
-    </div>
+    </main>
   );
 };
 

@@ -15,6 +15,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
+import SEO from "@/components/SEO";
 
 const SPEEDS = [0.75, 1, 1.25, 1.5, 2];
 const SLEEP_OPTIONS = [0, 5, 10, 15, 30];
@@ -88,6 +89,15 @@ const AudioPlayer = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
+      {book && (
+        <SEO
+          title={`Écouter ${book.title} — Faydabook`}
+          description={`Écoutez ${book.title} de ${book.author} en audio sur Faydabook.`}
+          path={`/listen/${book.id}`}
+          image={book.cover}
+          type="book"
+        />
+      )}
       {/* Blurred background */}
       <div className="absolute inset-0">
         <img src={book.cover} alt="" className="w-full h-full object-cover opacity-20 blur-3xl scale-110" />

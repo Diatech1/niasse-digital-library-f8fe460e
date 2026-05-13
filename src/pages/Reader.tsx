@@ -28,6 +28,7 @@ import MiniPlayer from "@/components/MiniPlayer";
 import { Slider } from "@/components/ui/slider";
 import { useSaveProgress, getSavedProgress } from "@/hooks/use-reading-progress";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import SEO from "@/components/SEO";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ChapterDropdown from "@/components/reader/ChapterDropdown";
 import ReaderBottomBar from "@/components/reader/ReaderBottomBar";
@@ -765,6 +766,15 @@ const Reader = () => {
 
   return (
     <div ref={containerRef} className={`reader-shell h-screen ${theme.bg} md:bg-transparent ${theme.text} transition-colors duration-300 flex flex-col`}>
+      {book && (
+        <SEO
+          title={`Lire ${book.title} — Faydabook`}
+          description={book.description?.slice(0, 155) || `Lecture immersive de ${book.title}.`}
+          path={`/read/${book.id}`}
+          image={book.cover}
+          type="book"
+        />
+      )}
       {/* Top bar */}
       <div className={`flex items-center gap-1 px-2 py-2 border-b border-border/20 transition-all duration-300 ${chromeVisible ? '' : 'opacity-0 max-h-0 overflow-hidden !py-0 !border-b-0'}`}>
         <button onClick={() => navigate(-1)} className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full transition-colors hover:bg-accent" aria-label="Go back">

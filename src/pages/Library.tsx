@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useBooks } from "@/hooks/use-books";
 import BookCard from "@/components/BookCard";
 import SearchBar from "@/components/SearchBar";
+import SEO from "@/components/SEO";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage } from "@/hooks/use-language";
 
@@ -27,7 +28,19 @@ const Library = () => {
   });
 
   return (
-    <div className="min-h-screen bg-background pb-24 lg:pb-12">
+    <main className="min-h-screen bg-background pb-24 lg:pb-12">
+      <SEO
+        title="Bibliothèque — Faydabook"
+        description="Catalogue complet des livres et traités de la Tariqa Tijaniyya, filtrable par langue (français, anglais, arabe)."
+        path="/library"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: "Bibliothèque Faydabook",
+          url: "https://faydabook.com/library",
+          description: "Catalogue de livres tidjanis.",
+        }}
+      />
       <div className="container mx-auto px-5 lg:px-8 max-w-7xl">
         <div className="pt-12 lg:pt-4 pb-4 lg:pb-8">
           <p className="hidden lg:block text-accent text-xs font-medium tracking-[0.2em] uppercase mb-2">
@@ -72,7 +85,7 @@ const Library = () => {
           </div>
         )}
       </div>
-    </div>
+    </main>
   );
 };
 

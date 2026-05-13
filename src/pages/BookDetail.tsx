@@ -6,6 +6,7 @@ import { useBookContent } from "@/hooks/use-book-content";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { directionForBookLanguage, useLanguage } from "@/hooks/use-language";
+import SEO from "@/components/SEO";
 
 interface SectionsListProps {
   bookId: string;
@@ -95,7 +96,28 @@ const BookDetail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-24 lg:pb-12 relative">
+    <main className="min-h-screen bg-background pb-24 lg:pb-12 relative">
+      <SEO
+        title={`${book.title} — Faydabook`}
+        description={book.description?.slice(0, 155) || `${book.title} par ${book.author}.`}
+        path={`/book/${book.id}`}
+        type="book"
+        image={book.cover}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Book",
+          name: book.title,
+          author: { "@type": "Person", name: book.author },
+          inLanguage: book.language,
+          numberOfPages: book.pages,
+          description: book.description,
+          image: book.cover,
+          url: `https://faydabook.com/book/${book.id}`,
+          ...(book.translator
+            ? { translator: { "@type": "Person", name: book.translator } }
+            : {}),
+        }}
+      />
       <div
         className="absolute inset-0 h-[60vh] gradient-cover z-0 lg:hidden"
         style={{
@@ -291,7 +313,7 @@ const BookDetail = () => {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 

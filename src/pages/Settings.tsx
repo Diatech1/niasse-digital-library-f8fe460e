@@ -7,6 +7,7 @@ import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { clearAudioCache } from "@/lib/audio-cache";
+import SEO from "@/components/SEO";
 
 const fonts = ["Sans", "Crimson Pro", "Amiri"] as const;
 const languages: { value: Language; label: string }[] = [
@@ -52,7 +53,12 @@ const Settings = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-24 lg:pb-12">
+    <main className="min-h-screen bg-background pb-24 lg:pb-12">
+      <SEO
+        title="Réglages — Faydabook"
+        description="Préférences de lecture, langue d'interface et apparence pour votre bibliothèque Faydabook."
+        path="/settings"
+      />
       <div className="container mx-auto max-w-2xl lg:px-8">
       {/* Header — matches Library/Home */}
       <div className="px-5 pt-12 lg:pt-4 pb-4 lg:pb-8">
@@ -256,7 +262,7 @@ const Settings = () => {
         </Section>
       </motion.div>
       </div>
-    </div>
+    </main>
   );
 };
 
