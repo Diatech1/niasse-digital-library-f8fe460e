@@ -10,6 +10,7 @@ import { getSavedProgress } from "@/hooks/use-reading-progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage } from "@/hooks/use-language";
 import ScrollRow from "@/components/ScrollRow";
+import SEO from "@/components/SEO";
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -51,7 +52,32 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-24 lg:pb-0">
+    <main className="min-h-screen bg-background pb-24 lg:pb-0">
+      <SEO
+        title="Faydabook — Bibliothèque numérique Tidjaniyya"
+        description="Lisez et écoutez les œuvres de Cheikh Ibrahim Niasse et de la Faydah Tidjaniyya, en français, anglais et arabe."
+        path="/"
+        jsonLd={[
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: "Faydabook",
+            url: "https://faydabook.com/",
+            potentialAction: {
+              "@type": "SearchAction",
+              target: "https://faydabook.com/library?q={search_term_string}",
+              "query-input": "required name=search_term_string",
+            },
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "Faydabook",
+            url: "https://faydabook.com/",
+            logo: "https://faydabook.com/pwa-512x512.png",
+          },
+        ]}
+      />
       {/* Desktop hero — hidden on mobile/tablet */}
       <div className="hidden lg:block desktop-surface">
         <Hero />
