@@ -85,7 +85,7 @@ const Library = () => {
           </div>
         )}
       </div>
-    </div>
+    </main>
   );
 };
 
