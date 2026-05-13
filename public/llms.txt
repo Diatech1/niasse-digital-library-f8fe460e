@@ -1,0 +1,18 @@
+# Faydabook
+
+> Bibliothèque numérique des enseignements de la Tariqa Tijaniyya — œuvres de Cheikh Ibrahim Niasse et de la Faydah, disponibles en français, anglais et arabe.
+
+Faydabook est une bibliothèque digitale dédiée aux écrits, traités et lettres de l'ordre soufi de la Tijaniyya, en particulier la branche de la Faydah du Cheikh Ibrahim Niasse. L'application propose un lecteur immersif, un mode audio (synthèse vocale ou enregistrements), des favoris et une expérience offline (PWA).
+
+## Pages
+
+- [Accueil](/): Sélection éditoriale, lecture en cours et favoris.
+- [Bibliothèque](/library): Catalogue complet, filtrable par langue.
+- [Audio](/audio): Tous les ouvrages disponibles à l'écoute.
+- [Réglages](/settings): Préférences de lecture, langue et apparence.
+
+## Optional
+
+- [Détail d'un livre](/book/:id): Métadonnées, sommaire, actions de lecture/écoute.
+- [Lecteur](/read/:id): Lecture immersive page-à-page, recherche, signets.
+- [Lecteur audio](/listen/:id): Lecteur immersif avec contrôles et sommaire.
