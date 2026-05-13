@@ -331,18 +331,15 @@ body.reader-chrome-hidden .bottom-nav {
   word-wrap: break-word;
 }
 
-/* Prose paragraphs MAY break across columns. Keep at least 2 lines
-   together at top/bottom of a column to avoid widows/orphans. */
+/* Prose paragraphs MAY break across columns. Allow 1-line orphans/widows
+   so columns can fill tightly without pushing whole paragraphs. */
 .formatted-content p {
   break-inside: auto;
-  orphans: 2;
-  widows: 2;
+  orphans: 1;
+  widows: 1;
 }
 
-/* Blocks that must NOT be split: only Arabic verses must stay whole.
-   Long French/English blockquotes, poetry blocks and numbered list items
-   are allowed to flow across columns so that columns fill vertically and
-   paragraphs split naturally — like a real printed book. */
+/* Blocks that must NOT be split: only Arabic verses must stay whole. */
 .formatted-content p[lang="ar"] {
   break-inside: avoid-column;
 }
@@ -350,8 +347,8 @@ body.reader-chrome-hidden .bottom-nav {
 .formatted-content blockquote,
 .formatted-content > .flex {
   break-inside: auto;
-  orphans: 2;
-  widows: 2;
+  orphans: 1;
+  widows: 1;
 }
 
 /* Inside numbered list items, the number marker must stay with at least
