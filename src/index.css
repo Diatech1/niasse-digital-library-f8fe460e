@@ -303,12 +303,25 @@ body.reader-chrome-hidden .bottom-nav {
   widows: 2;
 }
 
-/* Blocks that must NOT be split: Arabic verses, poetry blockquotes,
-   numbered list items (the .flex containers used by FormattedContent). */
-.formatted-content blockquote,
-.formatted-content > .flex,
+/* Blocks that must NOT be split: only Arabic verses must stay whole.
+   Long French/English blockquotes, poetry blocks and numbered list items
+   are allowed to flow across columns so that columns fill vertically and
+   paragraphs split naturally — like a real printed book. */
 .formatted-content p[lang="ar"] {
   break-inside: avoid-column;
+}
+
+.formatted-content blockquote,
+.formatted-content > .flex {
+  break-inside: auto;
+  orphans: 2;
+  widows: 2;
+}
+
+/* Inside numbered list items, the number marker must stay with at least
+   the first line of its paragraph; the paragraph itself flows freely. */
+.formatted-content > .flex > .shrink-0 {
+  break-after: avoid-column;
 }
 
 /* Fallback: when the runtime detector finds a block whose word still clips
