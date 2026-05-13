@@ -78,10 +78,10 @@ const PagedView = forwardRef<PagedViewHandle, PagedViewProps>(
     const bookHeight = isMobile ? availHeight * MOBILE_PAGE_MULTIPLIER : bookWidth * A4_RATIO;
 
     // A4-style margins (mirror the asymmetric typographic margins of a real book page)
-    const padTop = isMobile ? 56 : Math.round(bookHeight * 0.070);
-    const padBottom = isMobile ? 24 : Math.round(bookHeight * 0.050);
-    const padLeft = isMobile ? 24 : Math.round(bookWidth * 0.105);
-    const padRight = isMobile ? 24 : Math.round(bookWidth * 0.105);
+    const padTop = isMobile ? 20 : Math.round(bookHeight * 0.070);
+    const padBottom = isMobile ? 20 : Math.round(bookHeight * 0.050);
+    const padLeft = isMobile ? 22 : Math.round(bookWidth * 0.105);
+    const padRight = isMobile ? 22 : Math.round(bookWidth * 0.105);
 
     const singleContentWidth = bookWidth - padLeft - padRight;
     const rawContentHeight = bookHeight - padTop - padBottom;
