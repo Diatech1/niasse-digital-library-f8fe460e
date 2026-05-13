@@ -45,7 +45,7 @@ const AudioLibrary = () => {
           </div>
         )}
       </div>
-    </div>
+    </main>
   );
 };
 
