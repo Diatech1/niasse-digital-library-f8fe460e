@@ -158,6 +158,25 @@ const Settings = () => {
               </div>
             </div>
 
+            {/* Live preview */}
+            <div className="px-4 py-4">
+              <p className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground mb-2">Preview</p>
+              <p
+                className="text-foreground leading-relaxed"
+                style={{
+                  fontSize,
+                  fontFamily:
+                    fonts[fontIdx] === "Crimson Pro"
+                      ? "'Crimson Pro', serif"
+                      : fonts[fontIdx] === "Amiri"
+                        ? "'Amiri', serif"
+                        : "'Inter', sans-serif",
+                }}
+              >
+                In the name of Allah, the Most Gracious, the Most Merciful.
+              </p>
+            </div>
+
             {/* Fit to page */}
             <div className="px-4 py-4 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
