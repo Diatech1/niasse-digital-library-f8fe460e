@@ -187,18 +187,29 @@ export default defineConfig(({ mode }) => ({
         screenshots: [
           {
             src: "/screenshots/desktop-1.png",
-            sizes: "1280x800",
+            sizes: "1280x720",
             type: "image/png",
             form_factor: "wide",
             label: "Faydabook library on desktop",
           },
           {
             src: "/screenshots/mobile-1.png",
-            sizes: "704x1280",
+            sizes: "390x844",
             type: "image/png",
             form_factor: "narrow",
             label: "Faydabook library on mobile",
           },
+        ],
+        related_applications: [
+          {
+            platform: "play",
+            url: "https://play.google.com/store/apps/details?id=com.faydabook.twa",
+            id: "com.faydabook.twa",
+          },
+        ],
+        scope_extensions: [
+          { origin: "https://www.faydabook.com" },
+          { origin: "https://faydabook.com" },
         ],
         shortcuts: [
           {
