@@ -12,6 +12,7 @@ import Reader from "./pages/Reader";
 import AudioPlayer from "./pages/AudioPlayer";
 import AudioLibrary from "./pages/AudioLibrary";
 import Settings from "./pages/Settings";
+import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
 import BottomNav from "./components/BottomNav";
 import MiniPlayer from "./components/MiniPlayer";
@@ -60,6 +61,7 @@ const App = () => (
                         <Route path="/listen/:id" element={<AudioPlayer />} />
                         <Route path="/audio" element={<AudioLibrary />} />
                         <Route path="/settings" element={<Settings />} />
+                        <Route path="/privacy" element={<Privacy />} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                     </div>
