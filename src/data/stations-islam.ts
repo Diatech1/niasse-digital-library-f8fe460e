@@ -14,7 +14,7 @@ export const stationsIslamSections: StationsSection[] = [
   {
     id: "si-intro",
     chapter: "Introduction",
-    heading: "LES STATIONS DE L'ISLAM\n(Maqâmât, Manâzil, Hadarât)",
+    heading: "Introduction",
     content: `Cet ouvrage synthétise deux lettres écrites en 1350 H par Cheikh Ibrahim Niass à l'intention de son disciple Umar ibn Malick, portant sur la classification des étapes de la religion et des stations mystiques.`,
   },
   {
