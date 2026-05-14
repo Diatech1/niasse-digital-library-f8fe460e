@@ -126,19 +126,12 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, cen
             <p
               key={idx}
               className={`numbered-item leading-relaxed ${proseAlign}`}
-              style={{
-                fontSize,
-                paddingLeft: '1.8em',
-                textIndent: '-1.8em',
-              }}
+              style={{ fontSize }}
             >
-              <span
-                className="font-semibold text-primary/80 tabular-nums"
-                style={{ display: 'inline-block', minWidth: '1.5em' }}
-              >
+              <span className="font-semibold text-primary/80 tabular-nums">
                 {num}.
               </span>
-              {' '}
+              {'\u00a0'}
               {formatInlineText(text)}
             </p>
           );
