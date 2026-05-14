@@ -452,10 +452,13 @@ body.reader-chrome-hidden .bottom-nav {
   line-height: 1.9;
 }
 
-/* Numbered list items: clear gap between siblings. */
-.formatted-content p.numbered-item {
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
+/* Numbered list items: clear gap between siblings, no first-line indent
+   (the number itself acts as the visual marker). High specificity so it
+   wins over the generic pocket-paragraph indent reset. */
+.pocket-paragraphs .formatted-content > p.numbered-item {
+  margin-top: 0.55em;
+  margin-bottom: 0.55em;
+  text-indent: 0;
 }
 
 /* Page-number markers: subtle ornamental separator centred under the text. */
