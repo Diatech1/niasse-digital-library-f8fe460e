@@ -167,7 +167,7 @@ const fr: Dict = {
   "home.favorites": "Favoris",
   "home.library": "Bibliothèque",
   "home.searchResults": "Résultats",
-  "hero.eyebrow": "La Bibliothèque Numérique de",
+  "hero.eyebrow": "La Bibliothèque Numérique de la",
   "hero.subtitle": "Explorez les trésors spirituels de Médina Baye — livres, conférences et poésie de l'un des plus grands savants du XXᵉ siècle.",
   "hero.searchPlaceholder": "Rechercher livres, conférences, poésie...",
   "library.title": "Bibliothèque",
