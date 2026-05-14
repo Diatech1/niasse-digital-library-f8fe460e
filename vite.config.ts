@@ -149,7 +149,6 @@ export default defineConfig(({ mode }) => ({
         theme_color: "#1a5c2e",
         background_color: "#ffffff",
         display: "standalone",
-        display_override: ["window-controls-overlay", "standalone", "minimal-ui", "browser"],
         orientation: "portrait",
         start_url: "/",
         scope: "/",
@@ -157,13 +156,6 @@ export default defineConfig(({ mode }) => ({
         dir: "ltr",
         categories: ["books", "education", "lifestyle"],
         prefer_related_applications: false,
-        launch_handler: {
-          client_mode: ["navigate-existing", "auto"],
-        },
-        handle_links: "preferred",
-        edge_side_panel: {
-          preferred_width: 480,
-        },
         icons: [
           {
             src: "/pwa-192x192.png",
