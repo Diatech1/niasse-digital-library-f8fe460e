@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, MoreHorizontal, Globe, FileText, BookOpen, Headphones, ListOrdered, ChevronRight } from "lucide-react";
+import { ArrowLeft, MoreHorizontal, Globe, FileText, BookOpen, Headphones, ListOrdered, ChevronRight, ChevronDown } from "lucide-react";
+import { useState } from "react";
 import { useBook } from "@/hooks/use-books";
 import { useBookContent } from "@/hooks/use-book-content";
 import { Badge } from "@/components/ui/badge";
