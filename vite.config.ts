@@ -200,17 +200,6 @@ export default defineConfig(({ mode }) => ({
             label: "Faydabook library on mobile",
           },
         ],
-        related_applications: [
-          {
-            platform: "play",
-            url: "https://play.google.com/store/apps/details?id=com.faydabook.twa",
-            id: "com.faydabook.twa",
-          },
-        ],
-        scope_extensions: [
-          { origin: "https://www.faydabook.com" },
-          { origin: "https://faydabook.com" },
-        ],
         shortcuts: [
           {
             name: "Bibliothèque",
