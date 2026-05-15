@@ -1,0 +1,1 @@
+UPDATE public.books SET author='Cheikh Ibrahim Niass' WHERE id='hasbi-bihi';
