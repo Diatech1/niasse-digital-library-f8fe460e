@@ -16,6 +16,7 @@ import { dhikrGroupeSections, dhikrGroupeMeta } from "@/data/dhikr-groupe";
 import { douaWazifaSections, douaWazifaMeta } from "@/data/doua-wazifa";
 import { fadailDhikrSections, fadailDhikrMeta } from "@/data/fadail-dhikr";
 import { priereShaykhIbrahimSections, priereShaykhIbrahimMeta } from "@/data/priere-shaykh-ibrahim";
+import { hasbiBihiSections } from "@/data/hasbi-bihi";
 import { stationsDeenEnSections, stationsDeenEnMeta } from "@/data/stations-deen-en";
 import { loadConditionsReglesSections, conditionsReglesMeta, type ConditionsSection } from "@/data/conditions-regles";
 import { loadIfadatouSections, ifadatouAhmediyyaMeta, type IfadatouSection } from "@/data/ifadatou-ahmediyya";
