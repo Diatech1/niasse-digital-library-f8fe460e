@@ -50,7 +50,9 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, cen
           </p>
         );
       }
-      const isTransliteration = /[āīūēōǧḥṣḍṭẓʿ]/i.test(line) || /\b(bi|wa|al-|li-|fi|min|'ala)\b/i.test(line);
+      // Transliteration = the non-Arabic line that comes RIGHT after the Arabic
+      // (key === 1 in a 3-line verse). Translation is everything else.
+      const isTransliteration = key === 1;
       if (isTransliteration) {
         return (
           <p key={key} className="text-center font-serif font-bold m-0"
