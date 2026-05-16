@@ -20,59 +20,80 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, cen
   const proseAlign = (centered || poem) ? "text-center" : (isRtl ? "text-right" : "text-justify");
 
   if (poem) {
+    // Group paragraphs into verses. Source separates lines within a verse by
+    // "\n\n" and verses by "\n\n\n", so after split("\n\n") an empty string
+    // marks a verse boundary.
+    const rawBlocks = content.split("\n\n").map((p) => p.trim());
+    const verses: string[][] = [[]];
+    for (const block of rawBlocks) {
+      if (block.length === 0) {
+        if (verses[verses.length - 1].length > 0) verses.push([]);
+      } else {
+        verses[verses.length - 1].push(block);
+      }
+    }
+
+    const renderLine = (line: string, key: number) => {
+      const isArabic = /[\u0600-\u06FF]/.test(line) && line.replace(/[^\u0600-\u06FF\s]/g, '').length / line.length > 0.3;
+      if (isArabic) {
+        return (
+          <p key={key} dir="rtl" lang="ar" className="text-center font-bold m-0"
+            style={{
+              fontSize: fontSize * 1.05,
+              fontFamily: "'Scheherazade New', 'Amiri', 'Noto Naskh Arabic', serif",
+              color: textColor || 'inherit',
+              lineHeight: 1.7,
+            }}>
+            {line}
+          </p>
+        );
+      }
+      if (/^\(.*\)$/.test(line) && line.length < 80) {
+        return (
+          <p key={key} className="text-center italic text-muted-foreground m-0"
+            style={{ fontSize: fontSize * 0.85, lineHeight: 1.5 }}>
+            {line}
+          </p>
+        );
+      }
+      const isTransliteration = /[āīūēōǧḥṣḍṭẓʿ]/i.test(line) || /\b(bi|wa|al-|li-|fi|min|'ala)\b/i.test(line);
+      if (isTransliteration) {
+        return (
+          <p key={key} className="text-center font-serif font-bold m-0"
+            style={{
+              fontSize: fontSize * 1.0,
+              lineHeight: 1.5,
+              color: textColor || 'inherit',
+              letterSpacing: '0.01em',
+            }}>
+            {formatInlineText(line)}
+          </p>
+        );
+      }
+      return (
+        <p key={key} className="text-center font-serif m-0"
+          style={{
+            fontSize: fontSize * 0.98,
+            lineHeight: 1.55,
+            color: textColor || 'inherit',
+            letterSpacing: '0.01em',
+          }}>
+          {formatInlineText(line)}
+        </p>
+      );
+    };
+
     return (
       <div className="formatted-content poem-content" dir={dir} lang={lang}>
-        {paragraphs.map((para, idx) => {
-          const trimmed = para.trim();
-          const isArabic = /[\u0600-\u06FF]/.test(trimmed) && trimmed.replace(/[^\u0600-\u06FF\s]/g, '').length / trimmed.length > 0.3;
-          if (isArabic) {
-            return (
-              <p key={idx} dir="rtl" lang="ar" className="text-center my-4 font-bold"
-                style={{
-                  fontSize: fontSize * 1.05,
-                  fontFamily: "'Scheherazade New', 'Amiri', 'Noto Naskh Arabic', serif",
-                  color: textColor || 'inherit',
-                  lineHeight: 1.7,
-                }}>
-                {trimmed}
-              </p>
-            );
-          }
-          if (/^\(.*\)$/.test(trimmed) && trimmed.length < 80) {
-            return (
-              <p key={idx} className="text-center my-3 italic text-muted-foreground"
-                style={{ fontSize: fontSize * 0.85 }}>
-                {trimmed}
-              </p>
-            );
-          }
-          // Transliteration lines use Latin diacritics (ā ī ū ḥ ṣ etc.) — render bold, no italic.
-          const isTransliteration = /[āīūēōǧḥṣḍṭẓʿ]/i.test(trimmed) || /\b(bi|wa|al-|li-|fi|min|'ala)\b/i.test(trimmed);
-          if (isTransliteration) {
-            return (
-              <p key={idx} className="text-center my-2 font-serif font-bold"
-                style={{
-                  fontSize: fontSize * 1.0,
-                  lineHeight: 1.5,
-                  color: textColor || 'inherit',
-                  letterSpacing: '0.01em',
-                }}>
-                {formatInlineText(trimmed)}
-              </p>
-            );
-          }
-          return (
-            <p key={idx} className="text-center my-2 mb-6 font-serif"
-              style={{
-                fontSize: fontSize * 0.98,
-                lineHeight: 1.55,
-                color: textColor || 'inherit',
-                letterSpacing: '0.01em',
-              }}>
-              {formatInlineText(trimmed)}
-            </p>
-          );
-        })}
+        {verses.map((lines, vIdx) => (
+          <div
+            key={vIdx}
+            className="poem-verse flex flex-col items-center"
+            style={{ gap: `${fontSize * 0.35}px`, marginBottom: `${fontSize * 1.6}px` }}
+          >
+            {lines.map((line, lIdx) => renderLine(line, lIdx))}
+          </div>
+        ))}
       </div>
     );
   }
