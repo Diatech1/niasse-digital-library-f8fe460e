@@ -94,8 +94,8 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, cen
               marginBottom: `${fontSize * 1.6}px`,
               breakInside: 'avoid',
               pageBreakInside: 'avoid',
-              WebkitColumnBreakInside: 'avoid',
-            }}
+              ['WebkitColumnBreakInside' as any]: 'avoid',
+            } as React.CSSProperties}
           >
             {lines.map((line, lIdx) => renderLine(line, lIdx))}
           </div>
