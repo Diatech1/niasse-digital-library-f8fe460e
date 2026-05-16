@@ -95,7 +95,7 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, cen
             } as React.CSSProperties}
           >
             {lines.map((line, lIdx) => (
-              <div key={lIdx} style={{ marginTop: lIdx === 0 ? 0 : `${fontSize * 0.35}px` }}>
+              <div key={lIdx} style={{ marginTop: lIdx === 0 ? 0 : `${fontSize * 0.15}px` }}>
                 {renderLine(line, lIdx)}
               </div>
             ))}
