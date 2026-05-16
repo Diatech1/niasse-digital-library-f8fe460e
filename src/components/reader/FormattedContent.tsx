@@ -58,7 +58,7 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, cen
           <p key={key} className="text-center font-serif font-bold m-0"
             style={{
               fontSize: fontSize * 1.0,
-              lineHeight: 1.5,
+              lineHeight: 1.3,
               color: textColor || 'inherit',
               letterSpacing: '0.01em',
             }}>
