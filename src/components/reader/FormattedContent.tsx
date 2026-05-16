@@ -20,18 +20,12 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, cen
   const proseAlign = (centered || poem) ? "text-center" : (isRtl ? "text-right" : "text-justify");
 
   if (poem) {
-    // Group paragraphs into verses. Source separates lines within a verse by
-    // "\n\n" and verses by "\n\n\n", so after split("\n\n") an empty string
-    // marks a verse boundary.
-    const rawBlocks = content.split("\n\n").map((p) => p.trim());
-    const verses: string[][] = [[]];
-    for (const block of rawBlocks) {
-      if (block.length === 0) {
-        if (verses[verses.length - 1].length > 0) verses.push([]);
-      } else {
-        verses[verses.length - 1].push(block);
-      }
-    }
+    // Verses are separated by a blank line (\n\n\n in source → "\n" block
+    // after split). Lines within a verse are separated by \n\n.
+    const verses: string[][] = content
+      .split(/\n{3,}/)
+      .map((v) => v.split(/\n{2,}/).map((l) => l.trim()).filter((l) => l.length > 0))
+      .filter((v) => v.length > 0);
 
     const renderLine = (line: string, key: number) => {
       const isArabic = /[\u0600-\u06FF]/.test(line) && line.replace(/[^\u0600-\u06FF\s]/g, '').length / line.length > 0.3;
