@@ -36,7 +36,7 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, cen
               fontSize: fontSize * 1.05,
               fontFamily: "'Scheherazade New', 'Amiri', 'Noto Naskh Arabic', serif",
               color: textColor || 'inherit',
-              lineHeight: 1.7,
+              lineHeight: 1.5,
             }}>
             {line}
           </p>
@@ -58,7 +58,7 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, cen
           <p key={key} className="text-center font-serif font-bold m-0"
             style={{
               fontSize: fontSize * 1.0,
-              lineHeight: 1.5,
+              lineHeight: 1.3,
               color: textColor || 'inherit',
               letterSpacing: '0.01em',
             }}>
@@ -70,7 +70,7 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, cen
         <p key={key} className="text-center font-serif m-0"
           style={{
             fontSize: fontSize * 0.98,
-            lineHeight: 1.55,
+            lineHeight: 1.35,
             color: textColor || 'inherit',
             letterSpacing: '0.01em',
           }}>
@@ -95,7 +95,7 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, cen
             } as React.CSSProperties}
           >
             {lines.map((line, lIdx) => (
-              <div key={lIdx} style={{ marginTop: lIdx === 0 ? 0 : `${fontSize * 0.35}px` }}>
+              <div key={lIdx} style={{ marginTop: lIdx === 0 ? 0 : `${fontSize * 0.15}px` }}>
                 {renderLine(line, lIdx)}
               </div>
             ))}
