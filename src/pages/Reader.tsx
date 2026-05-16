@@ -308,6 +308,9 @@ const Reader = () => {
     if (book?.contentModule === "priere-shaykh-ibrahim") {
       return priereShaykhIbrahimSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
     }
+    if (book?.contentModule === "hasbi-bihi") {
+      return hasbiBihiSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
+    }
     if (book?.contentModule === "stations-deen-en") {
       return stationsDeenEnSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
     }
