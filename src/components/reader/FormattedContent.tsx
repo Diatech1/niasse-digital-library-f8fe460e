@@ -27,9 +27,9 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, cen
           const isArabic = /[\u0600-\u06FF]/.test(trimmed) && trimmed.replace(/[^\u0600-\u06FF\s]/g, '').length / trimmed.length > 0.3;
           if (isArabic) {
             return (
-              <p key={idx} dir="rtl" lang="ar" className="text-center my-5"
+              <p key={idx} dir="rtl" lang="ar" className="text-center my-4 font-bold"
                 style={{
-                  fontSize: fontSize * 1.0,
+                  fontSize: fontSize * 1.05,
                   fontFamily: "'Scheherazade New', 'Amiri', 'Noto Naskh Arabic', serif",
                   color: textColor || 'inherit',
                   lineHeight: 1.7,
@@ -46,13 +46,27 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, cen
               </p>
             );
           }
+          // Transliteration lines use Latin diacritics (ā ī ū ḥ ṣ etc.) — render bold, no italic.
+          const isTransliteration = /[āīūēōǧḥṣḍṭẓʿ]/i.test(trimmed) || /\b(bi|wa|al-|li-|fi|min|'ala)\b/i.test(trimmed);
+          if (isTransliteration) {
+            return (
+              <p key={idx} className="text-center my-2 font-serif font-bold"
+                style={{
+                  fontSize: fontSize * 1.0,
+                  lineHeight: 1.5,
+                  color: textColor || 'inherit',
+                  letterSpacing: '0.01em',
+                }}>
+                {formatInlineText(trimmed)}
+              </p>
+            );
+          }
           return (
-            <p key={idx} className="text-center my-3 font-serif"
+            <p key={idx} className="text-center my-2 mb-6 font-serif"
               style={{
-                fontSize: fontSize * 1.02,
-                lineHeight: 1.6,
+                fontSize: fontSize * 0.98,
+                lineHeight: 1.55,
                 color: textColor || 'inherit',
-                fontStyle: 'italic',
                 letterSpacing: '0.01em',
               }}>
               {formatInlineText(trimmed)}
