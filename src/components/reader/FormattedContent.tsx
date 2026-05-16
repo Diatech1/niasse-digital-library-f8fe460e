@@ -94,11 +94,17 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, cen
               width: '100%',
             } as React.CSSProperties}
           >
-            {lines.map((line, lIdx) => (
-              <div key={lIdx} style={{ marginTop: lIdx === 0 ? 0 : `${fontSize * 0.15}px` }}>
-                {renderLine(line, lIdx)}
-              </div>
-            ))}
+            {lines.map((line, lIdx) => {
+              // Tighter gap right after the Arabic line (it already carries
+              // tall ascenders/descenders from the script).
+              const prevIsArabic = lIdx > 0 && /[\u0600-\u06FF]/.test(lines[lIdx - 1]);
+              const mt = lIdx === 0 ? 0 : prevIsArabic ? `-${fontSize * 0.15}px` : `${fontSize * 0.15}px`;
+              return (
+                <div key={lIdx} style={{ marginTop: mt }}>
+                  {renderLine(line, lIdx)}
+                </div>
+              );
+            })}
           </div>
         ))}
       </div>
