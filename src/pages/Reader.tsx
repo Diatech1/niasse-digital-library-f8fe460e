@@ -732,7 +732,7 @@ const Reader = () => {
               textColor={pagedTextColor}
               dir={directionForBookLanguage(book?.language)}
               lang={book?.language}
-              poem={book?.contentModule === "doua-wazifa"}
+              poem={book?.contentModule === "doua-wazifa" || book?.contentModule === "hasbi-bihi"}
             />
           )}
          </div>
@@ -781,7 +781,7 @@ const Reader = () => {
           textColor={theme.text.replace('text-[', '').replace(']', '')}
           dir={directionForBookLanguage(book?.language)}
           lang={book?.language}
-          poem={book?.contentModule === "doua-wazifa"}
+          poem={book?.contentModule === "doua-wazifa" || book?.contentModule === "hasbi-bihi"}
         />
       </div>
     );
