@@ -36,7 +36,7 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, cen
               fontSize: fontSize * 1.05,
               fontFamily: "'Scheherazade New', 'Amiri', 'Noto Naskh Arabic', serif",
               color: textColor || 'inherit',
-              lineHeight: 1.7,
+              lineHeight: 1.5,
             }}>
             {line}
           </p>
