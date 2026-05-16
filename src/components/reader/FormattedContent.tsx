@@ -42,6 +42,7 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, cen
           </p>
         );
       }
+
       if (/^\(.*\)$/.test(line) && line.length < 80) {
         return (
           <p key={key} className="text-center italic text-muted-foreground m-0"
@@ -58,7 +59,7 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, cen
           <p key={key} className="text-center font-serif font-bold m-0"
             style={{
               fontSize: fontSize * 1.0,
-              lineHeight: 1.3,
+              lineHeight: 1.5,
               color: textColor || 'inherit',
               letterSpacing: '0.01em',
             }}>
@@ -70,7 +71,7 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, cen
         <p key={key} className="text-center font-serif m-0"
           style={{
             fontSize: fontSize * 0.98,
-            lineHeight: 1.35,
+            lineHeight: 1.5,
             color: textColor || 'inherit',
             letterSpacing: '0.01em',
           }}>
