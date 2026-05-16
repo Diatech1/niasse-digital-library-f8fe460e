@@ -89,7 +89,13 @@ const FormattedContent = ({ content, fontSize, textColor, dir = "ltr", lang, cen
           <div
             key={vIdx}
             className="poem-verse flex flex-col items-center"
-            style={{ gap: `${fontSize * 0.35}px`, marginBottom: `${fontSize * 1.6}px` }}
+            style={{
+              gap: `${fontSize * 0.35}px`,
+              marginBottom: `${fontSize * 1.6}px`,
+              breakInside: 'avoid',
+              pageBreakInside: 'avoid',
+              WebkitColumnBreakInside: 'avoid',
+            }}
           >
             {lines.map((line, lIdx) => renderLine(line, lIdx))}
           </div>
