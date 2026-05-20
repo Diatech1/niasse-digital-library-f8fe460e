@@ -195,6 +195,7 @@ const AudioPlayer = () => {
             <SleepTimerButton sleepMinutes={sleepMinutes} setSleepMinutes={setSleepMinutes} countdown={sleepCountdown} label={t("audioPlayer.sleepTimer")} offLabel={t("audioPlayer.sleepOff")} minLabel={t("audioPlayer.minutes")} />
             <ChapterQueueButton sections={sections} current={chapterIdx} onSelect={(i) => goToChapter(i)} label={t("audioPlayer.queue")} />
             <VoiceButton selected={tts.selectedVoiceURI} setSelected={tts.setSelectedVoiceURI} />
+            <OfflineDownloadButton bookId={book.id} sections={sections} voice={tts.selectedVoiceURI} language={book.language} />
             <SpeedButton rate={tts.rate} setRate={tts.setRate} label={t("audioPlayer.speed")} note={t("audioPlayer.speedNote")} />
           </div>
         </div>
