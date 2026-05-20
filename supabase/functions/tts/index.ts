@@ -59,34 +59,54 @@ async function synthesizeChunk(text: string, voice: string): Promise<Uint8Array>
   if (keys.length === 0) throw jsonResponse({ error: "No GEMINI_API_KEY* configured" }, 500);
 
   let lastStatus = 0, lastErr = "";
+  const RETRYABLE = new Set([429, 403, 500, 502, 503, 504]);
+  const MAX_ATTEMPTS_PER_KEY = 3;
+
   for (let i = 0; i < keys.length; i++) {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${TTS_MODEL}:generateContent?key=${keys[i]}`;
-    const resp = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text }] }],
-        generationConfig: {
-          responseModalities: ["AUDIO"],
-          speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } },
-        },
-      }),
-    });
+    for (let attempt = 0; attempt < MAX_ATTEMPTS_PER_KEY; attempt++) {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${TTS_MODEL}:generateContent?key=${keys[i]}`;
+      let resp: Response;
+      try {
+        resp = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text }] }],
+            generationConfig: {
+              responseModalities: ["AUDIO"],
+              speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } },
+            },
+          }),
+        });
+      } catch (e) {
+        lastStatus = 0;
+        lastErr = e instanceof Error ? e.message : String(e);
+        await new Promise((r) => setTimeout(r, 500 * (attempt + 1)));
+        continue;
+      }
 
-    if (resp.ok) {
-      const j = await resp.json();
-      const b64 = j?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-      if (!b64) throw jsonResponse({ error: "Gemini returned no audio data" }, 502);
-      const bin = atob(b64);
-      const pcm = new Uint8Array(bin.length);
-      for (let k = 0; k < bin.length; k++) pcm[k] = bin.charCodeAt(k);
-      return pcm;
+      if (resp.ok) {
+        const j = await resp.json();
+        const b64 = j?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+        if (!b64) throw jsonResponse({ error: "Gemini returned no audio data" }, 502);
+        const bin = atob(b64);
+        const pcm = new Uint8Array(bin.length);
+        for (let k = 0; k < bin.length; k++) pcm[k] = bin.charCodeAt(k);
+        return pcm;
+      }
+
+      lastStatus = resp.status;
+      lastErr = (await resp.text()).slice(0, 300);
+
+      // Retry same key for transient 5xx
+      if ((resp.status >= 500 && resp.status < 600) && attempt < MAX_ATTEMPTS_PER_KEY - 1) {
+        await new Promise((r) => setTimeout(r, 600 * (attempt + 1)));
+        continue;
+      }
+      // Rotate to next key for quota/auth/server errors
+      if (RETRYABLE.has(resp.status)) break;
+      throw jsonResponse({ error: `Gemini TTS error (${resp.status})`, details: lastErr }, 502);
     }
-
-    lastStatus = resp.status;
-    lastErr = (await resp.text()).slice(0, 300);
-    if (resp.status === 429 || resp.status === 403) continue;
-    throw jsonResponse({ error: `Gemini TTS error (${resp.status})`, details: lastErr }, 502);
   }
 
   if (lastStatus === 429) {
@@ -96,7 +116,7 @@ async function synthesizeChunk(text: string, voice: string): Promise<Uint8Array>
       { "Retry-After": "60", "X-TTS-Status": "rate_limited" },
     );
   }
-  throw jsonResponse({ error: "All Gemini keys failed", details: lastErr }, 502);
+  throw jsonResponse({ error: `Gemini TTS error (${lastStatus || "network"})`, details: lastErr }, 502);
 }
 
 function wrapWav(pcm: Uint8Array, sampleRate = SAMPLE_RATE): Uint8Array {
