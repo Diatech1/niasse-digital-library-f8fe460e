@@ -149,9 +149,17 @@ export default defineConfig(({ mode }) => ({
         theme_color: "#1a5c2e",
         background_color: "#ffffff",
         display: "standalone",
-        orientation: "portrait",
+        display_override: ["window-controls-overlay", "standalone", "minimal-ui", "browser"],
+        orientation: "any",
         start_url: "/",
         scope: "/",
+        handle_links: "preferred",
+        launch_handler: {
+          client_mode: ["navigate-existing", "auto"],
+        },
+        edge_side_panel: {
+          preferred_width: 480,
+        },
         lang: "fr",
         dir: "ltr",
         categories: ["books", "education", "lifestyle"],
