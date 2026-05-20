@@ -1,11 +1,15 @@
 [
   {
-    "relation": ["delegate_permission/common.handle_all_urls"],
+    "relation": [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
     "target": {
       "namespace": "android_app",
       "package_name": "com.faydabook.twa",
       "sha256_cert_fingerprints": [
-        "C9:E2:C0:25:F8:D6:B9:4C:DE:0E:6F:6F:C1:26:34:BA:B8:AE:C9:49:54:19:A3:DC:82:8D:86:CD:7F:16:94:A2"
+        "C9:E2:C0:25:F8:D6:B9:4C:DE:0E:6F:6F:C1:26:34:BA:B8:AE:C9:49:54:19:A3:DC:82:8D:86:CD:7F:16:94:A2",
+        "A1:A1:AC:87:C2:1E:A0:D7:20:9D:C7:0F:FE:0D:44:E5:59:EA:35:AF:6F:26:12:BA:09:41:CC:0B:2B:7A:03:7E"
       ]
     }
   }
