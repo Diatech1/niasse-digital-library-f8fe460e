@@ -16,6 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import SEO from "@/components/SEO";
+import OfflineDownloadButton from "@/components/OfflineDownloadButton";
 
 const SPEEDS = [0.75, 1, 1.25, 1.5, 2];
 const SLEEP_OPTIONS = [0, 5, 10, 15, 30];
@@ -194,6 +195,7 @@ const AudioPlayer = () => {
             <SleepTimerButton sleepMinutes={sleepMinutes} setSleepMinutes={setSleepMinutes} countdown={sleepCountdown} label={t("audioPlayer.sleepTimer")} offLabel={t("audioPlayer.sleepOff")} minLabel={t("audioPlayer.minutes")} />
             <ChapterQueueButton sections={sections} current={chapterIdx} onSelect={(i) => goToChapter(i)} label={t("audioPlayer.queue")} />
             <VoiceButton selected={tts.selectedVoiceURI} setSelected={tts.setSelectedVoiceURI} />
+            <OfflineDownloadButton bookId={book.id} sections={sections} voice={tts.selectedVoiceURI} language={book.language} />
             <SpeedButton rate={tts.rate} setRate={tts.setRate} label={t("audioPlayer.speed")} note={t("audioPlayer.speedNote")} />
           </div>
         </div>
@@ -278,6 +280,7 @@ const AudioPlayer = () => {
               <SleepTimerButton sleepMinutes={sleepMinutes} setSleepMinutes={setSleepMinutes} countdown={sleepCountdown} label={t("audioPlayer.sleepTimer")} offLabel={t("audioPlayer.sleepOff")} minLabel={t("audioPlayer.minutes")} />
               <ChapterQueueButton sections={sections} current={chapterIdx} onSelect={(i) => goToChapter(i)} label={t("audioPlayer.queue")} />
               <VoiceButton selected={tts.selectedVoiceURI} setSelected={tts.setSelectedVoiceURI} />
+              <OfflineDownloadButton bookId={book.id} sections={sections} voice={tts.selectedVoiceURI} language={book.language} />
               <SpeedButton rate={tts.rate} setRate={tts.setRate} label={t("audioPlayer.speed")} note={t("audioPlayer.speedNote")} />
             </div>
           </div>
