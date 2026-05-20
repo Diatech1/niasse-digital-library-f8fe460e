@@ -16,6 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import SEO from "@/components/SEO";
+import OfflineDownloadButton from "@/components/OfflineDownloadButton";
 
 const SPEEDS = [0.75, 1, 1.25, 1.5, 2];
 const SLEEP_OPTIONS = [0, 5, 10, 15, 30];
