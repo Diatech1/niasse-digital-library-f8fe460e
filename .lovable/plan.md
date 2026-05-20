@@ -1,30 +1,32 @@
-## Problem
+Replace the placeholder fingerprint in `public/.well-known/assetlinks.json` with the real SHA-256 from Play Console.
 
-In the reader's chapter dropdown for *Jawāhir al-Rasāʾil*, every entry appears twice — once as a bold uppercase chapter header and again as a clickable section row directly below it.
+## Change
 
-## Cause
-
-`parseJawahirRasailSections` sets both `chapter` and `heading` to the same `currentTitle` for every section (each Counsel is its own one-section "chapter"). The TOC builder in `Reader.tsx` (lines 310–337) then groups sections by `chapter`, so every Counsel becomes a 1-section chapter where the chapter header label and the only section's heading are identical. `ChapterDropdown` faithfully renders both — chapter as the uppercase title, then the section button — producing the duplication.
-
-Other books (kashif-en, volumes) don't show this because their sections have distinct `chapter` vs `heading` (e.g. chapter = "Part I — Foundations", heading = "Section 1: ...").
-
-## Fix
-
-In `src/components/reader/ChapterDropdown.tsx`, when a chapter contains exactly one section AND that section's heading equals the chapter label, render only the clickable button (skip the duplicate uppercase header). The button should adopt the highlighted/primary styling so it still reads as a chapter entry.
-
-This is a pure presentation fix — no parser changes, no impact on other books (which have multi-section chapters or distinct headings).
-
-### Pseudocode
-
-```text
-for each chapter ch:
-  isSingletonSameTitle = ch.sections.length === 1 && ch.sections[0].heading === ch.chapter
-  if isSingletonSameTitle:
-    render one button with the chapter label, styled like a chapter entry
-  else:
-    render uppercase chapter header + section buttons (current behavior)
+`public/.well-known/assetlinks.json` → set `sha256_cert_fingerprints` to:
+```
+C9:E2:C0:25:F8:D6:B9:4C:DE:0E:6F:6F:C1:26:34:BA:B8:AE:C9:49:54:19:A3:DC:82:8D:86:CD:7F:16:94:A2
 ```
 
-## Files
+Final file:
+```json
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.faydabook.twa",
+      "sha256_cert_fingerprints": [
+        "C9:E2:C0:25:F8:D6:B9:4C:DE:0E:6F:6F:C1:26:34:BA:B8:AE:C9:49:54:19:A3:DC:82:8D:86:CD:7F:16:94:A2"
+      ]
+    }
+  }
+]
+```
 
-- `src/components/reader/ChapterDropdown.tsx` — conditional render inside the `tocItems.map`.
+## After publish
+
+1. Verify the file is live: `https://faydabook.com/.well-known/assetlinks.json` (must return JSON, `Content-Type: application/json`, no redirect).
+2. Validate with Google: `https://digitalassetlinks.googleapis.com/v1/statements:list?source.web.site=https://faydabook.com&relation=delegate_permission/common.handle_all_urls`
+3. On device: uninstall the app, then reinstall from Play Store so Chrome re-runs Digital Asset Links verification. The URL bar should disappear.
+
+If it still shows the browser chrome after reinstall, the package name on Play Store doesn't match `com.faydabook.twa` — share the Play Store listing URL so I can confirm.
