@@ -201,9 +201,14 @@ const DesktopHomeSections = () => {
           </div>
           <div className="grid grid-cols-3 gap-6 max-w-5xl mx-auto">
             {langGroups.map((g) => {
-              const count = books.filter(
-                (b) => b.language?.toLowerCase() === g.native.toLowerCase() || b.language?.toLowerCase() === g.label.toLowerCase() || b.language?.toLowerCase() === g.code,
-              ).length;
+              const codeFor = (lang?: string) => {
+                const l = (lang ?? "").toLowerCase().trim();
+                if (["en", "english", "anglais", "inglés", "إنجليزية"].includes(l)) return "en";
+                if (["ar", "arabic", "arabe", "العربية", "عربي"].includes(l)) return "ar";
+                if (["fr", "french", "français", "francais"].includes(l)) return "fr";
+                return l;
+              };
+              const count = books.filter((b) => codeFor(b.language) === g.code).length;
               return (
                 <Link
                   key={g.code}
