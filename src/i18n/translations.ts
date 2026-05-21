@@ -14,6 +14,7 @@ export type TranslationKey =
   | "common.bookNotFound"
   | "home.continueReading"
   | "home.favorites"
+  | "home.featured"
   | "home.library"
   | "home.searchResults"
   | "hero.eyebrow"
