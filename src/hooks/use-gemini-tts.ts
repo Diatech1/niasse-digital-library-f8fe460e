@@ -277,16 +277,23 @@ export function useGeminiTts(options?: UseGeminiTtsOptions): GeminiTtsControls {
       }
     }
 
-    // 2. Fetch pre-generated audio from storage (per-voice path), cache, play.
+    // 2. Fetch pre-generated audio from storage. Try per-voice path first,
+    //    then fall back to the legacy (no-voice) path. Cache under storedKey.
     if (cacheKey) {
       const [bookId, sectionIdx] = cacheKey.split(":");
       if (bookId && sectionIdx != null) {
         const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-        const storedUrl = `${supabaseUrl}/storage/v1/object/public/book-audio/${bookId}/${voice}/chapter-${sectionIdx}.wav`;
-        const blob = await fetchAndCacheStoredBlob(storedUrl, storedKey!);
-        if (blob && reqId === requestIdRef.current) {
-          await playBlob(blob);
-          return;
+        const candidates = [
+          `${supabaseUrl}/storage/v1/object/public/book-audio/${bookId}/${voice}/chapter-${sectionIdx}.wav`,
+          `${supabaseUrl}/storage/v1/object/public/book-audio/${bookId}/chapter-${sectionIdx}.wav`,
+        ];
+        for (const storedUrl of candidates) {
+          const blob = await fetchAndCacheStoredBlob(storedUrl, storedKey!);
+          if (blob && reqId === requestIdRef.current) {
+            await playBlob(blob);
+            return;
+          }
+          if (reqId !== requestIdRef.current) return;
         }
       }
     }
