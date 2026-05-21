@@ -150,14 +150,12 @@ Deno.serve(async (req) => {
       : "";
 
     const chunks = chunkText(langHint + text);
-    const pcmParts: Uint8Array[] = [];
-    for (const c of chunks) {
-      try {
-        pcmParts.push(await synthesizeChunk(c, voiceName));
-      } catch (e) {
-        if (e instanceof Response) return e;
-        throw e;
-      }
+    let pcmParts: Uint8Array[];
+    try {
+      pcmParts = await Promise.all(chunks.map((c) => synthesizeChunk(c, voiceName)));
+    } catch (e) {
+      if (e instanceof Response) return e;
+      throw e;
     }
 
     const totalPcm = pcmParts.reduce((n, p) => n + p.byteLength, 0);
