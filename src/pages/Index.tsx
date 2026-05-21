@@ -144,6 +144,20 @@ const Index = () => {
         </motion.section>
       }
 
+      {/* Featured */}
+      {featured.length > 0 && !searchQuery &&
+        <section className="mb-8">
+          <h2 className="text-gold font-serif text-lg font-semibold px-5 mb-3">{t("home.featured")}</h2>
+          <ScrollRow ariaLabel={t("home.featured")}>
+            {featured.map((book, i) =>
+              <div key={book.id} className="min-w-[28%] max-w-[28%]">
+                <BookCard book={book} index={i} />
+              </div>
+            )}
+          </ScrollRow>
+        </section>
+      }
+
       {/* Favorites */}
       {favorites.length > 0 && !searchQuery &&
         <section className="mb-8">
