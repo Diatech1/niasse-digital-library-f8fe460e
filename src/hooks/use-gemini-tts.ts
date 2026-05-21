@@ -288,13 +288,15 @@ export function useGeminiTts(options?: UseGeminiTtsOptions): GeminiTtsControls {
           `${supabaseUrl}/storage/v1/object/public/book-audio/${bookId}/chapter-${sectionIdx}.wav`,
         ];
         // Race both candidate URLs in parallel — first hit wins.
-        const blob = await Promise.any(
-          candidates.map(async (u) => {
+        const blob = await new Promise<Blob | null>((resolve) => {
+          let pending = candidates.length;
+          let resolved = false;
+          candidates.forEach(async (u) => {
             const b = await fetchAndCacheStoredBlob(u, storedKey!);
-            if (!b) throw new Error("miss");
-            return b;
-          }),
-        ).catch(() => null);
+            if (b && !resolved) { resolved = true; resolve(b); return; }
+            if (--pending === 0 && !resolved) resolve(null);
+          });
+        });
         if (blob && reqId === requestIdRef.current) {
           await playBlob(blob);
           return;
