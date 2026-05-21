@@ -27,6 +27,10 @@ const Index = () => {
   );
 
   const favorites = books.filter((b) => b.isFavorite);
+  const featured = useMemo(
+    () => books.filter((b) => b.id.startsWith("volume-")),
+    [books]
+  );
   const filteredBooks = books.filter(
     (b) =>
       b.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
