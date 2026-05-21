@@ -14,6 +14,7 @@ export type TranslationKey =
   | "common.bookNotFound"
   | "home.continueReading"
   | "home.favorites"
+  | "home.featured"
   | "home.library"
   | "home.searchResults"
   | "hero.eyebrow"
@@ -90,6 +91,7 @@ const en: Dict = {
   "common.bookNotFound": "Book not found",
   "home.continueReading": "Continue Reading",
   "home.favorites": "Favorites",
+  "home.featured": "Featured",
   "home.library": "Library",
   "home.searchResults": "Search Results",
   "hero.eyebrow": "The Digital Library of",
@@ -165,6 +167,7 @@ const fr: Dict = {
   "common.bookNotFound": "Livre introuvable",
   "home.continueReading": "Reprendre la lecture",
   "home.favorites": "Favoris",
+  "home.featured": "À la une",
   "home.library": "Bibliothèque",
   "home.searchResults": "Résultats",
   "hero.eyebrow": "La Bibliothèque Numérique de la",
@@ -240,6 +243,7 @@ const ar: Dict = {
   "common.bookNotFound": "الكتاب غير موجود",
   "home.continueReading": "متابعة القراءة",
   "home.favorites": "المفضلة",
+  "home.featured": "مختارات",
   "home.library": "المكتبة",
   "home.searchResults": "نتائج البحث",
   "hero.eyebrow": "المكتبة الرقمية لـ",
