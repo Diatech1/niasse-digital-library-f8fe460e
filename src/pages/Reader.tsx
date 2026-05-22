@@ -336,6 +336,8 @@ const Reader = () => {
       "volume-7-biography",
       "volume-8-teachings",
       "jawaheer-al-maani",
+      "premier-voyage-hijaz",
+      "chaine-initiation",
     ];
     if (book?.contentModule && volumeModules.includes(book.contentModule) && loadedVolumeModule === book.contentModule) {
       return volumeData.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
