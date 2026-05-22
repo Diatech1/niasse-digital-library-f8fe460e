@@ -184,6 +184,33 @@ const DesktopHomeSections = () => {
         </div>
       </section>
 
+      {/* Library — full grid */}
+      <section className="py-8 container mx-auto px-6">
+        <div className="flex items-end justify-between mb-4">
+          <div>
+            <p className="text-accent text-xs font-medium tracking-[0.2em] uppercase mb-1">
+              Catalog
+            </p>
+            <h2 className="font-display text-2xl font-bold text-foreground">
+              {t("nav.library")}
+            </h2>
+          </div>
+          <Link
+            to="/library"
+            className="text-sm font-medium text-primary hover:text-primary/80 transition-colors inline-flex items-center gap-1"
+          >
+            <span>{t("common.seeAll")}</span>
+            <span aria-hidden className="rtl:-scale-x-100">→</span>
+          </Link>
+        </div>
+        <div className="grid grid-cols-6 gap-5">
+          {books.map((book, i) => (
+            <BookCard key={book.id} book={book} index={i} />
+          ))}
+        </div>
+      </section>
+
+
       {/* Browse by language */}
       <section className="py-12 bg-card">
         <div className="container mx-auto px-6">
