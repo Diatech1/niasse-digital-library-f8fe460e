@@ -204,7 +204,7 @@ const DesktopHomeSections = () => {
           </Link>
         </div>
         <div className="grid grid-cols-6 gap-5">
-          {books.map((book, i) => (
+          {books.slice(0, 12).map((book, i) => (
             <BookCard key={book.id} book={book} index={i} />
           ))}
         </div>
