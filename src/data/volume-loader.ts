@@ -14,7 +14,9 @@ export async function loadVolumeSections(
   idPrefix: string
 ): Promise<VolumeSection[]> {
   const response = await fetch(filePath);
-  const text = await response.text();
+  let text = await response.text();
+  // Strip control chars that render as stray glyphs (form-feed, vertical tab, etc.)
+  text = text.replace(/[\f\v\u0000-\u0008\u000E-\u001F]/g, "");
   const lines = text.split("\n");
 
   const sections: VolumeSection[] = [];
