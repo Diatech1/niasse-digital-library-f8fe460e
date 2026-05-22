@@ -42,6 +42,8 @@ const volumeMap: Record<string, string> = {
   "volume-8-teachings": "/books/volume-8-other-teachings.txt",
   "jawahir-rasail-en": "/books/jawahir-rasail-en.txt",
   "jawaheer-al-maani": "/books/jawaheer-al-maani.txt",
+  "premier-voyage-hijaz": "/books/premier-voyage-hijaz.txt",
+  "chaine-initiation": "/books/chaine-initiation.txt",
 };
 
 /**
