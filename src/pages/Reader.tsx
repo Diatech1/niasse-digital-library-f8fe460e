@@ -230,6 +230,8 @@ const Reader = () => {
       "volume-7-biography": "/books/volume-7-biography.txt",
       "volume-8-teachings": "/books/volume-8-other-teachings.txt",
       "jawaheer-al-maani": "/books/jawaheer-al-maani.txt",
+      "premier-voyage-hijaz": "/books/premier-voyage-hijaz.txt",
+      "chaine-initiation": "/books/chaine-initiation.txt",
     };
     const volumePath = book?.contentModule ? volumeMap[book.contentModule] : undefined;
     if (volumePath && book?.contentModule) {
@@ -334,6 +336,8 @@ const Reader = () => {
       "volume-7-biography",
       "volume-8-teachings",
       "jawaheer-al-maani",
+      "premier-voyage-hijaz",
+      "chaine-initiation",
     ];
     if (book?.contentModule && volumeModules.includes(book.contentModule) && loadedVolumeModule === book.contentModule) {
       return volumeData.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
