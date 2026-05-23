@@ -53,6 +53,7 @@ const volumeMap: Record<string, string> = {
   "volume-5-commentaries": "/books/volume-5-commentaries.txt",
   "volume-7-biography": "/books/volume-7-biography.txt",
   "volume-8-teachings": "/books/volume-8-other-teachings.txt",
+  "jawaheer-al-maani": "/books/jawaheer-al-maani.txt",
 };
 
 async function loadSections(contentModule: string): Promise<BookSection[]> {
