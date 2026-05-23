@@ -244,28 +244,29 @@ Deno.serve(async (req) => {
     }
     if (skipIfExists) {
       const { data: existing } = await supabase.storage.from("book-audio").list(`${bookId}/${voice}`, {
-        search: `chapter-${sectionIndex}.wav`,
+        search: finalName,
       });
-      if (existing?.some((f) => f.name === `chapter-${sectionIndex}.wav`)) {
+      if (existing?.some((f) => f.name === finalName)) {
         return new Response(JSON.stringify({ skipped: true, path: finalPath }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
     }
     const langHint = `Read the following ${language} text naturally:\n\n`;
     const chunks = chunkText(langHint + text);
-    const pcmParts: Uint8Array[] = [];
-    for (const c of chunks) pcmParts.push(await synthesizeChunk(c, voice));
-    const totalPcm = pcmParts.reduce((n, p) => n + p.byteLength, 0);
-    const merged = new Uint8Array(totalPcm);
-    let o = 0;
-    for (const p of pcmParts) { merged.set(p, o); o += p.byteLength; }
-    const wav = wrapWav(merged);
-    const { error } = await supabase.storage.from("book-audio").upload(finalPath, wav, {
-      contentType: "audio/wav", upsert: true, cacheControl: "31536000",
+    const pcmParts: Blob[] = [];
+    let totalPcm = 0;
+    for (const c of chunks) {
+      const p = await synthesizeChunk(c, voice);
+      pcmParts.push(new Blob([p]));
+      totalPcm += p.byteLength;
+    }
+    const mp3 = await encodePcmBlobsToMp3(pcmParts);
+    const { error } = await supabase.storage.from("book-audio").upload(finalPath, mp3, {
+      contentType: "audio/mpeg", upsert: true, cacheControl: "31536000",
     });
     if (error) throw error;
     const durationSec = Math.round((totalPcm / 2) / SAMPLE_RATE);
-    return new Response(JSON.stringify({ ok: true, path: finalPath, bytes: wav.byteLength, chunks: chunks.length, durationSec }),
+    return new Response(JSON.stringify({ ok: true, path: finalPath, bytes: mp3.byteLength, chunks: chunks.length, durationSec }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
     console.error("generate-audio error:", e);
