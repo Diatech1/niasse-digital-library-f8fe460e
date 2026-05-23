@@ -171,9 +171,9 @@ Deno.serve(async (req) => {
       if (!text) return new Response(JSON.stringify({ error: "Missing text" }), { status: 400, headers: corsHeaders });
       if (skipIfExists) {
         const { data: existing } = await supabase.storage.from("book-audio").list(`${bookId}/${voice}`, {
-          search: `chapter-${sectionIndex}.wav`,
+          search: finalName,
         });
-        if (existing?.some((f) => f.name === `chapter-${sectionIndex}.wav`)) {
+        if (existing?.some((f) => f.name === finalName)) {
           return new Response(JSON.stringify({ skipped: true, path: finalPath }),
             { headers: { ...corsHeaders, "Content-Type": "application/json" } });
         }
