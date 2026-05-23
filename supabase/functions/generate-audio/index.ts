@@ -161,7 +161,8 @@ Deno.serve(async (req) => {
     }
 
     const supabase = makeSupabase();
-    const finalPath = `${bookId}/${voice}/chapter-${sectionIndex}.wav`;
+    const finalPath = `${bookId}/${voice}/chapter-${sectionIndex}.mp3`;
+    const finalName = `chapter-${sectionIndex}.mp3`;
     const tmpDir = `${bookId}/${voice}/_tmp/chapter-${sectionIndex}`;
 
     // ---------- PLAN ----------
