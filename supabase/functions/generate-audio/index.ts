@@ -92,12 +92,11 @@ async function synthesizeChunk(text: string, voice: string): Promise<Uint8Array>
   throw new Error(`All Gemini keys failed. Last: ${lastErr}`);
 }
 
-function wrapWav(pcm: Uint8Array, sampleRate = SAMPLE_RATE): Uint8Array {
+function wavHeader(dataSize: number, sampleRate = SAMPLE_RATE): Uint8Array {
   const numChannels = 1, bitsPerSample = 16;
   const byteRate = sampleRate * numChannels * bitsPerSample / 8;
   const blockAlign = numChannels * bitsPerSample / 8;
-  const dataSize = pcm.byteLength;
-  const buf = new ArrayBuffer(44 + dataSize);
+  const buf = new ArrayBuffer(44);
   const v = new DataView(buf);
   const w = (o: number, s: string) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
   w(0, "RIFF"); v.setUint32(4, 36 + dataSize, true); w(8, "WAVE");
@@ -105,8 +104,14 @@ function wrapWav(pcm: Uint8Array, sampleRate = SAMPLE_RATE): Uint8Array {
   v.setUint16(22, numChannels, true); v.setUint32(24, sampleRate, true);
   v.setUint32(28, byteRate, true); v.setUint16(32, blockAlign, true); v.setUint16(34, bitsPerSample, true);
   w(36, "data"); v.setUint32(40, dataSize, true);
-  new Uint8Array(buf, 44).set(pcm);
   return new Uint8Array(buf);
+}
+
+function wrapWav(pcm: Uint8Array, sampleRate = SAMPLE_RATE): Uint8Array {
+  const header = wavHeader(pcm.byteLength, sampleRate);
+  const out = new Uint8Array(header.byteLength + pcm.byteLength);
+  out.set(header, 0); out.set(pcm, header.byteLength);
+  return out;
 }
 
 function makeSupabase() {
