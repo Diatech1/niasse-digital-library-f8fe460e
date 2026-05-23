@@ -105,6 +105,39 @@ function wrapWav(pcm: Uint8Array, sampleRate = SAMPLE_RATE): Uint8Array {
   return out;
 }
 
+// Encode mono 16-bit PCM (provided as a sequence of byte chunks) to MP3 (64kbps).
+async function encodePcmBlobsToMp3(blobs: Blob[], sampleRate = SAMPLE_RATE): Promise<Uint8Array> {
+  const encoder = new lamejs.Mp3Encoder(1, sampleRate, 64);
+  const FRAME = 1152; // lamejs sample block
+  const out: Uint8Array[] = [];
+  let leftover = new Uint8Array(0); // unpaired bytes between blobs
+
+  for (const blob of blobs) {
+    const buf = new Uint8Array(await blob.arrayBuffer());
+    // Concatenate leftover + buf, but only if leftover exists (rare).
+    const data = leftover.byteLength
+      ? (() => { const m = new Uint8Array(leftover.byteLength + buf.byteLength); m.set(leftover); m.set(buf, leftover.byteLength); return m; })()
+      : buf;
+    const evenLen = data.byteLength - (data.byteLength % 2);
+    leftover = data.subarray(evenLen);
+    const samples = new Int16Array(data.buffer, data.byteOffset, evenLen / 2);
+    for (let i = 0; i < samples.length; i += FRAME) {
+      const block = samples.subarray(i, Math.min(i + FRAME, samples.length));
+      const mp3buf = encoder.encodeBuffer(block);
+      if (mp3buf.length > 0) out.push(new Uint8Array(mp3buf));
+    }
+  }
+  const tail = encoder.flush();
+  if (tail.length > 0) out.push(new Uint8Array(tail));
+
+  let total = 0;
+  for (const p of out) total += p.byteLength;
+  const merged = new Uint8Array(total);
+  let o = 0;
+  for (const p of out) { merged.set(p, o); o += p.byteLength; }
+  return merged;
+}
+
 function makeSupabase() {
   return createClient(
     Deno.env.get("SUPABASE_URL")!,
