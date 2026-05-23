@@ -223,16 +223,15 @@ Deno.serve(async (req) => {
         blobs.push(data);
         total += data.size;
       }
-      const header = wavHeader(total);
-      const wavBlob = new Blob([header, ...blobs], { type: "audio/wav" });
-      const { error: upErr } = await supabase.storage.from("book-audio").upload(finalPath, wavBlob, {
-        contentType: "audio/wav", upsert: true, cacheControl: "31536000",
+      const mp3 = await encodePcmBlobsToMp3(blobs);
+      const { error: upErr } = await supabase.storage.from("book-audio").upload(finalPath, mp3, {
+        contentType: "audio/mpeg", upsert: true, cacheControl: "31536000",
       });
       if (upErr) throw upErr;
       const paths = Array.from({ length: totalChunks }, (_, i) => `${tmpDir}/${partName(i)}`);
       await supabase.storage.from("book-audio").remove(paths);
       const durationSec = Math.round((total / 2) / SAMPLE_RATE);
-      return new Response(JSON.stringify({ ok: true, path: finalPath, bytes: wavBlob.size, durationSec, chunks: totalChunks }),
+      return new Response(JSON.stringify({ ok: true, path: finalPath, bytes: mp3.byteLength, durationSec, chunks: totalChunks }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
