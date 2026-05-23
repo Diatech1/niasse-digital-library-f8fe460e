@@ -284,6 +284,7 @@ export function useGeminiTts(options?: UseGeminiTtsOptions): GeminiTtsControls {
       if (bookId && sectionIdx != null) {
         const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
         const candidates = [
+          `${supabaseUrl}/storage/v1/object/public/book-audio/${bookId}/${voice}/chapter-${sectionIdx}.mp3`,
           `${supabaseUrl}/storage/v1/object/public/book-audio/${bookId}/${voice}/chapter-${sectionIdx}.wav`,
           `${supabaseUrl}/storage/v1/object/public/book-audio/${bookId}/chapter-${sectionIdx}.wav`,
         ];

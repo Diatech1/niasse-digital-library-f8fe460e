@@ -1,16 +1,7 @@
-// Generate-and-upload audio for one book chapter.
-// Supports two flows:
-//  (1) Legacy single-shot: { bookId, sectionIndex, text, voice, language } - generates entire chapter in one call.
-//  (2) Chunked (avoids 150s edge timeout): { mode: "plan" | "chunk" | "finalize", ... }
-//      - "plan":     { bookId, sectionIndex, text, voice, language, skipIfExists } -> { chunks: string[], skipped? }
-//      - "chunk":    { bookId, sectionIndex, voice, chunkIndex, chunkText } -> { partPath, bytes }
-//      - "finalize": { bookId, sectionIndex, voice, totalChunks } -> { ok, path, bytes, durationSec }
-//
-// Storage paths:
-//   - Final WAV: book-audio/{bookId}/{voice}/chapter-{idx}.wav
-//   - Temp PCM:  book-audio/{bookId}/{voice}/_tmp/chapter-{idx}/part-{nnn}.pcm
-
+// Generate-and-upload audio for one book chapter. Final output: MP3 (lamejs).
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+// @ts-ignore - lamejs is plain JS (breezystack fork fixes Deno/ESM compat)
+import lamejs from "https://esm.sh/@breezystack/lamejs@1.2.7";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -114,6 +105,39 @@ function wrapWav(pcm: Uint8Array, sampleRate = SAMPLE_RATE): Uint8Array {
   return out;
 }
 
+// Encode mono 16-bit PCM (provided as a sequence of byte chunks) to MP3 (64kbps).
+async function encodePcmBlobsToMp3(blobs: Blob[], sampleRate = SAMPLE_RATE): Promise<Uint8Array> {
+  const encoder = new lamejs.Mp3Encoder(1, sampleRate, 64);
+  const FRAME = 1152; // lamejs sample block
+  const out: Uint8Array[] = [];
+  let leftover = new Uint8Array(0); // unpaired bytes between blobs
+
+  for (const blob of blobs) {
+    const buf = new Uint8Array(await blob.arrayBuffer());
+    // Concatenate leftover + buf, but only if leftover exists (rare).
+    const data = leftover.byteLength
+      ? (() => { const m = new Uint8Array(leftover.byteLength + buf.byteLength); m.set(leftover); m.set(buf, leftover.byteLength); return m; })()
+      : buf;
+    const evenLen = data.byteLength - (data.byteLength % 2);
+    leftover = data.subarray(evenLen);
+    const samples = new Int16Array(data.buffer, data.byteOffset, evenLen / 2);
+    for (let i = 0; i < samples.length; i += FRAME) {
+      const block = samples.subarray(i, Math.min(i + FRAME, samples.length));
+      const mp3buf = encoder.encodeBuffer(block);
+      if (mp3buf.length > 0) out.push(new Uint8Array(mp3buf));
+    }
+  }
+  const tail = encoder.flush();
+  if (tail.length > 0) out.push(new Uint8Array(tail));
+
+  let total = 0;
+  for (const p of out) total += p.byteLength;
+  const merged = new Uint8Array(total);
+  let o = 0;
+  for (const p of out) { merged.set(p, o); o += p.byteLength; }
+  return merged;
+}
+
 function makeSupabase() {
   return createClient(
     Deno.env.get("SUPABASE_URL")!,
@@ -137,7 +161,8 @@ Deno.serve(async (req) => {
     }
 
     const supabase = makeSupabase();
-    const finalPath = `${bookId}/${voice}/chapter-${sectionIndex}.wav`;
+    const finalPath = `${bookId}/${voice}/chapter-${sectionIndex}.mp3`;
+    const finalName = `chapter-${sectionIndex}.mp3`;
     const tmpDir = `${bookId}/${voice}/_tmp/chapter-${sectionIndex}`;
 
     // ---------- PLAN ----------
@@ -146,9 +171,9 @@ Deno.serve(async (req) => {
       if (!text) return new Response(JSON.stringify({ error: "Missing text" }), { status: 400, headers: corsHeaders });
       if (skipIfExists) {
         const { data: existing } = await supabase.storage.from("book-audio").list(`${bookId}/${voice}`, {
-          search: `chapter-${sectionIndex}.wav`,
+          search: finalName,
         });
-        if (existing?.some((f) => f.name === `chapter-${sectionIndex}.wav`)) {
+        if (existing?.some((f) => f.name === finalName)) {
           return new Response(JSON.stringify({ skipped: true, path: finalPath }),
             { headers: { ...corsHeaders, "Content-Type": "application/json" } });
         }
@@ -198,16 +223,15 @@ Deno.serve(async (req) => {
         blobs.push(data);
         total += data.size;
       }
-      const header = wavHeader(total);
-      const wavBlob = new Blob([header, ...blobs], { type: "audio/wav" });
-      const { error: upErr } = await supabase.storage.from("book-audio").upload(finalPath, wavBlob, {
-        contentType: "audio/wav", upsert: true, cacheControl: "31536000",
+      const mp3 = await encodePcmBlobsToMp3(blobs);
+      const { error: upErr } = await supabase.storage.from("book-audio").upload(finalPath, mp3, {
+        contentType: "audio/mpeg", upsert: true, cacheControl: "31536000",
       });
       if (upErr) throw upErr;
       const paths = Array.from({ length: totalChunks }, (_, i) => `${tmpDir}/${partName(i)}`);
       await supabase.storage.from("book-audio").remove(paths);
       const durationSec = Math.round((total / 2) / SAMPLE_RATE);
-      return new Response(JSON.stringify({ ok: true, path: finalPath, bytes: wavBlob.size, durationSec, chunks: totalChunks }),
+      return new Response(JSON.stringify({ ok: true, path: finalPath, bytes: mp3.byteLength, durationSec, chunks: totalChunks }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
@@ -220,28 +244,29 @@ Deno.serve(async (req) => {
     }
     if (skipIfExists) {
       const { data: existing } = await supabase.storage.from("book-audio").list(`${bookId}/${voice}`, {
-        search: `chapter-${sectionIndex}.wav`,
+        search: finalName,
       });
-      if (existing?.some((f) => f.name === `chapter-${sectionIndex}.wav`)) {
+      if (existing?.some((f) => f.name === finalName)) {
         return new Response(JSON.stringify({ skipped: true, path: finalPath }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
     }
     const langHint = `Read the following ${language} text naturally:\n\n`;
     const chunks = chunkText(langHint + text);
-    const pcmParts: Uint8Array[] = [];
-    for (const c of chunks) pcmParts.push(await synthesizeChunk(c, voice));
-    const totalPcm = pcmParts.reduce((n, p) => n + p.byteLength, 0);
-    const merged = new Uint8Array(totalPcm);
-    let o = 0;
-    for (const p of pcmParts) { merged.set(p, o); o += p.byteLength; }
-    const wav = wrapWav(merged);
-    const { error } = await supabase.storage.from("book-audio").upload(finalPath, wav, {
-      contentType: "audio/wav", upsert: true, cacheControl: "31536000",
+    const pcmParts: Blob[] = [];
+    let totalPcm = 0;
+    for (const c of chunks) {
+      const p = await synthesizeChunk(c, voice);
+      pcmParts.push(new Blob([p]));
+      totalPcm += p.byteLength;
+    }
+    const mp3 = await encodePcmBlobsToMp3(pcmParts);
+    const { error } = await supabase.storage.from("book-audio").upload(finalPath, mp3, {
+      contentType: "audio/mpeg", upsert: true, cacheControl: "31536000",
     });
     if (error) throw error;
     const durationSec = Math.round((totalPcm / 2) / SAMPLE_RATE);
-    return new Response(JSON.stringify({ ok: true, path: finalPath, bytes: wav.byteLength, chunks: chunks.length, durationSec }),
+    return new Response(JSON.stringify({ ok: true, path: finalPath, bytes: mp3.byteLength, chunks: chunks.length, durationSec }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
     console.error("generate-audio error:", e);

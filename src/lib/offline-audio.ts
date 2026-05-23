@@ -70,14 +70,16 @@ async function fetchPreGenerated(
   signal?: AbortSignal,
 ): Promise<Blob | null> {
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-  const url = `${supabaseUrl}/storage/v1/object/public/book-audio/${bookId}/${voice}/chapter-${idx}.wav`;
-  try {
-    const resp = await fetch(url, { signal });
-    if (!resp.ok) return null;
-    return await resp.blob();
-  } catch {
-    return null;
+  const base = `${supabaseUrl}/storage/v1/object/public/book-audio/${bookId}/${voice}/chapter-${idx}`;
+  for (const ext of ["mp3", "wav"]) {
+    try {
+      const resp = await fetch(`${base}.${ext}`, { signal });
+      if (resp.ok) return await resp.blob();
+    } catch {
+      // try next
+    }
   }
+  return null;
 }
 
 async function fetchLive(
