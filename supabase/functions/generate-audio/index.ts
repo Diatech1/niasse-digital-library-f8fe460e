@@ -1,7 +1,7 @@
 // Generate-and-upload audio for one book chapter. Final output: MP3 (lamejs).
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
-// @ts-ignore - lamejs is plain JS
-import lamejs from "https://esm.sh/lamejs@1.2.1";
+// @ts-ignore - lamejs is plain JS (breezystack fork fixes Deno/ESM compat)
+import lamejs from "https://esm.sh/@breezystack/lamejs@1.2.7";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
