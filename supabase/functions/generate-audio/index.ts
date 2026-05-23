@@ -1,16 +1,7 @@
-// Generate-and-upload audio for one book chapter.
-// Supports two flows:
-//  (1) Legacy single-shot: { bookId, sectionIndex, text, voice, language } - generates entire chapter in one call.
-//  (2) Chunked (avoids 150s edge timeout): { mode: "plan" | "chunk" | "finalize", ... }
-//      - "plan":     { bookId, sectionIndex, text, voice, language, skipIfExists } -> { chunks: string[], skipped? }
-//      - "chunk":    { bookId, sectionIndex, voice, chunkIndex, chunkText } -> { partPath, bytes }
-//      - "finalize": { bookId, sectionIndex, voice, totalChunks } -> { ok, path, bytes, durationSec }
-//
-// Storage paths:
-//   - Final WAV: book-audio/{bookId}/{voice}/chapter-{idx}.wav
-//   - Temp PCM:  book-audio/{bookId}/{voice}/_tmp/chapter-{idx}/part-{nnn}.pcm
-
+// Generate-and-upload audio for one book chapter. Final output: MP3 (lamejs).
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+// @ts-ignore - lamejs is plain JS
+import lamejs from "https://esm.sh/@breezystack/lamejs@1.1.1";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
