@@ -190,28 +190,24 @@ Deno.serve(async (req) => {
     if (mode === "finalize") {
       const { totalChunks } = body;
       if (!totalChunks) return new Response(JSON.stringify({ error: "Missing totalChunks" }), { status: 400, headers: corsHeaders });
-      const parts: Uint8Array[] = [];
+      const blobs: Blob[] = [];
       let total = 0;
       for (let i = 0; i < totalChunks; i++) {
         const { data, error } = await supabase.storage.from("book-audio").download(`${tmpDir}/${partName(i)}`);
         if (error || !data) throw new Error(`Missing part ${i}: ${error?.message}`);
-        const ab = await data.arrayBuffer();
-        parts.push(new Uint8Array(ab));
-        total += ab.byteLength;
+        blobs.push(data);
+        total += data.size;
       }
-      const merged = new Uint8Array(total);
-      let o = 0;
-      for (const p of parts) { merged.set(p, o); o += p.byteLength; }
-      const wav = wrapWav(merged);
-      const { error: upErr } = await supabase.storage.from("book-audio").upload(finalPath, wav, {
+      const header = wavHeader(total);
+      const wavBlob = new Blob([header, ...blobs], { type: "audio/wav" });
+      const { error: upErr } = await supabase.storage.from("book-audio").upload(finalPath, wavBlob, {
         contentType: "audio/wav", upsert: true, cacheControl: "31536000",
       });
       if (upErr) throw upErr;
-      // Clean temp parts
       const paths = Array.from({ length: totalChunks }, (_, i) => `${tmpDir}/${partName(i)}`);
       await supabase.storage.from("book-audio").remove(paths);
       const durationSec = Math.round((total / 2) / SAMPLE_RATE);
-      return new Response(JSON.stringify({ ok: true, path: finalPath, bytes: wav.byteLength, durationSec, chunks: totalChunks }),
+      return new Response(JSON.stringify({ ok: true, path: finalPath, bytes: wavBlob.size, durationSec, chunks: totalChunks }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
