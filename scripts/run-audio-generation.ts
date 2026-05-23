@@ -53,6 +53,7 @@ const volumeMap: Record<string, string> = {
   "volume-5-commentaries": "/books/volume-5-commentaries.txt",
   "volume-7-biography": "/books/volume-7-biography.txt",
   "volume-8-teachings": "/books/volume-8-other-teachings.txt",
+  "jawaheer-al-maani": "/books/jawaheer-al-maani.txt",
 };
 
 async function loadSections(contentModule: string): Promise<BookSection[]> {
@@ -90,12 +91,15 @@ async function loadSections(contentModule: string): Promise<BookSection[]> {
   throw new Error(`Unknown module: ${contentModule}`);
 }
 
+const STRIP_ARABIC = process.env.STRIP_ARABIC === "1";
+
 function stripForSpeech(content: string): string {
-  return content
-    .replace(/\{\{PAGE:\d+\}\}/g, " ")
-    .replace(/\n+/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
+  let s = content.replace(/\{\{PAGE:\d+\}\}/g, " ");
+  if (STRIP_ARABIC) {
+    // Remove Arabic script ranges + diacritics
+    s = s.replace(/[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]+/g, " ");
+  }
+  return s.replace(/\n+/g, " ").replace(/\s+/g, " ").trim();
 }
 
 async function fetchBooks(): Promise<Array<{ id: string; title: string; language: string; content_module: string }>> {
