@@ -16,6 +16,7 @@ import { dhikrGroupeSections, dhikrGroupeMeta } from "@/data/dhikr-groupe";
 import { douaWazifaSections, douaWazifaMeta } from "@/data/doua-wazifa";
 import { fadailDhikrSections, fadailDhikrMeta } from "@/data/fadail-dhikr";
 import { priereShaykhIbrahimSections, priereShaykhIbrahimMeta } from "@/data/priere-shaykh-ibrahim";
+import { rihlaKunakiriyaSections, rihlaKunakiriyaMeta } from "@/data/rihla-kunakiriya";
 import { hasbiBihiSections } from "@/data/hasbi-bihi";
 import { stationsDeenEnSections, stationsDeenEnMeta } from "@/data/stations-deen-en";
 import { loadConditionsReglesSections, conditionsReglesMeta, type ConditionsSection } from "@/data/conditions-regles";
@@ -310,6 +311,9 @@ const Reader = () => {
     }
     if (book?.contentModule === "priere-shaykh-ibrahim") {
       return priereShaykhIbrahimSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
+    }
+    if (book?.contentModule === "rihla-kunakiriya") {
+      return rihlaKunakiriyaSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
     }
     if (book?.contentModule === "hasbi-bihi") {
       return hasbiBihiSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
@@ -648,6 +652,16 @@ const Reader = () => {
           <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{priereShaykhIbrahimMeta.title}</h2>
           <p className="text-center text-sm text-muted-foreground mb-1">par {priereShaykhIbrahimMeta.author}</p>
           <p className="text-center text-xs text-muted-foreground mb-6">Traduit par : {priereShaykhIbrahimMeta.translator}</p>
+        </>
+      );
+    }
+    if (book.contentModule === "rihla-kunakiriya") {
+      return (
+        <>
+          <h2 className="text-center font-serif font-bold mb-1" style={{ fontSize }}>{rihlaKunakiriyaMeta.title}</h2>
+          <p className="text-center text-sm text-muted-foreground mb-1">{rihlaKunakiriyaMeta.subtitle}</p>
+          <p className="text-center text-xs text-muted-foreground mb-1">par {rihlaKunakiriyaMeta.author}</p>
+          <p className="text-center text-xs text-muted-foreground mb-6">Transcrit par : {rihlaKunakiriyaMeta.transcriber}</p>
         </>
       );
     }
