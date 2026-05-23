@@ -111,7 +111,7 @@ async function fetchBooks(): Promise<Array<{ id: string; title: string; language
   return await r.json();
 }
 
-async function generateChapter(bookId: string, sectionIndex: number, text: string, language: string) {
+async function callEdge(payload: any): Promise<any> {
   const r = await fetch(`${SUPABASE_URL}/functions/v1/generate-audio`, {
     method: "POST",
     headers: {
@@ -119,11 +119,34 @@ async function generateChapter(bookId: string, sectionIndex: number, text: strin
       apikey: ANON_KEY,
       Authorization: `Bearer ${ANON_KEY}`,
     },
-    body: JSON.stringify({ bookId, sectionIndex, text, voice: VOICE, language, skipIfExists: !FORCE }),
+    body: JSON.stringify(payload),
   });
   const txt = await r.text();
-  if (!r.ok) throw new Error(`HTTP ${r.status}: ${txt.slice(0, 300)}`);
+  if (!r.ok) throw new Error(`HTTP ${r.status}: ${txt.slice(0, 400)}`);
   return JSON.parse(txt);
+}
+
+async function generateChapter(bookId: string, sectionIndex: number, text: string, language: string) {
+  const plan = await callEdge({ mode: "plan", bookId, sectionIndex, text, voice: VOICE, language, skipIfExists: !FORCE });
+  if (plan.skipped) return { skipped: true };
+  const chunks: string[] = plan.chunks;
+  for (let i = 0; i < chunks.length; i++) {
+    let attempt = 0;
+    while (true) {
+      try {
+        await callEdge({ mode: "chunk", bookId, sectionIndex, voice: VOICE, chunkIndex: i, chunkText: chunks[i], skipIfExists: true });
+        break;
+      } catch (e) {
+        attempt++;
+        if (attempt >= 3) throw e;
+        await new Promise((r) => setTimeout(r, 6000 * attempt));
+      }
+    }
+    process.stdout.write(`.`);
+    await new Promise((r) => setTimeout(r, 4500));
+  }
+  process.stdout.write(` [finalize] `);
+  return await callEdge({ mode: "finalize", bookId, sectionIndex, voice: VOICE, totalChunks: chunks.length });
 }
 
 async function main() {
