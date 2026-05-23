@@ -1,9 +1,14 @@
 // Generate-and-upload audio for one book chapter.
-// - Calls Google Gemini TTS (gemini-2.5-flash-preview-tts) — returns PCM, wrapped to WAV
-// - Uploads to the `book-audio` bucket at `{bookId}/chapter-{idx}.wav`
-// - Rotates across GEMINI_API_KEY_2 / GEMINI_API_KEY_3 (key 1 has depleted credits) on 429.
+// Supports two flows:
+//  (1) Legacy single-shot: { bookId, sectionIndex, text, voice, language } - generates entire chapter in one call.
+//  (2) Chunked (avoids 150s edge timeout): { mode: "plan" | "chunk" | "finalize", ... }
+//      - "plan":     { bookId, sectionIndex, text, voice, language, skipIfExists } -> { chunks: string[], skipped? }
+//      - "chunk":    { bookId, sectionIndex, voice, chunkIndex, chunkText } -> { partPath, bytes }
+//      - "finalize": { bookId, sectionIndex, voice, totalChunks } -> { ok, path, bytes, durationSec }
 //
-// Note: admin/maintenance endpoint, intentionally unauthenticated for bulk generation.
+// Storage paths:
+//   - Final WAV: book-audio/{bookId}/{voice}/chapter-{idx}.wav
+//   - Temp PCM:  book-audio/{bookId}/{voice}/_tmp/chapter-{idx}/part-{nnn}.pcm
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
@@ -43,7 +48,6 @@ function chunkText(text: string, maxLen = MAX_CHUNK_CHARS): string[] {
 }
 
 function getKeys(): string[] {
-  // Skip key 1 (depleted prepay). Try 2, then 3.
   return [
     Deno.env.get("GEMINI_API_KEY_4"),
     Deno.env.get("GEMINI_API_KEY_2"),
@@ -55,7 +59,6 @@ function getKeys(): string[] {
 async function synthesizeChunk(text: string, voice: string): Promise<Uint8Array> {
   const keys = getKeys();
   if (keys.length === 0) throw new Error("No GEMINI_API_KEY* configured");
-
   let lastErr = "";
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
@@ -71,7 +74,6 @@ async function synthesizeChunk(text: string, voice: string): Promise<Uint8Array>
         },
       }),
     });
-
     if (resp.ok) {
       const j = await resp.json();
       const b64 = j?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
@@ -81,11 +83,10 @@ async function synthesizeChunk(text: string, voice: string): Promise<Uint8Array>
       for (let k = 0; k < bin.length; k++) pcm[k] = bin.charCodeAt(k);
       return pcm;
     }
-
     const errText = await resp.text();
     lastErr = `key#${i + 1} HTTP ${resp.status}: ${errText.slice(0, 200)}`;
     console.log(`generate-audio: ${lastErr}`);
-    if (resp.status === 429 || resp.status === 403) continue; // try next key
+    if (resp.status === 429 || resp.status === 403) continue;
     throw new Error(lastErr);
   }
   throw new Error(`All Gemini keys failed. Last: ${lastErr}`);
@@ -108,69 +109,142 @@ function wrapWav(pcm: Uint8Array, sampleRate = SAMPLE_RATE): Uint8Array {
   return new Uint8Array(buf);
 }
 
+function makeSupabase() {
+  return createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+  );
+}
+
+const partName = (i: number) => `part-${String(i).padStart(3, "0")}.pcm`;
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { bookId, sectionIndex, text, voice = "Kore", language = "en", skipIfExists = true } =
-      await req.json();
+    const body = await req.json();
+    const { mode, bookId, sectionIndex, voice = "Kore", language = "en" } = body;
 
-    if (!bookId || sectionIndex == null || !text) {
-      return new Response(JSON.stringify({ error: "Missing bookId, sectionIndex or text" }), {
+    if (!bookId || sectionIndex == null) {
+      return new Response(JSON.stringify({ error: "Missing bookId or sectionIndex" }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    );
+    const supabase = makeSupabase();
+    const finalPath = `${bookId}/${voice}/chapter-${sectionIndex}.wav`;
+    const tmpDir = `${bookId}/${voice}/_tmp/chapter-${sectionIndex}`;
 
-    const path = `${bookId}/${voice}/chapter-${sectionIndex}.wav`;
+    // ---------- PLAN ----------
+    if (mode === "plan") {
+      const { text, skipIfExists = true } = body;
+      if (!text) return new Response(JSON.stringify({ error: "Missing text" }), { status: 400, headers: corsHeaders });
+      if (skipIfExists) {
+        const { data: existing } = await supabase.storage.from("book-audio").list(`${bookId}/${voice}`, {
+          search: `chapter-${sectionIndex}.wav`,
+        });
+        if (existing?.some((f) => f.name === `chapter-${sectionIndex}.wav`)) {
+          return new Response(JSON.stringify({ skipped: true, path: finalPath }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        }
+      }
+      const langHint = `Read the following ${language} text naturally:\n\n`;
+      const chunks = chunkText(langHint + text);
+      return new Response(JSON.stringify({ chunks, totalChunks: chunks.length }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
 
+    // ---------- CHUNK ----------
+    if (mode === "chunk") {
+      const { chunkIndex, chunkText: ct, skipIfExists = true } = body;
+      if (chunkIndex == null || !ct) {
+        return new Response(JSON.stringify({ error: "Missing chunkIndex or chunkText" }), {
+          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const partPath = `${tmpDir}/${partName(chunkIndex)}`;
+      if (skipIfExists) {
+        const { data: existing } = await supabase.storage.from("book-audio").list(tmpDir, {
+          search: partName(chunkIndex),
+        });
+        if (existing?.some((f) => f.name === partName(chunkIndex))) {
+          return new Response(JSON.stringify({ skipped: true, partPath }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        }
+      }
+      const pcm = await synthesizeChunk(ct, voice);
+      const { error } = await supabase.storage.from("book-audio").upload(partPath, pcm, {
+        contentType: "application/octet-stream", upsert: true, cacheControl: "3600",
+      });
+      if (error) throw error;
+      return new Response(JSON.stringify({ ok: true, partPath, bytes: pcm.byteLength }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    // ---------- FINALIZE ----------
+    if (mode === "finalize") {
+      const { totalChunks } = body;
+      if (!totalChunks) return new Response(JSON.stringify({ error: "Missing totalChunks" }), { status: 400, headers: corsHeaders });
+      const parts: Uint8Array[] = [];
+      let total = 0;
+      for (let i = 0; i < totalChunks; i++) {
+        const { data, error } = await supabase.storage.from("book-audio").download(`${tmpDir}/${partName(i)}`);
+        if (error || !data) throw new Error(`Missing part ${i}: ${error?.message}`);
+        const ab = await data.arrayBuffer();
+        parts.push(new Uint8Array(ab));
+        total += ab.byteLength;
+      }
+      const merged = new Uint8Array(total);
+      let o = 0;
+      for (const p of parts) { merged.set(p, o); o += p.byteLength; }
+      const wav = wrapWav(merged);
+      const { error: upErr } = await supabase.storage.from("book-audio").upload(finalPath, wav, {
+        contentType: "audio/wav", upsert: true, cacheControl: "31536000",
+      });
+      if (upErr) throw upErr;
+      // Clean temp parts
+      const paths = Array.from({ length: totalChunks }, (_, i) => `${tmpDir}/${partName(i)}`);
+      await supabase.storage.from("book-audio").remove(paths);
+      const durationSec = Math.round((total / 2) / SAMPLE_RATE);
+      return new Response(JSON.stringify({ ok: true, path: finalPath, bytes: wav.byteLength, durationSec, chunks: totalChunks }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    // ---------- LEGACY single-shot ----------
+    const { text, skipIfExists = true } = body;
+    if (!text) {
+      return new Response(JSON.stringify({ error: "Missing text" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     if (skipIfExists) {
       const { data: existing } = await supabase.storage.from("book-audio").list(`${bookId}/${voice}`, {
         search: `chapter-${sectionIndex}.wav`,
       });
-      if (existing && existing.some((f) => f.name === `chapter-${sectionIndex}.wav`)) {
-        return new Response(JSON.stringify({ skipped: true, path }), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+      if (existing?.some((f) => f.name === `chapter-${sectionIndex}.wav`)) {
+        return new Response(JSON.stringify({ skipped: true, path: finalPath }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
     }
-
     const langHint = `Read the following ${language} text naturally:\n\n`;
     const chunks = chunkText(langHint + text);
-
     const pcmParts: Uint8Array[] = [];
-    for (const c of chunks) {
-      const pcm = await synthesizeChunk(c, voice);
-      pcmParts.push(pcm);
-    }
-
+    for (const c of chunks) pcmParts.push(await synthesizeChunk(c, voice));
     const totalPcm = pcmParts.reduce((n, p) => n + p.byteLength, 0);
-    const mergedPcm = new Uint8Array(totalPcm);
+    const merged = new Uint8Array(totalPcm);
     let o = 0;
-    for (const p of pcmParts) { mergedPcm.set(p, o); o += p.byteLength; }
-    const wav = wrapWav(mergedPcm);
-
-    const { error } = await supabase.storage.from("book-audio").upload(path, wav, {
-      contentType: "audio/wav",
-      upsert: true,
-      cacheControl: "31536000",
+    for (const p of pcmParts) { merged.set(p, o); o += p.byteLength; }
+    const wav = wrapWav(merged);
+    const { error } = await supabase.storage.from("book-audio").upload(finalPath, wav, {
+      contentType: "audio/wav", upsert: true, cacheControl: "31536000",
     });
     if (error) throw error;
-
     const durationSec = Math.round((totalPcm / 2) / SAMPLE_RATE);
-    return new Response(
-      JSON.stringify({ ok: true, path, bytes: wav.byteLength, chunks: chunks.length, durationSec }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
-    );
+    return new Response(JSON.stringify({ ok: true, path: finalPath, bytes: wav.byteLength, chunks: chunks.length, durationSec }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
     console.error("generate-audio error:", e);
-    return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-    );
+    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown" }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 });
