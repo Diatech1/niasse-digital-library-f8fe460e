@@ -34,8 +34,9 @@ const BookCard = ({ book, index }: BookCardProps) => {
           </div>
         )}
         <div className="absolute top-1.5 right-1.5 px-1 py-[1px] rounded text-[6px] sm:text-[7px] font-semibold uppercase tracking-wider bg-primary text-primary-foreground">
-          {book.language}
+          {book.language.slice(0, 2).toUpperCase()}
         </div>
+
       </div>
       <h3 className="font-serif text-xs sm:text-sm font-medium leading-tight line-clamp-2 text-foreground">
         {book.title}

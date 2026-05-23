@@ -19,6 +19,14 @@ interface BookRow {
   translator: string | null;
 }
 
+function normalizeLanguage(raw: string): string {
+  const v = (raw ?? "").trim().toLowerCase();
+  if (v.startsWith("fr")) return "French";
+  if (v.startsWith("ar")) return "Arabic";
+  if (v.startsWith("en")) return "English";
+  return raw;
+}
+
 function rowToBook(row: BookRow): Book {
   return {
     id: row.id,
@@ -26,7 +34,7 @@ function rowToBook(row: BookRow): Book {
     titleAr: row.title_ar ?? undefined,
     author: row.author,
     cover: row.cover,
-    language: row.language,
+    language: normalizeLanguage(row.language),
     pages: row.pages,
     tags: row.tags,
     description: row.description,
@@ -37,6 +45,7 @@ function rowToBook(row: BookRow): Book {
     translator: row.translator ?? undefined,
   };
 }
+
 
 async function fetchBooks(): Promise<Book[]> {
   const { data, error } = await supabase
