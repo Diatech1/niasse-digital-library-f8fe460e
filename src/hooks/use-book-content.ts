@@ -13,6 +13,7 @@ import { dhikrGroupeSections } from "@/data/dhikr-groupe";
 import { douaWazifaSections } from "@/data/doua-wazifa";
 import { fadailDhikrSections } from "@/data/fadail-dhikr";
 import { priereShaykhIbrahimSections } from "@/data/priere-shaykh-ibrahim";
+import { rihlaKunakiriyaSections } from "@/data/rihla-kunakiriya";
 import { hasbiBihiSections } from "@/data/hasbi-bihi";
 import { stationsDeenEnSections } from "@/data/stations-deen-en";
 import { loadConditionsReglesSections, type ConditionsSection } from "@/data/conditions-regles";
@@ -131,6 +132,8 @@ export function useBookContent(contentModule?: string) {
         return fadailDhikrSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
       case "priere-shaykh-ibrahim":
         return priereShaykhIbrahimSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
+      case "rihla-kunakiriya":
+        return rihlaKunakiriyaSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
       case "hasbi-bihi":
         return hasbiBihiSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
       case "stations-deen-en":
