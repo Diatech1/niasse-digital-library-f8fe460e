@@ -33,7 +33,7 @@ const BookCard = ({ book, index }: BookCardProps) => {
             />
           </div>
         )}
-        <div className="absolute top-1.5 right-1.5 px-1 py-[1px] rounded text-[6px] sm:text-[7px] font-semibold uppercase tracking-wider bg-primary text-primary-foreground">
+        <div className="absolute top-1.5 right-1.5 px-1.5 py-[2px] rounded text-[7px] sm:text-[8px] font-bold uppercase tracking-wider bg-foreground/85 text-background backdrop-blur-sm">
           {book.language.slice(0, 2).toUpperCase()}
         </div>
 
