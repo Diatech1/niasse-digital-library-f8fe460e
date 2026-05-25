@@ -14,4 +14,5 @@ export interface Book {
   contentModule?: string;
   isFavorite?: boolean;
   translator?: string;
+  preferredVoice?: string;
 }

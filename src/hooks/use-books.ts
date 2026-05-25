@@ -17,6 +17,7 @@ interface BookRow {
   content_module: string | null;
   is_favorite: boolean;
   translator: string | null;
+  preferred_voice: string | null;
 }
 
 function normalizeLanguage(raw: string): string {
@@ -43,6 +44,7 @@ function rowToBook(row: BookRow): Book {
     contentModule: row.content_module ?? undefined,
     isFavorite: row.is_favorite,
     translator: row.translator ?? undefined,
+    preferredVoice: row.preferred_voice ?? undefined,
   };
 }
 

@@ -51,7 +51,7 @@ export interface GeminiTtsControls {
   selectedVoiceURI: string | null;
   setSelectedVoiceURI: (uri: string | null) => void;
   resolveLang: (lang?: string) => string;
-  start: (text: string, lang?: string, cacheKey?: string) => Promise<void>;
+  start: (text: string, lang?: string, cacheKey?: string, voiceOverride?: string) => Promise<void>;
   pause: () => void;
   resume: () => void;
   stop: () => void;
@@ -252,13 +252,14 @@ export function useGeminiTts(options?: UseGeminiTtsOptions): GeminiTtsControls {
     text: string,
     lang?: string,
     cacheKey?: string,
+    voiceOverride?: string,
   ) => {
     if (!text.trim()) return;
     setError(null);
     const reqId = ++requestIdRef.current;
     const locale = resolveLocale(lang);
     lastLangRef.current = locale;
-    const voice = selectedVoiceURI || DEFAULT_VOICE;
+    const voice = voiceOverride || selectedVoiceURI || DEFAULT_VOICE;
 
     if (Date.now() < cooldownUntilRef.current) {
       setError("Audio is still being prepared for this chapter. Please try again in about a minute.");

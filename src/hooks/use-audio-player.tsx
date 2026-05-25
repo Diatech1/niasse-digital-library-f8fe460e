@@ -60,7 +60,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
     const text = stripForSpeech(target.content);
     if (!text) return;
     const cacheKey = `${currentBook.id}:${idx}`;
-    void ttsRef.current.start(text, currentBook.language, cacheKey);
+    void ttsRef.current.start(text, currentBook.language, cacheKey, currentBook.preferredVoice);
   }, []);
 
   const tts = useGeminiTts({
