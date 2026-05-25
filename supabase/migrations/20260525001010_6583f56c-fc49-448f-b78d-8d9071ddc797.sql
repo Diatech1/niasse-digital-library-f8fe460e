@@ -1,0 +1,1 @@
+UPDATE public.books SET preferred_voice = 'Schedar' WHERE id = 'rihla-kunakiriya';
