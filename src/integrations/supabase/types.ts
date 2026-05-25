@@ -27,6 +27,7 @@ export type Database = {
           is_favorite: boolean
           language: string
           pages: number
+          preferred_voice: string | null
           tags: string[]
           title: string
           title_ar: string | null
@@ -44,6 +45,7 @@ export type Database = {
           is_favorite?: boolean
           language: string
           pages?: number
+          preferred_voice?: string | null
           tags?: string[]
           title: string
           title_ar?: string | null
@@ -61,6 +63,7 @@ export type Database = {
           is_favorite?: boolean
           language?: string
           pages?: number
+          preferred_voice?: string | null
           tags?: string[]
           title?: string
           title_ar?: string | null
