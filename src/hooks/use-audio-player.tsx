@@ -93,6 +93,8 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
     // Sync refs immediately so a follow-up playChapter call sees the new book/sections.
     bookRef.current = nextBook;
     sectionsRef.current = nextSections;
+    // Apply per-book preferred playback rate (defaults to 1 if none).
+    tts.setRate(nextBook.preferredRate ?? 1);
     if (typeof autoPlayIdx === "number") {
       setChapterIdx(autoPlayIdx);
       chapterIdxRef.current = autoPlayIdx;
