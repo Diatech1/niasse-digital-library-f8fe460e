@@ -51,7 +51,7 @@ export interface GeminiTtsControls {
   selectedVoiceURI: string | null;
   setSelectedVoiceURI: (uri: string | null) => void;
   resolveLang: (lang?: string) => string;
-  start: (text: string, lang?: string, cacheKey?: string) => Promise<void>;
+  start: (text: string, lang?: string, cacheKey?: string, voiceOverride?: string) => Promise<void>;
   pause: () => void;
   resume: () => void;
   stop: () => void;
