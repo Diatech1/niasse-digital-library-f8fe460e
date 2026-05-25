@@ -46,6 +46,7 @@ function rowToBook(row: BookRow): Book {
     isFavorite: row.is_favorite,
     translator: row.translator ?? undefined,
     preferredVoice: row.preferred_voice ?? undefined,
+    preferredRate: row.preferred_rate ?? undefined,
   };
 }
 
