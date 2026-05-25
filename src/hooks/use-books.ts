@@ -18,6 +18,7 @@ interface BookRow {
   is_favorite: boolean;
   translator: string | null;
   preferred_voice: string | null;
+  preferred_rate: number | null;
 }
 
 function normalizeLanguage(raw: string): string {
