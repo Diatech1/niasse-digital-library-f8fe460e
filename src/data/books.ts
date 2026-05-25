@@ -15,4 +15,5 @@ export interface Book {
   isFavorite?: boolean;
   translator?: string;
   preferredVoice?: string;
+  preferredRate?: number;
 }
