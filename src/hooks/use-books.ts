@@ -18,6 +18,7 @@ interface BookRow {
   is_favorite: boolean;
   translator: string | null;
   preferred_voice: string | null;
+  preferred_rate: number | null;
 }
 
 function normalizeLanguage(raw: string): string {
@@ -45,6 +46,7 @@ function rowToBook(row: BookRow): Book {
     isFavorite: row.is_favorite,
     translator: row.translator ?? undefined,
     preferredVoice: row.preferred_voice ?? undefined,
+    preferredRate: row.preferred_rate ?? undefined,
   };
 }
 
