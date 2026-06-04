@@ -94,9 +94,9 @@ const Index = () => {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}>
-          <h1 className="text-2xl font-serif font-bold text-foreground">
+          <p className="text-2xl font-serif font-bold text-foreground">
             Fayda<span className="text-primary">book</span>
-          </h1>
+          </p>
           <p className="text-sm text-muted-foreground mt-1">
             {t("app.tagline")}
           </p>
