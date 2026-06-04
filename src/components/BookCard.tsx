@@ -33,9 +33,6 @@ const BookCard = ({ book, index }: BookCardProps) => {
             />
           </div>
         )}
-        <div className="absolute top-1.5 right-1.5 px-1 py-[1px] rounded text-[7px] sm:text-[8px] font-semibold uppercase bg-primary text-primary-foreground">
-          {book.language.slice(0, 2)}
-        </div>
 
       </div>
       <h3 className="font-serif text-xs sm:text-sm font-medium leading-tight line-clamp-2 text-foreground">
