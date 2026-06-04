@@ -57,6 +57,7 @@ const Index = () => {
 
   return (
     <main className="min-h-screen bg-background pb-24 lg:pb-0">
+      <h1 className="sr-only">{t("app.title")}</h1>
       <SEO
         title="Faydabook — Bibliothèque numérique Tidjaniyya"
         description="Lisez et écoutez les œuvres de Cheikh Ibrahim Niasse et de la Faydah Tidjaniyya, en français, anglais et arabe."
