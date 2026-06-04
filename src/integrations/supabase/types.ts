@@ -29,6 +29,7 @@ export type Database = {
           pages: number
           preferred_rate: number | null
           preferred_voice: string | null
+          slug: string
           tags: string[]
           title: string
           title_ar: string | null
@@ -48,6 +49,7 @@ export type Database = {
           pages?: number
           preferred_rate?: number | null
           preferred_voice?: string | null
+          slug: string
           tags?: string[]
           title: string
           title_ar?: string | null
@@ -67,6 +69,7 @@ export type Database = {
           pages?: number
           preferred_rate?: number | null
           preferred_voice?: string | null
+          slug?: string
           tags?: string[]
           title?: string
           title_ar?: string | null
@@ -243,6 +246,7 @@ export type Database = {
           read_ct: number
         }[]
       }
+      slugify: { Args: { input: string }; Returns: string }
     }
     Enums: {
       app_role: "admin" | "user"
