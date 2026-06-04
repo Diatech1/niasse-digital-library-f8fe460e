@@ -44,6 +44,13 @@ const AudioPlayer = () => {
     sleepCountdown, elapsed, totalDuration, setActiveBook, goToChapter, togglePlayPause,
   } = player;
 
+  // Redirect numeric/legacy ids to the pretty slug URL
+  useEffect(() => {
+    if (book && id && book.slug && id !== book.slug) {
+      navigate(`/listen/${book.slug}`, { replace: true });
+    }
+  }, [book, id, navigate]);
+
   // Sync this book + sections into the global player when they load
   useEffect(() => {
     if (book && sections.length > 0) {
@@ -55,7 +62,7 @@ const AudioPlayer = () => {
 
   const handleShare = async () => {
     if (!book) return;
-    const shareUrl = `${window.location.origin}/listen/${book.id}`;
+    const shareUrl = `${window.location.origin}/listen/${book.slug}`;
     const shareData = {
       title: book.title,
       text: `${book.title} — ${book.author}`,
