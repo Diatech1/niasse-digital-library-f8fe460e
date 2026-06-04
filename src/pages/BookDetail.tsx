@@ -140,7 +140,25 @@ const BookDetail = () => {
         <button onClick={() => navigate(-1)} className="p-2 rounded-full glass">
           <ArrowLeft className="w-5 h-5 text-foreground" />
         </button>
-        <button className="p-2 rounded-full glass">
+        <button
+          onClick={async () => {
+            const url = `${window.location.origin}/book/${book.id}`;
+            const shareData = { title: book.title, text: `${book.title} — ${book.author}`, url };
+            try {
+              if (navigator.share) {
+                await navigator.share(shareData);
+              } else {
+                await navigator.clipboard.writeText(url);
+              }
+            } catch (err) {
+              if ((err as Error)?.name !== "AbortError") {
+                try { await navigator.clipboard.writeText(url); } catch {}
+              }
+            }
+          }}
+          className="p-2 rounded-full glass"
+          aria-label="Share"
+        >
           <MoreHorizontal className="w-5 h-5 text-foreground" />
         </button>
       </div>
