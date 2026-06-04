@@ -33,6 +33,7 @@ function normalizeLanguage(raw: string): string {
 function rowToBook(row: BookRow): Book {
   return {
     id: row.id,
+    slug: row.slug ?? row.id,
     title: row.title,
     titleAr: row.title_ar ?? undefined,
     author: row.author,
