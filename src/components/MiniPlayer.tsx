@@ -64,7 +64,7 @@ const MiniPlayer = () => {
   const currentSection = sections[chapterIdx];
   const subtitle = currentSection?.heading || `${t("audioPlayer.chapter")} ${chapterIdx + 1}`;
 
-  const openFull = () => navigate(`/listen/${book.id}`);
+  const openFull = () => navigate(`/listen/${book.slug}`);
 
   return (
     <div
