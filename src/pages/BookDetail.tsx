@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, MoreHorizontal, Globe, FileText, BookOpen, Headphones, ListOrdered, ChevronRight, ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useBook } from "@/hooks/use-books";
 import { useBookContent } from "@/hooks/use-book-content";
 import { Badge } from "@/components/ui/badge";
@@ -87,6 +87,14 @@ const BookDetail = () => {
   const { book, isLoading } = useBook(id);
   const { t } = useLanguage();
 
+  // Redirect numeric/legacy ids to the pretty slug URL
+  useEffect(() => {
+    if (book && id && book.slug && id !== book.slug) {
+      navigate(`/book/${book.slug}`, { replace: true });
+    }
+  }, [book, id, navigate]);
+
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center pt-32 gap-4">
@@ -110,7 +118,7 @@ const BookDetail = () => {
       <SEO
         title={`${book.title} — Faydabook`}
         description={book.description?.slice(0, 155) || `${book.title} par ${book.author}.`}
-        path={`/book/${book.id}`}
+        path={`/book/${book.slug}`}
         type="book"
         image={book.cover}
         jsonLd={{
@@ -122,7 +130,7 @@ const BookDetail = () => {
           numberOfPages: book.pages,
           description: book.description,
           image: book.cover,
-          url: `https://faydabook.com/book/${book.id}`,
+          url: `https://faydabook.com/book/${book.slug}`,
           ...(book.translator
             ? { translator: { "@type": "Person", name: book.translator } }
             : {}),
@@ -142,7 +150,7 @@ const BookDetail = () => {
         </button>
         <button
           onClick={async () => {
-            const url = `${window.location.origin}/book/${book.id}`;
+            const url = `${window.location.origin}/book/${book.slug}`;
             const shareData = { title: book.title, text: `${book.title} — ${book.author}`, url };
             try {
               if (navigator.share) {
@@ -217,13 +225,13 @@ const BookDetail = () => {
 
           <div className="flex flex-col gap-3 max-w-xs mx-auto">
             <button
-              onClick={() => navigate(`/read/${book.id}`)}
+              onClick={() => navigate(`/read/${book.slug}`)}
               className="flex items-center justify-center gap-2 bg-primary text-primary-foreground rounded-xl py-3.5 font-semibold text-sm transition-all hover:opacity-90"
             >
               <BookOpen className="w-4 h-4" />{t("book.read")}
             </button>
             <button
-              onClick={() => navigate(`/listen/${book.id}`)}
+              onClick={() => navigate(`/listen/${book.slug}`)}
               className="flex items-center justify-center gap-2 border border-primary text-primary rounded-xl py-3.5 font-semibold text-sm transition-all hover:bg-primary/10"
             >
               <Headphones className="w-4 h-4" />{t("book.listen")}
@@ -262,14 +270,14 @@ const BookDetail = () => {
               </div>
               <div className="flex flex-col gap-3">
                 <button
-                  onClick={() => navigate(`/read/${book.id}`)}
+                  onClick={() => navigate(`/read/${book.slug}`)}
                   className="flex items-center justify-center gap-2 bg-primary text-primary-foreground rounded-xl py-3.5 font-semibold text-sm transition-all hover:opacity-90"
                 >
                   <BookOpen className="w-4 h-4" />{t("book.read")}
                 </button>
                 {book.hasAudio && (
                   <button
-                    onClick={() => navigate(`/listen/${book.id}`)}
+                    onClick={() => navigate(`/listen/${book.slug}`)}
                     className="flex items-center justify-center gap-2 border border-primary text-primary rounded-xl py-3.5 font-semibold text-sm transition-all hover:bg-primary/10"
                   >
                     <Headphones className="w-4 h-4" />{t("book.listen")}

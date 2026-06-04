@@ -4,6 +4,7 @@ import type { Book } from "@/data/books";
 
 interface BookRow {
   id: string;
+  slug: string | null;
   title: string;
   title_ar: string | null;
   author: string;
@@ -32,6 +33,7 @@ function normalizeLanguage(raw: string): string {
 function rowToBook(row: BookRow): Book {
   return {
     id: row.id,
+    slug: row.slug ?? row.id,
     title: row.title,
     titleAr: row.title_ar ?? undefined,
     author: row.author,
@@ -69,8 +71,10 @@ export function useBooks() {
   return { books, isLoading, error };
 }
 
-export function useBook(id: string | undefined) {
+export function useBook(idOrSlug: string | undefined) {
   const { books, isLoading, error } = useBooks();
-  const book = books.find((b) => b.id === id);
+  const book =
+    books.find((b) => b.slug === idOrSlug) ??
+    books.find((b) => b.id === idOrSlug);
   return { book, isLoading, error };
 }

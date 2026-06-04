@@ -25,7 +25,7 @@ const MiniPlayer = () => {
   const location = useLocation();
   const { t } = useLanguage();
 
-  const isOnPlayerRoute = book ? location.pathname === `/listen/${book.id}` : false;
+  const isOnPlayerRoute = book ? location.pathname === `/listen/${book.slug}` || location.pathname === `/listen/${book.id}` : false;
   const isOnReaderRoute = location.pathname.startsWith("/read/");
 
   useEffect(() => {
@@ -64,7 +64,7 @@ const MiniPlayer = () => {
   const currentSection = sections[chapterIdx];
   const subtitle = currentSection?.heading || `${t("audioPlayer.chapter")} ${chapterIdx + 1}`;
 
-  const openFull = () => navigate(`/listen/${book.id}`);
+  const openFull = () => navigate(`/listen/${book.slug}`);
 
   return (
     <div

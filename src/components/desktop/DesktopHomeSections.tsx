@@ -106,7 +106,7 @@ const DesktopHomeSections = () => {
                   key={book.id}
                   className="cursor-pointer"
                   whileHover={{ y: -4 }}
-                  onClick={() => navigate(`/read/${book.id}`)}
+                  onClick={() => navigate(`/read/${book.slug}`)}
                 >
                   <div className="relative rounded-[6px] overflow-hidden shadow-[4px_4px_10px_rgba(0,0,0,0.3),_1px_1px_3px_rgba(0,0,0,0.2)] border-l-[3px] border-l-black/10 mb-3">
                     <img

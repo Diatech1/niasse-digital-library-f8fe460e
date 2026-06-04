@@ -21,92 +21,92 @@
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://faydabook.com/book/9</loc>
+    <loc>https://faydabook.com/book/ruh-al-adab</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://faydabook.com/read/9</loc>
+    <loc>https://faydabook.com/read/ruh-al-adab</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://faydabook.com/book/10</loc>
+    <loc>https://faydabook.com/book/kachiful-albas</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://faydabook.com/read/10</loc>
+    <loc>https://faydabook.com/read/kachiful-albas</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://faydabook.com/book/7</loc>
+    <loc>https://faydabook.com/book/the-removal-of-confusion</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://faydabook.com/read/7</loc>
+    <loc>https://faydabook.com/read/the-removal-of-confusion</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://faydabook.com/book/8</loc>
+    <loc>https://faydabook.com/book/comprendre-la-faydhah-tijaniyyah</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://faydabook.com/read/8</loc>
+    <loc>https://faydabook.com/read/comprendre-la-faydhah-tijaniyyah</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://faydabook.com/listen/8</loc>
+    <loc>https://faydabook.com/listen/comprendre-la-faydhah-tijaniyyah</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://faydabook.com/book/11</loc>
+    <loc>https://faydabook.com/book/le-wird-tidjane</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://faydabook.com/read/11</loc>
+    <loc>https://faydabook.com/read/le-wird-tidjane</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://faydabook.com/listen/11</loc>
+    <loc>https://faydabook.com/listen/le-wird-tidjane</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://faydabook.com/book/12</loc>
+    <loc>https://faydabook.com/book/les-stations-de-l-islam</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://faydabook.com/read/12</loc>
+    <loc>https://faydabook.com/read/les-stations-de-l-islam</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://faydabook.com/listen/12</loc>
+    <loc>https://faydabook.com/listen/les-stations-de-l-islam</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://faydabook.com/book/18</loc>
+    <loc>https://faydabook.com/book/les-merites-du-dhikr</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://faydabook.com/read/18</loc>
+    <loc>https://faydabook.com/read/les-merites-du-dhikr</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://faydabook.com/listen/18</loc>
+    <loc>https://faydabook.com/listen/les-merites-du-dhikr</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
@@ -196,92 +196,17 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://faydabook.com/book/14</loc>
+    <loc>https://faydabook.com/book/l-origine-du-chapelet</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://faydabook.com/read/14</loc>
+    <loc>https://faydabook.com/read/l-origine-du-chapelet</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://faydabook.com/listen/14</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://faydabook.com/book/17</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://faydabook.com/read/17</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://faydabook.com/listen/17</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://faydabook.com/book/13</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://faydabook.com/read/13</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://faydabook.com/listen/13</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://faydabook.com/book/15</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://faydabook.com/read/15</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://faydabook.com/listen/15</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://faydabook.com/book/16</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://faydabook.com/read/16</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://faydabook.com/listen/16</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://faydabook.com/book/priere-shaykh-ibrahim</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://faydabook.com/read/priere-shaykh-ibrahim</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://faydabook.com/listen/priere-shaykh-ibrahim</loc>
+    <loc>https://faydabook.com/listen/l-origine-du-chapelet</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
@@ -301,12 +226,97 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://faydabook.com/book/l-evocation-en-groupe</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://faydabook.com/read/l-evocation-en-groupe</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://faydabook.com/listen/l-evocation-en-groupe</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://faydabook.com/book/les-bienseances-du-dhikr</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://faydabook.com/read/les-bienseances-du-dhikr</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://faydabook.com/listen/les-bienseances-du-dhikr</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://faydabook.com/book/la-salatoul-fatihi</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://faydabook.com/read/la-salatoul-fatihi</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://faydabook.com/listen/la-salatoul-fatihi</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://faydabook.com/book/la-djaouharatou-l-kamel</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://faydabook.com/read/la-djaouharatou-l-kamel</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://faydabook.com/listen/la-djaouharatou-l-kamel</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://faydabook.com/book/priere-shaykh-ibrahim</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://faydabook.com/read/priere-shaykh-ibrahim</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://faydabook.com/listen/priere-shaykh-ibrahim</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://faydabook.com/book/jawahir-rasail-en</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://faydabook.com/read/jawahir-rasail-en</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://faydabook.com/book/rihla-kunakiriya</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://faydabook.com/read/rihla-kunakiriya</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -357,16 +367,6 @@
   </url>
   <url>
     <loc>https://faydabook.com/read/chaine-initiation</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://faydabook.com/book/rihla-kunakiriya</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://faydabook.com/read/rihla-kunakiriya</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
