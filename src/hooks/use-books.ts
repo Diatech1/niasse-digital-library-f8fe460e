@@ -71,8 +71,10 @@ export function useBooks() {
   return { books, isLoading, error };
 }
 
-export function useBook(id: string | undefined) {
+export function useBook(idOrSlug: string | undefined) {
   const { books, isLoading, error } = useBooks();
-  const book = books.find((b) => b.id === id);
+  const book =
+    books.find((b) => b.slug === idOrSlug) ??
+    books.find((b) => b.id === idOrSlug);
   return { book, isLoading, error };
 }
