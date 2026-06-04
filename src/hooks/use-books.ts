@@ -4,6 +4,7 @@ import type { Book } from "@/data/books";
 
 interface BookRow {
   id: string;
+  slug: string | null;
   title: string;
   title_ar: string | null;
   author: string;
