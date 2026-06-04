@@ -73,6 +73,17 @@ const Reader = () => {
   const sectionParam = searchParams.get("section");
   const { book, isLoading: bookLoading } = useBook(id);
 
+  // Redirect numeric/legacy ids to the pretty slug URL (preserving query string)
+  useEffect(() => {
+    if (book && id && book.slug && id !== book.slug) {
+      navigate(
+        { pathname: `/read/${book.slug}`, search: window.location.search },
+        { replace: true }
+      );
+    }
+  }, [book, id, navigate]);
+
+
   // Default reader theme matches the app's appearance
   const [themeIdx, setThemeIdx] = useState(() => {
     const isDark =
