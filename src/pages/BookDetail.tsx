@@ -217,13 +217,13 @@ const BookDetail = () => {
 
           <div className="flex flex-col gap-3 max-w-xs mx-auto">
             <button
-              onClick={() => navigate(`/read/${book.id}`)}
+              onClick={() => navigate(`/read/${book.slug}`)}
               className="flex items-center justify-center gap-2 bg-primary text-primary-foreground rounded-xl py-3.5 font-semibold text-sm transition-all hover:opacity-90"
             >
               <BookOpen className="w-4 h-4" />{t("book.read")}
             </button>
             <button
-              onClick={() => navigate(`/listen/${book.id}`)}
+              onClick={() => navigate(`/listen/${book.slug}`)}
               className="flex items-center justify-center gap-2 border border-primary text-primary rounded-xl py-3.5 font-semibold text-sm transition-all hover:bg-primary/10"
             >
               <Headphones className="w-4 h-4" />{t("book.listen")}
