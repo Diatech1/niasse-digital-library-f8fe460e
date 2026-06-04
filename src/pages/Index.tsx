@@ -127,7 +127,7 @@ const Index = () => {
                   key={book.id}
                   className="cursor-pointer min-w-[28%] max-w-[28%]"
                   whileTap={{ scale: 0.97 }}
-                  onClick={() => navigate(`/read/${book.id}`)}>
+                  onClick={() => navigate(`/read/${book.slug}`)}>
                   <div className="relative rounded-[6px] overflow-hidden shadow-[4px_4px_10px_rgba(0,0,0,0.3),_1px_1px_3px_rgba(0,0,0,0.2)] border-l-[3px] border-l-black/10">
                     <img src={book.cover} alt={book.title} className="w-full aspect-[2/3] object-cover" />
                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-1.5 pt-3 pb-1.5">
