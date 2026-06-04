@@ -133,7 +133,7 @@ const AudioPlayer = () => {
           </div>
 
           <div className="px-8 text-center mb-1">
-            <h2 className="text-base font-serif font-bold text-foreground line-clamp-1">{book.title}</h2>
+            <h1 className="text-base font-serif font-bold text-foreground line-clamp-1">{book.title}</h1>
             <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{book.author}</p>
             {totalChapters > 0 && (
               <p className="text-[11px] text-muted-foreground mt-1 line-clamp-1">
@@ -218,9 +218,9 @@ const AudioPlayer = () => {
               <p className="text-accent text-xs font-medium tracking-[0.2em] uppercase mb-2">
                 {t("audioPlayer.nowPlaying")}
               </p>
-              <h2 className="font-display text-3xl xl:text-4xl font-bold text-foreground mb-2 line-clamp-2">
+              <h1 className="font-display text-3xl xl:text-4xl font-bold text-foreground mb-2 line-clamp-2">
                 {book.title}
-              </h2>
+              </h1>
               <p className="text-base text-muted-foreground">{book.author}</p>
               {totalChapters > 0 && (
                 <p className="text-sm text-muted-foreground mt-3 line-clamp-1">

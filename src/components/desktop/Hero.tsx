@@ -40,7 +40,7 @@ const Hero = () => {
           {t("hero.eyebrow")}
         </motion.p>
 
-        <motion.h1
+        <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
@@ -49,7 +49,7 @@ const Hero = () => {
           Faydah
           <br />
           <span className="text-gold">Tidjaniyah</span>
-        </motion.h1>
+        </motion.h2>
 
         <motion.p
           initial={{ opacity: 0 }}

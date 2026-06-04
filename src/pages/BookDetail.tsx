@@ -137,7 +137,7 @@ const BookDetail = () => {
 
       {/* Mobile top actions */}
       <div className="relative z-10 flex items-center justify-between px-5 pt-12 pb-4 lg:hidden">
-        <button onClick={() => navigate(-1)} className="p-2 rounded-full glass">
+        <button onClick={() => navigate(-1)} className="p-2 rounded-full glass" aria-label="Go back">
           <ArrowLeft className="w-5 h-5 text-foreground" />
         </button>
         <button

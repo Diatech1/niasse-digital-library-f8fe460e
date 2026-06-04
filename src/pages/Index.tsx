@@ -57,6 +57,7 @@ const Index = () => {
 
   return (
     <main className="min-h-screen bg-background pb-24 lg:pb-0">
+      <h1 className="sr-only">{t("app.title")}</h1>
       <SEO
         title="Faydabook — Bibliothèque numérique Tidjaniyya"
         description="Lisez et écoutez les œuvres de Cheikh Ibrahim Niasse et de la Faydah Tidjaniyya, en français, anglais et arabe."
@@ -94,9 +95,9 @@ const Index = () => {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}>
-          <h1 className="text-2xl font-serif font-bold text-foreground">
+          <p className="text-2xl font-serif font-bold text-foreground">
             Fayda<span className="text-primary">book</span>
-          </h1>
+          </p>
           <p className="text-sm text-muted-foreground mt-1">
             {t("app.tagline")}
           </p>
