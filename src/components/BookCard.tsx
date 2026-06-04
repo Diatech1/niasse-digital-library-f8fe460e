@@ -33,8 +33,8 @@ const BookCard = ({ book, index }: BookCardProps) => {
             />
           </div>
         )}
-        <div className="absolute top-1.5 right-1.5 px-1.5 py-[2px] rounded text-[8px] sm:text-[9px] font-semibold tracking-wider bg-primary text-primary-foreground">
-          {book.language}
+        <div className="absolute top-1.5 right-1.5 px-1 py-[1px] rounded text-[7px] sm:text-[8px] font-semibold uppercase bg-primary text-primary-foreground">
+          {book.language.slice(0, 2)}
         </div>
 
       </div>
