@@ -101,7 +101,7 @@ const AudioPlayer = () => {
         <SEO
           title={`Écouter ${book.title} — Faydabook`}
           description={`Écoutez ${book.title} de ${book.author} en audio sur Faydabook.`}
-          path={`/listen/${book.id}`}
+          path={`/listen/${book.slug}`}
           image={book.cover}
           type="book"
         />
