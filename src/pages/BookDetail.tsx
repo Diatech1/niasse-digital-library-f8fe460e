@@ -87,6 +87,14 @@ const BookDetail = () => {
   const { book, isLoading } = useBook(id);
   const { t } = useLanguage();
 
+  // Redirect numeric/legacy ids to the pretty slug URL
+  useEffect(() => {
+    if (book && id && book.slug && id !== book.slug) {
+      navigate(`/book/${book.slug}`, { replace: true });
+    }
+  }, [book, id, navigate]);
+
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center pt-32 gap-4">
