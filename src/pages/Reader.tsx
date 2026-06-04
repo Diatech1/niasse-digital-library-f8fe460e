@@ -822,7 +822,7 @@ const Reader = () => {
         <SEO
           title={`Lire ${book.title} — Faydabook`}
           description={book.description?.slice(0, 155) || `Lecture immersive de ${book.title}.`}
-          path={`/read/${book.id}`}
+          path={`/read/${book.slug}`}
           image={book.cover}
           type="book"
         />
