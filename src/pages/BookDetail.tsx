@@ -142,7 +142,7 @@ const BookDetail = () => {
         </button>
         <button
           onClick={async () => {
-            const url = `${window.location.origin}/book/${book.id}`;
+            const url = `${window.location.origin}/book/${book.slug}`;
             const shareData = { title: book.title, text: `${book.title} — ${book.author}`, url };
             try {
               if (navigator.share) {
