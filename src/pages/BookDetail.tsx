@@ -110,7 +110,7 @@ const BookDetail = () => {
       <SEO
         title={`${book.title} — Faydabook`}
         description={book.description?.slice(0, 155) || `${book.title} par ${book.author}.`}
-        path={`/book/${book.id}`}
+        path={`/book/${book.slug}`}
         type="book"
         image={book.cover}
         jsonLd={{
@@ -122,7 +122,7 @@ const BookDetail = () => {
           numberOfPages: book.pages,
           description: book.description,
           image: book.cover,
-          url: `https://faydabook.com/book/${book.id}`,
+          url: `https://faydabook.com/book/${book.slug}`,
           ...(book.translator
             ? { translator: { "@type": "Person", name: book.translator } }
             : {}),
