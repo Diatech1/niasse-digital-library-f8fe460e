@@ -39,23 +39,24 @@ async function fetchBookEntries(): Promise<SitemapEntry[]> {
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
     const { data, error } = await supabase
       .from("books")
-      .select("id, has_audio");
+      .select("id, slug, has_audio");
     if (error) throw error;
     const entries: SitemapEntry[] = [];
     for (const row of data ?? []) {
+      const key = (row as { slug?: string | null }).slug ?? row.id;
       entries.push({
-        path: `/book/${row.id}`,
+        path: `/book/${key}`,
         changefreq: "monthly",
         priority: "0.7",
       });
       entries.push({
-        path: `/read/${row.id}`,
+        path: `/read/${key}`,
         changefreq: "monthly",
         priority: "0.6",
       });
       if (row.has_audio) {
         entries.push({
-          path: `/listen/${row.id}`,
+          path: `/listen/${key}`,
           changefreq: "monthly",
           priority: "0.5",
         });
