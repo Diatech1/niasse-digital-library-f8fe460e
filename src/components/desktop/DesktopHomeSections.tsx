@@ -319,7 +319,7 @@ const DesktopHomeSections = () => {
       {/* Footer */}
       <footer className="bg-card border-t border-border py-14">
         <div className="container mx-auto px-6">
-          <div className="grid grid-cols-3 gap-12 mb-6">
+          <div className="grid grid-cols-4 gap-12 mb-6">
             <div>
               <Link to="/" className="flex items-center gap-2 mb-4">
                 <BookOpen className="h-5 w-5 text-primary" />
@@ -367,6 +367,19 @@ const DesktopHomeSections = () => {
                   </Link>
                 ))}
               </div>
+            </div>
+            <div>
+              <h4 className="font-display font-semibold text-foreground mb-4">
+                App
+              </h4>
+              <a
+                href="https://play.google.com/store/apps/details?id=com.faydabook.twa&hl=en"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-sm text-muted-foreground hover:text-primary transition-colors"
+              >
+                Google Play
+              </a>
             </div>
           </div>
           <div className="border-t border-border pt-6 text-center">
