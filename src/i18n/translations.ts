@@ -73,7 +73,8 @@ export type TranslationKey =
   | "settings.contact"
   | "settings.disclaimer.title"
   | "settings.disclaimer.body"
-  | "settings.madeWith";
+  | "settings.madeWith"
+  | "settings.getApp";
 
 type Dict = Record<TranslationKey, string>;
 
@@ -151,6 +152,7 @@ const en: Dict = {
   "settings.disclaimer.title": "Disclaimer",
   "settings.disclaimer.body": "This app was built with the help of AI and may contain mistakes. For corrections or feedback, please contact {email}.",
   "settings.madeWith": "Made with {heart} for the Tijānī community",
+  "settings.getApp": "Get the app",
 };
 
 const fr: Dict = {
@@ -227,6 +229,7 @@ const fr: Dict = {
   "settings.disclaimer.title": "Avertissement",
   "settings.disclaimer.body": "Cette application a été conçue avec l'aide de l'IA et peut contenir des erreurs. Pour toute correction ou remarque, veuillez contacter {email}.",
   "settings.madeWith": "Fait avec {heart} pour la communauté Tijānī",
+  "settings.getApp": "Télécharger l'app",
 };
 
 const ar: Dict = {
@@ -303,6 +306,7 @@ const ar: Dict = {
   "settings.disclaimer.title": "تنويه",
   "settings.disclaimer.body": "تم تطوير هذا التطبيق بمساعدة الذكاء الاصطناعي وقد يحتوي على بعض الأخطاء. للتصحيحات أو الملاحظات، يُرجى التواصل عبر {email}.",
   "settings.madeWith": "صُنع بـ {heart} لمجتمع التجاني",
+  "settings.getApp": "تحميل التطبيق",
 };
 
 const dictionaries: Record<Language, Dict> = { en, fr, ar };
