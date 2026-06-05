@@ -306,6 +306,7 @@ const ar: Dict = {
   "settings.disclaimer.title": "تنويه",
   "settings.disclaimer.body": "تم تطوير هذا التطبيق بمساعدة الذكاء الاصطناعي وقد يحتوي على بعض الأخطاء. للتصحيحات أو الملاحظات، يُرجى التواصل عبر {email}.",
   "settings.madeWith": "صُنع بـ {heart} لمجتمع التجاني",
+  "settings.getApp": "تحميل التطبيق",
 };
 
 const dictionaries: Record<Language, Dict> = { en, fr, ar };
