@@ -252,6 +252,16 @@ const Settings = () => {
             <AboutRow icon={Info} label="Faydabook" value="v1.0.0" />
             <AboutRow icon={BookOpen} label="Shaykh Ibrahim Niass (ra)" />
             <AboutRow icon={Mail} label={t("settings.contact")} value="admin@diatech.consulting" />
+            <a
+              href="https://play.google.com/store/apps/details?id=com.faydabook.twa&hl=en"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 px-4 py-3.5 hover:bg-muted/50 transition-colors"
+            >
+              <Smartphone className="w-4 h-4 text-primary shrink-0" />
+              <span className="text-sm font-medium text-foreground flex-1">{t("settings.getApp")}</span>
+              <ExternalLink className="w-3.5 h-3.5 text-muted-foreground" />
+            </a>
           </div>
 
           {/* Disclaimer */}
