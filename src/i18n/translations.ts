@@ -73,7 +73,8 @@ export type TranslationKey =
   | "settings.contact"
   | "settings.disclaimer.title"
   | "settings.disclaimer.body"
-  | "settings.madeWith";
+  | "settings.madeWith"
+  | "settings.getApp";
 
 type Dict = Record<TranslationKey, string>;
 
