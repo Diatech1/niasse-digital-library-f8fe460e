@@ -229,6 +229,7 @@ const fr: Dict = {
   "settings.disclaimer.title": "Avertissement",
   "settings.disclaimer.body": "Cette application a été conçue avec l'aide de l'IA et peut contenir des erreurs. Pour toute correction ou remarque, veuillez contacter {email}.",
   "settings.madeWith": "Fait avec {heart} pour la communauté Tijānī",
+  "settings.getApp": "Télécharger l'app",
 };
 
 const ar: Dict = {
