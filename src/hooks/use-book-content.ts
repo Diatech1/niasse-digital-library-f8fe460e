@@ -16,6 +16,7 @@ import { priereShaykhIbrahimSections } from "@/data/priere-shaykh-ibrahim";
 import { rihlaKunakiriyaSections } from "@/data/rihla-kunakiriya";
 import { hasbiBihiSections } from "@/data/hasbi-bihi";
 import { stationsDeenEnSections } from "@/data/stations-deen-en";
+import { predictionsDanFodioSections } from "@/data/predictions-dan-fodio";
 import { loadConditionsReglesSections, type ConditionsSection } from "@/data/conditions-regles";
 import { loadIfadatouSections, type IfadatouSection } from "@/data/ifadatou-ahmediyya";
 import { loadJawahirRasailSections, type JawahirRasailSection } from "@/data/jawahir-rasail-en";
@@ -138,6 +139,8 @@ export function useBookContent(contentModule?: string) {
         return hasbiBihiSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
       case "stations-deen-en":
         return stationsDeenEnSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
+      case "predictions-dan-fodio":
+        return predictionsDanFodioSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
       case "kachiful-albas":
         return kachiful.map((s) => ({ id: s.id, part: s.part, chapter: s.chapter, heading: s.heading, content: s.content }));
       case "kashif-en":

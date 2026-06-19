@@ -19,6 +19,7 @@ import { priereShaykhIbrahimSections, priereShaykhIbrahimMeta } from "@/data/pri
 import { rihlaKunakiriyaSections, rihlaKunakiriyaMeta } from "@/data/rihla-kunakiriya";
 import { hasbiBihiSections } from "@/data/hasbi-bihi";
 import { stationsDeenEnSections, stationsDeenEnMeta } from "@/data/stations-deen-en";
+import { predictionsDanFodioSections, predictionsDanFodioMeta } from "@/data/predictions-dan-fodio";
 import { loadConditionsReglesSections, conditionsReglesMeta, type ConditionsSection } from "@/data/conditions-regles";
 import { loadIfadatouSections, ifadatouAhmediyyaMeta, type IfadatouSection } from "@/data/ifadatou-ahmediyya";
 import { loadJawahirRasailSections, jawahirRasailEnMeta, type JawahirRasailSection } from "@/data/jawahir-rasail-en";
@@ -331,6 +332,9 @@ const Reader = () => {
     }
     if (book?.contentModule === "stations-deen-en") {
       return stationsDeenEnSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
+    }
+    if (book?.contentModule === "predictions-dan-fodio") {
+      return predictionsDanFodioSections.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
     }
     if (book?.contentModule === "conditions-regles") {
       return conditionsReglesData.map((s) => ({ id: s.id, chapter: s.chapter, heading: s.heading, content: s.content }));
