@@ -55,7 +55,7 @@ Affiliated with the Qādiriyya order, Shaykh Usman was also a mystic of great st
 Among his works, several poems announce the coming of a great reformer from the far West — identified by the Tijānī tradition as Shaykh Ibrāhīm Niasse (1900 — 1975), Ṣāḥib al-Fayḍa. The ten verses that follow are among the most celebrated of those predictions.`;
 
 const versesEn: string[] = [
-  "I thank God and pray upon the Prophet. Listen well, O you who ask about the Mahdī.",
+  "I thank Allah and pray upon the Prophet. Listen well, O you who ask about the Mahdī.",
   "There shall come to these lands a man from the West. His assembly will be made up of helpers of the Mahdī, to strengthen the religion and to fight polytheism and innovation in religion.",
   "This man shall come from the far West, and his companions shall be the helpers of the Mahdī.",
   "When this man comes, neither you nor your princes will be followed any longer, except through him…",
