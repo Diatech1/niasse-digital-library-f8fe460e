@@ -24,7 +24,7 @@ Affilié à la voie qādiriyya, Cheikh Usman était également un mystique de ha
 Parmi ses œuvres, certains poèmes annoncent la venue d'un grand réformateur de l'occident lointain, identifié par la tradition tijaniyya à Cheikh Ibrāhīm Niasse (1900 — 1975), Ṣāḥib al-Fayḍa. Les dix vers qui suivent comptent parmi les plus célèbres de ces prédictions.`;
 
 const versesFr: string[] = [
-  "Je remercie Dieu et prie sur le Prophète. Écoute bien, toi qui demandes après le Mahdi.",
+  "Je remercie Allah et prie sur le Prophète. Écoute bien, toi qui demandes après le Mahdi.",
   "Viendra dans ces contrées un homme venant de l'ouest. Son assemblée sera constituée d'assistants du Mahdi, en vue de raffermir la religion et de lutter contre le polythéisme et l'innovation religieuse.",
   "Cet homme viendra de l'occident lointain et ses hommes seront les aides du Mahdi.",
   "Quand viendra cet homme, vous et vos princes ne serez plus suivis, sauf à travers lui…",
