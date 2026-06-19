@@ -212,7 +212,7 @@ Deno.serve(async (req) => {
     }
 
     // ---------- FINALIZE ----------
-    if (mode === "finalize") {
+    if (mode === "finalize" || mode === "finalize-wav") {
       const { totalChunks } = body;
       if (!totalChunks) return new Response(JSON.stringify({ error: "Missing totalChunks" }), { status: 400, headers: corsHeaders });
       const blobs: Blob[] = [];
@@ -223,15 +223,35 @@ Deno.serve(async (req) => {
         blobs.push(data);
         total += data.size;
       }
-      const mp3 = await encodePcmBlobsToMp3(blobs);
-      const { error: upErr } = await supabase.storage.from("book-audio").upload(finalPath, mp3, {
-        contentType: "audio/mpeg", upsert: true, cacheControl: "31536000",
+
+      let outBytes: Uint8Array;
+      let outPath: string;
+      let outType: string;
+      if (mode === "finalize-wav") {
+        // Cheap path: concatenate PCM and prepend a WAV header. No encoding CPU.
+        const pcm = new Uint8Array(total);
+        let off = 0;
+        for (const b of blobs) {
+          const u = new Uint8Array(await b.arrayBuffer());
+          pcm.set(u, off); off += u.byteLength;
+        }
+        outBytes = wrapWav(pcm);
+        outPath = `${bookId}/${voice}/chapter-${sectionIndex}.wav`;
+        outType = "audio/wav";
+      } else {
+        outBytes = await encodePcmBlobsToMp3(blobs);
+        outPath = finalPath;
+        outType = "audio/mpeg";
+      }
+
+      const { error: upErr } = await supabase.storage.from("book-audio").upload(outPath, outBytes, {
+        contentType: outType, upsert: true, cacheControl: "31536000",
       });
       if (upErr) throw upErr;
       const paths = Array.from({ length: totalChunks }, (_, i) => `${tmpDir}/${partName(i)}`);
       await supabase.storage.from("book-audio").remove(paths);
       const durationSec = Math.round((total / 2) / SAMPLE_RATE);
-      return new Response(JSON.stringify({ ok: true, path: finalPath, bytes: mp3.byteLength, durationSec, chunks: totalChunks }),
+      return new Response(JSON.stringify({ ok: true, path: outPath, bytes: outBytes.byteLength, durationSec, chunks: totalChunks }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 

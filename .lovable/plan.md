@@ -1,61 +1,28 @@
-# Slug-based book permalinks
+## Goal
 
-Goal: replace `/book/11` with `/book/le-wird-tidjane` (and same for `/read/:id`, `/listen/:id`), while keeping old numeric URLs working so nothing breaks.
-
-## Why
-Some books already use slug-style IDs (`hasbi-bihi`, `volume-1-conditions`), others are numeric (`7`–`18`). Slugs are friendlier for users and better for SEO (keywords in URL, more clickable in search results).
+Pre-generate and cache MP3 narration for the "Predictions of Cheikh Usman Dan Fodio" book so audio plays instantly when readers tap the listen button. Cover all 4 sections: French biography, French predictions, English biography, English predictions.
 
 ## Approach
 
-1. **Database** — add a `slug` column to `books`
-   - `text`, unique, indexed
-   - Backfill from `title` (lowercased, accent-stripped, hyphenated). For books whose `id` is already a slug, reuse that id as the slug to keep URLs stable.
-   - Examples: `11` → `le-wird-tidjane`, `12` → `les-stations-de-l-islam`, `hasbi-bihi` → `hasbi-bihi`.
+Use the existing `generate-audio` edge function (Gemini TTS → MP3 → `book-audio` storage bucket). It already supports the legacy single-shot mode, which handles plan + chunking + finalize in one call.
 
-2. **Lookup** — `useBook` resolves either slug or id
-   - Single source of truth: try `slug === param`, fall back to `id === param`.
-   - Old `/book/11` links keep working forever; new canonical links use the slug.
+Write a one-off Node script in `/tmp` (not committed) that:
 
-3. **Link generation** — everywhere we build a book URL, use `book.slug ?? book.id`
-   - `BookCard`, `BookDetail` (read/listen buttons), `Hero`, `DesktopHomeSections`, `Library`, `AudioLibrary`, `AudioPlayer`, reading-history/favorites/bookmarks consumers, `MiniPlayer`, etc.
-   - Reading-history & bookmarks stored in localStorage still key by `id` (stable), so existing progress is preserved.
+1. Reads section texts from `src/data/predictions-dan-fodio.ts` (the exported `predictionsDanFodioSections` array — same source the reader uses).
+2. For each section (index 0..3), invokes the edge function once with:
+   - `bookId: "predictions-dan-fodio"`
+   - `sectionIndex: i`
+   - `voice: "Zephyr"` (the app's default voice — matches what users will hit first)
+   - `language: "french"` for sections 0–1, `"english"` for sections 2–3
+   - `text: <flattened section text>`
+   - `skipIfExists: true`
+3. Hits the function URL directly with the project anon key (no edits to app code).
 
-4. **Canonical + sitemap**
-   - `SEO` canonical on `BookDetail` / `Reader` / `AudioPlayer` uses the slug path.
-   - `scripts/generate-sitemap.ts` emits slug URLs.
-   - JSON-LD `url` field on `BookDetail` uses the slug.
+Output lands at `book-audio/predictions-dan-fodio/Zephyr/chapter-{0..3}.mp3`, which is exactly where `use-gemini-tts.ts` already looks.
 
-5. **Optional redirect** — when the route param matches a numeric id that has a slug, `navigate(slugPath, { replace: true })` so the address bar updates to the pretty URL.
+## Notes
 
-## Technical details
-
-```text
-books
-├── id     text  (unchanged, primary key, still used internally)
-└── slug   text  unique, not null  ← new
-```
-
-Slugify rule (TS helper in `src/lib/slug.ts`):
-```
-NFD normalize → strip diacritics → lowercase → replace non-alphanumerics with "-" → collapse/trim "-"
-```
-
-Route resolution in `useBook(param)`:
-```ts
-books.find(b => b.slug === param) ?? books.find(b => b.id === param)
-```
-
-Files touched (≈10):
-- migration: add column + backfill + unique index
-- `src/hooks/use-books.ts` (map `slug`), `src/data/books.ts` (add `slug` to `Book`)
-- `src/lib/slug.ts` (new helper, also used as fallback if a row ever lacks slug)
-- `src/components/BookCard.tsx`, `src/components/desktop/Hero.tsx`, `src/components/desktop/DesktopHomeSections.tsx`
-- `src/pages/Index.tsx`, `src/pages/Library.tsx`, `src/pages/AudioLibrary.tsx`, `src/pages/BookDetail.tsx`, `src/pages/AudioPlayer.tsx`, `src/pages/Reader.tsx`
-- `src/components/MiniPlayer.tsx` (if it links to a book)
-- `scripts/generate-sitemap.ts`
-
-Routes in `App.tsx` stay as `/book/:id` etc. — the param name is just a placeholder; the value can be a slug or numeric id.
-
-## Out of scope
-- Changing the primary key from `id` to `slug` (risky, not needed).
-- Server-side 301 redirects (not available on static hosting; in-app `replace` navigation is the equivalent).
+- No app/source code changes. Only a throwaway script run via `code--exec`.
+- If a chapter already exists, it's skipped — safe to re-run.
+- Only the default voice (Zephyr) is pre-generated. If a user picks a different voice later, the reader will generate that voice on demand (existing behavior).
+- Generation can take 1–3 minutes per chapter depending on length; will be run sequentially with a longer timeout.
